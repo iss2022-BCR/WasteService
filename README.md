@@ -6,9 +6,12 @@
 [![Java][java-shield]][java-url]
 [![IntelliJ IDEA][intellij-shield]][intellij-url]
 
+<br/>
 </div>
 
 <div align="center">
+  <img align="center" width="25%" src="./gfx/walle.jpg"/>
+  
   <h1>WasteService</h1>
   
   Sistema software distribuito per un ***servizio di smaltimento rifiuti differenziato***. Progetto per il corso di [Ingegneria dei Sistemi Software M](https://www.unibo.it/it/didattica/insegnamenti/insegnamento/2021/468003), dell'Università di Bologna.
