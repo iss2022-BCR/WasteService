@@ -19,3 +19,8 @@ Ci serve raspberry con LED come sistema di allarme/monitoring:
 Il robot è stopped quando si mette una mano davanti al radar.
 
 Meccanismo di STOP/RESUME: c'è un manager che supervisiona tutto con una GUI. La GUI mostra lo stato corrente del transport trolley e possibilmente la sua posizione nella stanza. NB: potrebbe anche essere vaga, tipo il robot si sta muovendo oppure no, è in HOME, ecc.
+
+### Linee Guida
+Fornire una comunicazione nel momento in cui iniziamo a lavorare al problema, spiegando che iniziamo da analisi requisiti e analisi del problema.
+Integriamo col prof quando siamo arrivati alla fine di questa fase, perché andiamo avanti a step.
+Sfruttare il ricevimento del giovedì per farlo (ore 16-18), gli mandiamo una mail, oppure prenotarsi per ricevimento ad hoc.
