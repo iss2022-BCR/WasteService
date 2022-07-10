@@ -1,5 +1,21 @@
-# WasteService
-Sistema software distribuito per lo servizio di smaltimento rifiuti differenziato. Progetto per Ingegneria dei Sistemi Software M @Unibo
+<div align="center">
+
+[![MIT License][license-shield]][license-url]
+[![Downloads][downloads-shield]][downloads-url]
+[![Stars][stars-shield]][stars-url]\
+[![Java][java-shield]][java-url]
+[![IntelliJ IDEA][intellij-shield]][intellij-url]
+
+</div>
+
+<div align="center">
+  <h1>WasteService</h1>
+  
+  Sistema software distribuito per un ***servizio di smaltimento rifiuti differenziato***. Progetto per il corso di [Ingegneria dei Sistemi Software M](https://www.unibo.it/it/didattica/insegnamenti/insegnamento/2021/468003), dell'Università di Bologna.
+  
+</div>
+
+
 
 ### Descrizione
 - c'è un pot di ingresso dove arrivano dei camion (indoor)
@@ -24,3 +40,14 @@ Meccanismo di STOP/RESUME: c'è un manager che supervisiona tutto con una GUI. L
 Fornire una comunicazione nel momento in cui iniziamo a lavorare al problema, spiegando che iniziamo da analisi requisiti e analisi del problema.
 Integriamo col prof quando siamo arrivati alla fine di questa fase, perché andiamo avanti a step.
 Sfruttare il ricevimento del giovedì per farlo (ore 16-18), gli mandiamo una mail, oppure prenotarsi per ricevimento ad hoc.
+
+[java-shield]: https://img.shields.io/badge/Java-ED8B00?logo=java&logoColor=white
+[java-url]: https://www.java.com
+[intellij-shield]: https://img.shields.io/badge/IntelliJ%20IDEA-000000.svg?logo=intellij-idea&logoColor=blue
+[intellij-url]: https://www.jetbrains.com/idea/ 
+[downloads-shield]: https://img.shields.io/github/downloads/iss2022-BCR/WasteService/total
+[downloads-url]: https://github.com/iss2022-BCR/WasteService/releases/latest
+[license-shield]: https://img.shields.io/github/license/iss2022-BCR/WasteService
+[license-url]: https://github.com/iss2022-BCR/WasteService/blob/main/LICENSE
+[stars-shield]: https://custom-icon-badges.herokuapp.com/github/stars/iss2022-BCR/WasteService?logo=star&logoColor=yellow
+[stars-url]: https://github.com/iss2022-BCR/WasteService/stargazers
