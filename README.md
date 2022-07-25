@@ -44,6 +44,10 @@ Fornire una comunicazione nel momento in cui iniziamo a lavorare al problema, sp
 Integriamo col prof quando siamo arrivati alla fine di questa fase, perché andiamo avanti a step.
 Sfruttare il ricevimento del giovedì per farlo (ore 16-18), gli mandiamo una mail, oppure prenotarsi per ricevimento ad hoc.
 
+### Roadmap
+- [ ] Ripassare gli HTML sulla teoria (TemaFinale2022, Conclusioni, Costruire Software, QActor, ...)
+- [ ] Guardare videolezioni degli scorsi ricevimenti, per capire come vuole le cose
+
 [java-shield]: https://img.shields.io/badge/Java-ED8B00?logo=java&logoColor=white
 [java-url]: https://www.java.com
 [intellij-shield]: https://img.shields.io/badge/IntelliJ%20IDEA-000000.svg?logo=intellij-idea&logoColor=blue
