@@ -32,15 +32,15 @@
                     <li>a service area (rectangular, flat) that includes:
                         <ul>
                             <li>an <ksi>INDOOR</ksi> port, to enter waste material</li>
-                            <li>a <ksi>PlasticBox</ksi> container, devoted to store objects made of plastic, upto <b>MAXPB</b> kg of material.</li>
-                            <li>a <ksi>GlassBox</ksi> container, devoted to store objects made of glass, upto <b>MAXGB</b> kg of material.</li>
+                            <li>a <ksi>PlasticBox</ksi> container, devoted to store objects made of plastic, up to <b>MAXPB</b> kg of material.</li>
+                            <li>a <ksi>GlassBox</ksi> container, devoted to store objects made of glass, up to <b>MAXGB</b> kg of material.</li>
                         </ul>
                         The service area is free from internal obstacles, as shown in the following picture:<br/>
                         <center><img width="70%" src="../img/finalTheme/WasteServiceRoom.PNG"/></center>
                     </li>
-                    <li>a DDR robot working as a <ksi>transport trolley</ksi>, that is intially situated in its <ksi>HOME</ksi> location. The transport trolley has the form of a square of side length <b>RD</b>.
+                    <li>a DDR robot working as a <ksi>transport trolley</ksi>, that is initially situated in its <ksi>HOME</ksi> location. The transport trolley has the form of a square of side length <b>RD</b>.
                         <br><br>
-                        The <i>transport trolley</i> is used to performa a <ksi>deposit action</ksi> that consists in the following phases:
+                        The <i>transport trolley</i> is used to perform a <ksi>deposit action</ksi> that consists in the following phases:
                         <ol>
                             <li>pick up a waste-load from a <ksi>Waste truck</ksi> located on the <i>INDOOR</i></li>
                             <li>go from the <i>INDOOR</i> to the proper waste container</li>
@@ -74,7 +74,7 @@
                 The <i>WasteService</i> must create a <ksi>WasteServiceStatusGUI</ksi> that shows to the <i>Service-manager</i>:
                 <ul>
                     <li>the current state of the <i>transport trolley</i> and it position in the room</li>
-                    <li>the current weigth of the material stored in the two waste-containers</li>
+                    <li>the current weight of the material stored in the two waste-containers</li>
                     <li>the current state of the <i>Led</i></li>
                 </ul>
             </div>
@@ -84,27 +84,71 @@
             <div class="remark">
                 <h3>Non functional requirements</h3>
                 <ol>
-                    <li>The ideal work team is composed of 33 persons. Teams of 1 or 2 persons (NOT 4 or more) are also allowed.</li>
-                    <li>The team must present a workplan as the result of the requirements/problem analysis, including some significant TestPlan.</li>
+                    <li>The ideal work team is composed of 33 persons. Teams of 1 or 2 persons (<ksi>NOT 4 or more</ksi>) are also allowed.</li>
+                    <li>The team must present a work plan as the result of the requirements/problem analysis, including some significant TestPlan.</li>
                     <li>The team must present the sequence of SPRINT performed, with appropriate motivations.</li>
                     <li>Each SPRINT must be associated with its own ‘chronicle’ (see <a href="templateToFill.html">templateToFill.html</a>) that presents, in concise way, the key-points related to each phase of development.
                     Hopefully, the team could also deploy the system using Docker.</li>
-                    <li>Each team must publish and maintain a GIT-repository (referred in the templateToFill.html) with the code and the related documents.</li>
-                    <li>The team must present (in synthetic, schematic way) the specific activity of each team-component.</li>
+                    <li>Each team must publish and maintain a <ksi>GIT-repository</ksi> (referred in the <a href="">templateToFill.html</a>) with the code and the related documents.</li>
+                    <li>The team must present (in synthetic, schematic way) the <ksi>specific activity</ksi> of each team-component.</li>
                 </ol>
 
                 <h3>Guidelines</h3>
                 <ul>
                     <li>The number and purpose of SPRINT are defined by the development Team after appropriate interactions with the customer.</li>
-                    <li>The customer (and/or the product-owner) is available ONLINE every Thursday from 16 to 18 until 21st of June 2022, but is always reachable on-demand via e-mail.</li>
+                    <li>The customer (and/or the product-owner) is available ONLINE every <ksi>Thursday from 16 to 18</ksi> until <ksi>21st of June 2022</ksi>, but is always reachable on-demand via e-mail.</li>
                 </ul>
 
-                The work must be carrieed out in several phases:
+                The work must be carried out in several phases:
+                <ol>
+                    <li>The <ksi>analysis phase</ksi>, which ends with the definition of a logical architecture of the system, executable models and some significant test plans.
+                    It's recommended that the results of this phase are presented to the customer (on appointment), before the final delivery of the product.</li>
+                    <li>The <ksi>project and production phase</ksi>, which ends with the deployment of the product.</li>
+                    <li>The <ksi>discussion phase</ksi> of the work that had been carried out, which will have to take place IN PRESENCE, (preferably) in Lab2.</li>
+                </ol>
+                It is advisable that each participant is ready to discuss also the works that they developed during the course.
+
+                <h3>Interview PHASES</h3>
+                <ol>
+                    <li>Group presentation of the system <ksi>‘live’ demo</ksi>, which must not exceed 15 minutes.
+                        The group presentation order will be scheduled by the teacher.
+                        The demo must show the execution of <ksi>at least one automated Test(Plan)</ksi>, that has been evaluated as significant by the group.
+                        For applications which do NOT use real robots video presentations are NOT allowed.</li>
+                    <li>Group presentation of the system project and its report with the analysis phase.
+                        In this phase the teacher <ksi>requires the preparation</ksi> of <prec>2-3 illustrative SLIDES</prec> about the architectures, with pictures and (if considered useful) references to the source code.
+                        At the end of those phases, each group member can reach a maximum score of <prec>27/30</prec>.</li>
+                    <li><ksi>Questions</ksi> (for examples, check the file <a href="">domande.html</a>) that the teacher addresses to single students, related to the product, the project and requirement/problem analysis.
+                        At the end of this phase, a student can reach a maximum score of <prec>29/30</prec>.</li>
+                    <li><ksi>Further questions</ksi> to single students.
+                        At the end of this phase, a student can reach a score of <prec>30L</prec>.</li>
+                </ol>
+
+                <h3>Software Updates</h3>
+                The teacher published the following resources on the course GIT:
                 <ul>
-                    <li>1. Analysis phase, ends with the definition of</li>
+                    <li>the project <i>unibo.comm22</i> with various implementations of <i>Interaction2021</i> with different protocols.</li>
+                    <li>the project <i>webrobot22</i> (and the file <i>webRobot22.html</i> in the material folders) which provides a webGUI for the basicrobot.</li>
+                    <li>the project <i>unibo.testqakexample</i> as a JUnit example for the testing of the <i>pickup</i> request from the final theme, based on a qak model and based on the fact that qak actors are CoAP resources.</li>
                 </ul>
 
-                [...]
+                <h3>Customer Clarifications</h3>
+                Next are reported the answers given by the customer to some specific questions:
+                <ul>
+                    <li>It's better to dismiss the truck as soon as possible.</li>
+                    <li>The <i>WasteService</i> might receive a new request while it's still processing the deposit action of the previous one.</li>
+                    <li>Once full, the containers won't get emptied, if not by restarting the application.</li>
+                    <li>As for the <i>trolley position</i>, even qualitative indications are valid, such as ‘at indoor’, ‘at glassbox’, etc.</li>
+                    <li>The robot is not required to move in an optimized way, but it shouldn't even wander too much around the room.</li>
+                    <li>The pick-up time of the material from the truck is always limited and predictable, while the time needed for the storage could even be quite long (related to the previous point).</li>
+                    <li>Sonar/led are NOT on top of the trolley, but on a separated RaspberryPi.</li>
+                    <li>The Sonar detects objects which we are going to position in front of it.</li>
+                    <li>The DDR provided by the customer is equipped with an on-board sonar which is used to detect obstacles while it's moving.</li>
+                </ul>
+
+                <h3>Notes following the online interactions</h3>
+
+                <h3>Software Updates</h3>
+
             </div>
 
 

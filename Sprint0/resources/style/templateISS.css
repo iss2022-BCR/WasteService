@@ -80,6 +80,12 @@ ksi{
     color: #0000CD	;
 	font-size: 90%;
 }
+prec {
+    font-family: Consolas;
+        font-family: 'Consolas', 'Menlo', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
+        font-size: 0.9em;
+        background-color: #ecf0f3;
+}
 kc{
 	font-family: "Arial";
 	font-weight: bold;
