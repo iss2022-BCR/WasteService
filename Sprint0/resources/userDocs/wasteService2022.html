@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <!--
+    <script type="text/javascript" src="../css/issStyle.js"></script>
+    -->
+    <head>
+        <title>Waste Service</title>
+        <link rel="stylesheet" type="text/css" href="../style/templateISS.css">
+        <link rel="stylesheet" type="text/css" href="../style/main.css">
+        <link rel="stylesheet" type="text/css" href="../style/sidenav.css">
+    </head>
+    
+    <body>
+        <div class="sidenav">
+            <a href="../../index.html">Index</a>
+            <a class="selected" href="#">Final Theme</a>
+            <a href="#">Requirement Analysis</a>
+            <a href="#">Problem Analysis</a>
+            <a href="./teamBCR.html">Team</a>
+        </div>
+
+        <div class="main">
+            <h1 align="center">WASTE SERVICE 2022</h1>
+            <div class="remark">
+                Documento originale: <a class="reference external" href="../../../temaFinale/TemaFinale22.html">TemaFinale22.html</a>
+            </div>
+
+            <h2>Requirements</h2>
+            <div class="remark">
+                A company intends to build a <ksi>WasteService</ksi> for the <i>separate collection of waste</i>, composed of a set of elements:
+                <ol>
+                    <li>a service area (rectangular, flat) that includes:
+                        <ul>
+                            <li>an <ksi>INDOOR</ksi> port, to enter waste material</li>
+                            <li>a <ksi>PlasticBox</ksi> container, devoted to store objects made of plastic, upto <b>MAXPB</b> kg of material.</li>
+                            <li>a <ksi>GlassBox</ksi> container, devoted to store objects made of glass, upto <b>MAXGB</b> kg of material.</li>
+                        </ul>
+                        The service area is free from internal obstacles, as shown in the following picture:<br/>
+                        <center><img width="70%" src="../img/finalTheme/WasteServiceRoom.PNG"/></center>
+                    </li>
+                    <li>a DDR robot working as a <ksi>transport trolley</ksi>, that is intially situated in its <ksi>HOME</ksi> location. The transport trolley has the form of a square of side length <b>RD</b>.
+                        <br><br>
+                        The <i>transport trolley</i> is used to performa a <ksi>deposit action</ksi> that consists in the following phases:
+                        <ol>
+                            <li>pick up a waste-load from a <ksi>Waste truck</ksi> located on the <i>INDOOR</i></li>
+                            <li>go from the <i>INDOOR</i> to the proper waste container</li>
+                            <li>deposit the waste-load in the container</li>
+                        </ol>
+                    </li>
+                    <li>a <ksi>Service-manager</ksi> (an human being) which supervises the state of the service-area by using a <ksi>WasteServiceStatusGUI</ksi>.</li>
+                    <li>a <ksi>Sonar</ksi> and a <ksi>Led</ksi> connected to a RaspnerryPi. The Led is used as a warning devices, according to the following scheme:
+                        <ul>
+                            <li>the <i>Led</i> is <b>off</b> when the <i>transport trolley</i> is at HOME</li>
+                            <li>the <i>Led</i> <b>blinks</b> while the <i>transport trolley</i> is moving</li>
+                            <li>the <i>Led</i> is <b>on</b> when the <i>transport trolley</i> is stopped.</li>
+                        </ul>
+                    </li>
+                </ol>
+
+                The <i>Sonar</i> is used as an ‘alarm device’: when it measures a distance less that a prefixed value <b>DLIMT</b>, the <i>transport
+                trolley</i> must be stopped. It will be resumed when <i>Sonar</i> detects again a distance higher than <b>DLIMT</b>.
+                <br>
+                <br>
+                <h3>TFRequirements</h3>
+                The main goal of the <ksi>WasteService</ksi> software is to allow a <ksi>Waste truck</ksi> to deposit its load of <b>TruckLoad</b> kg plastic or glass in the proper container.
+                <br><br>
+                The global story can be described as follows:
+                <ol>
+                    <li>The <i>Waste truck</i> driver approaches the <i>INDOOR</i> and sends (using a smart device) a request to store the load, by specifyng the <i>type of the material</i> (plastic or glass) and its <i>TruckLoad</i>.</li>
+                    <li>The <i>WasteService</i> sends the answer <i>loadaccept</i> if the final content of proper container will not surpass the maximum value allowed (<i>MAXPB</i> or <i>MAXGB</i>). Otherwise, it sends the answer <i>loadrejecetd</i> and the <i>Waste truck</i> leaves the <i>INDOOR</i> area.</li>
+                    <li>When the load is accepted, the <i>transport trolley</i> reaches the <i>INDOOR</i>, picks up the material, goes to the proper container and settles the material. During this activity, the <i>WasteService</i> <b>blinks</b> the <i>Led</i></li>
+                    <li>When the deposit action is terminated, the <i>transport trolley</i> excutes another deposit command (if any) or returns to its <i>HOME</i>.</li>
+                </ol>
+                The <i>WasteService</i> must create a <ksi>WasteServiceStatusGUI</ksi> that shows to the <i>Service-manager</i>:
+                <ul>
+                    <li>the current state of the <i>transport trolley</i> and it position in the room</li>
+                    <li>the current weigth of the material stored in the two waste-containers</li>
+                    <li>the current state of the <i>Led</i></li>
+                </ul>
+            </div>
+
+            <h2>Notes</h2>
+
+            <div class="remark">
+                <h3>Non functional requirements</h3>
+                <ol>
+                    <li>The ideal work team is composed of 33 persons. Teams of 1 or 2 persons (NOT 4 or more) are also allowed.</li>
+                    <li>The team must present a workplan as the result of the requirements/problem analysis, including some significant TestPlan.</li>
+                    <li>The team must present the sequence of SPRINT performed, with appropriate motivations.</li>
+                    <li>Each SPRINT must be associated with its own ‘chronicle’ (see <a href="templateToFill.html">templateToFill.html</a>) that presents, in concise way, the key-points related to each phase of development.
+                    Hopefully, the team could also deploy the system using Docker.</li>
+                    <li>Each team must publish and maintain a GIT-repository (referred in the templateToFill.html) with the code and the related documents.</li>
+                    <li>The team must present (in synthetic, schematic way) the specific activity of each team-component.</li>
+                </ol>
+
+                <h3>Guidelines</h3>
+                <ul>
+                    <li>The number and purpose of SPRINT are defined by the development Team after appropriate interactions with the customer.</li>
+                    <li>The customer (and/or the product-owner) is available ONLINE every Thursday from 16 to 18 until 21st of June 2022, but is always reachable on-demand via e-mail.</li>
+                </ul>
+
+                The work must be carrieed out in several phases:
+                <ul>
+                    <li>1. Analysis phase, ends with the definition of</li>
+                </ul>
+
+                [...]
+            </div>
+
+
+        </div>
+
+
+
+    </body>
+
+</html>
