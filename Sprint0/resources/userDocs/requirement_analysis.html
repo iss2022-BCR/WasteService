@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
     <!--
@@ -11,19 +12,28 @@
     </head>
 
 
-
     <body>
         <div class="sidenav">
             <a href="../../index.html">Index</a>
             <a href="final_theme.html">Final Theme</a>
-            <a class="selected" href="#">Requirement Analysis</a>
+            <a class="selected" href="requirement_analysis.htmlu">Requirement Analysis</a>
             <a href="problem_analysis.html">Problem Analysis</a>
+            <a href="conclusions.html">Conclusions</a>
             <a href="team.html">Team</a>
         </div>
 
         <div class="main">
             <h1 align="center">Requirement Analysis</h1>
 
+            <div>
+                Dopo aver letto con attenzione i requisiti forniti dal committente, abbiamo compreso che ci sono almeno 3 requisiti fondamentali
+
+
+                        </div>
+
+            The Led is off when the transport trolley is at HOME
+            the Led blinks while the transport trolley is moving
+            the Led is on when transport trolley is stopped
             <div>
                 Scopo finale del prodotto: gestire un servizio di smaltimento di rifiuti di diverso tipo.
                 Come prima cosa, iniziamo analizzando i requisiti introdotti dal committente, ordinati per priorità:
@@ -38,8 +48,102 @@
 
                 <h2>Dictionary</h2>
 
+                <ul>
+                    <li>WasteService: <b>distributed software system</b> to manage and coordinate the separate collection of waste.
+                        That's the final product as a whole, to be delivered to customer.</li>
 
-                Scelta del linguaggio di modellazione (Qak) CON MOTIVAZIONE!!! Una buona motivazione è che è un linguaggio completo (in quanto include Kotlin), e permette di specificare il concetto di richiesta e risposta. Inoltre aggiungere anche un link alla documentazione
+                    <li>Service area software: </li>
+
+                    <li>Service area: a rectangular, flat surface, free from internal obstacles</li>
+                    <li>Plastic Box: a container which contains objects made of plastic, with maximum capacity of MAXPB kg</li>
+                    <li>Glass Box: a container which contains objects made of glass, with maximum capacity of MAXGB kg </li>
+                    <li>Indoor: a location in the service area where the waste enter from</li>
+                    <li>Transport trolley: a square-shaped DDR robot, with side length of RD, which is initially situated in its home location and performs a deposit action.  </li>
+                    <li>Home: a location in the upper right corner of the service area that indicates the starting point of the transport trolley</li>
+                    <li>Deposit action: a macro action that describes the deposit of the waste-load in a container; it is divided in:
+                        <ul>
+                            <li>pick up a waste-load from a waste truck on the Indoor</li>
+                            <li>go from Indoor to the proper container</li>
+                            <li>deposit the waste-load in the container</li>
+                        </ul>
+                    </li>
+                    <li>waste-load: it indicates a load of waste taken from a waste track</li>
+                    <li>TruckLoad: a variable that indicates the weight of waste deposited by a waste truck in Indoor</li>
+                    <li>WasteServiceStatusGUI: a software product that shows the state of the transport trolley and where it is in the service area, hom much weight contains each container and the state of the Led</li>
+                    <li>Service-manager: an human supervisor that controls the state of the service-area using a WasteServiceStatusGUI</li>
+                    <li>Sonar: an alarm device, which measures a distance, and if this one is less than a prefixed value DLIMT, the transport trolley must be stopped.</li>
+                    <li>Led: a warning device, which worka ccording to the following scheme:
+                        - the Led is off when the transport trolley is at HOME
+                        - the Led blinks while the transport trolley is moving
+                        - the Led is on when transport trolley is stopped
+                    </li>
+                    <li>DLIMT: a prefixed distance used to trigger the alarm system that stops the transport trolley</li>
+                </ul>
+                
+                <br/>
+                Entità emerse durante l'analisi dei requisiti (e come potrebbero essere modellate):
+                <ul>
+                    <li>service area software</li>
+                    <li></li>
+                </ul>
+
+                <h3>Entities</h3>
+                <table width="100%">
+                    <tr align="center">
+                        <td width="30%"><b>Entity</b></td>
+                        <td width="69%"><b>Description</b></td>
+                    </tr>
+                    <tr align="center">
+                        <td>Waste truck</td>
+                        <td></td>
+                    </tr>
+                    <tr align="center">
+                        <td>Transport trolley</td>
+                        <td></td>
+                    </tr>
+                    <tr align="center">
+                        <td>DDR robot</td>
+                        <td></td>
+                    </tr>
+                    <tr align="center">
+                        <td>WasteServiceState</td>
+                        <td></td>
+                    </tr>
+                    <tr align="center">
+                        <td>Alarm component</td>
+                        <td></td>
+                    </tr>
+                </table>
+
+                <h3>Tasks</h3>
+                <table width="100%">
+                    <tr align="center">
+                        <td width="30%"><b>Task</b></td>
+                        <td width="69%"><b>Description</b></td>
+                    </tr>
+                    <tr align="center">
+                        <td>Deposit action</td>
+                        <td>Sarebbe bene mandare via il truck appena possibile.<br/>
+                            `pickup`, che sarà una request perché vogliamo una risposta, appena il trolley arriva all'indoor e sappiamo che l'ha fatto, altrimenti non può rispondere al truck.
+
+                            Lo modelliamo in questo modo perché il committente ha detto che dobbiamo liberare il camion il prima possibile.</td>
+                    </tr>
+                    
+                </table>
+
+                <h3>Messages</h3>
+                <table width="100%">
+                    <tr align="center">
+                        <td width="30%"><b>Message</b></td>
+                        <td width="69%"><b>Description</b></td>
+                    </tr>
+                </table>
+
+                <h2>Architettura Logica</h2>
+
+                Scelta del linguaggio di modellazione (Qak) CON MOTIVAZIONE!!!
+                <br/>
+                Una buona motivazione è che è un linguaggio completo (in quanto include Kotlin), e permette di specificare il concetto di richiesta e risposta. Inoltre aggiungere anche un link alla documentazione
             </div>
         </div>
 
