@@ -1,14 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html>
-    <!--
-    <script type="text/javascript" src="../css/issStyle.js"></script>
-    -->
     <head>
         <title>Conclusions</title>
-        <link rel="stylesheet" type="text/css" href="../style/templateISS.css">
-        <link rel="stylesheet" type="text/css" href="../style/main.css">
-        <link rel="stylesheet" type="text/css" href="../style/sidenav.css">
-        
+        <link rel="stylesheet" type="text/css" href="../styles/templateISS.css">
+        <link rel="stylesheet" type="text/css" href="../styles/main.css">
+        <link rel="stylesheet" type="text/css" href="../styles/sidenav.css">
+        <script type="text/javascript" src="../scripts/myScripts.js"></script>
+    
         <style>
 
             table {
@@ -41,7 +39,7 @@
             <div>
                 This first Sprint (<a href="../../index.html">Sprint0</a>) served to analyze and fully comprehend the requirements provided by the customer, in order to give a proper formalization.
                 <br/>
-                As a result, we grouped the requests into <ks>3 main requirements</ks> (sorted by priority):
+                As a result, we grouped the specifications into <ks>3 macro requirements</ks> (sorted by priority) which involve the 3 main components of the system:
                 <div class="remark">
                     <ol>
                         <li>Transport Trolley software</li>
@@ -60,6 +58,13 @@
             </div>
         </div>
 
+        <div style="position: absolute; bottom: 0; right: 0; text-align:right; padding: 0px 10px 10px 0px;">
+            Last modified: <span id="lastModifiedDate"></span>
+        </div>
+        <script>
+            const date = new Date(document.lastModified);
+            document.getElementById("lastModifiedDate").innerHTML = date.toDateString();
+        </script>
     </body>
 
 </html>
