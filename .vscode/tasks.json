@@ -1,0 +1,23 @@
+{
+    "version": "2.0.0",
+    "command": "Chrome",    
+    "windows": {
+        "command": "C:/Program Files/Google/Chrome/Application/chrome.exe"
+    },
+    "args": [
+        "D:/Michele Righi/Programmi/GitHub/WasteService/userDocs/wasteService.html"
+    ],
+    "tasks": [
+        {
+            "label": "C:/Program Files/Google/Chrome/Application/chrome.exe",
+            "args": [
+                "D:/Michele Righi/Programmi/GitHub/WasteService/userDocs/wasteService.html"
+            ],
+            "problemMatcher": [],
+            "group": {
+                "_id": "build",
+                "isDefault": false
+            }
+        }
+    ]
+}

@@ -1,29 +1,30 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-    <!--
-    <script type="text/javascript" src="../css/issStyle.js"></script>
-    -->
     <head>
-        <title>Problem Analysis</title>
+        <title>Sprint0</title>
         <link rel="stylesheet" type="text/css" href="../styles/templateISS.css">
         <link rel="stylesheet" type="text/css" href="../styles/main.css">
         <link rel="stylesheet" type="text/css" href="../styles/sidenav.css">
+        <link rel="stylesheet" type="text/css" href="../styles/topnav.css">
+        <script type="text/javascript" src="../scripts/myScripts.js"></script>
     </head>
 
-
-
-    <body>
-        <div class="sidenav">
+    <body onload="return loadNav();">
+        <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
+        <div id="sidenav" class="sidenav">
+            <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
             <a href="../../index.html">Index</a>
             <a href="final_theme.html">Final Theme</a>
-            <a href="requirement_analysis.html">Requirement Analysis</a>
+            <a href="requirement_analysis.html">Requirement<br/>Analysis</a>
             <a class="selected" href="problem_analysis.html">Problem Analysis</a>
             <a href="conclusions.html">Conclusions</a>
             <a href="team.html">Team</a>
         </div>
 
-        <div class="main">
+        <div id="main">
             <h1 align="center">Problem Analysis</h1>
+
+            Modello il trolley come un attore perché ... https://github.com/orgs/iss2022-BCR/teams/iss2022
         </div>
 
     </body>

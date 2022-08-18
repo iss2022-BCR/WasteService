@@ -1,31 +1,34 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Sprint Index</title>
+        <title>Sprint0</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" type="text/css" href="resources/styles/templateISS.css">
         <link rel="stylesheet" type="text/css" href="resources/styles/main.css">
         <link rel="stylesheet" type="text/css" href="resources/styles/sidenav.css">
-
+        <link rel="stylesheet" type="text/css" href="resources/styles/topnav.css">
+        <script type="text/javascript" src="resources/scripts/myScripts.js"></script>
     </head>
     
-    <body>
-        <div class="sidenav">
+    <body onload="return loadNav();">
+        <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
+        <div id="sidenav" class="sidenav">
+            <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
             <a class="selected" href="#">Index</a>
             <a href="resources/userDocs/final_theme.html">Final Theme</a>
-            <a href="resources/userDocs/requirement_analysis.html">Requirement Analysis</a>
+            <a href="resources/userDocs/requirement_analysis.html">Requirement<br/>Analysis</a>
             <a href="resources/userDocs/problem_analysis.html">Problem Analysis</a>
             <a href="resources/userDocs/conclusions.html">Conclusions</a>
             <a href="resources/userDocs/team.html">Team</a>
         </div>
         
-        
-        <div class="main">
+        <div id="main">
             <h1 align="center">Sprint 0</h1>
             <h2>Introduction</h2>
             <div>
                 During Sprint0 we will read the text provided by the client, <b>analyzing</b> the requirements that the final product needs to fulfill.
-                Our task is to comprehend and <b>formalize</b> those requirements, so that everyone (team members and the customer/product owner) agrees on their meaning.
+                Our task is to comprehend and <b>formalize</b> those requirements with a programming language or with models, so that everyone
+                (team members and the customer/product owner) agrees on their meaning.
                 <br/>
                 <br/>
                 In particular, the <a href="resources/userDocs/requirement_analysis.html">requirement analysis</a> aims to identify the actual requirements and the functionalities/features the product will need to include.
@@ -35,9 +38,21 @@
                 On the other hand, the <a href="resources/userDocs/problem_analysis.html">problem analysis</a> purpose is to express what we came up with, while trying to remove those ambiguities, and the reasonings and arguments that led us to a particular decision rather than another one.
                 <br/>
                 <br/>
-                As a consequence, the product of the analysis is going to be <i>models</i> (expressed in a particular modeling language), <i>diagrams</i> representing architectures and/or behaviours, and the related (executable) <i>test plans</i>.
+                As a consequence, the product of the analysis (for the next Sprints, but eventually already from this one) is going to be:
+                a detailed formalization of the requirements, grouped by functionality, and eventually some model.
+                <ul>
+                    <li><i>models</i> (expressed in a particular modeling language);</li>
+                    <li><i>diagrams</i> representing architectures and/or behaviours;</li>
+                    <li>and the related (executable) <i>test plans</i>.</li>
+                </ul>
                 Then, from these, we will be able to draft some <a href="resources/userDocs/conclusions.html">conclusions</a> and define a work plan and the goal for the next Sprint: the Sprint1.
             </div>
+
+            <h2>Motto</h2>
+            <div class="remark">
+                There is no code without a project, there is no project without problem analysis, there is no problem without requirements.
+            </div>
+
             <h2>Resources</h2>
             <ul>
                 <li>Course GitHub repository: <a href="https://github.com/anatali/issLab2022">anatali/issLab2022</a></li>

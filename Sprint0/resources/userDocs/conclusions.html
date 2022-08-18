@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Conclusions</title>
+        <title>Sprint0</title>
         <link rel="stylesheet" type="text/css" href="../styles/templateISS.css">
         <link rel="stylesheet" type="text/css" href="../styles/main.css">
         <link rel="stylesheet" type="text/css" href="../styles/sidenav.css">
+        <link rel="stylesheet" type="text/css" href="../styles/topnav.css">
         <script type="text/javascript" src="../scripts/myScripts.js"></script>
-    
+        
         <style>
 
             table {
@@ -19,19 +20,19 @@
         </style>
     </head>
 
-
-
-    <body>
-        <div class="sidenav">
+    <body onload="return loadNav();">
+        <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
+        <div id="sidenav" class="sidenav">
+            <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
             <a href="../../index.html">Index</a>
             <a href="final_theme.html">Final Theme</a>
-            <a href="requirement_analysis.html">Requirement Analysis</a>
+            <a href="requirement_analysis.html">Requirement<br/>Analysis</a>
             <a href="problem_analysis.html">Problem Analysis</a>
             <a class="selected" href="conclusions.html">Conclusions</a>
             <a href="team.html">Team</a>
         </div>
 
-        <div class="main">
+        <div id="main">
             <h1 align="center">Sprint Conclusions</h1>
 
             <h2>Summary</h2>
@@ -39,11 +40,11 @@
             <div>
                 This first Sprint (<a href="../../index.html">Sprint0</a>) served to analyze and fully comprehend the requirements provided by the customer, in order to give a proper formalization.
                 <br/>
-                As a result, we grouped the specifications into <ks>3 macro requirements</ks> (sorted by priority) which involve the 3 main components of the system:
+                As a result, we concluded that the specifications can be grouped into <ks>3 macro requirements</ks> (sorted by priority) which involve the 3 main components of the system:
                 <div class="remark">
                     <ol>
                         <li>Transport Trolley software</li>
-                        <li>WasteServiceGUI</li>
+                        <li>WasteServiceStatusGUI</li>
                         <li>Alarm software</li>
                     </ol>
                 </div>
@@ -51,10 +52,11 @@
             
             <h2>Work Plan</h2>
             <div>
+                The <a href="">Sprint1</a> will focus on the <i>first requirement</i> and is going to include:
                 
                 <br/>
                 <br/>
-                The Sprint1 will focus on the first requirement: ...
+                Tenere presente che per la realizzazione dei prodotti, potranno essere utilizzate o specializzate le applicazioni realizzate dalla nostra software house, nel corso dell'anno corrente: Applicazioni22.
             </div>
         </div>
 

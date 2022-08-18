@@ -1,35 +1,42 @@
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-    <!--
-    <script type="text/javascript" src="../css/issStyle.js"></script>
-    -->
     <head>
-        <title>Requirement Analysis</title>
+        <title>Sprint0</title>
         <link rel="stylesheet" type="text/css" href="../styles/templateISS.css">
         <link rel="stylesheet" type="text/css" href="../styles/main.css">
         <link rel="stylesheet" type="text/css" href="../styles/sidenav.css">
+        <link rel="stylesheet" type="text/css" href="../styles/topnav.css">
+        <script type="text/javascript" src="../scripts/myScripts.js"></script>
+    
+        <style>
+            table, td {
+                padding: 5px 5px 15px 5px;
+            }
+        </style>
     </head>
 
-
-    <body>
-        <div class="sidenav">
+    <body onload="return loadNav();">
+        <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
+        <div id="sidenav" class="sidenav">
+            <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
             <a href="../../index.html">Index</a>
             <a href="final_theme.html">Final Theme</a>
-            <a class="selected" href="requirement_analysis.html">Requirement Analysis</a>
+            <a class="selected" href="requirement_analysis.html">Requirement<br/>Analysis</a>
             <a href="problem_analysis.html">Problem Analysis</a>
             <a href="conclusions.html">Conclusions</a>
             <a href="team.html">Team</a>
         </div>
 
-        <div class="main">
+        <div id="main">
             <h1 align="center">Requirement Analysis</h1>
 
             <div>
+
                 Dopo aver letto con attenzione i requisiti forniti dal committente, abbiamo compreso che ci sono almeno 3 requisiti fondamentali
 
 
-                        </div>
+            </div>
 
             The Led is off when the transport trolley is at HOME
             the Led blinks while the transport trolley is moving
@@ -48,6 +55,128 @@
 
                 <h2>Dictionary</h2>
 
+                <h5>JavaScript to sort table by when the terms appear in the text, or alphabetically</h5>
+                <ul>
+                    <li><a href="https://stackoverflow.com/questions/14267781/sorting-html-table-with-javascript">solution1</a></li>
+                    <li><a href="https://www.w3schools.com/howto/howto_js_sort_table.asp#:~:text=Sort%20Table%20by%20Clicking%20the,ascending%20(A%20to%20Z).">solution2</a></li>
+                </ul>
+                <h4>Nouns</h4>
+                <table width="100%">
+                    <tr align="center">
+                        <td><b>Term</b></td>
+                        <td><b>Definition</b></td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>WasteService</ks></td>
+                        <td><a href="https://en.wikipedia.org/wiki/Distributed_computing"><b>Distributed software system</b></a> to manage and coordinate the separate collection of waste.
+                            That's the <b>final product</b> as a whole, to be delivered to the customer.</td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>Service area</ks></td>
+                        <td>Rectangular flat surface, free from internal obstacles.</td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>INDOOR</ks></td>
+                        <td>Location situated on the perimeter of the service area, where the waste enters from.</td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>PlasticBox</ks></td>
+                        <td>Container which contains stuff made of plastic, and has a maximum capacity of <b>MAXPB</b>.</td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>MAXPB</ks></td>
+                        <td>The maximum capacity of PlasticBox.</td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>GlassBox</ks></td>
+                        <td>Container which contains objects made of glass, and has a maximum capacity of <b>MAXGB</b>.</td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>MAXGB</ks></td>
+                        <td>The maximum capacity of GlassBox.</td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>DDR robot</ks></td>
+                        <td>
+                            Differential Drive Robot (DDR), which band is confined inside the service area. It's
+                        </td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>Transport trolley</ks></td>
+                        <td>
+                            Square-shaped virtual robot, with side length of RD, which is initially situated
+                            in its home location (HOME) and performs a deposit action. It can move forward, backward, stop and rotate by 90°.<br/>
+                            The transport trolley is a command actuator: it can use the DDR robot to perform actions in a real environment.
+                        </td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>RD</ks></td>
+                        <td>Length of the transport trolley.</td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>HOME</ks></td>
+                        <td>Starting position of the transport trolley, inside the service area.</td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>Deposit action</ks></td>
+                        <td>
+                            Operation that describes the deposit of the WasteLoad in a container and consists in 3 phases:
+                            <ol align="left">
+                                <li>pick up a WasteLoad from a waste truck on the INDOOR;</li>
+                                <li>go from the INDOOR to the proper waste container</li>
+                                <li>deposit the WasteLoad in the container</li>
+                            </ol>
+                        </td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>Waste truck</ks></td>
+                        <td>A generic entity external to the system, which dumps TruckLoad kg of waste.</td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>TruckLoad</ks></td>
+                        <td></td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>WasteLoad</ks></td>
+                        <td></td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>PlasticBox</ks></td>
+                        <td></td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>PlasticBox</ks></td>
+                        <td></td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>PlasticBox</ks></td>
+                        <td></td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>PlasticBox</ks></td>
+                        <td></td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>PlasticBox</ks></td>
+                        <td></td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>PlasticBox</ks></td>
+                        <td></td>
+                    </tr>
+                </table>
+
+                <h4>Verbs</h4>
+                <table width="100%" >
+                    <tr align="center">
+                        <td width="30%"><b>Term</b></td>
+                        <td width="70%"><b>Definition</b></td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>Perform a deposit action</ks></td>
+                        <td></td>
+                    </tr>
+                </table>
                 <ul>
                     <li>WasteService: <b>distributed software system</b> to manage and coordinate the separate collection of waste.
                         That's the final product as a whole, to be delivered to customer.</li>
@@ -79,7 +208,8 @@
                     </li>
                     <li>DLIMT: a prefixed distance used to trigger the alarm system that stops the transport trolley</li>
                 </ul>
-                
+                <h3>Analisi</h3>
+                Il software del servizio NON gira sulla stessa macchina dove gira il trolley
                 <br/>
                 Entità emerse durante l'analisi dei requisiti (e come potrebbero essere modellate):
                 <ul>

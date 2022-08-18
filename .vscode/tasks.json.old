@@ -1,0 +1,8 @@
+{
+    "version": "0.1.0",
+    "command": "Chrome",    
+    "windows": {
+        "command": "C:/Program Files/Google/Chrome/Application/chrome.exe"
+    },
+    "args": ["D:/Michele Righi/Programmi/GitHub/WasteService/userDocs/wasteService.html"]
+}
