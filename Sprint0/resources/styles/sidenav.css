@@ -19,6 +19,23 @@
   white-space: nowrap;
 }
 
+.sidenavSection {
+  margin-left: 14px;
+}
+.sidenavSection a {
+  font-size: 20px;
+}
+
+.sidenavSubSection {
+  margin-left: 10px;
+}
+.sidenavSubSection a {
+  font-size: 16px;
+}
+
+
+
+
 .sidenav a:hover {
   color: #f1f1f1;
 }

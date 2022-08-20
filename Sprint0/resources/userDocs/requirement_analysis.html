@@ -23,6 +23,14 @@
             <a href="../../index.html">Index</a>
             <a href="final_theme.html">Final Theme</a>
             <a class="selected" href="requirement_analysis.html">Requirement<br/>Analysis</a>
+            <div class="sidenavSection">
+                <a href="#Dictionary">Dictionary</a>
+                <div class="sidenavSubSection">
+                    <a href="#Nouns">Nouns</a>
+                    <a href="#Verbs">Verbs</a>
+                </div>
+                <a href="#Requirements-Formalization">Requirements<br/>Formalization</a>
+            </div>
             <a href="problem_analysis.html">Problem Analysis</a>
             <a href="conclusions.html">Conclusions</a>
             <a href="team.html">Team</a>
@@ -53,14 +61,14 @@
                 <br/>
                 Ora formalizziamo tali requisiti creando un dizionario di riferimento.
 
-                <h2>Dictionary</h2>
+                <h2 id="Dictionary">Dictionary</h2>
 
                 <h5>JavaScript to sort table by when the terms appear in the text, or alphabetically</h5>
                 <ul>
                     <li><a href="https://stackoverflow.com/questions/14267781/sorting-html-table-with-javascript">solution1</a></li>
                     <li><a href="https://www.w3schools.com/howto/howto_js_sort_table.asp#:~:text=Sort%20Table%20by%20Clicking%20the,ascending%20(A%20to%20Z).">solution2</a></li>
                 </ul>
-                <h4>Nouns</h4>
+                <h3 id="Nouns">Nouns</h3>
                 <table width="100%">
                     <tr align="center">
                         <td><b>Term</b></td>
@@ -85,7 +93,7 @@
                     </tr>
                     <tr align="center">
                         <td><ks>MAXPB</ks></td>
-                        <td>The maximum capacity of PlasticBox.</td>
+                        <td>The maximum capacity of <b>PlasticBox</b>.</td>
                     </tr>
                     <tr align="center">
                         <td><ks>GlassBox</ks></td>
@@ -93,7 +101,7 @@
                     </tr>
                     <tr align="center">
                         <td><ks>MAXGB</ks></td>
-                        <td>The maximum capacity of GlassBox.</td>
+                        <td>The maximum capacity of <b>GlassBox</b>.</td>
                     </tr>
                     <tr align="center">
                         <td><ks>DDR robot</ks></td>
@@ -104,8 +112,8 @@
                     <tr align="center">
                         <td><ks>Transport trolley</ks></td>
                         <td>
-                            Square-shaped virtual robot, with side length of RD, which is initially situated
-                            in its home location (HOME) and performs a deposit action. It can move forward, backward, stop and rotate by 90°.<br/>
+                            Square-shaped virtual robot, with side length of <b>RD</b>, which is initially situated
+                            in its <b>HOME</b> location and performs a deposit action. It can move forward, backward, stop and rotate by 90°.<br/>
                             The transport trolley is a command actuator: it can use the DDR robot to perform actions in a real environment.
                         </td>
                     </tr>
@@ -120,7 +128,7 @@
                     <tr align="center">
                         <td><ks>Deposit action</ks></td>
                         <td>
-                            Operation that describes the deposit of the WasteLoad in a container and consists in 3 phases:
+                            Operation that describes the deposit of the <b>WasteLoad</b> in a container and consists in 3 phases:
                             <ol align="left">
                                 <li>pick up a WasteLoad from a waste truck on the INDOOR;</li>
                                 <li>go from the INDOOR to the proper waste container</li>
@@ -130,23 +138,35 @@
                     </tr>
                     <tr align="center">
                         <td><ks>Waste truck</ks></td>
-                        <td>A generic entity external to the system, which dumps TruckLoad kg of waste.</td>
+                        <td>A generic entity external to the system, which deposits <b>TruckLoad</b> kg of waste at the INDOOR location.</td>
                     </tr>
                     <tr align="center">
                         <td><ks>TruckLoad</ks></td>
-                        <td></td>
+                        <td>The amount (kg) of waste that had been deposited by the <b>waste truck</b> at <b>INDOOR</b>.</td>
                     </tr>
                     <tr align="center">
                         <td><ks>WasteLoad</ks></td>
+                        <td>The amount (kg) of waste the <b>transport trolley</b> has to pick up from the <b>waste truck</b> at <b>INDOOR</b>.</td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>Service-manager</ks></td>
+                        <td>An human supervisor which monitors the state of the <b>service area</b> through a <b>WasteServiceStatusGUI</b>.</td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>WasteServiceStatusGUI</ks></td>
                         <td></td>
                     </tr>
                     <tr align="center">
-                        <td><ks>PlasticBox</ks></td>
+                        <td><ks>Sonar</ks></td>
                         <td></td>
                     </tr>
                     <tr align="center">
-                        <td><ks>PlasticBox</ks></td>
-                        <td></td>
+                        <td><ks>Led</ks></td>
+                        <td>Is used as a warning device...</td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>RaspberryPi</ks></td>
+                        <td>https://www.raspberrypi.com/products/raspberry-pi-4-model-b/</td>
                     </tr>
                     <tr align="center">
                         <td><ks>PlasticBox</ks></td>
@@ -166,17 +186,50 @@
                     </tr>
                 </table>
 
-                <h4>Verbs</h4>
+                <h3 id="Verbs">Verbs</h3>
                 <table width="100%" >
                     <tr align="center">
                         <td width="30%"><b>Term</b></td>
                         <td width="70%"><b>Definition</b></td>
                     </tr>
                     <tr align="center">
+                        <td><ks>To perform a deposit action</ks></td>
+                        <td></td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>To store the load</ks></td>
+                        <td>to send a request, specifying the type of material and its <b>TruckLoad</b></td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>To supervise</ks></td>
+                        <td></td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>DLIMT</ks></td>
+                        <td>Prefixed distance used to trigger the alarm system that stops the <b>transport trolley</b>.</td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>Perform a deposit action</ks></td>
+                        <td></td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>Perform a deposit action</ks></td>
+                        <td></td>
+                    </tr>
+                    <tr align="center">
+                        <td><ks>Perform a deposit action</ks></td>
+                        <td></td>
+                    </tr>
+                    <tr align="center">
                         <td><ks>Perform a deposit action</ks></td>
                         <td></td>
                     </tr>
                 </table>
+                <h2 id="Requirements-Formalization">Requirements Formalization</h2>
+
+                <h3>Context</h3>
+                <h3>Entities</h3>
+                <h3>Logical Architecture Model</h3>
                 <ul>
                     <li>WasteService: <b>distributed software system</b> to manage and coordinate the separate collection of waste.
                         That's the final product as a whole, to be delivered to customer.</li>
