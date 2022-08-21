@@ -1,0 +1,25 @@
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid black;
+}
+tr {
+    text-align: center;
+}
+th {
+    border: 1px solid black;
+    padding: 5px 5px 5px 5px;
+    font-weight: bold;
+    cursor: pointer;
+    position: sticky;
+    z-index: 1;
+    top: 55px;
+    background-color: white;
+}
+td {
+    padding: 5px 5px 15px 5px;
+}
+td ol, ul {
+    text-align: left;
+}

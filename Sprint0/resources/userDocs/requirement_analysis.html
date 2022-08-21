@@ -5,23 +5,29 @@
         <title>Sprint0</title>
         <link rel="stylesheet" type="text/css" href="../styles/templateISS.css">
         <link rel="stylesheet" type="text/css" href="../styles/main.css">
-        <link rel="stylesheet" type="text/css" href="../styles/sidenav.css">
-        <link rel="stylesheet" type="text/css" href="../styles/topnav.css">
+        <link rel="stylesheet" type="text/css" href="../styles/navbar.css">
+        <link rel="stylesheet" type="text/css" href="../styles/table.css">
         <script type="text/javascript" src="../scripts/myScripts.js"></script>
     
         <style>
             table {
                 width: 100%;
-                border: 3px solid black;
+                border-collapse: separate;
+                border-spacing: 0;
+                border: 1px solid black;
             }
             tr {
                 text-align: center;
             }
             th {
-                border: 3px solid black;
+                border: 2px solid black;
                 padding: 5px 5px 5px 5px;
                 font-weight: bold;
                 cursor: pointer;
+                position: sticky;
+                z-index: 1;
+                top: 55px;
+                background-color: white;
             }
             td {
                 padding: 5px 5px 15px 5px;
@@ -74,7 +80,7 @@
                 </tr>
                 <tr>
                     <td><ks>WasteService</ks></td>
-                    <td><a href="https://en.wikipedia.org/wiki/Distributed_computing"><b>Distributed software system</b></a> to manage and coordinate the separate collection of waste.
+                    <td><a href="https://en.wikipedia.org/wiki/Distributed_computing">Distributed software system</a> to manage and coordinate the separate collection of waste.
                         That's the <b>final product</b> as a whole, to be delivered to the customer.</td>
                 </tr>
                 <tr>
@@ -83,7 +89,7 @@
                 </tr>
                 <tr>
                     <td><ks>INDOOR</ks></td>
-                    <td>Location situated on the perimeter of the service area, where the waste enters from.</td>
+                    <td>Location situated on the perimeter of the <b>service area</b>, where the waste enters from.</td>
                 </tr>
                 <tr>
                     <td><ks>PlasticBox</ks></td>
@@ -104,7 +110,13 @@
                 <tr>
                     <td><ks>DDR robot</ks></td>
                     <td>
-                        Differential Drive Robot (DDR), which band is confined inside the service area. It's
+                        Differential Drive Robot (DDR), confined inside the service area.
+                        It's the actual physical robot, that is capable of:
+                        <ul>
+                            <li>moving (according to the commands it receives) forward, backward and rotate left and right by 90°;</li>
+                            <li>picking up and carry objects (i.e. waste).</li>
+                        </ul>
+                        It's also equipped with different devices. <a href="./others/devsDdr.html">DDR robot reference</a>.
                     </td>
                 </tr>
                 <tr>
@@ -117,11 +129,11 @@
                 </tr>
                 <tr>
                     <td><ks>RD</ks></td>
-                    <td>Length of each side of the transport trolley.</td>
+                    <td>Length of each side of the <b>transport trolley</b>.</td>
                 </tr>
                 <tr>
                     <td><ks>HOME</ks></td>
-                    <td>Starting position of the transport trolley, inside the service area.</td>
+                    <td>Starting position of the <b>transport trolley</b>, inside the service area.</td>
                 </tr>
                 <tr>
                     <td><ks>Deposit action</ks></td>
@@ -132,6 +144,8 @@
                             <li>go from the <b>INDOOR</b> to the proper waste container</li>
                             <li>deposit the <b>WasteLoad</b> into the container</li>
                         </ol>
+                        Once that action is terminated, the <b>Transport trolley</b> either executes another <b>deposit action</b>
+                        (if there are any) or returns to its <b>HOME</b>.
                     </td>
                 </tr>
                 <tr>
@@ -182,8 +196,8 @@
                         Component used as a <u>warning device</u>:
                         <ul>
                             <li><b>OFF</b> when the transport trolley is at <b>HOME</b>;</li>
-                            <li><b>blinks</b> when the transport trolley is <b>moving</b>;</li>
-                            <li><b>ON</b> when the transport trolley is <b>stopped</b>.</li>
+                            <li><b>blinks</b> when the transport trolley is <i>moving</i>;</li>
+                            <li><b>ON</b> when the transport trolley is <i>stopped</i>.</li>
                         </ul>
                     </td>
                 </tr>
@@ -197,12 +211,12 @@
                 </tr>
             </table>
 
-            <p id="notes">
-                Notes:
+            <h4 id="notes">Notes</h4>
+            <div>
                 <ol>
                     <li><b>DDR robot</b> and <b>transport trolley</b> are not the same.</li>
                 </ol>
-            </p>
+            </div>
 
             <h3 id="Verbs">Verbs</h3>
             <table>
@@ -214,19 +228,22 @@
                 </tr>
                 <tr>
                     <td><ks>To send a store request</ks></td>
-                    <td>Truck driver</td>
+                    <td>Waste truck/ truck driver</td>
                     <td>WasteService</td>
-                    <td>The truck driver approaches the INDOOR of the service area and ask the WasteService (through a smart device) if he can deposit TruckLoad kg of a certain type of material.</td>
+                    <td>
+                        The <b>truck driver</b> approaches the INDOOR of the service area
+                        and asks the <b>WasteService</b> (through a smart device) if he can deposit TruckLoad kg of a certain type of material.
+                    </td>
                 </tr>
                 <tr>
                     <td><ks>To send a store answer</ks></td>
                     <td>WasteService</td>
-                    <td>Truck driver</td>
+                    <td>Waste truck/ truck driver</td>
                     <td>
-                        Action that happens when the WasteService receives a <b>store request</b>. The WasteService sends a reply to the waste truck, that might be:
+                        Action that occurs after the <b>WasteService</b> had received a <i>store request</i>. The <b>WasteService</b> sends a reply to the <b>waste truck</b>, that might be:
                         <ul>
-                            <li>positive (loadaccept), if the container has enough space to store the waste that the truck wants to deposit;</li>
-                            <li>negative (loadrejected), if the container has NOT enough space. In this case the waste truck will leave the <b>INDOOR</b> area.</li>
+                            <li>positive (<i>loadaccept</i>), if the container has enough space to store the waste that the truck wants to deposit;</li>
+                            <li>negative (<i>loadrejected</i>), if the container has NOT enough space. In this case the waste truck will leave and free the <b>INDOOR</b> area.</li>
                         </ul>
                     </td>
                 </tr>
@@ -235,10 +252,10 @@
                     <td>Transport trolley</td>
                     <td>WasteLoad</td>
                     <td>
-                        That task consists in the completion of 3 actions:
+                        That task consists in the completion of 3 actions, by the <b>transport trolley</b>:
                         <ol>
-                            <li>pick up the waste at INDOOR;</li>
-                            <li>transfer the waste from the INDOOR to the proper waste container;</li>
+                            <li>pick up the WasteLoad at INDOOR;</li>
+                            <li>transfer the WasteLoad from the INDOOR to the proper waste container;</li>
                             <li>actually deposit the WasteLoad into the container.</li>
                         </ol>
                     </td>
@@ -247,63 +264,85 @@
                     <td><ks>To pick up the waste</ks></td>
                     <td>Transport trolley</td>
                     <td>WasteLoad</td>
-                    <td>to send a request, specifying the type of material and its <b>TruckLoad</b></td>
+                    <td>The <b>transport trolley</b> collects the <b>WasteLoad</b> dumped by the waste truck at INDOOR.</td>
                 </tr>
                 <tr>
                     <td><ks>To transfer the waste</ks></td>
                     <td>Transport trolley</td>
                     <td>WasteLoad</td>
-                    <td></td>
+                    <td>The <b>transport trolley</b> carries the <b>WasteLoad</b> from the INDOOR to the container used for the collection of waste of that type (specified in the store request).</td>
                 </tr>
                 <tr>
                     <td><ks>To deposit the WasteLoad</ks></td>
                     <td>Transport trolley</td>
                     <td>WasteLoad</td>
-                    <td></td>
+                    <td>The <b>transport trolley</b> dumps the <b>WasteLoad</b> into the container, that must have enough space to fit the waste, and </td>
                 </tr>
                 <tr>
                     <td><ks>To be ON</ks></td>
                     <td>Led</td>
                     <td>-</td>
-                    <td></td>
+                    <td>The <b>Led</b> is turned on and emits light.</td>
                 </tr>
                 <tr>
                     <td><ks>To be OFF</ks></td>
                     <td>Led</td>
                     <td>-</td>
-                    <td></td>
+                    <td>The <b>Led</b> is turned on and does not emit light.</td>
                 </tr>
                 <tr>
                     <td><ks>To blink</ks></td>
                     <td>Led</td>
                     <td>-</td>
-                    <td></td>
+                    <td>The <b>Led</b> is switching on/off in a rapid sequence.</td>
                 </tr>
                 <tr>
                     <td><ks>To measure the distance</ks></td>
                     <td>Sonar</td>
                     <td>Obstacle</td>
-                    <td></td>
+                    <td>The <b>sonar</b> is detecting the presence of an obstacle (e.g. through the emission of ultrasound waves).</td>
                 </tr>
                 <tr>
                     <td><ks>To start the activity</ks></td>
                     <td>WasteService</td>
-                    <td>transport trolley</td>
-                    <td>Start the WasteService software, the robot is positioned in its HOME location.</td>
+                    <td>Transport trolley</td>
+                    <td>When <b>WasteService</b> software starts, the robot is positioned in its HOME location.</td>
+                </tr>
+                <tr>
+                    <td><ks>To be ready</ks></td>
+                    <td>Transport trolley</td>
+                    <td>-</td>
+                    <td>The <b>Transport trolley</b> is prepared to handle the next deposit action.</td>
+                </tr>
+                <tr>
+                    <td><ks>To be moving</ks></td>
+                    <td>Transport trolley</td>
+                    <td>-</td>
+                    <td>The <b>Transport trolley</b> is moving inside the service area.</td>
+                </tr>
+                <tr>
+                    <td><ks>To terminate the deposit action</ks></td>
+                    <td>Transport trolley</td>
+                    <td>-</td>
+                    <td>
+                        The <b>transport trolley</b> has completed the deposit action and is ready to handle the next one,
+                        if there are any, otherwise it will return to its HOME.
+                    </td>
                 </tr>
                 <tr>
                     <td><ks>To stop the activity</ks></td>
                     <td>Sonar</td>
-                    <td>transport trolley</td>
-                    <td></td>
+                    <td>Transport trolley</td>
+                    <td>The <b>transport trolley</b> is stopped and cannot move, until a resume message occurs.</td>
                 </tr>
                 <tr>
                     <td><ks>To resume the activity</ks></td>
                     <td>Sonar</td>
-                    <td>transport trolley</td>
-                    <td></td>
+                    <td>Transport trolley</td>
+                    <td>The <b>transport trolley</b> resumes the activity and continues performing deposit actions.</td>
                 </tr>
             </table>
+            
             <h2 id="Requirements-Formalization">Requirements Formalization</h2>
 
             <h3>Context</h3>
@@ -332,7 +371,7 @@
                     <td></td>
                 </tr>
                 <tr>
-                    <td>Transport trolley</td>
+                    <td>Truck driver</td>
                     <td></td>
                     <td></td>
                 </tr>
@@ -342,12 +381,22 @@
                     <td></td>
                 </tr>
                 <tr>
+                    <td>Transport trolley</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
                     <td>WasteServiceState</td>
                     <td></td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>Alarm component</td>
+                    <td>Alarm device</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Warning device</td>
                     <td></td>
                     <td></td>
                 </tr>
