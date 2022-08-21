@@ -23,3 +23,10 @@ td {
 td ol, ul {
     text-align: left;
 }
+
+.dictionary td:first-child {
+    font-family: "Arial";
+	font-weight: bold;
+    color: #0000CD	;
+	font-size: 90%;
+}

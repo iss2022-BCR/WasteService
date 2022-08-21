@@ -73,54 +73,54 @@
 
             <h2 id="Dictionary">Dictionary</h2>
             <h3 id="Nouns">Nouns</h3>
-            <table width="100%">
+            <table class="dictionary">
                 <tr>
                     <th title="Click to sort alphabetically">Term</th>
                     <th title="Click to sort alphabetically">Definition</th>
                 </tr>
                 <tr>
-                    <td><ks>WasteService</ks></td>
+                    <td>WasteService</td>
                     <td><a href="https://en.wikipedia.org/wiki/Distributed_computing">Distributed software system</a> to manage and coordinate the separate collection of waste.
                         That's the <b>final product</b> as a whole, to be delivered to the customer.</td>
                 </tr>
                 <tr>
-                    <td><ks>Service area</ks></td>
+                    <td>Service area</td>
                     <td>Rectangular flat surface, free from internal obstacles.</td>
                 </tr>
                 <tr>
-                    <td><ks>INDOOR</ks></td>
+                    <td>INDOOR</td>
                     <td>Location situated on the perimeter of the <b>service area</b>, where the waste enters from.</td>
                 </tr>
                 <tr>
-                    <td><ks>PlasticBox</ks></td>
+                    <td>PlasticBox</td>
                     <td>Container which contains waste made of plastic, and has a maximum capacity of <b>MAXPB</b>.</td>
                 </tr>
                 <tr>
-                    <td><ks>MAXPB</ks></td>
+                    <td>MAXPB</td>
                     <td>The maximum capacity of <b>PlasticBox</b>.</td>
                 </tr>
                 <tr>
-                    <td><ks>GlassBox</ks></td>
+                    <td>GlassBox</td>
                     <td>Container which contains waste made of glass, and has a maximum capacity of <b>MAXGB</b>.</td>
                 </tr>
                 <tr>
-                    <td><ks>MAXGB</ks></td>
+                    <td>MAXGB</td>
                     <td>The maximum capacity of <b>GlassBox</b>.</td>
                 </tr>
                 <tr>
-                    <td><ks>DDR robot</ks></td>
+                    <td>DDR robot</td>
                     <td>
-                        Differential Drive Robot (DDR), confined inside the service area.
+                        Differential Drive Robot (DDR), provided by the customer, which is confined inside the service area.
                         It's the actual physical robot, that is capable of:
                         <ul>
                             <li>moving (according to the commands it receives) forward, backward and rotate left and right by 90°;</li>
                             <li>picking up and carry objects (i.e. waste).</li>
                         </ul>
-                        It's also equipped with different devices. <a href="./others/devsDdr.html">DDR robot reference</a>.
+                        It's also equipped with different devices (including a sonar). <a href="./others/devsDdr.html">DDR robot reference</a>.
                     </td>
                 </tr>
                 <tr>
-                    <td><ks>Transport trolley</ks> <a class="footnote" href="#notes">¹</a></td>
+                    <td>Transport trolley <a class="footnote" href="#notesNouns">¹</a></td>
                     <td>
                         Square-shaped virtual robot, with side length of <b>RD</b>, which is initially situated
                         in its <b>HOME</b> location and performs a deposit action. It can move forward, backward, stop and rotate by 90°.<br/>
@@ -128,15 +128,15 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><ks>RD</ks></td>
+                    <td>RD</td>
                     <td>Length of each side of the <b>transport trolley</b>.</td>
                 </tr>
                 <tr>
-                    <td><ks>HOME</ks></td>
+                    <td>HOME</td>
                     <td>Starting position of the <b>transport trolley</b>, inside the service area.</td>
                 </tr>
                 <tr>
-                    <td><ks>Deposit action</ks></td>
+                    <td>Deposit action</td>
                     <td>
                         Operation that describes the deposit of the <b>WasteLoad</b> in a container and consists in 3 phases:
                         <ol>
@@ -149,27 +149,27 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><ks>Waste truck</ks></td>
+                    <td>Waste truck</td>
                     <td>A generic entity external to the system, which deposits <b>TruckLoad</b> kg of waste at the INDOOR location.</td>
                 </tr>
                 <tr>
-                    <td><ks>Truck driver</ks></td>
-                    <td>A person who drives the <b>waste truck</b>.</td>
+                    <td>Truck driver</td>
+                    <td>A person who drives the <b>waste truck</b>, which is not part of the system.</td>
                 </tr>
                 <tr>
-                    <td><ks>TruckLoad</ks></td>
+                    <td>TruckLoad</td>
                     <td>The amount (kg) of waste that had been deposited by the <b>waste truck</b> at <b>INDOOR</b>.</td>
                 </tr>
                 <tr>
-                    <td><ks>WasteLoad</ks></td>
+                    <td>WasteLoad</td>
                     <td>The amount (kg) of waste the <b>transport trolley</b> has to pick up from the <b>waste truck</b> at <b>INDOOR</b>.</td>
                 </tr>
                 <tr>
-                    <td><ks>Service-manager</ks></td>
+                    <td>Service-manager</td>
                     <td>An human supervisor which monitors the state of the <b>service area</b> through a <b>WasteServiceStatusGUI</b>.</td>
                 </tr>
                 <tr>
-                    <td><ks>State of the service area</ks></td>
+                    <td>State of the service area</td>
                     <td>
                         Information about the <b>WasteService</b> at a certain time, which include:
                         <ul>
@@ -180,18 +180,18 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><ks>WasteServiceStatusGUI</ks></td>
+                    <td>WasteServiceStatusGUI</td>
                     <td>Graphical User Interface of a specific software (which will run on a smart device), that shows the <b>state of the service area</b> and can be monitored by a supervisor.</td>
                 </tr>
                 <tr>
-                    <td><ks>Sonar</ks></td>
+                    <td>Sonar</td>
                     <td>
                         Component used as an <u>alarm device</u>: when it measures a distance which is less than a prefixed value <b>DLIMT</b>, the <b>transport trolley</b> must be <i>stopped</i>.<br/>
                         It will be <i>resumed</i> when the Sonar detects again a distance higher than <b>DLIMT</b>.
                     </td>
                 </tr>
                 <tr>
-                    <td><ks>Led</ks></td>
+                    <td>Led</td>
                     <td>
                         Component used as a <u>warning device</u>:
                         <ul>
@@ -202,16 +202,16 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><ks>RaspberryPi</ks></td>
+                    <td>RaspberryPi</td>
                     <td>Single-board computer. Refers to the <a href="https://www.raspberrypi.com/products/raspberry-pi-4-model-b/">model Pi 4 B</a>.</td>
                 </tr>
                 <tr>
-                    <td><ks>DLIMT</ks></td>
+                    <td>DLIMT</td>
                     <td>Prefixed distance used to trigger the alarm system that stops the <b>transport trolley</b>.</td>
                 </tr>
             </table>
 
-            <h4 id="notes">Notes</h4>
+            <h4 id="notesNouns">Notes</h4>
             <div>
                 <ol>
                     <li><b>DDR robot</b> and <b>transport trolley</b> are not the same.</li>
@@ -342,76 +342,90 @@
                     <td>The <b>transport trolley</b> resumes the activity and continues performing deposit actions.</td>
                 </tr>
             </table>
+
+            <h2 id="General-Overview">General Overview</h2>
+            <h3 id="Graphical-Exaple-Story">Graphical Exaple Story</h3>
+            - App: start -> container svuotati & robot in HOME
+            - the truck approaches the area
+            - the truck sends a request
+            - the robot goes to INDOOR and perform a pick up action of T duration
+
             
             <h2 id="Requirements-Formalization">Requirements Formalization</h2>
-
-            <h3>Context</h3>
-            <h3>Entities</h3>
-            <h3>Logical Architecture Model</h3>
-            
-            <h3>Analisi</h3>
-            Il software del servizio NON gira sulla stessa macchina dove gira il trolley
-            <br/>
-            Entità emerse durante l'analisi dei requisiti (e come potrebbero essere modellate):
-            <ul>
-                <li>service area software</li>
-                <li></li>
-            </ul>
+            <h3>Software Provided by Customer</h3>
+            The customer provides BasicRobot to use the DDR robot.
 
             <h3>Entities</h3>
-            <table>
+            <table class="dictionary">
                 <tr>
                     <th>Entity</th>
-                    <th>Type</th>
-                    <th>Description</th>
+                    <th>Abstract Type</th>
+                    <th>Description/Behaviour</th>
                 </tr>
                 <tr>
                     <td>Waste truck</td>
-                    <td></td>
-                    <td></td>
+                    <td>Reactive <a class="footnote" href="#notesEntities">¹</a></td>
+                    <td>Entity (external to the system) that approaches the service area to dump some WasteLoad.</td>
                 </tr>
                 <tr>
                     <td>Truck driver</td>
-                    <td></td>
-                    <td></td>
+                    <td>Proactive <a class="footnote" href="#notesEntities">²</a></td>
+                    <td>Human entity, external to the system, that drives the waste truck and sends <i>store requests</i>.</td>
                 </tr>
                 <tr>
                     <td>DDR robot</td>
-                    <td></td>
-                    <td></td>
+                    <td>Reactive</td>
+                    <td>Entity which executes the commands received by the transport trolley.</td>
                 </tr>
                 <tr>
                     <td>Transport trolley</td>
-                    <td></td>
-                    <td></td>
+                    <td>Proactive and Reactive</td>
+                    <td>Main entity of the WasteService system, which performs the </td>
                 </tr>
                 <tr>
-                    <td>WasteServiceState</td>
-                    <td></td>
-                    <td></td>
+                    <td>WasteServiceStatus</td>
+                    <td>Reactive</td>
+                    <td>Entity that receives data and updates a GUI, used to monitor the status of the service area.</td>
+                </tr>
+                <tr>
+                    <td>Supervisor</td>
+                    <td>Reactive</td>
+                    <td>Human entity, external to the system, that monitors the state of the service area.</td>
                 </tr>
                 <tr>
                     <td>Alarm device</td>
-                    <td></td>
-                    <td></td>
+                    <td>Proactive</td>
+                    <td>
+                        Entity, which is part of a smart device, that sends a message to the
+                        WasteService when it detects the presence of an obstacle.
+                    </td>
                 </tr>
                 <tr>
                     <td>Warning device</td>
-                    <td></td>
-                    <td></td>
+                    <td>Reactive</td>
+                    <td>
+                        Entity, which is part of a smart device, that receives information about the
+                        current state of the transport trolley, and behave differently according to 
+                        its movement.
+                    </td>
                 </tr>
             </table>
+            <h4 id="notesEntities">Notes</h4>
+            <div>
+                <ol>
+                    <li><b>Proactive</b>: entity which creates or controls a situation rather than just responding passively after it has happened.</li>
+                    <li><b>Reactive</b>: entity which acts in response to a situation rather than creating or controlling it.</li>
+                </ol>
+            </div>
 
             <h3>Data</h3>
-            <table>
+            <table class="dictionary">
                 <tr>
-                    <th>Message</th>
-                    <th>Type</th>
+                    <th>Data</th>
                     <th>Description</th>
                 </tr>
                 <tr>
-                    <td>MAXPB </td>
-                    <td>Floating point constant</td>
+                    <td>MAXPB</td>
                     <td></td>
                 </tr>
             </table>
@@ -445,11 +459,51 @@
                     <td>Request</td>
                     <td></td>
                 </tr>
+                <tr>
+                    <td>LoadAccept</td>
+                    <td>Response</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>LoadRejected</td>
+                    <td>Response</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Start</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Stop</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Resume</td>
+                    <td></td>
+                    <td></td>
+                </tr>
             </table>
 
-            <h2>Logical Architecture</h2>
+            <img width="100%" src="../../resources/imgs/Modello Stanza3.png"/>
+            
+            <h3>Context</h3>
+            <h3>Entities</h3>
+            
+            <h3>Analisi</h3>
+            Il software del servizio NON gira sulla stessa macchina dove gira il trolley
+            <br/>
+            Entità emerse durante l'analisi dei requisiti (e come potrebbero essere modellate):
+            <ul>
+                <li>service area software</li>
+                <li></li>
+            </ul>
 
-            Modelli vari e diagrammi: 1 disegno dell'architettura generale nel suo insieme(?);
+            
+            
+
+            Modelli vari e diagrammi (nell'analisi del problema!!!): 1 disegno dell'architettura generale nel suo insieme(?);
             diagrammi UML generici.
 
             Scelta del linguaggio di modellazione (Qak) CON MOTIVAZIONE!!!
