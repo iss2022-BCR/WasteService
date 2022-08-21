@@ -10,13 +10,29 @@
         <script type="text/javascript" src="../scripts/myScripts.js"></script>
     
         <style>
-            table, td {
+            table {
+                width: 100%;
+                border: 3px solid black;
+            }
+            tr {
+                text-align: center;
+            }
+            th {
+                border: 3px solid black;
+                padding: 5px 5px 5px 5px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+            td {
                 padding: 5px 5px 15px 5px;
+            }
+            td ol, ul {
+                text-align: left;
             }
         </style>
     </head>
 
-    <body onload="return loadNav();">
+    <body onload="loadNav(); setupSort();">
         <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
         <div id="sidenav" class="sidenav">
             <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
@@ -70,158 +86,166 @@
                 </ul>
                 <h3 id="Nouns">Nouns</h3>
                 <table width="100%">
-                    <tr align="center">
-                        <td><b>Term</b></td>
-                        <td><b>Definition</b></td>
+                    <tr>
+                        <th title="Click to sort alphabetically">Term</th>
+                        <th title="Click to sort alphabetically">Definition</th>
                     </tr>
-                    <tr align="center">
+                    <tr>
                         <td><ks>WasteService</ks></td>
                         <td><a href="https://en.wikipedia.org/wiki/Distributed_computing"><b>Distributed software system</b></a> to manage and coordinate the separate collection of waste.
                             That's the <b>final product</b> as a whole, to be delivered to the customer.</td>
                     </tr>
-                    <tr align="center">
+                    <tr>
                         <td><ks>Service area</ks></td>
                         <td>Rectangular flat surface, free from internal obstacles.</td>
                     </tr>
-                    <tr align="center">
+                    <tr>
                         <td><ks>INDOOR</ks></td>
                         <td>Location situated on the perimeter of the service area, where the waste enters from.</td>
                     </tr>
-                    <tr align="center">
+                    <tr>
                         <td><ks>PlasticBox</ks></td>
-                        <td>Container which contains stuff made of plastic, and has a maximum capacity of <b>MAXPB</b>.</td>
+                        <td>Container which contains waste made of plastic, and has a maximum capacity of <b>MAXPB</b>.</td>
                     </tr>
-                    <tr align="center">
+                    <tr>
                         <td><ks>MAXPB</ks></td>
                         <td>The maximum capacity of <b>PlasticBox</b>.</td>
                     </tr>
-                    <tr align="center">
+                    <tr>
                         <td><ks>GlassBox</ks></td>
-                        <td>Container which contains objects made of glass, and has a maximum capacity of <b>MAXGB</b>.</td>
+                        <td>Container which contains waste made of glass, and has a maximum capacity of <b>MAXGB</b>.</td>
                     </tr>
-                    <tr align="center">
+                    <tr>
                         <td><ks>MAXGB</ks></td>
                         <td>The maximum capacity of <b>GlassBox</b>.</td>
                     </tr>
-                    <tr align="center">
+                    <tr>
                         <td><ks>DDR robot</ks></td>
                         <td>
                             Differential Drive Robot (DDR), which band is confined inside the service area. It's
                         </td>
                     </tr>
-                    <tr align="center">
-                        <td><ks>Transport trolley</ks></td>
+                    <tr>
+                        <td><ks>Transport trolley</ks> <a class="footnote" href="#notes">¹</a></td>
                         <td>
                             Square-shaped virtual robot, with side length of <b>RD</b>, which is initially situated
                             in its <b>HOME</b> location and performs a deposit action. It can move forward, backward, stop and rotate by 90°.<br/>
-                            The transport trolley is a command actuator: it can use the DDR robot to perform actions in a real environment.
+                            The transport trolley is a <u>command actuator</u>: it can use the <b>DDR robot</b> to perform actions in a real environment.
                         </td>
                     </tr>
-                    <tr align="center">
+                    <tr>
                         <td><ks>RD</ks></td>
-                        <td>Length of the transport trolley.</td>
+                        <td>Length of each side of the transport trolley.</td>
                     </tr>
-                    <tr align="center">
+                    <tr>
                         <td><ks>HOME</ks></td>
                         <td>Starting position of the transport trolley, inside the service area.</td>
                     </tr>
-                    <tr align="center">
+                    <tr>
                         <td><ks>Deposit action</ks></td>
                         <td>
                             Operation that describes the deposit of the <b>WasteLoad</b> in a container and consists in 3 phases:
-                            <ol align="left">
-                                <li>pick up a WasteLoad from a waste truck on the INDOOR;</li>
-                                <li>go from the INDOOR to the proper waste container</li>
-                                <li>deposit the WasteLoad in the container</li>
+                            <ol>
+                                <li>pick up a <b>WasteLoad</b> from a <b>waste truck</b> on the <b>INDOOR</b>;</li>
+                                <li>go from the <b>INDOOR</b> to the proper waste container</li>
+                                <li>deposit the <b>WasteLoad</b> in the container</li>
                             </ol>
                         </td>
                     </tr>
-                    <tr align="center">
+                    <tr>
                         <td><ks>Waste truck</ks></td>
                         <td>A generic entity external to the system, which deposits <b>TruckLoad</b> kg of waste at the INDOOR location.</td>
                     </tr>
-                    <tr align="center">
+                    <tr>
                         <td><ks>TruckLoad</ks></td>
                         <td>The amount (kg) of waste that had been deposited by the <b>waste truck</b> at <b>INDOOR</b>.</td>
                     </tr>
-                    <tr align="center">
+                    <tr>
                         <td><ks>WasteLoad</ks></td>
                         <td>The amount (kg) of waste the <b>transport trolley</b> has to pick up from the <b>waste truck</b> at <b>INDOOR</b>.</td>
                     </tr>
-                    <tr align="center">
+                    <tr>
                         <td><ks>Service-manager</ks></td>
                         <td>An human supervisor which monitors the state of the <b>service area</b> through a <b>WasteServiceStatusGUI</b>.</td>
                     </tr>
-                    <tr align="center">
+                    <tr>
+                        <td><ks>State of the service area</ks></td>
+                        <td>
+                            Information about the <b>WasteService</b> at a certain time, which include:
+                            <ul>
+                                <li>the current state of the <b>transport trolley</b> and its position inside the room;</li>
+                                <li>the current weight (kg) of the material stored in the two waste-containers;</li>
+                                <li>the current state of the <b>Led</b>.</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
                         <td><ks>WasteServiceStatusGUI</ks></td>
-                        <td></td>
+                        <td>Graphical User Interface of a specific software which shows the <b>state of the service area</b> and can be monitored by a supervisor.</td>
                     </tr>
-                    <tr align="center">
+                    <tr>
                         <td><ks>Sonar</ks></td>
-                        <td></td>
+                        <td>
+                            Alarm device: when it measures a distance which is less than a prefixed value <b>DLIMT</b>, the <b>transport trolley</b> must be <i>stopped</i>.<br/>
+                            It will be <i>resumed</i> when the Sonar detects again a distance higher than <b>DLIMT</b>.
+                        </td>
                     </tr>
-                    <tr align="center">
+                    <tr>
                         <td><ks>Led</ks></td>
-                        <td>Is used as a warning device...</td>
+                        <td>
+                            Component used as a warning device:
+                            <ul>
+                                <li><b>OFF</b> when the transport trolley is at <b>HOME</b>;</li>
+                                <li><b>blinks</b> when the transport trolley is <b>moving</b>;</li>
+                                <li><b>ON</b> when the transport trolley is <b>stopped</b>.</li>
+                            </ul>
+                        </td>
                     </tr>
-                    <tr align="center">
+                    <tr>
                         <td><ks>RaspberryPi</ks></td>
-                        <td>https://www.raspberrypi.com/products/raspberry-pi-4-model-b/</td>
+                        <td>Single-board computer. Refers to the <a href="https://www.raspberrypi.com/products/raspberry-pi-4-model-b/">model Pi 4 B</a>.</td>
                     </tr>
-                    <tr align="center">
-                        <td><ks>PlasticBox</ks></td>
-                        <td></td>
-                    </tr>
-                    <tr align="center">
-                        <td><ks>PlasticBox</ks></td>
-                        <td></td>
-                    </tr>
-                    <tr align="center">
-                        <td><ks>PlasticBox</ks></td>
-                        <td></td>
-                    </tr>
-                    <tr align="center">
-                        <td><ks>PlasticBox</ks></td>
-                        <td></td>
-                    </tr>
-                </table>
-
-                <h3 id="Verbs">Verbs</h3>
-                <table width="100%" >
-                    <tr align="center">
-                        <td width="30%"><b>Term</b></td>
-                        <td width="70%"><b>Definition</b></td>
-                    </tr>
-                    <tr align="center">
-                        <td><ks>To perform a deposit action</ks></td>
-                        <td></td>
-                    </tr>
-                    <tr align="center">
-                        <td><ks>To store the load</ks></td>
-                        <td>to send a request, specifying the type of material and its <b>TruckLoad</b></td>
-                    </tr>
-                    <tr align="center">
-                        <td><ks>To supervise</ks></td>
-                        <td></td>
-                    </tr>
-                    <tr align="center">
+                    <tr>
                         <td><ks>DLIMT</ks></td>
                         <td>Prefixed distance used to trigger the alarm system that stops the <b>transport trolley</b>.</td>
                     </tr>
-                    <tr align="center">
+                </table>
+
+                <p id="notes">
+                    Notes:
+                    <ol>
+                        <li><b>DDR robot</b> and <b>transport trolley</b> are not the same.</li>
+                    </ol>
+                </p>
+
+                <h3 id="Verbs">Verbs</h3>
+                <table>
+                    <tr>
+                        <th title="Click to sort alphabetically">Term</th>
+                        <th title="Click to sort alphabetically">Definition</th>
+                    </tr>
+                    <tr>
+                        <td><ks>To perform a deposit action</ks></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><ks>To store the load</ks></td>
+                        <td>to send a request, specifying the type of material and its <b>TruckLoad</b></td>
+                    </tr>
+                    <tr>
+                        <td><ks>To supervise</ks></td>
+                        <td></td>
+                    </tr>
+                    <tr>
                         <td><ks>Perform a deposit action</ks></td>
                         <td></td>
                     </tr>
-                    <tr align="center">
-                        <td><ks>Perform a deposit action</ks></td>
+                    <tr>
+                        <td><ks>Stop the transport trolley</ks></td>
                         <td></td>
                     </tr>
-                    <tr align="center">
-                        <td><ks>Perform a deposit action</ks></td>
-                        <td></td>
-                    </tr>
-                    <tr align="center">
-                        <td><ks>Perform a deposit action</ks></td>
+                    <tr>
+                        <td><ks>Resume the transport trolley</ks></td>
                         <td></td>
                     </tr>
                 </table>
@@ -271,54 +295,81 @@
                 </ul>
 
                 <h3>Entities</h3>
-                <table width="100%">
-                    <tr align="center">
-                        <td width="30%"><b>Entity</b></td>
-                        <td width="69%"><b>Description</b></td>
+                <table>
+                    <tr>
+                        <th>Entity</th>
+                        <th>Type</th>
+                        <th>Description</th>
                     </tr>
-                    <tr align="center">
+                    <tr>
                         <td>Waste truck</td>
                         <td></td>
+                        <td></td>
                     </tr>
-                    <tr align="center">
+                    <tr>
                         <td>Transport trolley</td>
                         <td></td>
+                        <td></td>
                     </tr>
-                    <tr align="center">
+                    <tr>
                         <td>DDR robot</td>
                         <td></td>
-                    </tr>
-                    <tr align="center">
-                        <td>WasteServiceState</td>
                         <td></td>
                     </tr>
-                    <tr align="center">
+                    <tr>
+                        <td>WasteServiceState</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
                         <td>Alarm component</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+
+                <h3>Data</h3>
+                <table>
+                    <tr>
+                        <th>Message</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td>MAXPB </td>
+                        <td>Floating point constant</td>
                         <td></td>
                     </tr>
                 </table>
 
                 <h3>Tasks</h3>
-                <table width="100%">
-                    <tr align="center">
-                        <td width="30%"><b>Task</b></td>
-                        <td width="69%"><b>Description</b></td>
+                <table>
+                    <tr>
+                        <th>Task</th>
+                        <th>Type</th>
+                        <th>Description</th>
                     </tr>
-                    <tr align="center">
+                    <tr>
                         <td>Deposit action</td>
+                        <td></td>
                         <td>Sarebbe bene mandare via il truck appena possibile.<br/>
                             `pickup`, che sarà una request perché vogliamo una risposta, appena il trolley arriva all'indoor e sappiamo che l'ha fatto, altrimenti non può rispondere al truck.
 
                             Lo modelliamo in questo modo perché il committente ha detto che dobbiamo liberare il camion il prima possibile.</td>
                     </tr>
-                    
                 </table>
 
                 <h3>Messages</h3>
-                <table width="100%">
-                    <tr align="center">
-                        <td width="30%"><b>Message</b></td>
-                        <td width="69%"><b>Description</b></td>
+                <table>
+                    <tr>
+                        <th>Message</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td>Store the load</td>
+                        <td>Request</td>
+                        <td></td>
                     </tr>
                 </table>
 

@@ -1,3 +1,13 @@
 body {
   font-family: "Lato", sans-serif;
 }
+.footnote:link {
+  font-size: 20px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.footnote:hover {
+  font-size: 30px;
+  background-color: yellow;
+  text-decoration: none;
+}

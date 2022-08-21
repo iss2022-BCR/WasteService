@@ -10,15 +10,37 @@
         
         <style>
             table {
-                border-style: hidden;
-                border-collapse: collapse;
+                width: 100%;
+                border-collapse: separate;
                 border-radius: 25px;
+                border: solid black 1px;
                 background-color: #9ed8ff;
             }
+            td, th {
+                border-left: solid black 1px;
+                border-top: solid black 1px;
+                padding: 15px;
+            }
+            tr {
+                text-align: center;
+            }
+            tr:last-child td {
+                border-bottom: none;
+            }
+            th {
+                border-top: none;
+            }
+            td:first-child, th:first-child {
+                border-left: none;
+            }
+            td:last-child, th:last-child {
+                border-right: none;
+            }
+            
         </style>
     </head>
 
-    <body onload="return loadNav();">
+    <body onload="loadNav();">
         <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
         <div id="sidenav" class="sidenav">
             <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
@@ -33,28 +55,28 @@
         <div id="main">
             <h1 align="center">Team Members</h1>
 
-            <table width="100%">
-                <tr align="center">
-                    <td width="30%" style="padding: 15px"><img width="90%" src="../imgs/team/avatar_Raffaele_Battipaglia.jpg"/></td>
-                    <td width="30%" style="padding: 15px"><img width="90%" src="../imgs/team/avatar_Karina_Chichifoi.jpg"/></td>
-                    <td width="30%" style="padding: 15px"><img width="90%" src="../imgs/team/avatar_Michele_Righi.png"/></td>
+            <table>
+                <tr>
+                    <th width="30%" style="padding: 15px"><img width="90%" src="../imgs/team/avatar_Raffaele_Battipaglia.jpg"/></th>
+                    <th width="30%" style="padding: 15px"><img width="90%" src="../imgs/team/avatar_Karina_Chichifoi.jpg"/></th>
+                    <th width="30%" style="padding: 15px"><img width="90%" src="../imgs/team/avatar_Michele_Righi.png"/></th>
                 </tr>
-                <tr align="center" height="50px">
+                <tr>
                     <td><b>Raffaele Battipaglia</b></td>
                     <td><b>Karina Chichifoi</b></td>
                     <td><b>Michele Righi</b></td>
                 </tr>
-                <tr align="center" height="50px">
+                <tr>
                     <td><a href="mailto:raffaele.battipaglia@studio.unibo.it" style="color: black">E-mail</a></td>
                     <td><a href="mailto:karina.chichifoi@studio.unibo.it" style="color: black">E-mail</a></td>
                     <td><a href="mailto:michele.righi5@studio.unibo.it" style="color: black">E-mail</a></td>
                 </tr>
-                <tr align="center" height="50px">
+                <tr>
                     <td><a href="https://github.com/Clappy98" style="color: black">GitHub</a></td>
                     <td><a href="https://github.com/TryKatChup" style="color: black">GitHub</a></td>
                     <td><a href="https://github.com/mikyll" style="color: black">GitHub</a></td>
                 </tr>
-                <tr align="center" height="50px">
+                <tr>
                     <td><a href="https://www.linkedin.com/in/raffaele-battipaglia-83547010b/" style="color: black">LinkedIn</a></td>
                     <td><a href="https://www.linkedin.com/in/karina-chichifoi/" style="color: black">LinkedIn</a></td>
                     <td><a href="https://www.linkedin.com/in/michele-righi/" style="color: black">LinkedIn</a></td>
