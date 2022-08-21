@@ -309,37 +309,7 @@
             <h3>Context</h3>
             <h3>Entities</h3>
             <h3>Logical Architecture Model</h3>
-            <ul>
-                <li>WasteService: <b>distributed software system</b> to manage and coordinate the separate collection of waste.
-                    That's the final product as a whole, to be delivered to customer.</li>
-
-                <li>Service area software: </li>
-
-                <li>Service area: a rectangular, flat surface, free from internal obstacles</li>
-                <li>Plastic Box: a container which contains objects made of plastic, with maximum capacity of MAXPB kg</li>
-                <li>Glass Box: a container which contains objects made of glass, with maximum capacity of MAXGB kg </li>
-                <li>Indoor: a location in the service area where the waste enter from</li>
-                <li>Transport trolley: a square-shaped DDR robot, with side length of RD, which is initially situated in its home location and performs a deposit action.  </li>
-                <li>Home: a location in the upper right corner of the service area that indicates the starting point of the transport trolley</li>
-                <li>Deposit action: a macro action that describes the deposit of the waste-load in a container; it is divided in:
-                    <ul>
-                        <li>pick up a waste-load from a waste truck on the Indoor</li>
-                        <li>go from Indoor to the proper container</li>
-                        <li>deposit the waste-load in the container</li>
-                    </ul>
-                </li>
-                <li>waste-load: it indicates a load of waste taken from a waste track</li>
-                <li>TruckLoad: a variable that indicates the weight of waste deposited by a waste truck in Indoor</li>
-                <li>WasteServiceStatusGUI: a software product that shows the state of the transport trolley and where it is in the service area, hom much weight contains each container and the state of the Led</li>
-                <li>Service-manager: an human supervisor that controls the state of the service-area using a WasteServiceStatusGUI</li>
-                <li>Sonar: an alarm device, which measures a distance, and if this one is less than a prefixed value DLIMT, the transport trolley must be stopped.</li>
-                <li>Led: a warning device, which worka ccording to the following scheme:
-                    - the Led is off when the transport trolley is at HOME
-                    - the Led blinks while the transport trolley is moving
-                    - the Led is on when transport trolley is stopped
-                </li>
-                <li>DLIMT: a prefixed distance used to trigger the alarm system that stops the transport trolley</li>
-            </ul>
+            
             <h3>Analisi</h3>
             Il software del servizio NON gira sulla stessa macchina dove gira il trolley
             <br/>
