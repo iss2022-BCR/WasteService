@@ -51,3 +51,13 @@ function setupSort() {
             .forEach(tr => table.appendChild(tr) );
     })));
 }
+
+// code
+function setupCode() {
+    document.querySelectorAll("pre code").forEach((element) => {
+        let html = element.outerHTML
+        let pattern = html.match(/\s*\n[\t\s]*/)
+
+        element.outerHTML = html.replace(new RegExp(pattern, "g"),'\n')
+    });
+}
