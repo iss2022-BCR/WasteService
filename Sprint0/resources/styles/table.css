@@ -1,13 +1,13 @@
-table {
+.dictionary {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
     border: 1px solid black;
 }
-tr {
+.dictionary tr {
     text-align: center;
 }
-th {
+.dictionary th {
     border: 1px solid black;
     padding: 5px 5px 5px 5px;
     font-weight: bold;
@@ -17,7 +17,7 @@ th {
     top: 55px;
     background-color: white;
 }
-td {
+.dictionary td {
     padding: 5px 5px 15px 5px;
 }
 td ol, ul {
@@ -28,5 +28,4 @@ td ol, ul {
     font-family: "Arial";
 	font-weight: bold;
     color: #0000CD	;
-	font-size: 90%;
 }

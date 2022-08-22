@@ -8,34 +8,6 @@
         <link rel="stylesheet" type="text/css" href="../styles/navbar.css">
         <link rel="stylesheet" type="text/css" href="../styles/table.css">
         <script type="text/javascript" src="../scripts/myScripts.js"></script>
-    
-        <style>
-            table {
-                width: 100%;
-                border-collapse: separate;
-                border-spacing: 0;
-                border: 1px solid black;
-            }
-            tr {
-                text-align: center;
-            }
-            th {
-                border: 2px solid black;
-                padding: 5px 5px 5px 5px;
-                font-weight: bold;
-                cursor: pointer;
-                position: sticky;
-                z-index: 1;
-                top: 55px;
-                background-color: white;
-            }
-            td {
-                padding: 5px 5px 15px 5px;
-            }
-            td ol, ul {
-                text-align: left;
-            }
-        </style>
     </head>
 
     <body onload="loadNav(); setupSort();">
@@ -51,7 +23,18 @@
                     <a href="#Nouns">Nouns</a>
                     <a href="#Verbs">Verbs</a>
                 </div>
+                <a href="#General-Overview">General Overview</a>
+                <div class="sidenavSubSection">
+                    <a href="#System-Abstract">System Abstract</a>
+                    <a href="#Software-Provided-by-the-Customer">Software Provided by<br/>the Customer</a>
+                    <a href="#Graphical-Exaple-Story">Graphical Exaple Story</a>
+                </div>
                 <a href="#Requirements-Formalization">Requirements<br/>Formalization</a>
+                <div class="sidenavSubSection">
+                    <a href="#Entities">Entities</a>
+                    <a href="#Data">Data</a>
+                    <a href="#Messages">Messages</a>
+                </div>
             </div>
             <a href="problem_analysis.html">Problem Analysis</a>
             <a href="conclusions.html">Conclusions</a>
@@ -120,7 +103,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Transport trolley <a class="footnote" href="#notesNouns">¹</a></td>
+                    <td>Transport trolley<a class="footnote" href="#notesNouns">¹</a></td>
                     <td>
                         Square-shaped virtual robot, with side length of <b>RD</b>, which is initially situated
                         in its <b>HOME</b> location and performs a deposit action. It can move forward, backward, stop and rotate by 90°.<br/>
@@ -219,7 +202,7 @@
             </div>
 
             <h3 id="Verbs">Verbs</h3>
-            <table>
+            <table class="dictionary">
                 <tr>
                     <th title="Click to sort alphabetically">Term</th>
                     <th title="Click to sort alphabetically">Subject</th>
@@ -227,7 +210,7 @@
                     <th title="Click to sort alphabetically">Description</th>
                 </tr>
                 <tr>
-                    <td><ks>To send a store request</ks></td>
+                    <td>To send a store request</td>
                     <td>Waste truck/ truck driver</td>
                     <td>WasteService</td>
                     <td>
@@ -236,7 +219,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><ks>To send a store answer</ks></td>
+                    <td>To send a store answer</td>
                     <td>WasteService</td>
                     <td>Waste truck/ truck driver</td>
                     <td>
@@ -248,7 +231,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><ks>To perform a deposit action</ks></td>
+                    <td>To perform a deposit action</td>
                     <td>Transport trolley</td>
                     <td>WasteLoad</td>
                     <td>
@@ -261,67 +244,67 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><ks>To pick up the waste</ks></td>
+                    <td>To pick up the waste</td>
                     <td>Transport trolley</td>
                     <td>WasteLoad</td>
                     <td>The <b>transport trolley</b> collects the <b>WasteLoad</b> dumped by the waste truck at INDOOR.</td>
                 </tr>
                 <tr>
-                    <td><ks>To transfer the waste</ks></td>
+                    <td>To transfer the waste</td>
                     <td>Transport trolley</td>
                     <td>WasteLoad</td>
                     <td>The <b>transport trolley</b> carries the <b>WasteLoad</b> from the INDOOR to the container used for the collection of waste of that type (specified in the store request).</td>
                 </tr>
                 <tr>
-                    <td><ks>To deposit the WasteLoad</ks></td>
+                    <td>To deposit the WasteLoad</td>
                     <td>Transport trolley</td>
                     <td>WasteLoad</td>
                     <td>The <b>transport trolley</b> dumps the <b>WasteLoad</b> into the container, that must have enough space to fit the waste, and </td>
                 </tr>
                 <tr>
-                    <td><ks>To be ON</ks></td>
+                    <td>To be ON</td>
                     <td>Led</td>
                     <td>-</td>
                     <td>The <b>Led</b> is turned on and emits light.</td>
                 </tr>
                 <tr>
-                    <td><ks>To be OFF</ks></td>
+                    <td>To be OFF</td>
                     <td>Led</td>
                     <td>-</td>
                     <td>The <b>Led</b> is turned on and does not emit light.</td>
                 </tr>
                 <tr>
-                    <td><ks>To blink</ks></td>
+                    <td>To blink</td>
                     <td>Led</td>
                     <td>-</td>
                     <td>The <b>Led</b> is switching on/off in a rapid sequence.</td>
                 </tr>
                 <tr>
-                    <td><ks>To measure the distance</ks></td>
+                    <td>To measure the distance</td>
                     <td>Sonar</td>
                     <td>Obstacle</td>
                     <td>The <b>sonar</b> is detecting the presence of an obstacle (e.g. through the emission of ultrasound waves).</td>
                 </tr>
                 <tr>
-                    <td><ks>To start the activity</ks></td>
+                    <td>To start the activity</td>
                     <td>WasteService</td>
                     <td>Transport trolley</td>
                     <td>When <b>WasteService</b> software starts, the robot is positioned in its HOME location.</td>
                 </tr>
                 <tr>
-                    <td><ks>To be ready</ks></td>
+                    <td>To be ready</td>
                     <td>Transport trolley</td>
                     <td>-</td>
                     <td>The <b>Transport trolley</b> is prepared to handle the next deposit action.</td>
                 </tr>
                 <tr>
-                    <td><ks>To be moving</ks></td>
+                    <td>To be moving</td>
                     <td>Transport trolley</td>
                     <td>-</td>
                     <td>The <b>Transport trolley</b> is moving inside the service area.</td>
                 </tr>
                 <tr>
-                    <td><ks>To terminate the deposit action</ks></td>
+                    <td>To terminate the deposit action</td>
                     <td>Transport trolley</td>
                     <td>-</td>
                     <td>
@@ -330,13 +313,13 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><ks>To stop the activity</ks></td>
+                    <td>To stop the activity</td>
                     <td>Sonar</td>
                     <td>Transport trolley</td>
                     <td>The <b>transport trolley</b> is stopped and cannot move, until a resume message occurs.</td>
                 </tr>
                 <tr>
-                    <td><ks>To resume the activity</ks></td>
+                    <td>To resume the activity</td>
                     <td>Sonar</td>
                     <td>Transport trolley</td>
                     <td>The <b>transport trolley</b> resumes the activity and continues performing deposit actions.</td>
@@ -344,57 +327,87 @@
             </table>
 
             <h2 id="General-Overview">General Overview</h2>
+            <h3 id="System-Abstract">System Abstract</h3>
+            Descrizione molto generale del sistema (con immagine della mappa).
+            Dai requisiti si può notare come siano presenti almeno 3 componenti principali.[...]
+            <img width="100%" src="../../resources/imgs/Modello Stanza3.png"/>
+            
             <h3 id="Graphical-Exaple-Story">Graphical Exaple Story</h3>
             - App: start -> container svuotati & robot in HOME
             - the truck approaches the area
             - the truck sends a request
             - the robot goes to INDOOR and perform a pick up action of T duration
 
-            
-            <h2 id="Requirements-Formalization">Requirements Formalization</h2>
-            <h3>Software Provided by Customer</h3>
-            The customer provides BasicRobot to use the DDR robot.
+            <h3 id="Software-Provided-by-the-Customer">Software Provided by the Customer</h3>
+            Map util?
+            <br/>
+            The customer provides BasicRobot to use the DDR robot. [...] aggiungere link al progetto e piccola spiegazione con immagini.
+            <br/>
+            Software Provided VS software to implement:
+            <br/>
+            DDR robot + basicRobot (link)
 
-            <h3>Entities</h3>
+            <h2 id="Requirements-Formalization">Requirements Formalization</h2>
+            <h3 id="Entities">Entities</h3>
+            ADD MOTIVATIONS !!!
             <table class="dictionary">
                 <tr>
                     <th>Entity</th>
-                    <th>Abstract Type</th>
+                    <th>Activity</th>
+                    <th>Type</th>
                     <th>Description/Behaviour</th>
                 </tr>
                 <tr>
                     <td>Waste truck</td>
-                    <td>Reactive <a class="footnote" href="#notesEntities">¹</a></td>
-                    <td>Entity (external to the system) that approaches the service area to dump some WasteLoad.</td>
+                    <td>Reactive<a class="footnote" href="#notesEntities">¹</a></td>
+                    <td>Generic Entity</td>
+                    <td>
+                        Entity that approaches the INDOOR of the service area to dump some WasteLoad.
+                        It's represented as a generic entity, since it's not part of the system,
+                        but will be later implemented as an actor (as well as the driver, to send dummy requests)
+                        for testing/simulation purposes only.
+                    </td>
                 </tr>
                 <tr>
                     <td>Truck driver</td>
-                    <td>Proactive <a class="footnote" href="#notesEntities">²</a></td>
+                    <td>Proactive<a class="footnote" href="#notesEntities">²</a></td>
+                    <td>Generic Entity</td>
                     <td>Human entity, external to the system, that drives the waste truck and sends <i>store requests</i>.</td>
+                </tr>
+                <tr>
+                    <td>WasteService</td>
+                    <td>Proactive&nbsp& Reactive</td>
+                    <td>Actor</td>
+                    <td>Handles the waste trucks requests and manages the transport trolley actions.</td>
                 </tr>
                 <tr>
                     <td>DDR robot</td>
                     <td>Reactive</td>
-                    <td>Entity which executes the commands received by the transport trolley.</td>
+                    <td>POJO</td>
+                    <td>Entity which executes the commands received by the transport trolley through a special interface provided by the customer.</td>
                 </tr>
                 <tr>
                     <td>Transport trolley</td>
-                    <td>Proactive and Reactive</td>
-                    <td>Main entity of the WasteService system, which performs the </td>
+                    <td>Proactive&nbsp& Reactive</td>
+                    <td>Actor</td>
+                    <td>Main entity of the WasteService system, which performs the deposit actions.</td>
                 </tr>
                 <tr>
-                    <td>WasteServiceStatus</td>
+                    <td>WasteServiceStatusGUI</td>
                     <td>Reactive</td>
+                    <td>Generic Entity</td>
                     <td>Entity that receives data and updates a GUI, used to monitor the status of the service area.</td>
                 </tr>
                 <tr>
                     <td>Supervisor</td>
                     <td>Reactive</td>
+                    <td>Generic Entity</td>
                     <td>Human entity, external to the system, that monitors the state of the service area.</td>
                 </tr>
                 <tr>
                     <td>Alarm device</td>
                     <td>Proactive</td>
+                    <td>Actor</td>
                     <td>
                         Entity, which is part of a smart device, that sends a message to the
                         WasteService when it detects the presence of an obstacle.
@@ -403,6 +416,7 @@
                 <tr>
                     <td>Warning device</td>
                     <td>Reactive</td>
+                    <td>POJO</td>
                     <td>
                         Entity, which is part of a smart device, that receives information about the
                         current state of the transport trolley, and behave differently according to 
@@ -418,37 +432,48 @@
                 </ol>
             </div>
 
-            <h3>Data</h3>
+            <h3 id="Data">Data</h3>
             <table class="dictionary">
                 <tr>
                     <th>Data</th>
-                    <th>Description</th>
-                </tr>
-                <tr>
-                    <td>MAXPB</td>
-                    <td></td>
-                </tr>
-            </table>
-
-            <h3>Tasks</h3>
-            <table>
-                <tr>
-                    <th>Task</th>
                     <th>Type</th>
                     <th>Description</th>
                 </tr>
                 <tr>
-                    <td>Deposit action</td>
+                    <td>TruckLoad</td>
+                    <td>Floating Point Variable</td>
+                    <td>
+                        It indicates the <b>weight of the waste that the truck wants to dump</b>.
+                        Since the weight is expressed in kg, we have to use decimal too.
+                        <pre>
+                            float truckLoad;
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>WasteLoad</td>
+                    <td>Floating Point Variable</td>
                     <td></td>
-                    <td>Sarebbe bene mandare via il truck appena possibile.<br/>
-                        `pickup`, che sarà una request perché vogliamo una risposta, appena il trolley arriva all'indoor e sappiamo che l'ha fatto, altrimenti non può rispondere al truck.
-
-                        Lo modelliamo in questo modo perché il committente ha detto che dobbiamo liberare il camion il prima possibile.</td>
+                </tr>
+                <tr>
+                    <td>WasteType</td>
+                    <td>Enumerative</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>TruckLoad</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>TruckLoad</td>
+                    <td></td>
+                    <td></td>
                 </tr>
             </table>
 
-            <h3>Messages</h3>
-            <table>
+            <h3 id="Messages">Messages</h3>
+            <table class="dictionary">
                 <tr>
                     <th>Message</th>
                     <th>Type</th>
@@ -462,7 +487,7 @@
                 <tr>
                     <td>LoadAccept</td>
                     <td>Response</td>
-                    <td></td>
+                    <td>The truck waits T prefixed time</td>
                 </tr>
                 <tr>
                     <td>LoadRejected</td>
@@ -486,12 +511,7 @@
                 </tr>
             </table>
 
-            <img width="100%" src="../../resources/imgs/Modello Stanza3.png"/>
             
-            <h3>Context</h3>
-            <h3>Entities</h3>
-            
-            <h3>Analisi</h3>
             Il software del servizio NON gira sulla stessa macchina dove gira il trolley
             <br/>
             Entità emerse durante l'analisi dei requisiti (e come potrebbero essere modellate):
