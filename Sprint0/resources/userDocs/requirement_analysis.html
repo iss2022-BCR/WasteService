@@ -19,6 +19,7 @@
             <a href="final_theme.html">Final Theme</a>
             <a class="selected" href="requirement_analysis.html">Requirement<br/>Analysis</a>
             <div class="sidenavSection">
+                <a href="#Customer-Clarifications">Customer<br/>Clarifications</a>
                 <a href="#Dictionary">Dictionary</a>
                 <div class="sidenavSubSection">
                     <a href="#Nouns">Nouns</a>
@@ -45,14 +46,9 @@
         <div id="main">
             <h1 align="center">Requirement Analysis</h1>
             The purpose of the final product is to <b>manage a waste-disposal service</b>.
-            From the analysis of text provided by the customer, we are able to draft one
-            main evidence: the software system is going to comprehend at least 3 computational
-            nodes:
-            <ul>
-                <li>WasteService node</li>
-                <li>Alarm-warning node</li>
-                <li>Monitoring node</li>
-            </ul>
+            
+            <h2 id="Customer-Clarifications">Customer Clarifications</h2>
+            Riassunto delle robe scritte nelle note
 
 
             <br/>
@@ -354,7 +350,24 @@
             </table>
 
             <h2 id="General-Overview">General Overview</h2>
+            From the analysis of text provided by the customer, we are able to draft one
+            main evidence: the software system is going to comprehend at least 3 computational
+            nodes:
+            <ul>
+                <li>WasteService node</li>
+                <li>Alarm-warning node</li>
+                <li>Monitoring node</li>
+            </ul>
+            However, since the WasteService software doesn't run on the transport trolley
+            machine, it must comunicate with it. So we're going to consider an ulterior one:
+            the transport trolley node, which task is to drive the robot, according to the WasteService
+            "orders".
             <h3 id="System-Abstract">System Abstract</h3>
+            <h4>Computational Nodes</h4>
+            <img width="100%" src="../../resources/diagrams/system_abstract.png"/>
+            
+
+            <h4>Service Area Structure</h4>
             <highlight1>
                 Descrizione molto generale del sistema (con immagine della mappa).
             Dai requisiti si può notare come siano presenti almeno 3 componenti principali.[...]
@@ -389,9 +402,10 @@
             Software Provided VS software to implement:
             <br/>
             DDR robot + basicRobot (link)
-        </highlight1>
+            </highlight1>
 
             <h2 id="Requirements-Formalization">Requirements Formalization</h2>
+            <highlight3>Spostare questa parte in Analisi del Problema?</highlight3>
             <h3 id="Entities">Entities</h3>
             <highlight1>ADD MOTIVATIONS !!!</highlight1>
             <table class="dictionary">
@@ -489,7 +503,7 @@
                     <td>TruckLoad</td>
                     <td>Floating Point Variable</td>
                     <td>
-                        It indicates the <b>weight of the waste that the truck wants to dump</b>.
+                        Indicates the <b>weight of the waste that the truck wants to dump</b>.
                         Since the weight is expressed in kg, we have to use decimal too.
                         <pre>
                             val truckLoad : Float
@@ -500,7 +514,7 @@
                     <td>WasteLoad</td>
                     <td>Floating Point Variable</td>
                     <td>
-                        It indicates the <b>weight of waste that the transport trolley is going to deposit</b>.
+                        Indicates the <b>weight of waste that the transport trolley is going to deposit</b>.
                         <pre>
                             val wasteLoad : Float
                         </pre>
@@ -510,7 +524,7 @@
                     <td>WasteType</td>
                     <td>Enumerative</td>
                     <td>
-
+                        Indicates the type of waste to deposit.
                         <pre>
                             enum class WasteType { PLASTIC, GLASS }
                         </pre>
@@ -520,8 +534,7 @@
                     <td>PICKUP_TIME</td>
                     <td>Integer Constant</td>
                     <td>
-                        Time in seconds, known in advance, it takes the transport trolley to pick up the waste
-
+                        Time in seconds, known in advance, it takes the transport trolley to pick up the waste.
                         <pre>
                             const val PICKUP_TIME : Int
                         </pre>
@@ -531,6 +544,7 @@
                     <td>MAXPB</td>
                     <td>Floating Point Constant</td>
                     <td>
+                        Maximum waste capacity that the PlasticBox can store.
                         <pre>
                             const val MAXPB : Float
                         </pre>
@@ -540,6 +554,7 @@
                     <td>MAXGB</td>
                     <td>Floating Point Constant</td>
                     <td>
+                        Maximum waste capacity that the GlassBox can store.
                         <pre>
                             const val MAXGB : Float
                         </pre>
@@ -571,6 +586,7 @@
                     <td>DLIMT</td>
                     <td>Floating Point Constant</td>
                     <td>
+                        Limit distance beyond which the alarm is activated.
                         <pre>
                             const val DLIMT : Float
                         </pre>
@@ -630,7 +646,7 @@
                     <td>Resume</td>
                     <td>Dispatch</td>
                     <td>
-                        Warning message, sent from the RaspberryPi to the WasteService, to resume the transport trolley activity.
+                        Message, sent from the RaspberryPi to the WasteService, to resume the transport trolley activity.
                     </td>
                 </tr>
             </table>
