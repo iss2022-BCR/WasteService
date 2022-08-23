@@ -7,10 +7,11 @@
         <link rel="stylesheet" type="text/css" href="../styles/main.css">
         <link rel="stylesheet" type="text/css" href="../styles/navbar.css">
         <link rel="stylesheet" type="text/css" href="../styles/table.css">
+        <link rel="stylesheet" type="text/css" href="../styles/code.css">
         <script type="text/javascript" src="../scripts/myScripts.js"></script>
     </head>
 
-    <body onload="loadNav(); setupSort();">
+    <body onload="loadNav(); setupSort(); setupCode();">
         <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
         <div id="sidenav" class="sidenav">
             <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
@@ -43,13 +44,16 @@
 
         <div id="main">
             <h1 align="center">Requirement Analysis</h1>
-            Scopo finale del prodotto: gestire un servizio di smaltimento di rifiuti di diverso tipo.
-            Come prima cosa, iniziamo analizzando i requisiti introdotti dal committente, ordinati per priorità:
-            <ol>
+            The purpose of the final product is to <b>manage a waste-disposal service</b>.
+            From the analysis of text provided by the customer, we are able to draft one
+            main evidence: the software system is going to comprehend at least 3 computational
+            nodes:
+            <ul>
+                <li>WasteService node</li>
+                <li>Alarm-warning node</li>
+                <li>Monitoring node</li>
+            </ul>
 
-            </ol>
-            <br/>
-            Motivazione della priorità e discussione (tutti concordano?)
 
             <br/>
             Ora formalizziamo tali requisiti creando un dizionario di riferimento.
@@ -94,12 +98,13 @@
                     <td>DDR robot</td>
                     <td>
                         Differential Drive Robot (DDR), provided by the customer, which is confined inside the service area.
-                        It's the actual physical robot, that is capable of:
+                        It's the actual physical robot, and can be controlled through a software provided by the customer: <a href="">BasicRobot</a>
+                        <!--that is capable of:
                         <ul>
                             <li>moving (according to the commands it receives) forward, backward and rotate left and right by 90°;</li>
                             <li>picking up and carry objects (i.e. waste).</li>
                         </ul>
-                        It's also equipped with different devices (including a sonar). <a href="./others/devsDdr.html">DDR robot reference</a>.
+                        It's also equipped with different devices (including a sonar). <a href="./others/devsDdr.html">DDR robot reference</a>.-->
                     </td>
                 </tr>
                 <tr>
@@ -169,14 +174,30 @@
                 <tr>
                     <td>Sonar</td>
                     <td>
-                        Component used as an <u>alarm device</u>: when it measures a distance which is less than a prefixed value <b>DLIMT</b>, the <b>transport trolley</b> must be <i>stopped</i>.<br/>
+                        Concrete component, provided by the customer along with the software to use it: <a href=""></a>.
+                        It can detect the presence of obstacle within a certain scope, and tell its distance.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Alarm device</td>
+                    <td>
+                        Abstract component which uses the <b>Sonar</b> (through the software provided by the customer), and will be installed on a RaspberryPi.
+                        When it measures a distance which is less than a prefixed value <b>DLIMT</b>, the <b>transport trolley</b> must be <i>stopped</i>.<br/>
                         It will be <i>resumed</i> when the Sonar detects again a distance higher than <b>DLIMT</b>.
                     </td>
                 </tr>
                 <tr>
                     <td>Led</td>
                     <td>
-                        Component used as a <u>warning device</u>:
+                        Concrete component, provided by the customer along with the software necessary to use it: <a href=""></a>
+                        It can emit light.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Warning device</td>
+                    <td>
+                        Abstract component which uses the <b>Led</b> (through the software provided by the customer), and will be installed on a RaspberryPi.
+                        It will give information about the current state of the trolley:
                         <ul>
                             <li><b>OFF</b> when the transport trolley is at <b>HOME</b>;</li>
                             <li><b>blinks</b> when the transport trolley is <i>moving</i>;</li>
@@ -289,7 +310,7 @@
                     <td>To start the activity</td>
                     <td>WasteService</td>
                     <td>Transport trolley</td>
-                    <td>When <b>WasteService</b> software starts, the robot is positioned in its HOME location.</td>
+                    <td>To start the <b>WasteService</b> software. When the execution begins, the robot is positioned in its HOME location.</td>
                 </tr>
                 <tr>
                     <td>To be ready</td>
@@ -301,7 +322,10 @@
                     <td>To be moving</td>
                     <td>Transport trolley</td>
                     <td>-</td>
-                    <td>The <b>Transport trolley</b> is moving inside the service area.</td>
+                    <td>
+                        The <b>Transport trolley</b> is moving inside the service area.
+                        It's considered moving also when it's settled doing an action (e.g. picking up the waste at INDOOR).
+                    </td>
                 </tr>
                 <tr>
                     <td>To terminate the deposit action</td>
@@ -316,7 +340,10 @@
                     <td>To stop the activity</td>
                     <td>Sonar</td>
                     <td>Transport trolley</td>
-                    <td>The <b>transport trolley</b> is stopped and cannot move, until a resume message occurs.</td>
+                    <td>
+                        The <b>transport trolley</b>, while moving forward or backward, can be stopped due to the alarm device. 
+                        While the transport trolley is stopped, it cannot move until a resume message occurs.
+                    </td>
                 </tr>
                 <tr>
                     <td>To resume the activity</td>
@@ -328,28 +355,45 @@
 
             <h2 id="General-Overview">General Overview</h2>
             <h3 id="System-Abstract">System Abstract</h3>
-            Descrizione molto generale del sistema (con immagine della mappa).
+            <highlight1>
+                Descrizione molto generale del sistema (con immagine della mappa).
             Dai requisiti si può notare come siano presenti almeno 3 componenti principali.[...]
+            </highlight1>
             <img width="100%" src="../../resources/imgs/Modello Stanza3.png"/>
+            Matrice di caselle. Ciascuna casella può assumere certi valori: HOME, NONE, TT, INDOOR, PLASTICBOX, GLASSBOX
             
             <h3 id="Graphical-Exaple-Story">Graphical Exaple Story</h3>
-            - App: start -> container svuotati & robot in HOME
+            <highlight1>
+                - App: start -> container svuotati & robot in HOME
             - the truck approaches the area
             - the truck sends a request
             - the robot goes to INDOOR and perform a pick up action of T duration
+            </highlight1>
 
             <h3 id="Software-Provided-by-the-Customer">Software Provided by the Customer</h3>
+            <highlight1>The customer provides the following components:
+            <ul>
+                <li>BasicRobot</li>
+                <li>Sonar</li>
+                <li>Led</li>
+                <li>SmartDevice</li>
+            </ul>
+            <br/>
+            Aggiungere breve descrizione
             Map util?
+            <br/>
+            Scrivere tutti i software forniti che potrebbero essere utili
             <br/>
             The customer provides BasicRobot to use the DDR robot. [...] aggiungere link al progetto e piccola spiegazione con immagini.
             <br/>
             Software Provided VS software to implement:
             <br/>
             DDR robot + basicRobot (link)
+        </highlight1>
 
             <h2 id="Requirements-Formalization">Requirements Formalization</h2>
             <h3 id="Entities">Entities</h3>
-            ADD MOTIVATIONS !!!
+            <highlight1>ADD MOTIVATIONS !!!</highlight1>
             <table class="dictionary">
                 <tr>
                     <th>Entity</th>
@@ -393,7 +437,7 @@
                     <td>Main entity of the WasteService system, which performs the deposit actions.</td>
                 </tr>
                 <tr>
-                    <td>WasteServiceStatusGUI</td>
+                    <td>WasteService-<br/>StatusGUI</td>
                     <td>Reactive</td>
                     <td>Generic Entity</td>
                     <td>Entity that receives data and updates a GUI, used to monitor the status of the service area.</td>
@@ -433,6 +477,8 @@
             </div>
 
             <h3 id="Data">Data</h3>
+            <highlight1>Kotlin because it provides the built-in syntax necessary to declare our model elements.
+            </highlight1>
             <table class="dictionary">
                 <tr>
                     <th>Data</th>
@@ -446,29 +492,89 @@
                         It indicates the <b>weight of the waste that the truck wants to dump</b>.
                         Since the weight is expressed in kg, we have to use decimal too.
                         <pre>
-                            float truckLoad;
+                            val truckLoad : Float
                         </pre>
                     </td>
                 </tr>
                 <tr>
                     <td>WasteLoad</td>
                     <td>Floating Point Variable</td>
-                    <td></td>
+                    <td>
+                        It indicates the <b>weight of waste that the transport trolley is going to deposit</b>.
+                        <pre>
+                            val wasteLoad : Float
+                        </pre>
+                    </td>
                 </tr>
                 <tr>
                     <td>WasteType</td>
                     <td>Enumerative</td>
-                    <td></td>
+                    <td>
+
+                        <pre>
+                            enum class WasteType { PLASTIC, GLASS }
+                        </pre>
+                    </td>
                 </tr>
                 <tr>
-                    <td>TruckLoad</td>
-                    <td></td>
-                    <td></td>
+                    <td>PICKUP_TIME</td>
+                    <td>Integer Constant</td>
+                    <td>
+                        Time in seconds, known in advance, it takes the transport trolley to pick up the waste
+
+                        <pre>
+                            const val PICKUP_TIME : Int
+                        </pre>
+                    </td>
                 </tr>
                 <tr>
-                    <td>TruckLoad</td>
+                    <td>MAXPB</td>
+                    <td>Floating Point Constant</td>
+                    <td>
+                        <pre>
+                            const val MAXPB : Float
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>MAXGB</td>
+                    <td>Floating Point Constant</td>
+                    <td>
+                        <pre>
+                            const val MAXGB : Float
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>RD</td>
+                    <td>Integer Constant</td>
+                    <td>
+                        Length of the transport trolley.
+                        <pre>
+                            const val RD : Int
+                        </pre>
+                    </td>
+                </tr>
+                <!--<tr>
+                    <td>Box</td>
+                    <td>Enumerative</td>
+                    <td>
+                        Unique area, within ServiceArea, of RD width. A Box represents a position where the transport trolley could be at a certain time.
+                    </td>
+                </tr>
+                <tr>
+                    <td>ServiceAreaMap</td>
+                    <td>2x2 Matrix of </td>
                     <td></td>
-                    <td></td>
+                </tr>-->
+                <tr>
+                    <td>DLIMT</td>
+                    <td>Floating Point Constant</td>
+                    <td>
+                        <pre>
+                            const val DLIMT : Float
+                        </pre>
+                    </td>
                 </tr>
             </table>
 
@@ -482,53 +588,53 @@
                 <tr>
                     <td>Store the load</td>
                     <td>Request</td>
-                    <td></td>
+                    <td>
+                        Message sent from the truck driver to the WasteService through a smart device,
+                        to ask if it can dump TruckLoad kg of waste.
+                    </td>
                 </tr>
                 <tr>
                     <td>LoadAccept</td>
                     <td>Response</td>
-                    <td>The truck waits T prefixed time</td>
+                    <td>
+                        Message received from the WasteService,
+                        that means there is enough space for the waste to be deposited.
+                        Once this message is received, the truck waits T seconds (prefixed pickup time),
+                        then it leaves and frees the INDOOR.
+                    </td>
                 </tr>
                 <tr>
                     <td>LoadRejected</td>
                     <td>Response</td>
-                    <td></td>
+                    <td>
+                        Message received from the WasteService,
+                        that means there is NOT enough space for the waste to be deposited.
+                        When the truck receives this messages, it leaves and freed the INDOOR immediately.
+                    </td>
                 </tr>
                 <tr>
                     <td>Start</td>
-                    <td></td>
-                    <td></td>
+                    <td>Dispatch</td>
+                    <td>
+                        Message the user of WasteService can send to the system, to initialize it.
+                    </td>
                 </tr>
                 <tr>
                     <td>Stop</td>
-                    <td></td>
-                    <td></td>
+                    <td>Dispatch</td>
+                    <td>
+                        Alarm message, sent from the RaspberryPi to the WasteService, to stop the transport trolley activity.
+                    </td>
                 </tr>
                 <tr>
                     <td>Resume</td>
-                    <td></td>
-                    <td></td>
+                    <td>Dispatch</td>
+                    <td>
+                        Warning message, sent from the RaspberryPi to the WasteService, to resume the transport trolley activity.
+                    </td>
                 </tr>
             </table>
 
-            
-            Il software del servizio NON gira sulla stessa macchina dove gira il trolley
-            <br/>
-            Entità emerse durante l'analisi dei requisiti (e come potrebbero essere modellate):
-            <ul>
-                <li>service area software</li>
-                <li></li>
-            </ul>
-
-            
-            
-
-            Modelli vari e diagrammi (nell'analisi del problema!!!): 1 disegno dell'architettura generale nel suo insieme(?);
-            diagrammi UML generici.
-
-            Scelta del linguaggio di modellazione (Qak) CON MOTIVAZIONE!!!
-            <br/>
-            Una buona motivazione è che è un linguaggio completo (in quanto include Kotlin), e permette di specificare il concetto di richiesta e risposta. Inoltre aggiungere anche un link alla documentazione
         </div>
     </body>
 </html>
