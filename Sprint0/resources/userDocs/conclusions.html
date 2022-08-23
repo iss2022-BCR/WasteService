@@ -20,7 +20,7 @@
         </style>
     </head>
 
-    <body onload="loadNav();">
+    <body onload="loadNav();"> <!--setLastModifiedDate();">-->
         <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
         <div id="sidenav" class="sidenav">
             <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
@@ -37,21 +37,19 @@
 
             <h2>Summary</h2>
 
-            <div>
-                This first Sprint (<a href="../../index.html">Sprint0</a>) served to analyze and fully comprehend the requirements provided by the customer, in order to give a proper formalization.
-                <br/>
-                As a result, we concluded that the specifications can be grouped into <ks>3 macro requirements</ks> (sorted by priority) which involve the 3 main components of the system:
-                <div class="remark">
-                    <ol>
-                        <li>Transport Trolley software</li>
-                        <li>WasteServiceStatusGUI</li>
-                        <li>Alarm software</li>
-                    </ol>
-                </div>
+            This first Sprint (<a href="../../index.html">Sprint0</a>) served to analyze and fully comprehend the requirements provided by the customer, in order to give a proper formalization.
+            <br/>
+            As a result, we concluded that the specifications can be grouped into <ks>3 macro requirements</ks> (sorted by priority) which involve the 3 main components of the system:
+            <div class="remark">
+                <ol>
+                    <li>Transport Trolley software</li>
+                    <li>WasteServiceStatusGUI</li>
+                    <li>Alarm software</li>
+                </ol>
             </div>
             
             <h2>Work Plan</h2>
-            <div>
+            <div class="remark">
                 The <a href="">Sprint1</a> will focus on the <i>first requirement</i> and is going to include:
                 
                 <br/>
@@ -60,13 +58,9 @@
             </div>
         </div>
 
-        <div style="position: absolute; bottom: 0; right: 0; text-align:right; padding: 0px 10px 10px 0px;">
+        <!--<footer>
             Last modified: <span id="lastModifiedDate"></span>
-        </div>
-        <script>
-            const date = new Date(document.lastModified);
-            document.getElementById("lastModifiedDate").innerHTML = date.toDateString();
-        </script>
+        <footer>-->
     </body>
 
 </html>

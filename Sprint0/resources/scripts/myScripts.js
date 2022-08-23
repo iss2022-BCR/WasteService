@@ -52,7 +52,13 @@ function setupSort() {
     })));
 }
 
-// code
+
+function setLastModifiedDate() {
+    const date = new Date(document.lastModified);
+    document.getElementById("lastModifiedDate").innerHTML = date.toDateString();
+}
+
+// <pre><code></code></pre> tag (non usato)
 function setupCode() {
     document.querySelectorAll("pre code").forEach((element) => {
         let html = element.outerHTML
