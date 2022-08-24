@@ -6,6 +6,7 @@
         <link rel="stylesheet" type="text/css" href="../styles/main.css">
         <link rel="stylesheet" type="text/css" href="../styles/navbar.css">
         <link rel="stylesheet" type="text/css" href="../styles/table.css">
+        <link rel="stylesheet" type="text/css" href="../styles/code.css">
         <script type="text/javascript" src="../scripts/myScripts.js"></script>
     </head>
 
@@ -17,43 +18,357 @@
             <a href="final_theme.html">Final Theme</a>
             <a href="requirement_analysis.html">Requirement<br/>Analysis</a>
             <a class="selected" href="problem_analysis.html">Problem Analysis</a>
+            <div class="sidenavSection">
+                <a href="#Service-Area">Service Area</a>
+                <div class="sidenavSubSection">
+                    <a href="#Relevant-Positions">Relevant Positions</a>
+                </div>
+                <a href="#Requirements-Formalization">Requirements<br/>Formalization</a>
+                <div class="sidenavSubSection">
+                    <a href="#Entities">Entities</a>
+                    <a href="#Data">Data</a>
+                    <a href="#Messages">Messages</a>
+                </div>
+                <a href="#Models">Models</a>
+                <div class="sidenavSubSection">
+                    <a href="#Why-QAK">Why QAK</a>
+                    <a href="#Logical-Architecture">Logical Architecture</a>
+                </div>
+                <a href="#Test-Plans">Test Plans</a>
+            </div>
             <a href="conclusions.html">Conclusions</a>
             <a href="team.html">Team</a>
         </div>
 
         <div id="main">
             <h1 align="center">Problem Analysis</h1>
+            <h2 id="Service-Area">Service Area</h2>
+            <b>Problem</b>: we need a proper <i>representation</i> of the service area to optimally move and monitor the transport trolley.<br/>
+            <b>Solution</b>: <ksi>2x2 matrix</ksi>, where each element represents a different position, starting from the top-left corner.<br/>
+            <b>Reasons</b>:
+            <ul>
+                <li>
+                    Since the HOME is the top-left corner, it's more intuitive to represent it as the
+                    first element of the matrix, which is the [0,0] element. 
+                </li>
+                <li>
+                    We can associate a <b>cartesian coordinate system</b> to the matrix with the origin in the
+                    top-left corner and RD as unit. That might make things easier later on, if we will
+                    need to implement a graphical representation of the transport trolley state 
+                    (for example in WasteServiceStatusGUI).
+                    This because almost every software, library, framework or API, start drawing from
+                    the top-left corner to the bottom-right one.
+                </li>
+            </ul>
 
-            Descrizione molto generale del sistema (con immagine della mappa).
-            Dai requisiti si può notare come siano presenti almeno 3 componenti principali.[...]
-            Matrice di caselle. Ciascuna casella può assumere certi valori: HOME, NONE, TT, INDOOR, PLASTICBOX, GLASSBOX
-            <img width="100%" src="../../resources/imgs/modello_stanza_descritta_v3.png"/>
-            <input id="map-legend" type="checkbox">Show the legend</input><br/>
-            <input id="map-coordinates" type="checkbox">Show the coordinate system</input>
+            <div class="image-container">
+                <img id="map" class="base-image" width="100%" src="../../resources/imgs/modello_stanza_v4.png"/>
+                <img id="map-legend" class="overlay-image1" width="100%" src="../../resources/imgs/modello_stanza_solo_scritte.png"/>
+                <img id="map-coordinates" class="overlay-image2" width="100%" src="../../resources/imgs/modello_stanza_solo_coordinate.png"/>    
+            </div>
+            <input type="checkbox" onclick="showOverlay(this, 'map-legend');" checked>Show the legend</input><br/>
+            <input type="checkbox" onclick="showOverlay(this, 'map-coordinates');" checked>Show the coordinate system</input>
             <br/>
-            <br/>
-            <br/>
+            <h3 id="Relevant-Positions">Relevant Positions</h3>
+            The matrix size of rows and columns depend on RD (which is the size of the DDR robot),
+            therefore for the moment we assume that they are respectively N (row size, x axis) 
+            and M (column size, y axis).<br/>
+            <div class="remark">
+                The relevant positions are:
+                <ul>
+                    <li>[0,0] = <ks>HOME</ks></li>
+                    <li>from [0,M] to [4,M] = <ks>INDOOR</ks></li>
+                    <li>from [N,0] to [N,4] = <ks>GLASSBOX</ks></li>
+                    <li>from [N,M-4] to [N,M] = <ks>PLASTICBOX</ks></li>
+                </ul>
+            </div>
+
+            <h2 id="Requirements-Formalization">Requirements Formalization</h2>
+            <h3 id="Entities">Entities</h3>
+            <highlight1>ADD MOTIVATIONS !!!</highlight1>
+            <table class="dictionary">
+                <tr>
+                    <th>Entity</th>
+                    <th>Activity</th>
+                    <th>Type</th>
+                    <th>Description/Behaviour</th>
+                </tr>
+                <tr>
+                    <td>Waste truck</td>
+                    <td>Reactive<a class="footnote" href="#notesEntities">¹</a></td>
+                    <td>Generic Entity</td>
+                    <td>
+                        Entity that approaches the INDOOR of the service area to dump some WasteLoad.
+                        It's represented as a generic entity, since it's not part of the system,
+                        but will be later implemented as an actor (as well as the driver, to send dummy requests)
+                        for testing/simulation purposes only.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Truck driver</td>
+                    <td>Proactive<a class="footnote" href="#notesEntities">²</a></td>
+                    <td>Generic Entity</td>
+                    <td>Human entity, external to the system, that drives the waste truck and sends <i>store requests</i>.</td>
+                </tr>
+                <tr>
+                    <td>WasteService</td>
+                    <td>Proactive&nbsp& Reactive</td>
+                    <td>Actor</td>
+                    <td>Handles the waste trucks requests and manages the transport trolley actions.</td>
+                </tr>
+                <tr>
+                    <td>DDR robot</td>
+                    <td>Reactive</td>
+                    <td>POJO</td>
+                    <td>Entity which executes the commands received by the transport trolley through a special interface provided by the customer.</td>
+                </tr>
+                <tr>
+                    <td>Transport trolley</td>
+                    <td>Proactive&nbsp& Reactive</td>
+                    <td>Actor</td>
+                    <td>Main entity of the WasteService system, which performs the deposit actions.</td>
+                </tr>
+                <tr>
+                    <td>WasteService-<br/>StatusGUI</td>
+                    <td>Reactive</td>
+                    <td>Generic Entity</td>
+                    <td>Entity that receives data and updates a GUI, used to monitor the status of the service area.</td>
+                </tr>
+                <tr>
+                    <td>Supervisor</td>
+                    <td>Reactive</td>
+                    <td>Generic Entity</td>
+                    <td>Human entity, external to the system, that monitors the state of the service area.</td>
+                </tr>
+                <tr>
+                    <td>Alarm device</td>
+                    <td>Proactive</td>
+                    <td>Actor</td>
+                    <td>
+                        Entity, which is part of a smart device, that sends a message to the
+                        WasteService when it detects the presence of an obstacle.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Warning device</td>
+                    <td>Reactive</td>
+                    <td>POJO</td>
+                    <td>
+                        Entity, which is part of a smart device, that receives information about the
+                        current state of the transport trolley, and behave differently according to 
+                        its movement.
+                    </td>
+                </tr>
+            </table>
+            <h4 id="notesEntities">Notes</h4>
+            <div>
+                <ol>
+                    <li><b>Proactive</b>: entity which creates or controls a situation rather than just responding passively after it has happened.</li>
+                    <li><b>Reactive</b>: entity which acts in response to a situation rather than creating or controlling it.</li>
+                </ol>
+            </div>
+
+            <h3 id="Data">Data</h3>
+            <highlight1>Kotlin because it provides the built-in syntax necessary to declare our model elements.
+            </highlight1>
+            <table class="dictionary">
+                <tr>
+                    <th>Data</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>TruckLoad</td>
+                    <td>Floating Point Variable</td>
+                    <td>
+                        Indicates the <b>weight of the waste that the truck wants to dump</b>.
+                        Since the weight is expressed in kg, we have to use decimal too.
+                        <pre>
+                            val truckLoad : Float
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>WasteLoad</td>
+                    <td>Floating Point Variable</td>
+                    <td>
+                        Indicates the <b>weight of waste that the transport trolley is going to deposit</b>.
+                        <pre>
+                            val wasteLoad : Float
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>WasteType</td>
+                    <td>Enumerative</td>
+                    <td>
+                        Indicates the type of waste to deposit.
+                        <pre>
+                            enum class WasteType { PLASTIC, GLASS }
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>PICKUP_TIME</td>
+                    <td>Integer Constant</td>
+                    <td>
+                        Time in seconds, known in advance, it takes the transport trolley to pick up the waste.
+                        <pre>
+                            const val PICKUP_TIME : Int
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>MAXPB</td>
+                    <td>Floating Point Constant</td>
+                    <td>
+                        Maximum waste capacity that the PlasticBox can store.
+                        <pre>
+                            const val MAXPB : Float
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>MAXGB</td>
+                    <td>Floating Point Constant</td>
+                    <td>
+                        Maximum waste capacity that the GlassBox can store.
+                        <pre>
+                            const val MAXGB : Float
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>RD</td>
+                    <td>Integer Constant</td>
+                    <td>
+                        Length of the transport trolley.
+                        <pre>
+                            const val RD : Int
+                        </pre>
+                    </td>
+                </tr>
+                <!--<tr>
+                    <td>Box</td>
+                    <td>Enumerative</td>
+                    <td>
+                        Unique area, within ServiceArea, of RD width. A Box represents a position where the transport trolley could be at a certain time.
+                    </td>
+                </tr>
+                <tr>
+                    <td>ServiceAreaMap</td>
+                    <td>2x2 Matrix of </td>
+                    <td></td>
+                </tr>-->
+                <tr>
+                    <td>DLIMT</td>
+                    <td>Floating Point Constant</td>
+                    <td>
+                        Limit distance beyond which the alarm is activated.
+                        <pre>
+                            const val DLIMT : Float
+                        </pre>
+                    </td>
+                </tr>
+            </table>
+
+            <h3 id="Messages">Messages</h3>
+            <table class="dictionary">
+                <tr>
+                    <th>Message</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>Store the load</td>
+                    <td>Request</td>
+                    <td>
+                        Message sent from the truck driver to the WasteService through a smart device,
+                        to ask if it can dump TruckLoad kg of waste.
+                    </td>
+                </tr>
+                <tr>
+                    <td>LoadAccept</td>
+                    <td>Response</td>
+                    <td>
+                        Message received from the WasteService,
+                        that means there is enough space for the waste to be deposited.
+                        Once this message is received, the truck waits T seconds (prefixed pickup time),
+                        then it leaves and frees the INDOOR.
+                    </td>
+                </tr>
+                <tr>
+                    <td>LoadRejected</td>
+                    <td>Response</td>
+                    <td>
+                        Message received from the WasteService,
+                        that means there is NOT enough space for the waste to be deposited.
+                        When the truck receives this messages, it leaves and freed the INDOOR immediately.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Start</td>
+                    <td>Dispatch</td>
+                    <td>
+                        Message the user of WasteService can send to the system, to initialize it.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Stop</td>
+                    <td>Dispatch</td>
+                    <td>
+                        Alarm message, sent from the RaspberryPi to the WasteService, to stop the transport trolley activity.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Resume</td>
+                    <td>Dispatch</td>
+                    <td>
+                        Message, sent from the RaspberryPi to the WasteService, to resume the transport trolley activity.
+                    </td>
+                </tr>
+            </table>
             
-            
-
-            Modello il trolley come un attore perché ... https://github.com/orgs/iss2022-BCR/teams/iss2022
-
             <h2 id="Models">Models</h2>
             <h3 id="Why-QAK">Why QAK</h3>
+            <b>Problem</b>: we need to fill the abstraction gap related to the concept of <i>service</i>.<br/>
+            <b>Solution</b>: <ksi>QAK meta-modeling language</ksi>.<br/>
+            <b>Reasons</b>:
+            <ul>
+                <li>
+                    It's was implemented entirely created whitin our
+                    <a href="https://github.com/anatali/issLab2022">software house</a>, which makes
+                    it easier to get information and support from the actual creator of the language. 
+                </li>
+                <li>
+                    It allows you to create <b>executable</b> models, directly from the language.
+                    It provides a way to represent concepts related to services, such as
+                    request, response, dispatch, etc.; while other general-purpose languages
+                    would need external libraries (e.g. Java would need some kind of JAR to
+                    implement Actors), frameworks or resources to do the same.
+                </li>
+                <li>
+                    It provides an easy way to implement runnable test models which capture
+                    the salient concepts of the requirements or problems.
+                </li>
+                <li>
+                    Our software house already has some project and components we could
+                    exploit and use.
+                </li>
+            </ul>
+            <highlight1>
+                <a href="">QAK cheatsheet</a><br/>
+                <a href="">QAK documentation</a><br/>
+                QAK is a custom (meta)modeling language documentation
+            </highlight1>
 
-            Problem: That's the abstraction gap that we need to be overcome.
-            BCR ISS2022 software house provides many differents applications and projects
-            To represent the project
-            Why QAK<br/>
-            QAK
-
-            <h2>Logical Architecture</h2>
+            <h2 id="Logical-Architecture">Logical Architecture</h2>
             Drawing with legend (NB: il QAK fornisce un diagramma da inserire qui)
 
             <h2>Diagrams</h2>
             UML (forse meglio metterli negli sprint successivi)
 
-            <h2>Test Plans</h2>
+            <h2 id="Test-Plans">Test Plans</h2>
             Executable Models
 
         </div>

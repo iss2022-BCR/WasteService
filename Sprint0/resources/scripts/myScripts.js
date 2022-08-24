@@ -67,3 +67,11 @@ function setupCode() {
         element.outerHTML = html.replace(new RegExp(pattern, "g"),'\n')
     });
 }
+
+function showOverlay(cb, id) {
+    if(cb.checked) {
+        document.getElementById(id).style.visibility = "visible";
+    } else {
+        document.getElementById(id).style.visibility = "hidden";
+    }
+}

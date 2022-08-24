@@ -55,13 +55,32 @@
                     The messages sent by the truck driver through a smart device are however 
                     part of the system
                 </li>
-                <li></li>
+                <li>The waste truck should be dismissed as soon as possible.</li>
+                <li>
+                    WasteService might receive a new request while it's still processing the
+                    deposit action of the previous one.
+                </li>
+                <li>Once full, containers aren't emptied until the application is restarted.</li>
+                <li>
+                    The trolley position could be represented as qualitative indications,
+                    for example "at indoor", "at glassbox", etc.
+                </li>
+                <li>
+                    The robot is not required to move optimally, but it shouldn't wander around
+                    the room too much either.
+                </li>
+                <li>
+                    The collection time of the material from the truck is always limited and predictable, 
+                    while the time required for storage could be quite long (also due to the not-optimal movement).
+                </li>
+                <li>Sonar and led are NOT on the trolley, but on a separate Raspberry Pi.</li>
+                <li>The sonar detects objects that we place in front of it.</li>
+                <li>The trolley stop, as a consequence of an "alarm" from the Sonar, should occur "as soon as possible".</li>
+                <li>
+                    The DDR provided by the customer has an on-board sonar, but this is used
+                    to detect obstacles when the robot is moving (e.g. the room walls).
+                </li>
             </ul>
-            Riassunto delle robe scritte nelle note
-
-
-            <br/>
-            Ora formalizziamo tali requisiti creando un dizionario di riferimento.
 
             <h2 id="Dictionary">Dictionary</h2>
             <h3 id="Nouns">Nouns</h3>
@@ -360,28 +379,47 @@
 
             <h2 id="General-Overview">General Overview</h2>
             From the analysis of text provided by the customer, we are able to draft one
-            main evidence: the software system is going to comprehend at least 3 computational
+            main evidence: the software system is going to comprehend at least 4 computational
             nodes:
             <ul>
                 <li>WasteService node</li>
+                <li>Smart device (waste truck) node</li>
                 <li>Alarm-warning node</li>
                 <li>Monitoring node</li>
             </ul>
             However, since the WasteService software doesn't run on the transport trolley
-            machine, it must comunicate with it. So we're going to consider an ulterior one:
+            machine, it must comunicate with it. Therefore we're going to consider an ulterior one:
             the transport trolley node, which task is to drive the robot, according to the WasteService
             "orders".
             <h3 id="System-Abstract">System Abstract</h3>
-            <h4>Computational Nodes</h4>
-            <img width="100%" src="../../resources/diagrams/system_abstract_v2.png"/>
+            <h4 id="Computational-Nodes">Computational Nodes</h4>
+            <div class="image-container">
+                <img id="map" class="base-image" width="100%" src="../../resources/diagrams/system_abstract_v2.png"/>
+                <img id="map-legend" class="overlay-image2" width="100%" src="../../resources/diagrams/system_abstract_v2_legend.png"/>
+            </div>
+            <input type="checkbox" onclick="showOverlay(this, 'map-legend');" checked>Show the legend</input><br/>
             
 
-            <h4>Service Area Structure</h4>
-            
-            <highlight1>
-                Qua formalizziamo la forma della stanza, da ciò che si capisce dai requisiti (e dall'immagine fornita dal committente).
-               
-            </highlight1>
+            <h4 id="Service-Area">Service Area</h4>
+            Given the description and the image provided by the customer, we've modeled the service area as
+            a rectangle free from obstacles and surrounded by 4 walls, within which there are 4 relevant areas:
+            <ul>
+                <li>
+                    <b>HOME</b>, an area of the same size as the transport trolley, in which it will be placed
+                    each time the WasteService software is run;
+                </li>
+                <li>
+                    <b>INDOOR</b>, a zone along the perimeter, where the transport trolley will have to go
+                    every time the WasteService receives a StoreRequest, and from which it will pick up the waste;
+                </li>
+                <li>
+                    <b>GLASSBOX</b> and <b>PLASTICBOX</b>, an area along the perimeter, where the transport trolley 
+                    will have to deposit the respective waste.
+                </li>
+            </ul>
+            The transport trolley is considered "at HOME" when it is above the HOME area, while it is considered
+            "at INDOOR", "at GLASSBOX" or "at PLASTICBOX", when it hits the wall of that area.
+            <br/><br/>
             <img width="100%" src="../../resources/imgs/modello_stanza_vuota_descritta.png"/>
             
             <h3 id="Graphical-Exaple-Story">Graphical Exaple Story</h3>
@@ -399,10 +437,11 @@
                 <li>Sonar</li>
                 <li>Led</li>
                 <li>SmartDevice</li>
+                <li>Map util?</li>
             </ul>
             <br/>
             Aggiungere breve descrizione
-            Map util?
+            
             <br/>
             Scrivere tutti i software forniti che potrebbero essere utili
             <br/>
@@ -414,9 +453,7 @@
             </highlight1>
 
             <h2 id="Requirements-Formalization">Requirements Formalization</h2>
-            <highlight3>Spostare questa parte in Analisi del Problema?</highlight3>
             <h3 id="Entities">Entities</h3>
-            <highlight1>ADD MOTIVATIONS !!!</highlight1>
             <table class="dictionary">
                 <tr>
                     <th>Entity</th>

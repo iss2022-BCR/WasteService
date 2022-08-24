@@ -23,3 +23,31 @@ footer {
   right: 0;
   padding: 10px;
 }
+footer a:link, footer a:visited, footer a:hover {
+  color: black;
+}
+
+/* img overlay */
+.image-container {
+  position: relative;
+  width: 100%;
+}
+.base-image {
+  width: 100%;
+}
+.overlay-image1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  visibility: visible;
+  z-index: 1;
+}
+.overlay-image2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  visibility: visible;
+  z-index: 2;
+}
