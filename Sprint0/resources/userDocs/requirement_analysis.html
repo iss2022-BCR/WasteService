@@ -537,8 +537,6 @@
             </div>
 
             <h3 id="Data">Data</h3>
-            <highlight1>Kotlin because it provides the built-in syntax necessary to declare our model elements.
-            </highlight1>
             <table class="dictionary">
                 <tr>
                     <th>Data</th>
@@ -547,95 +545,59 @@
                 </tr>
                 <tr>
                     <td>TruckLoad</td>
-                    <td>Floating Point Variable</td>
+                    <td>Floating point variable</td>
                     <td>
-                        Indicates the <b>weight of the waste that the truck wants to dump</b>.
+                        Indicates the <b>weight</b> of the waste that the truck wants <b>to dump</b>.
                         Since the weight is expressed in kg, we have to use decimal too.
-                        <pre>
-                            val truckLoad : Float
-                        </pre>
                     </td>
                 </tr>
                 <tr>
                     <td>WasteLoad</td>
-                    <td>Floating Point Variable</td>
+                    <td>Floating point variable</td>
                     <td>
-                        Indicates the <b>weight of waste that the transport trolley is going to deposit</b>.
-                        <pre>
-                            val wasteLoad : Float
-                        </pre>
+                        Indicates the <b>weight</b> of waste that the transport trolley is going <b>to deposit</b>.
                     </td>
                 </tr>
                 <tr>
                     <td>WasteType</td>
                     <td>Enumerative</td>
                     <td>
-                        Indicates the type of waste to deposit.
-                        <pre>
-                            enum class WasteType { PLASTIC, GLASS }
-                        </pre>
+                        Indicates the <b>type of waste</b> to deposit.
                     </td>
                 </tr>
                 <tr>
                     <td>PICKUP_TIME</td>
-                    <td>Integer Constant</td>
+                    <td>Integer constant</td>
                     <td>
-                        Time in seconds, known in advance, it takes the transport trolley to pick up the waste.
-                        <pre>
-                            const val PICKUP_TIME : Int
-                        </pre>
+                        <b>Time</b> in seconds, known in advance, it takes the transport trolley to <b>pick up</b> the waste.
                     </td>
                 </tr>
                 <tr>
                     <td>MAXPB</td>
-                    <td>Floating Point Constant</td>
+                    <td>Floating point constant</td>
                     <td>
-                        Maximum waste capacity that the PlasticBox can store.
-                        <pre>
-                            const val MAXPB : Float
-                        </pre>
+                        Maximum waste <b>capacity</b> that the <b>PlasticBox</b> can store.
                     </td>
                 </tr>
                 <tr>
                     <td>MAXGB</td>
-                    <td>Floating Point Constant</td>
+                    <td>Floating point constant</td>
                     <td>
-                        Maximum waste capacity that the GlassBox can store.
-                        <pre>
-                            const val MAXGB : Float
-                        </pre>
+                        Maximum waste <b>capacity</b> that the <b>GlassBox</b> can store.
                     </td>
                 </tr>
                 <tr>
                     <td>RD</td>
-                    <td>Integer Constant</td>
+                    <td>Integer constant</td>
                     <td>
-                        Length of the transport trolley.
-                        <pre>
-                            const val RD : Int
-                        </pre>
+                        <b>Length</b> of the <b>transport trolley</b>.
                     </td>
                 </tr>
-                <!--<tr>
-                    <td>Box</td>
-                    <td>Enumerative</td>
-                    <td>
-                        Unique area, within ServiceArea, of RD width. A Box represents a position where the transport trolley could be at a certain time.
-                    </td>
-                </tr>
-                <tr>
-                    <td>ServiceAreaMap</td>
-                    <td>2x2 Matrix of </td>
-                    <td></td>
-                </tr>-->
                 <tr>
                     <td>DLIMT</td>
-                    <td>Floating Point Constant</td>
+                    <td>Floating point constant</td>
                     <td>
-                        Limit distance beyond which the alarm is activated.
-                        <pre>
-                            const val DLIMT : Float
-                        </pre>
+                        <b>Limit distance</b> beyond which the alarm is activated.
                     </td>
                 </tr>
             </table>
@@ -648,7 +610,7 @@
                     <th>Description</th>
                 </tr>
                 <tr>
-                    <td>Store the load</td>
+                    <td>storeLoad</td>
                     <td>Request</td>
                     <td>
                         Message sent from the truck driver to the WasteService through a smart device,
@@ -656,7 +618,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>LoadAccept</td>
+                    <td>loadAccepted</td>
                     <td>Response</td>
                     <td>
                         Message received from the WasteService,
@@ -666,7 +628,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>LoadRejected</td>
+                    <td>loadRejected</td>
                     <td>Response</td>
                     <td>
                         Message received from the WasteService,
@@ -675,21 +637,14 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Start</td>
-                    <td>Dispatch</td>
-                    <td>
-                        Message the user of WasteService can send to the system, to initialize it.
-                    </td>
-                </tr>
-                <tr>
-                    <td>Stop</td>
+                    <td>stop</td>
                     <td>Dispatch</td>
                     <td>
                         Alarm message, sent from the RaspberryPi to the WasteService, to stop the transport trolley activity.
                     </td>
                 </tr>
                 <tr>
-                    <td>Resume</td>
+                    <td>resume</td>
                     <td>Dispatch</td>
                     <td>
                         Message, sent from the RaspberryPi to the WasteService, to resume the transport trolley activity.
