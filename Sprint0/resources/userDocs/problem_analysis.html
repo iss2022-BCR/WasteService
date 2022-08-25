@@ -32,12 +32,14 @@
                 <a href="#Models">Models</a>
                 <div class="sidenavSubSection">
                     <a href="#Why-QAK">Why QAK</a>
-                    <a href="#Logical-Architecture">Logical Architecture</a>
+                    <a href="#System-QAK-Model">System QAK Model</a>
                 </div>
+                <a href="#Logical-Architecture">Logical Architecture</a>
                 <a href="#Test-Plans">Test Plans</a>
             </div>
             <a href="conclusions.html">Conclusions</a>
             <a href="team.html">Team</a>
+            <p style="height: 100px; visibility: hidden"></p><!-- tmp -->
         </div>
 
         <div id="main">
@@ -85,7 +87,6 @@
 
             <h2 id="Requirements-Formalization">Requirements Formalization</h2>
             <h3 id="Entities">Entities</h3>
-            <highlight1>FIX MOTIVATIONS !!!</highlight1>
             <table class="dictionary">
                 <tr>
                     <th>Entity</th>
@@ -96,7 +97,7 @@
                 <tr>
                     <td>wasteTruck</td>
                     <td>Reactive</td>
-                    <td>(Test) Actor</td>
+                    <td><highlight1>(Test) Actor</highlight1></td>
                     <td>
                         Entity that approaches the INDOOR of the service area to dump some wasteLoad.
                         It's represented as an actor for testing/simulation purposes: it sends dummy 
@@ -108,12 +109,12 @@
                     <td>Proactive&nbsp& Reactive</td>
                     <td>Actor</td>
                     <td>
-                        Handles the waste trucks requests and manages the transport trolley actions.
+                        Handles the wasteTruck requests and manages the transport trolley actions.
                         It also sends updates to the wasteServiceStatusGUI and to the alarmDevice.
                     </td>
                 </tr>
                 <tr>
-                    <td>basicRobot</td>
+                    <td><emn>basicRobot</emn></td>
                     <td>Reactive</td>
                     <td>Actor</td>
                     <td>Entity that receives commands from the transportTrolley and drives the DDR robot.</td>
@@ -130,25 +131,33 @@
                 <tr>
                     <td>wasteService-<br/>StatusGUI</td>
                     <td>Reactive</td>
-                    <td>Actor</td>
-                    <td>Entity that receives data from the wasteService and updates a GUI, used to monitor the status of the service area.</td>
+                    <td><highlight1>Actor</highlight1></td>
+                    <td>
+                        Entity that receives data from the wasteService and updates a GUI,
+                        used to monitor the status of the service area.
+                        We model it as an actor beacuse it processes messages one by one and
+                        updates the GUI accordingly.
+                    </td>
                 </tr>
                 <tr>
                     <td>alarmDevice</td>
                     <td>Proactive</td>
-                    <td>Actor</td>
+                    <td><highlight1>Actor</highlight1></td>
                     <td>
                         Entity, which is part of a smart device, that sends a message to the
                         wasteService when it detects the presence of an obstacle.
+                        We formalize the alarmDevice as an actor because it has its own autonomous
+                        flow of control, and sends messages to wasteService.
                     </td>
                 </tr>
                 <tr>
                     <td>warningDevice</td>
                     <td>Reactive</td>
-                    <td>Actor</td>
+                    <td><highlight1>Actor</highlight1></td>
                     <td>
-                        Entity, which is part of a smart device, that receives information about the
-                        current state of the transport trolley, and updates the status of the Led accordingly.
+                        Entity, which is part of a smart device, used to monitor the state of the trolley,
+                        We model it as an actor beacuse it processes messages one by one and
+                        updates the Led state accordingly.
                     </td>
                 </tr>
             </table>
@@ -244,7 +253,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Box</td>
+                    <td><emn>Box</emn></td>
                     <td>Enumerative</td>
                     <td>
                         <b>Unique area, within serviceArea</b>, of RD width. A Box represents a position where the transport trolley could be at a certain time.
@@ -254,7 +263,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>serviceArea</td>
+                    <td><emn>serviceArea</emn></td>
                     <td>2 dimensional
                         matrix of Box-es</td>
                     <td>
@@ -265,7 +274,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>ROWS</td>
+                    <td><emn>ROWS</emn></td>
                     <td>Integer constant</td>
                     <td>
                         Number of <b>rows of the service area</b> matrix.
@@ -275,7 +284,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>COLUMNS</td>
+                    <td><emn>COLUMNS</emn></td>
                     <td>Integer constant</td>
                     <td>
                         Number of <b>columns of the service area</b> matrix.
@@ -285,7 +294,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>TTState</td>
+                    <td><emn>TTState</emn></td>
                     <td>Enumerative</td>
                     <td>
                         All the <b>possible states</b> of the transport trolley.
@@ -295,7 +304,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>LedState</td>
+                    <td><emn>LedState</emn></td>
                     <td>Enumerative</td>
                     <td>
                         All the <b>possible states</b> of the Led.
@@ -307,6 +316,7 @@
             </table>
 
             <h3 id="Messages">Messages</h3>
+            <highlight2>Riguardare</highlight2>
             <table class="dictionary">
                 <tr>
                     <th>Message</th>
@@ -362,14 +372,14 @@
                     </td>
                 </tr>-->
                 <tr>
-                    <td>ttState</td>
+                    <td><emn>serviceArea-<br/>State</emn></td>
                     <td>Dispatch</td>
                     <td>
                         Message, sent from the WasteService to the WasteServiceStatusGUI, which contains the transport trolley current state.
                     </td>
                 </tr>
                 <tr>
-                    <td>ledState</td>
+                    <td><emn>ledState</emn></td>
                     <td>Dispatch</td>
                     <td>
                         Message, sent from the WasteService to the WasteServiceStatusGUI, which contains the state the Led will have to enter.
@@ -389,26 +399,262 @@
                     it easier to get information and support from the actual creator of the language. 
                 </li>
                 <li>
-                    It allows you to create <b>executable</b> models, directly from the language.
                     It provides a way to represent concepts related to services, such as
                     request, response, dispatch, etc.; while other general-purpose languages
                     would need external libraries (e.g. Java would need some kind of JAR to
                     implement Actors), frameworks or resources to do the same.
                 </li>
                 <li>
-                    It provides an easy way to implement runnable test models which capture
-                    the salient concepts of the requirements or problems.
+                    It allows you to create executable models, directly from the language,
+                    which capture the salient aspects of the requirements or problems.
                 </li>
                 <li>
                     Our software house already has some project and components we could
                     exploit and use.
                 </li>
             </ul>
-            <highlight1>
+            <highlight2>
                 <a href="">QAK cheatsheet</a><br/>
                 <a href="">QAK documentation</a><br/>
                 QAK is a custom (meta)modeling language documentation
-            </highlight1>
+            </highlight2>
+            <h3 id="System-QAK-Model">System QAK Model</h3>
+            File: <a href="../models/demo_system_overview_v1.txt">demo_system_overview.qak</a>
+
+            <pre style="white-space: pre-wrap;">
+System demo_system_overview
+
+// CONTEXTS ===================================================================
+Context ctx_wasteservice	ip [host="localhost" port=11800]
+Context ctx_monitor			ip [host="localhost" port=11801]
+Context ctx_alarm			ip [host="localhost" port=11802]
+Context ctx_test			ip [host="localhost" port=11803]
+
+// MESSAGES ===================================================================
+// truckdriver <-> wasteservice
+Request storerequest :		storerequest( WasteType, TruckLoad )
+Reply loadaccept :			loadaccept()
+Reply loadrejected :		loadrejected()
+
+// rasp <-> wasteservice
+Event stopevent :			stopevent()
+Event resumeevent :			resumeevent()
+Dispatch setled :			setled( STATE )
+
+// radar -> rasp ??
+Event sonardata :			sonar( Data )
+
+// trolley -> truckdriver
+Event pickupend :			pickupend()
+
+// trolley -> ??
+Event depositend :			depositend()
+
+// wasteservice -> trolley
+Dispatch loadwaiting :		loadwaiting( WasteType )
+
+// wasteservice -> monitor
+Dispatch servicestate :		servicestate(TrolleyState, TrolleyPosition, PlasticWeight, GlassWeight, LedState)
+
+// ACTORS =====================================================================
+QActor wasteservice context ctx_wasteservice {
+    
+    State state_init initial {
+        // init (reset system)
+        [#
+            var currentPlastic =	0.0F
+            var currentGlass =		0.0F
+            // reset trolley position to Home
+        #]
+        println("[WasteService] ")
+    }
+    Goto state_idle
+    
+    State state_idle {
+        // wait for messages:
+    }
+    Transition t0	whenMsg storerequest	->	state_handle_store
+                    whenEvent stopevent 	-> 	state_hande_stop
+                    whenEvent resumeevent 	-> 	state_handle_resume
+    // begin to accept requests
+
+    State state_handle_deposit {
+        // check if there is enough space
+        // yes: send accept and make the trolley do the deposit action
+        if [# utils.checkEnoughSpace(WasteType, TruckLoad) #] {
+            replyTo depositrequest with loadaccept : loadaccept()
+            
+            forward trasporttrolley -m loadwaiting : loadwaiting()
+        }
+        // no: send rejected
+        else {
+            replyTo depositrequest with loadrejected : loadrejected()
+            // trolley stai a casa porcodio che cazzo fai c'è il covid
+        }
+    }
+    Goto state_idle
+
+    // DA DEFINIRE:	il comando per settare il led forse è meglio sul raspberry
+    // 				ma bisogna capire se è meglio comunicare che il robot stia
+    //				lavorando al rasp oppure far fare tutto al WasteService
+    State state_handle_stop {
+        // utils.trolley.sendAction(INTERRUPT)
+        // utils.rasp.setLed(ON)
+    }
+    Goto state_idle
+
+    State state_handle_resume {
+        // var wasDoingTask = utils.trolley.sendAction(RESUME)
+        if [# wasDoingTask #]{
+            // utils.rasp.setLed(BLINK)
+        }else{
+            // utils.rasp.setLed(OFF)
+        }
+    }
+    Goto state_idle
+}
+
+QActor transporttrolley context ctx_wasteservice {
+    State state_init initial {
+        [#
+            var currWaste = ""	
+        #]
+    }
+    Goto state_idle
+
+    State state_idle {
+        // Just chilling...
+    }
+    Transition t0	whenEvent	emergencyinterrupt	->	state_interrupt_handle	// non sono troppo sicuro di questi due
+                    whenEvent	emergencyresume		->	state_resume_handle
+                    whenMsg		loadwaiting			->	state_loadwaiting_handle
+    
+    // goes to INDOOR
+    State state_loadwaiting_handle {
+        // ormai leggere il payload di un messaggio equivale a rendere il codice confuso perchè mi dimentico di aggiungere "msg."
+
+        // utils.trolley.moveTo(INDOOR)
+        [# currWaste = WasteType #]
+    }
+    Goto state_pickup
+    
+    // unload the truck
+    // (separare il movimento dal pickup mi sembrava un po' più sensato di avere tutto insieme, ma potrebbe essere una cazzata)
+    State state_pickup {
+        // utils.trolley.pickup()
+
+        emit pickupend : pickupend()
+    }
+    Goto state_deposit
+
+    // deposit the load
+    State state_deposit {
+        if [# currLoad == 'plastic' #]{
+            // utils.trolley.moveTo(PLASTIC)
+        }else{
+            // utils.trolley.moveTo(GLASS)
+        }
+
+        delay 200	// simula il tempo di deposito (?)
+
+        emit depositend : depositend()	// potrebbe servire, al momento non so per cosa però
+    }
+    Transition t1	whenTimer	1000		->	state_gohome				// prima di tornare a casa, attende nuovi depositi
+                    whenMsg		loadwaiting	->	state_loadwaiting_handle	
+    
+    // better a lot of simple states than fewer more complex
+    State state_gohome {
+        // utils.trolley.moveTo(HOME)
+    }
+    Goto state_idle
+
+    // La soluzione precedente non tiene conto di eventuali richieste che arrivano durante il tragitto verso casa
+}
+
+QActor wasteservicestatusgui context ctx_monitor {
+    // initial state, reset gui status (idk what it has, so just a random func)
+    State state_init initial {
+        // utils.gui.reset()
+    }
+    Goto state_idle
+
+    // waiting for updates
+    State state_idle {
+        // Really wished I got that Netflix subscription...
+    }
+    Transition t0 	whenMsg servicestate -> state_update_handle
+
+    State state_update_handle {
+        // still no idea di come leggere i dati di un messaggio
+        // still no idea di come settare lo stato di questa maledetta gui
+        // no thoughts, only functions
+        // utils.gui.setState(TrolleyState, TrolleyPosition, PlasticWeight, GlassWeight, LedState)
+    }
+    Goto state_idle
+}
+
+QActor raspdevice context ctx_alarm {
+    // initial state, DLIMT hardcoded atm
+    State state_init initial {
+        [#
+            var DLIMT = 		30.0F
+            var LedStatus =		"OFF"
+            var stoppped = 		false	// potrebbe essere evitato controllando lo stato del Led
+                                        // ma lo preferisco per leggibilità del codice
+        #]
+    }
+    Goto state_idle
+
+    // waiting for data from sonar
+    State state_idle {
+        // too much chilling in here, give me a jacket...
+    }
+    Transition t0	whenEvent	sonardata	->	state_sonar_handle
+                    whenMsg		setled		->	state_led_handle	// non implementato al momento, aspettando discussione
+    
+    State state_sonar_handle {
+        // non c'è scritto da nessuna parte come leggere i dati del payload
+        // potrei piangere non ironicamente
+        if [# DATA >= DLIMT && !stopped #]{		// è giusto che il sonar debba farsi il problema se il robot è fermo?
+            emit stopevent : stopevent()
+            [# stopped = true #]
+        }
+
+        if [# DATA < DLIMT && stopped #]{
+            emit resumeevent : resumeevent()
+            [# stopped = false #]
+        }
+    }
+    Goto state_idle
+}
+
+QActor testdriver context ctx_test {
+    // initialize a random load and does a request
+    State state_init initial{
+        [#
+            var WasteType = rand('plastic', 'glass')	// rand() non penso esista
+            var TruckLoad = rand(1, 15)
+        #]
+
+        request wasteservice -m storerequest : storerequest( WasteType, TruckLoad )
+    }
+    Transition t0	whenMsg	loadaccept		->	state_accept_handle
+                    whenMsg	loadrejected	->	state_end				// il mio lavoro qui è finito
+    
+    State state_accept_handle {
+        // not sure to what happens here
+        // I think it just wait for a pickup action to end
+    }
+    Transition t1	whenEvent	pickupend	->	state_end
+
+    State state_end {
+        // see you, space waste truck!
+    }
+    // Goto futuro incerto, teoricamente il wastetruck qui ha finito di fare le cose utili
+}
+
+// Additional actor for test/simulation purposes only
+            </pre>
 
             <h2 id="Logical-Architecture">Logical Architecture</h2>
             Drawing with legend (NB: il QAK fornisce un diagramma da inserire qui)

@@ -41,6 +41,7 @@
             <a href="problem_analysis.html">Problem Analysis</a>
             <a href="conclusions.html">Conclusions</a>
             <a href="team.html">Team</a>
+            <p style="height: 100px; visibility: hidden"></p><!-- tmp -->
         </div>
 
         <div id="main">
@@ -423,17 +424,21 @@
             <img width="100%" src="../../resources/imgs/modello_stanza_vuota_descritta.png"/>
             
             <h3 id="Graphical-Exaple-Story">Graphical Exaple Story</h3>
-            <highlight1>
+            <highlight2>
                 - App: start -> container svuotati & robot in HOME
             - the truck approaches the area
             - the truck sends a request
             - the robot goes to INDOOR and perform a pick up action of T duration
-            </highlight1>
+            </highlight2>
 
             <h3 id="Software-Provided-by-the-Customer">Software Provided by the Customer</h3>
-            <highlight1>The customer provides the following components:
+            <highlight2>The customer provides the following components:
             <ul>
-                <li>BasicRobot</li>
+                <li>
+                    <a href="../../../commons/basicRobot/BasicRobot22.html"><b>BasicRobot</b></a> -
+                    software component which executes movement commands of a DDR-robot "independently 
+                    of the technology" with which the robot is implemented (virtual or real); 
+                </li>
                 <li>Sonar</li>
                 <li>Led</li>
                 <li>SmartDevice</li>
@@ -450,7 +455,7 @@
             Software Provided VS software to implement:
             <br/>
             DDR robot + basicRobot (link)
-            </highlight1>
+            </highlight2>
 
             <h2 id="Requirements-Formalization">Requirements Formalization</h2>
             <h3 id="Entities">Entities</h3>
@@ -462,69 +467,85 @@
                     <th>Description/Behaviour</th>
                 </tr>
                 <tr>
-                    <td>Waste truck</td>
+                    <td>wasteTruck</td>
                     <td>Reactive<a class="footnote" href="#notesEntities">¹</a></td>
                     <td>Generic Entity</td>
                     <td>
                         Entity that approaches the INDOOR of the service area to dump some WasteLoad.
-                        It's represented as a generic entity, since it's not part of the system,
-                        but will be later implemented as an actor (as well as the driver, to send dummy requests)
-                        for testing/simulation purposes only.
+                        It's represented as a generic entity, since it's not part of the system.
                     </td>
                 </tr>
                 <tr>
-                    <td>Truck driver</td>
+                    <td>truckDriver</td>
                     <td>Proactive<a class="footnote" href="#notesEntities">²</a></td>
                     <td>Generic Entity</td>
-                    <td>Human entity, external to the system, that drives the waste truck and sends <i>store requests</i>.</td>
+                    <td>
+                        Human entity that drives the waste truck and sends <i>store requests</i>.
+                        It's represented as a generic entity, since it's not part of the system.
+                    </td>
                 </tr>
                 <tr>
-                    <td>WasteService</td>
+                    <td>wasteService</td>
                     <td>Proactive&nbsp& Reactive</td>
                     <td>Actor</td>
-                    <td>Handles the waste trucks requests and manages the transport trolley actions.</td>
+                    <td>
+                        Handles the waste trucks requests and manages the transport trolley actions.
+                        We formalize the wasteService as an actor because we know it can receive new
+                        requests while it's still processing one, therefore we need to store those somewhere
+                        (the actor's local queue).
+                    </td>
                 </tr>
                 <tr>
-                    <td>DDR robot</td>
+                    <td>DDRrobot</td>
                     <td>Reactive</td>
-                    <td>POJO</td>
+                    <td>-</td>
                     <td>Entity which executes the commands received by the transport trolley through a special interface provided by the customer.</td>
                 </tr>
                 <tr>
-                    <td>Transport trolley</td>
+                    <td>transportTrolley</td>
                     <td>Proactive&nbsp& Reactive</td>
                     <td>Actor</td>
-                    <td>Main entity of the WasteService system, which performs the deposit actions.</td>
+                    <td>
+                        Main entity of the WasteService system, which performs the deposit actions.
+                        We formalize it as an actior because it has its own autonomous flow of control,
+                        when performing deposit actions.
+                    </td>
                 </tr>
                 <tr>
-                    <td>WasteService-<br/>StatusGUI</td>
+                    <td>wasteService-<br/>StatusGUI</td>
                     <td>Reactive</td>
                     <td>Generic Entity</td>
-                    <td>Entity that receives data and updates a GUI, used to monitor the status of the service area.</td>
+                    <td>
+                        Entity that receives data and updates a GUI, used to monitor the status of the service area.
+                    </td>
                 </tr>
                 <tr>
-                    <td>Supervisor</td>
+                    <td>supervisor</td>
                     <td>Reactive</td>
                     <td>Generic Entity</td>
-                    <td>Human entity, external to the system, that monitors the state of the service area.</td>
+                    <td>
+                        Human entity, external to the system, that monitors the state of the service area.
+                        It's represented as a generic entity, since it's not part of the system.
+                    </td>
                 </tr>
                 <tr>
-                    <td>Alarm device</td>
+                    <td>alarmDevice</td>
                     <td>Proactive</td>
-                    <td>Actor</td>
+                    <td>-</td>
                     <td>
                         Entity, which is part of a smart device, that sends a message to the
                         WasteService when it detects the presence of an obstacle.
                     </td>
                 </tr>
                 <tr>
-                    <td>Warning device</td>
+                    <td>warningDevice</td>
                     <td>Reactive</td>
-                    <td>POJO</td>
+                    <td>-</td>
                     <td>
                         Entity, which is part of a smart device, that receives information about the
                         current state of the transport trolley, and behave differently according to 
-                        its movement.
+                        its movement.<br/>
+                        Both alarmDevice and warningDevice are located on the Raspberry Pi.
                     </td>
                 </tr>
             </table>
@@ -544,7 +565,7 @@
                     <th>Description</th>
                 </tr>
                 <tr>
-                    <td>TruckLoad</td>
+                    <td>truckLoad</td>
                     <td>Floating point variable</td>
                     <td>
                         Indicates the <b>weight</b> of the waste that the truck wants <b>to dump</b>.
@@ -552,7 +573,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>WasteLoad</td>
+                    <td>wasteLoad</td>
                     <td>Floating point variable</td>
                     <td>
                         Indicates the <b>weight</b> of waste that the transport trolley is going <b>to deposit</b>.

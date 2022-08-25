@@ -60,6 +60,13 @@ em{
 	border-color: #abe876;
     color: #1632cc;
 }
+emn {
+    font-family: "Arial";
+	font-weight: bold;
+	border-style:solid;
+	border-color: #abe876;
+    color: #1632cc;
+}
 bc{
 	font-family: "Arial";
 	font-size: 90%;
