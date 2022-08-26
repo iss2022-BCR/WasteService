@@ -27,15 +27,19 @@
                 </div>
                 <a href="#General-Overview">General Overview</a>
                 <div class="sidenavSubSection">
-                    <a href="#System-Abstract">System Abstract</a>
                     <a href="#Software-Provided-by-the-Customer">Software Provided by<br/>the Customer</a>
-                    <a href="#Graphical-Exaple-Story">Graphical Exaple Story</a>
+                    <a href="#System-Abstract">System Abstract</a>
                 </div>
                 <a href="#Requirements-Formalization">Requirements<br/>Formalization</a>
                 <div class="sidenavSubSection">
                     <a href="#Entities">Entities</a>
                     <a href="#Data">Data</a>
                     <a href="#Messages">Messages</a>
+                </div>
+                <a href="#Models">Models</a>
+                <div class="sidenavSubSection">
+                    <a href="#Why-QAK">Why QAK</a>
+                    <a href="#Logical-Architecture">Logical Architecture</a>
                 </div>
             </div>
             <a href="problem_analysis.html">Problem Analysis</a>
@@ -379,58 +383,6 @@
             </table>
 
             <h2 id="General-Overview">General Overview</h2>
-            From the analysis of text provided by the customer, we are able to draft one
-            main evidence: the software system is going to comprehend at least 4 computational
-            nodes:
-            <ul>
-                <li>WasteService node</li>
-                <li>Smart device (waste truck) node</li>
-                <li>Alarm-warning node</li>
-                <li>Monitoring node</li>
-            </ul>
-            However, since the WasteService software doesn't run on the transport trolley
-            machine, it must comunicate with it. Therefore we're going to consider an ulterior one:
-            the transport trolley node, which task is to drive the robot, according to the WasteService
-            "orders".
-            <h3 id="System-Abstract">System Abstract</h3>
-            <h4 id="Computational-Nodes">Computational Nodes</h4>
-            <div class="image-container">
-                <img id="map" class="base-image" width="100%" src="../../resources/diagrams/system_abstract_v2.png"/>
-                <img id="map-legend" class="overlay-image2" width="100%" src="../../resources/diagrams/system_abstract_v2_legend.png"/>
-            </div>
-            <input type="checkbox" onclick="showOverlay(this, 'map-legend');" checked>Show the legend</input><br/>
-            
-
-            <h4 id="Service-Area">Service Area</h4>
-            Given the description and the image provided by the customer, we've modeled the service area as
-            a rectangle free from obstacles and surrounded by 4 walls, within which there are 4 relevant areas:
-            <ul>
-                <li>
-                    <b>HOME</b>, an area of the same size as the transport trolley, in which it will be placed
-                    each time the WasteService software is run;
-                </li>
-                <li>
-                    <b>INDOOR</b>, a zone along the perimeter, where the transport trolley will have to go
-                    every time the WasteService receives a StoreRequest, and from which it will pick up the waste;
-                </li>
-                <li>
-                    <b>GLASSBOX</b> and <b>PLASTICBOX</b>, an area along the perimeter, where the transport trolley 
-                    will have to deposit the respective waste.
-                </li>
-            </ul>
-            The transport trolley is considered "at HOME" when it is above the HOME area, while it is considered
-            "at INDOOR", "at GLASSBOX" or "at PLASTICBOX", when it hits the wall of that area.
-            <br/><br/>
-            <img width="100%" src="../../resources/imgs/modello_stanza_vuota_descritta.png"/>
-            
-            <h3 id="Graphical-Exaple-Story">Graphical Exaple Story</h3>
-            <highlight2>
-                - App: start -> container svuotati & robot in HOME
-            - the truck approaches the area
-            - the truck sends a request
-            - the robot goes to INDOOR and perform a pick up action of T duration
-            </highlight2>
-
             <h3 id="Software-Provided-by-the-Customer">Software Provided by the Customer</h3>
             <highlight2>The customer provides the following components:
             <ul>
@@ -456,6 +408,50 @@
             <br/>
             DDR robot + basicRobot (link)
             </highlight2>
+
+            <h3 id="System-Abstract">System Abstract</h3>
+            From the analysis of text provided by the customer, we are able to draft one
+            main evidence: the software system is going to comprehend at least 4 computational
+            nodes:
+            <ul>
+                <li>WasteService node</li>
+                <li>Smart device (waste truck) node</li>
+                <li>Alarm-warning node</li>
+                <li>Monitoring node</li>
+            </ul>
+            However, since the WasteService software doesn't run on the robot
+            machine, it must comunicate with it. Therefore we're going to consider an ulterior one:
+            the DDR robot node, which task is to drive the robot, according to the TransportTrolley
+            "orders".
+            <h4 id="Computational-Nodes">Computational Nodes</h4>
+            <div class="image-container">
+                <img id="map" class="base-image" width="100%" src="../../resources/diagrams/system_abstract_v4.png"/>
+                <img id="map-legend" class="overlay-image2" width="100%" src="../../resources/diagrams/system_abstract_v4_legend.png"/>
+            </div>
+            <input type="checkbox" onclick="showOverlay(this, 'map-legend');" checked>Show the legend</input><br/>
+            
+
+            <h4 id="Service-Area">Service Area</h4>
+            Given the description and the image provided by the customer, we've modeled the service area as
+            a rectangle free from obstacles and surrounded by 4 walls, within which there are 4 relevant areas:
+            <ul>
+                <li>
+                    <b>HOME</b>, an area of the same size as the transport trolley, in which it will be placed
+                    each time the WasteService software is run;
+                </li>
+                <li>
+                    <b>INDOOR</b>, a zone along the perimeter, where the transport trolley will have to go
+                    every time the WasteService receives a StoreRequest, and from which it will pick up the waste;
+                </li>
+                <li>
+                    <b>GLASSBOX</b> and <b>PLASTICBOX</b>, an area along the perimeter, where the transport trolley 
+                    will have to deposit the respective waste.
+                </li>
+            </ul>
+            The transport trolley is considered "at HOME" when it is above the HOME area, while it is considered
+            "at INDOOR", "at GLASSBOX" or "at PLASTICBOX", when it hits the wall of that area.
+            <br/><br/>
+            <img width="100%" src="../../resources/imgs/modello_stanza_vuota_descritta.png"/>
 
             <h2 id="Requirements-Formalization">Requirements Formalization</h2>
             <h3 id="Entities">Entities</h3>
@@ -672,7 +668,38 @@
                     </td>
                 </tr>
             </table>
-
+            <h2 id="Models">Models</h2>
+            <h3 id="Why-QAK">Why QAK</h3>
+            <b>Problem</b>: we need to fill the abstraction gap related to the concept of <i>service</i>.<br/>
+            <b>Solution</b>: <ksi>QAK meta-modeling language</ksi>.<br/>
+            <b>Reasons</b>:
+            <ul>
+                <li>
+                    It's was entirely implemented whitin our
+                    <a href="https://github.com/anatali/issLab2022">software house</a>, which makes
+                    it easier to get information and support from the actual creator of the language. 
+                </li>
+                <li>
+                    It provides a way to represent concepts related to services, such as
+                    request, response, dispatch, etc.; while other general-purpose languages
+                    would need external libraries (e.g. Java would need some kind of JAR to
+                    implement Actors), frameworks or resources to do the same.
+                </li>
+                <li>
+                    It allows you to create executable models, directly from the language,
+                    which capture the salient aspects of the requirements or problems.
+                </li>
+                <li>
+                    Our software house already has some project and components we could
+                    exploit and use.
+                </li>
+            </ul>
+            <highlight2>
+                <a href="">QAK cheatsheet</a><br/>
+                <a href="">QAK documentation</a><br/>
+                QAK is a custom (meta)modeling language documentation
+            </highlight2>
+            <h3 id="Logical-Architecture">Logical Architecture</h3>
         </div>
     </body>
 </html>
