@@ -1,1 +1,69 @@
 System demo_system_overview
+
+// MESSAGES AND EVENTS ========================================================
+// SmartDevice (truck) -> WasteService
+Request storerequest :		storerequest(WasteType, TruckLoad)
+
+// WasteService -> SmartDevice
+Reply loadaccept :			loadaccept(_)
+Reply loadrejected :		loadrejected(_)
+
+// WasteService -> WasteServiceStatusGUI
+Dispatch updategui : 		updategui(_)
+
+// WasteService -> Raspberry
+Dispatch updateled : 		updateled(_)
+
+
+// CONTEXTS ===================================================================
+Context ctx_wasteservice		ip [host="localhost" port=11800]
+Context ctx_robot				ip [host="localhost" port=11801]
+Context ctx_monitor				ip [host="localhost" port=11802]
+Context ctx_raspdevice			ip [host="localhost" port=11803]
+Context ctx_smartdevice_test	ip [host="localhost" port=11804]
+
+// ACTORS =====================================================================
+/*
+ * Test Actor:
+ * The truck driver approaches the waste service area at INDOOR, and sends a storerequest
+ */
+QActor smartdevice_test context ctx_smartdevice_test {
+	State state_init initial {
+		delay 1000
+		request wasteservice -m storerequest:storerequest(_)
+	}
+}
+
+QActor wasteservice context ctx_wasteservice {
+	
+	State state_init initial {
+		println("[WasteService] Initializing...")
+		[#
+			var currentPlastic =		0.0F
+			var currentGlass =			0.0F
+			TrolleyPosition position =  TrolleyPosition.HOME
+		#]
+		println("[WasteService] Initialization completed. Current state:\n
+					\tPlastic: $Plastic")
+	}
+	Goto state_idle
+	
+	State state_idle {
+		// wait for messages:
+	}
+	/*Transition t0	whenRequest storerequest ->	state_handle_store
+					whenEvent stopevent 	-> 	state_hande_stop
+					whenEvent resumeevent 	-> 	state_handle_resume*/
+}
+
+
+QActor transporttrolley context ctx_robot {
+	State state_init initial {
+		
+	}
+}
+QActor basicrobot context ctx_robot {
+	State state_init initial {
+		// 
+	}
+}

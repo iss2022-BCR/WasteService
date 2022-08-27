@@ -1,0 +1,236 @@
+System demo_system_overview
+
+
+
+// MESSAGES ===================================================================
+// truckdriver <-> wasteservice
+Request storerequest :		storerequest( WasteType, TruckLoad )
+Reply loadaccept :			loadaccept(_)
+Reply loadrejected :		loadrejected(_)
+
+// rasp <-> wasteservice
+Event stopevent :			stopevent(_)
+Event resumeevent :			resumeevent(_)
+Dispatch setled :			setled( STATE )
+
+// radar -> rasp ??
+Event sonardata :			sonar( Data )
+
+// trolley -> truckdriver
+Event pickupend :			pickupend(_)
+
+// trolley -> ??
+Event depositend :			depositend(_)
+
+// wasteservice -> trolley
+Dispatch loadwaiting :		loadwaiting( WasteType )
+
+// wasteservice -> monitor
+Dispatch servicestate :		servicestate(TrolleyState, TrolleyPosition, PlasticWeight, GlassWeight, LedState)
+
+// CONTEXTS ===================================================================
+Context ctx_wasteservice	ip [host="localhost" port=11800]
+Context ctx_monitor			ip [host="localhost" port=11801]
+Context ctx_alarm			ip [host="localhost" port=11802]
+Context ctx_test			ip [host="localhost" port=11803]
+
+// ACTORS =====================================================================
+QActor wasteservice context ctx_wasteservice {
+	
+	State state_init initial {
+		println("[WasteService] Initializing...")
+		[#
+			var currentPlastic =		0.0F
+			var currentGlass =			0.0F
+			TrolleyPosition position =  
+			// reset trolley position to Home
+		#]
+		println("[WasteService] Initialization completed.\n
+					Current state:")
+	}
+	Goto state_idle
+	
+	State state_idle {
+		// wait for messages:
+	}
+	Transition t0	whenRequest storerequest ->	state_handle_store
+					whenEvent stopevent 	-> 	state_hande_stop
+					whenEvent resumeevent 	-> 	state_handle_resume
+	// begin to accept requests
+
+	State state_handle_deposit {
+		// check if there is enough space
+		// yes: send accept and make the trolley do the deposit action
+		if [# utils.checkEnoughSpace(WasteType, TruckLoad) #] {
+			replyTo depositrequest with loadaccept : loadaccept()
+			
+			forward trasporttrolley -m loadwaiting : loadwaiting()
+		}
+		// no: send rejected
+		else {
+			replyTo depositrequest with loadrejected : loadrejected()
+			// trolley stai a casa porcodio che cazzo fai c'è il covid
+		}
+	}
+	Goto state_idle
+
+	// DA DEFINIRE:	il comando per settare il led forse è meglio sul raspberry
+	// 				ma bisogna capire se è meglio comunicare che il robot stia
+	//				lavorando al rasp oppure far fare tutto al WasteService
+	State state_handle_stop {
+		// utils.trolley.sendAction(INTERRUPT)
+		// utils.rasp.setLed(ON)
+	}
+	Goto state_idle
+
+	State state_handle_resume {
+		// var wasDoingTask = utils.trolley.sendAction(RESUME)
+		if [# wasDoingTask #]{
+			// utils.rasp.setLed(BLINK)
+		}else{
+			// utils.rasp.setLed(OFF)
+		}
+	}
+	Goto state_idle
+}
+
+QActor transporttrolley context ctx_wasteservice {
+	State state_init initial {
+		[#
+			var currWaste = ""	
+		#]
+	}
+	Goto state_idle
+
+	State state_idle {
+		// Just chilling...
+	}
+	Transition t0	whenEvent	emergencyinterrupt	->	state_interrupt_handle	// non sono troppo sicuro di questi due
+					whenEvent	emergencyresume		->	state_resume_handle
+					whenMsg		loadwaiting			->	state_loadwaiting_handle
+	
+	// goes to INDOOR
+	State state_loadwaiting_handle {
+		// ormai leggere il payload di un messaggio equivale a rendere il codice confuso perchè mi dimentico di aggiungere "msg."
+
+		// utils.trolley.moveTo(INDOOR)
+		[# currWaste = WasteType #]
+	}
+	Goto state_pickup
+	
+	// unload the truck
+	// (separare il movimento dal pickup mi sembrava un po' più sensato di avere tutto insieme, ma potrebbe essere una cazzata)
+	State state_pickup {
+		// utils.trolley.pickup()
+
+		emit pickupend : pickupend()
+	}
+	Goto state_deposit
+
+	// deposit the load
+	State state_deposit {
+		if [# currLoad == 'plastic' #]{
+			// utils.trolley.moveTo(PLASTIC)
+		}else{
+			// utils.trolley.moveTo(GLASS)
+		}
+
+		delay 200	// simula il tempo di deposito (?)
+
+		emit depositend : depositend()	// potrebbe servire, al momento non so per cosa però
+	}
+	Transition t1	whenTimer	1000		->	state_gohome				// prima di tornare a casa, attende nuovi depositi
+					whenMsg		loadwaiting	->	state_loadwaiting_handle	
+	
+	// better a lot of simple states than fewer more complex
+	State state_gohome {
+		// utils.trolley.moveTo(HOME)
+	}
+	Goto state_idle
+
+	// La soluzione precedente non tiene conto di eventuali richieste che arrivano durante il tragitto verso casa
+}
+
+QActor wasteservicestatusgui context ctx_monitor {
+	// initial state, reset gui status (idk what it has, so just a random func)
+	State state_init initial {
+		// utils.gui.reset()
+	}
+	Goto state_idle
+
+	// waiting for updates
+	State state_idle {
+		// Really wished I got that Netflix subscription...
+	}
+	Transition t0 	whenMsg servicestate -> state_update_handle
+
+	State state_update_handle {
+		// still no idea di come leggere i dati di un messaggio
+		// still no idea di come settare lo stato di questa maledetta gui
+		// no thoughts, only functions
+		// utils.gui.setState(TrolleyState, TrolleyPosition, PlasticWeight, GlassWeight, LedState)
+	}
+	Goto state_idle
+}
+
+QActor raspdevice context ctx_alarm {
+	// initial state, DLIMT hardcoded atm
+	State state_init initial {
+		[#
+			var DLIMT = 		30.0F
+			var LedStatus =		"OFF"
+			var stoppped = 		false	// potrebbe essere evitato controllando lo stato del Led
+										// ma lo preferisco per leggibilità del codice
+		#]
+	}
+	Goto state_idle
+
+	// waiting for data from sonar
+	State state_idle {
+		// too much chilling in here, give me a jacket...
+	}
+	Transition t0	whenEvent	sonardata	->	state_sonar_handle
+					whenMsg		setled		->	state_led_handle	// non implementato al momento, aspettando discussione
+	
+	State state_sonar_handle {
+		// non c'è scritto da nessuna parte come leggere i dati del payload
+		// potrei piangere non ironicamente
+		if [# DATA >= DLIMT && !stopped #]{		// è giusto che il sonar debba farsi il problema se il robot è fermo?
+			emit stopevent : stopevent()
+			[# stopped = true #]
+		}
+
+		if [# DATA < DLIMT && stopped #]{
+			emit resumeevent : resumeevent()
+			[# stopped = false #]
+		}
+	}
+	Goto state_idle
+}
+
+QActor testdriver context ctx_test {
+	// initialize a random load and does a request
+	State state_init initial{
+		[#
+			var WasteType = rand('plastic', 'glass')	// rand() non penso esista
+			var TruckLoad = rand(1, 15)
+		#]
+
+		request wasteservice -m storerequest : storerequest( WasteType, TruckLoad )
+	}
+	Transition t0	whenMsg	loadaccept		->	state_accept_handle
+					whenMsg	loadrejected	->	state_end				// il mio lavoro qui è finito
+	
+	State state_accept_handle {
+		// not sure to what happens here
+		// I think it just wait for a pickup action to end
+	}
+	Transition t1	whenEvent	pickupend	->	state_end
+
+	State state_end {
+		// see you, space waste truck!
+	}
+	// Goto futuro incerto, teoricamente il wastetruck qui ha finito di fare le cose utili
+}
+
+// Additional actor for test/simulation purposes only
