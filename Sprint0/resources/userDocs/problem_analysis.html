@@ -178,7 +178,7 @@
                         Indicates the <b>weight</b> of the waste that the truck wants <b>to dump</b>.
                         Since the weight is expressed in kg, we have to use decimal too.
                         <pre>
-                            val truckLoad : Float
+                            var truckLoad : Float
                         </pre>
                     </td>
                 </tr>
@@ -188,7 +188,7 @@
                     <td>
                         Indicates the <b>weight</b> of waste that the transport trolley is going <b>to deposit</b>.
                         <pre>
-                            val wasteLoad : Float
+                            var wasteLoad : Float
                         </pre>
                     </td>
                 </tr>
@@ -269,7 +269,7 @@
                     <td>
                         <b>Area within which the transport trolley can move</b>, made by N x M Boxes.
                         <pre>
-                            val serviceArea = Array(N) { IntArray(M) }
+                            var serviceArea = Array(N) { IntArray(M) }
                         </pre>
                     </td>
                 </tr>
@@ -294,7 +294,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><emn>TTState</emn></td>
+                    <td><emn>TrolleyState</emn></td>
                     <td>Enumerative</td>
                     <td>
                         All the <b>possible states</b> of the transport trolley.

@@ -15,10 +15,43 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
+		
+				// state
+				// position
+				// ...
 		return { //this:ActionBasciFsm
 				state("state_init") { //this:State
 					action { //it:State
 					}
+				}	 
+				state("state_idle") { //this:State
+					action { //it:State
+						forward("updategui", "updategui(_)" ,"wasteservicestatusgui" ) 
+					}
+				}	 
+				state("state_pickup") { //this:State
+					action { //it:State
+						forward("updategui", "updategui(_)" ,"wasteservicestatusgui" ) 
+					}
+					 transition( edgeName="goto",targetState="state_moving", cond=doswitch() )
+				}	 
+				state("state_moving") { //this:State
+					action { //it:State
+						forward("updategui", "updategui(_)" ,"wasteservicestatusgui" ) 
+					}
+					 transition( edgeName="goto",targetState="state_storing", cond=doswitch() )
+				}	 
+				state("state_storing") { //this:State
+					action { //it:State
+						forward("updategui", "updategui(_)" ,"wasteservicestatusgui" ) 
+					}
+					 transition( edgeName="goto",targetState="state_idle", cond=doswitch() )
+				}	 
+				state("state_stopped") { //this:State
+					action { //it:State
+						forward("updategui", "updategui(_)" ,"wasteservicestatusgui" ) 
+					}
+					 transition( edgeName="goto",targetState="state_idle", cond=doswitch() )
 				}	 
 			}
 		}

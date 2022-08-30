@@ -15,21 +15,57 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
+		
+				var currentPlastic: Float
+				var currentGlass: Float
+				var position: wasteservice.TrolleyPosition
 		return { //this:ActionBasciFsm
 				state("state_init") { //this:State
 					action { //it:State
+						println("$name in ${currentState.stateName} | $currentMsg")
 						println("[WasteService] Initializing...")
 						
-									var currentPlastic =		0.0F
-									var currentGlass =			0.0F
-									TrolleyPosition position =  TrolleyPosition.HOME
+									currentPlastic = 0.0f
+									currentGlass = 0.0f
+									position = wasteservice.TrolleyPosition.HOME
 						println("[WasteService] Initialization completed. Current state:
 						
-												Plastic: $Plastic")
+												Plastic: $currentPlastic KG
+						
+												Glass: $currentGlass KG
+						
+												TrolleyPosition: $position")
 					}
 					 transition( edgeName="goto",targetState="state_idle", cond=doswitch() )
 				}	 
 				state("state_idle") { //this:State
+					action { //it:State
+						println("$name in ${currentState.stateName} | $currentMsg")
+						if( checkMsgContent( Term.createTerm("storerequest(wasteType,truckLoad)"), Term.createTerm("storerequest(wasteType,truckLoad)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+						}
+					}
+					 transition(edgeName="t00",targetState="state_handle_store",cond=whenRequest("storerequest"))
+					transition(edgeName="t01",targetState="state_handle_distance",cond=whenDispatch("distance"))
+				}	 
+				state("state_handle_store") { //this:State
+					action { //it:State
+						forward("cmd", "cmd(_)" ,"basicrobot" ) 
+						forward("updategui", "updategui(_)" ,"wasteservicestatusgui" ) 
+					}
+					 transition( edgeName="goto",targetState="state_idle", cond=doswitch() )
+				}	 
+				state("state_handle_distance") { //this:State
+					action { //it:State
+						if(  payloadArg(0) >= wasteservice.Constants.DLIMT  
+						 ){}
+					}
+				}	 
+				state("state_handle_stop") { //this:State
+					action { //it:State
+					}
+				}	 
+				state("state_handle_resume") { //this:State
 					action { //it:State
 					}
 				}	 
