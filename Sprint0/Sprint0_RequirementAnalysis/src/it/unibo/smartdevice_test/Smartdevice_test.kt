@@ -18,8 +18,8 @@ class Smartdevice_test ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 		return { //this:ActionBasciFsm
 				state("state_init") { //this:State
 					action { //it:State
-						delay(1000) 
 						request("storerequest", "storerequest(_)" ,"wasteservice" )  
+						delay(1000) 
 					}
 				}	 
 			}

@@ -18,12 +18,6 @@ class Alarmdevice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name
 		return { //this:ActionBasciFsm
 				state("state_init") { //this:State
 					action { //it:State
-						println("[AlarmDevice] Initializing...")
-						
-									var distance =		0.0F
-						println("[AlarmDevice] Initialization completed. Current state:
-						
-												Distance: $distance")
 					}
 					 transition( edgeName="goto",targetState="state_alarm", cond=doswitch() )
 				}	 

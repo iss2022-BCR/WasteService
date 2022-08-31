@@ -15,43 +15,44 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
-		
-				// state
-				// position
-				// ...
 		return { //this:ActionBasciFsm
 				state("state_init") { //this:State
 					action { //it:State
+						forward("updateled", "updateled($Led)" ,"warningdevice" ) 
+						forward("updategui", "updategui(_)" ,"wasteservicestatusgui" ) 
 					}
+					 transition( edgeName="goto",targetState="state_idle", cond=doswitch() )
 				}	 
 				state("state_idle") { //this:State
 					action { //it:State
 						forward("updategui", "updategui(_)" ,"wasteservicestatusgui" ) 
+						stateTimer = TimerActor("timer_state_idle", 
+							scope, context!!, "local_tout_transporttrolley_state_idle", 5000.toLong() )
 					}
+					 transition(edgeName="t02",targetState="state_idle",cond=whenTimeout("local_tout_transporttrolley_state_idle"))   
+					transition(edgeName="t03",targetState="state_deposit",cond=whenDispatch("doDeposit"))
+					transition(edgeName="t04",targetState="state_handle_stop",cond=whenDispatch("stop"))
 				}	 
-				state("state_pickup") { //this:State
+				state("state_deposit") { //this:State
 					action { //it:State
+						println("[TransportTrolley] Performing deposit action...")
+						request("step", "step(_)" ,"basicrobot" )  
+						forward("cmd", "cmd(_)" ,"basicrobot" ) 
+						forward("updateled", "updateled($Led)" ,"warningdevice" ) 
 						forward("updategui", "updategui(_)" ,"wasteservicestatusgui" ) 
-					}
-					 transition( edgeName="goto",targetState="state_moving", cond=doswitch() )
-				}	 
-				state("state_moving") { //this:State
-					action { //it:State
-						forward("updategui", "updategui(_)" ,"wasteservicestatusgui" ) 
-					}
-					 transition( edgeName="goto",targetState="state_storing", cond=doswitch() )
-				}	 
-				state("state_storing") { //this:State
-					action { //it:State
-						forward("updategui", "updategui(_)" ,"wasteservicestatusgui" ) 
+						println("[TransportTrolley] Deposit action concluded.")
 					}
 					 transition( edgeName="goto",targetState="state_idle", cond=doswitch() )
 				}	 
-				state("state_stopped") { //this:State
+				state("state_handle_stop") { //this:State
 					action { //it:State
-						forward("updategui", "updategui(_)" ,"wasteservicestatusgui" ) 
 					}
-					 transition( edgeName="goto",targetState="state_idle", cond=doswitch() )
+					 transition(edgeName="t05",targetState="state_handle_resume",cond=whenDispatch("resume"))
+				}	 
+				state("state_handle_resume") { //this:State
+					action { //it:State
+						returnFromInterrupt(interruptedStateTransitions)
+					}
 				}	 
 			}
 		}

@@ -1,4 +1,4 @@
-System demo_system_overview
+System demo_system_overview_v0
 
 // MESSAGES AND EVENTS ========================================================
 // SmartDevice (truck) -> WasteService
@@ -8,10 +8,11 @@ Request storerequest:	storerequest(
 						)
 
 // WasteService -> SmartDevice
-Reply loadaccept:		loadaccept(_)
+Reply loadaccepted:		loadaccepted(_)
 Reply loadrejected:		loadrejected(_)
 // WasteService -> TransportTrolley
-Dispatch docmd:			docmd(_)
+Dispatch doDeposit:		doDeposit(Type, Weight)
+
 Dispatch stop:			stop(_)
 Dispatch resume:		resume(_)
 
@@ -29,7 +30,7 @@ Dispatch updategui: 	updategui(
 						)
 
 // WasteService -> Raspberry
-Dispatch updateled: 	updateled(_)
+Dispatch updateled: 	updateled(LedState)
 
 // AlarmDevice -> WasteService
 Dispatch distance:		distance(_)
@@ -45,114 +46,105 @@ Context ctx_basicrobot      	ip [host="localhost" port=11810]
 // ACTORS =====================================================================
 ExternalQActor basicrobot context ctx_basicrobot
 
-// ACTORS for ctx_wasteservice ------------------------------------------------
+// ACTORS for ctx_smartdevice_test --------------------------------------------
 /*
  * Test Actor:
  * The truck driver approaches the waste service area at INDOOR, and sends a storerequest
  */
 QActor smartdevice_test context ctx_smartdevice_test {
 	State state_init initial {
-		delay 1000
-		
-		/*[#
-			var wasteType = if(kotlin.random.Random.nextBoolean()) "glass" else "plastic"
-			var Quantity = kotlin.random.Random.nextDouble(10.0, 50.0)
-		#]*/
-		// per ora mandiamo solo una richiesta, come test
 		request wasteservice -m storerequest: storerequest(_)
+		
+		delay 1000
 	}
 }
 
+// ACTORS for ctx_wasteservice ------------------------------------------------
 QActor wasteservice context ctx_wasteservice {
-	[#
-		var currentPlastic: Float
-		var currentGlass: Float
-		var position: wasteservice.TrolleyPosition
-	#]
 	State state_init initial {
 		printCurrentMessage
 		println("[WasteService] Initializing...")
-		[#
-			currentPlastic = 0.0f
-			currentGlass = 0.0f
-			position = wasteservice.TrolleyPosition.HOME
-		#]
-		println("[WasteService] Initialization completed. Current state:\n
-					\tPlastic: $currentPlastic KG\n
-					\tGlass: $currentGlass KG\n
-					\tTrolleyPosition: $position")
 	}
 	Goto state_idle
 	
 	State state_idle {
-		printCurrentMessage
-		onMsg(storerequest: storerequest(wasteType, truckLoad)) {
-			// doCmd
-		}
-		// wait for messages:
+		// wait for messages...
 	}
 	Transition t0	whenRequest storerequest	-> state_handle_store
 					whenMsg distance 			-> state_handle_distance
 					
 	State state_handle_store {
-		forward basicrobot -m cmd : cmd(_) // TO-DO
-		forward wasteservicestatusgui -m updategui : updategui(_)
+		printCurrentMessage
+		onMsg(storerequest: storerequest(TYPE, WEIGHT)) {
+			// Check if there is enough space
+			if [# /*enough space*/ #] {
+				replyTo storerequest with loadaccepted: loadaccepted(_)
+				forward transporttrolley -m doDeposit: doDeposit(TYPE, WEIGHT)
+			}
+			else {
+				replyTo storerequest with loadrejected: loadaccepted(_)
+			}
+			forward wasteservicestatusgui -m updategui: updategui(_)
+		}
+		
+		delay 1000 // pickup time (known)
 	}
 	Goto state_idle
 	
 	State state_handle_distance {
 		if [# payloadArg(0) >= wasteservice.Constants.DLIMT #] {
 			// state_handle_stop
+			forward transporttrolley -m stop: stop(_)
 		} else {
 			// state_handle_resume
+			forward transporttrolley -m resume: resume(_)
 		}
-		// stop transport trolley
 	}
-	
-	State state_handle_stop {
-		// resume transport trolley
-	}
-	State state_handle_resume {
-		
-	}
+	Goto state_idle
 }
 
-// ACTORS for ctx_robot -------------------------------------------------------
 QActor transporttrolley context ctx_wasteservice {
-	[#
-		// state
-		// position
-		// ...
-	#]
 	State state_init initial {
-		
+		// go at home
+		forward warningdevice -m updateled: updateled($Led)
+		forward wasteservicestatusgui -m updategui: updategui(_)
 	}
+	Goto state_idle
 	
 	State state_idle {
-		forward wasteservicestatusgui -m updategui : updategui(_)
+		forward wasteservicestatusgui -m updategui: updategui(_)
 		
 	}
-	// to-do
+	Transition t0	whenTime 5000		-> state_idle
+					whenMsg doDeposit	-> state_deposit
+					whenMsg	stop 		-> state_handle_stop
 	
-	State state_pickup {
-		forward wasteservicestatusgui -m updategui : updategui(_)
-	}
-	Goto state_moving
-	
-	State state_moving {
-		forward wasteservicestatusgui -m updategui : updategui(_)
-	}
-	Goto state_storing
-	
-	State state_storing {
-		forward wasteservicestatusgui -m updategui : updategui(_)
-	}
-	Goto state_idle
-	
-	State state_stopped {
-		forward wasteservicestatusgui -m updategui : updategui(_)
+	State state_deposit {
+		println("[TransportTrolley] Performing deposit action...")
+		// TO-DO
+		// pickup 
+		// move
+		// store
+		request basicrobot -m step : step(_)
+		forward basicrobot -m cmd : cmd(_)
+		
+		forward warningdevice -m updateled: updateled($Led)
+		forward wasteservicestatusgui -m updategui: updategui(_)
+		
+		println("[TransportTrolley] Deposit action concluded.")
 	}
 	Goto state_idle
+	
+	State state_handle_stop {
+		// do something
+	}
+	Transition t0	whenMsg resume		-> state_handle_resume
+	
+	State state_handle_resume {
+		// do something
+		
+		returnFromInterrupt
+	}
 }
 
 // ACTORS for ctx_raspdevice --------------------------------------------------
@@ -161,12 +153,7 @@ QActor transporttrolley context ctx_wasteservice {
  */
 QActor alarmdevice context ctx_raspdevice {
 	State state_init initial {
-		println("[AlarmDevice] Initializing...")
-		[#
-			var distance =		0.0F
-		#]
-		println("[AlarmDevice] Initialization completed. Current state:\n
-					\tDistance: $distance")
+		
 	}
 	Goto state_alarm
 	
@@ -181,6 +168,35 @@ QActor warningdevice context ctx_raspdevice {
 	State state_init initial {
 		println("[WarningDevice] Initializing...")
 	}
+	
+	State state_update {
+		onMsg(updateled:	update_led(ARG)){
+			[# newState = ws.LedState.valueOf(payloadArg(0)) #]
+			//println("update_led(${newState})")
+			[# val stateName = when(newState) {
+						ws.LedState.OFF -> "off"
+						ws.LedState.ON -> "on"
+						ws.LedState.BLINK -> "blink_on"
+					}
+				transitNow(stateName)
+			#]
+		}
+	}
+	
+	State state_off {
+		
+	}
+	Transition t0	whenMsg updateled	-> state_update
+	
+	State state_on {
+		
+	}
+	Transition t0	whenMsg updateled	-> state_update
+	
+	State state_blinking {
+		
+	}
+	Transition t0	whenMsg updateled	-> state_update
 }
 
 // ACTORS for ctx_monitor -----------------------------------------------------

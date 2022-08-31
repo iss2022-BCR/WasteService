@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<!-- saved from url=(0158)file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#startup-versione-valastro-marchegiani -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/">
+
+    <title>QActor (meta)model — iss22 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="./QActor (meta)model_files/pygments.css">
+    <link rel="stylesheet" type="text/css" href="./QActor (meta)model_files/alabaster.css">
+    <script data-url_root="./" id="documentation_options" src="./QActor (meta)model_files/documentation_options.js.download"></script>
+    <script src="./QActor (meta)model_files/jquery.js.download"></script>
+    <script src="./QActor (meta)model_files/underscore.js.download"></script>
+    <script src="./QActor (meta)model_files/doctools.js.download"></script>
+    <link rel="index" title="Index" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/genindex.html">
+    <link rel="search" title="Search" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/search.html">
+    <link rel="next" title="BasicRobot22" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/BasicRobot22.html">
+    <link rel="prev" title="Oltre TCP" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/OltreTcp.html">
+   
+  <link rel="stylesheet" href="./QActor (meta)model_files/custom.css" type="text/css">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="qactor-meta-model">
+<h1>QActor (meta)model<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#qactor-meta-model" title="Permalink to this headline">¶</a></h1>
+<p>QActor è il nome dato al linguaggio personalizzato ispirato al <a class="reference external" href="https://doc.akka.io//docs/akka/current/typed/guide/actors-motivation.html">Akka actor model</a> basato,
+a sua volta, sul lavoro di <a class="reference external" href="https://en.wikipedia.org/wiki/Carl_Hewitt#Actor_model">Hewitt</a> al MIT .</p>
+<p>La <strong>Q/q</strong>  nella parola <em>QActor</em>, significa “quasi” poiché il linguaggio non è inteso come un linguaggio
+di programmazione generico, ma piuttosto un linguaggio di modellazione per l’analisi e il progetto di applicazioni
+distribuiti e per la definizione di modelli di comportamento di attori
+che si comportano come Finite State Machines.</p>
+<p>L’aggiunta di <strong>k</strong> al prefisso (es <code class="docutils literal notranslate"><span class="pre">qak</span></code>, <code class="docutils literal notranslate"><span class="pre">Qak</span></code>) significa che stiamo facendo riferimento alla versione
+implementata in <a class="reference external" href="https://kotlinlang.org/">Kotlin</a> (), senza utilizzare alcun supporto Akka (come fatto nella prima versione del linguaggio).</p>
+<p><span class="remark">Introduzione all’uso di Kotlin</span></p>
+<ul class="simple">
+<li><p>si veda anche <a class="reference external" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.kotlinIntro/userDocs/LabIntroductionToKotlin.html">kotlinUnibo</a></p></li>
+</ul>
+<p>Il linguaggio <code class="docutils literal notranslate"><span class="pre">Qak</span></code> è definito utilizzando il framework <a class="reference external" href="https://www.eclipse.org/Xtext/:https://www.eclipse.org/Xtext/">Xtext</a>  e si basa su un nucleo di concetti
+che compongono il <span class="blue">metamodello QActor</span> . Questi concetti possono essere così riassunti:</p>
+<ul>
+<li><p>A <span class="blue">QA-System</span> is a collection of active entities (<em>QActors</em>) each working in a
+computational node (<span class="blue">Context</span>).</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="./QActor (meta)model_files/qacontexts.png"><img alt="_images/qacontexts.png" class="align-center" src="./QActor (meta)model_files/qacontexts.png" style="width: 40%;"></a>
+</div></blockquote>
+</li>
+<li><p><span class="blue">QActors interact</span> by using <span class="blue">Messages</span> of different types (<em>Dispatch, Request,…</em>) and <em>Events</em>.</p></li>
+<li><p>A QActor can deliver information to another QActor (both local or remote) by using a
+proper operations or by emitting events.</p></li>
+<li><p>High-level send-operations do not use low-level references, but only <strong>actor-names</strong>.</p></li>
+<li><p>Each context owns a set QActors that can interact with components (actors or ‘aliens’) working on
+a different node, by means of the following protocols:</p>
+<ul class="simple">
+<li><p><span class="blue">TCP</span> : on the port specified by the Context</p></li>
+<li><p><span class="blue">CoAP</span> : on the port specified by the Context</p></li>
+<li><p><span class="blue">MQTT</span> : using the broker specified in the <code class="docutils literal notranslate"><span class="pre">mqttBroker</span></code> declaration</p></li>
+</ul>
+</li>
+</ul>
+<section id="the-qactor-software-factory">
+<h2>The QActor software factory<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#the-qactor-software-factory" title="Permalink to this headline">¶</a></h2>
+<p>The mapping between the high-level communication actions and a specific protocol
+is done by the QActor-infrastructure with the help of the <em>Eclipse QActor software factory</em>.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="./QActor (meta)model_files/qakSoftwareFactory.png"><img alt="_images/qakSoftwareFactory.png" class="align-center" src="./QActor (meta)model_files/qakSoftwareFactory.png" style="width: 70%;"></a>
+</div></blockquote>
+<p>The metamodel is supported by the <span class="blue">qak-infrastructure</span> defined in the <span class="blue">project
+it.unibo.qakactor</span> and deployed in <strong>it.unibo.qakactor-2.7.jar</strong>.</p>
+<section id="unibo-qakactor22-2-8-jar">
+<h3>unibo.qakactor22-2.8.jar<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#unibo-qakactor22-2-8-jar" title="Permalink to this headline">¶</a></h3>
+<p>The library of the <cite>qak-infrastructure</cite> has been updated to  <strong>unibo.qakactor22-2.8.jar</strong> in June 2002. This new library
+exploits the communication support <code class="docutils literal notranslate"><span class="pre">unibo.comm22-1.1.jar</span></code> built in the project  <span class="blue">it.unibo.comm22</span>,
+that implements <a class="reference internal" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/RadarSystemProdottiAnalisi.html#interaction2021"><span class="std std-ref">L’interfaccia Interaction2021</span></a>  using several protocolos (TCP, UDP, CoAP, … )</p>
+</section>
+<section id="system-description">
+<h3>System description<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#system-description" title="Permalink to this headline">¶</a></h3>
+<p>Given a system named <code class="docutils literal notranslate"><span class="pre">xxx</span></code>, the Qak Software Factory generates a file <code class="docutils literal notranslate"><span class="pre">xxx.pl</span></code> that includes a description (written in Prolog) of
+the system.
+Moreover, it generates a utility file <code class="docutils literal notranslate"><span class="pre">sysRules.pl</span></code> (see <a class="reference external" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/_static/LabQakPrologUsage2021.html">Uso di Prolog</a>) that is used by the QActor-infrastructure
+when it needs knowledge about the system.</p>
+</section>
+<section id="actorbasic-kt">
+<h3>ActorBasic.kt<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#actorbasic-kt" title="Permalink to this headline">¶</a></h3>
+<p><span class="blue">ActorBasic.kt</span> is an abstract class that implements the concept of qakactor as
+a <strong>message-driven</strong> entity that handles messages by delegating the work to the abstract
+the method <em>actorBody</em>.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="./QActor (meta)model_files/ActorBasic.png"><img alt="_images/ActorBasic.png" class="align-center" src="./QActor (meta)model_files/ActorBasic.png" style="width: 50%;"></a>
+</div></blockquote>
+<section id="kactor">
+<h4>kactor<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#kactor" title="Permalink to this headline">¶</a></h4>
+<p><em>ActorBasic.kt</em> includes a Kotlin actor (let us name it as <strong>kactor</strong>) associated to a <span class="blue">dispatcher</span>
+defined (see <a class="reference external" href="https://kotlinlang.org/docs/coroutine-context-and-dispatchers.html">Coroutine context and dispatchers</a>)
+according two arguments (<strong>confined</strong> and <strong>iobound</strong>) given in the constructor:</p>
+<ul class="simple">
+<li><p>If <strong>confined=true</strong>, the actor is activated with a <em>kotlinx.coroutines.newSingleThreadContext</em>
+that makes use of just 1 Thread.</p></li>
+<li><p>If <strong>confined=false and iobound=true</strong>, the actor is activated with a
+<em>kotlinx.coroutines.newFixedThreadPoolContext</em> with 64 Threads.</p></li>
+<li><p>If <strong>confined=false and iobound=false</strong>, the <span class="blue">default</span> of type
+<em>kotlinx.coroutines.newFixedThreadPoolContext</em> is selected, that handles as many Threads
+as the number of CPUs available.</p></li>
+</ul>
+<p>The class <em>ActorBasic.kt</em> can be used to define applicative actors working in <strong>message-driven</strong> way:</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="./QActor (meta)model_files/ApplActorBasic.png"><img alt="_images/ApplActorBasic.png" class="align-center" src="./QActor (meta)model_files/ApplActorBasic.png" style="width: 50%;"></a>
+</div></blockquote>
+</section>
+</section>
+<section id="actorbasicfsm-kt">
+<h3>ActorBasicFsm.kt<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#actorbasicfsm-kt" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p><span class="blue">ActorBasicFsm.kt</span> is an abstract class that <strong>extends ActorBasic.kt</strong> by defining
+the method <em>actorBody</em>, so to implement the behavior of a FSM.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="./QActor (meta)model_files/ApplActorBasicFsm.png"><img alt="_images/ApplActorBasicFsm.png" class="align-center" src="./QActor (meta)model_files/ApplActorBasicFsm.png" style="width: 65%;"></a>
+</div></blockquote>
+</li>
+</ul>
+<section id="fsmwork">
+<h4>fsmwork<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#fsmwork" title="Permalink to this headline">¶</a></h4>
+<p>This class <em>ActorBasicFsm.kt</em> is designed according the same principles exposed in
+<a class="reference external" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/_static/FSMKotlin.html">FSMKotlin</a>.
+The abstract methid actorBody of <a class="reference internal" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#actorbasic-kt"><span class="std std-ref">ActorBasic.kt</span></a> overcomes the message-driven policy, by calling
+an internal method <span class="blue">fsmwork</span> that implements the behavior of a FSM <cite>Moore machine</cite>, as described later, in
+a:ref:<cite>Message handling rules</cite>.</p>
+</section>
+</section>
+</section>
+<section id="messages-and-events">
+<h2>Messages and Events<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#messages-and-events" title="Permalink to this headline">¶</a></h2>
+<p>In the QActor metamodel:</p>
+<ul>
+<li><p>a <span class="blue">message</span> is intended as information sent in <strong>asynchronous way</strong>
+by some source to some specific destination.</p>
+<p>For <span class="blue">asynchronous</span> transmission, we intend that the messages can be ‘buffered’ by the infrastructure,
+while the ‘unbuffered’ transmission is said to be <span class="blue">synchronous</span>.</p>
+</li>
+<li><p>an <span class="blue">event</span> is intended as information emitted by some source without any explicit destination.</p>
+<p>Events whose identifier start with the prefix <strong>local_</strong> are <span class="blue">not propagated outside</span> the context in
+which they are generated.</p>
+</li>
+</ul>
+<section id="applmessage-kt">
+<h3>ApplMessage.kt<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#applmessage-kt" title="Permalink to this headline">¶</a></h3>
+<p>A  message has type <strong>ApplMessage.kt</strong> (see <a class="reference internal" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/ContestiContenitori.html#la-classe-applmessage"><span class="std std-ref">ApplMessage</span></a>), that requires the <a class="reference external" href="http://amsacta.unibo.it/5450/7/tuprolog-guide.pdf">tuProlog</a> library.
+Some help in building and sending messages is given by the class: <strong>MsgUtil.kt</strong>.</p>
+</section>
+<section id="message-handling-rules">
+<h3>Message handling rules<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#message-handling-rules" title="Permalink to this headline">¶</a></h3>
+<p>With reference to a user-defined QAkactor <code class="docutils literal notranslate"><span class="pre">qa</span></code> of type <code class="docutils literal notranslate"><span class="pre">ActorBasicFsm</span></code>, let us call:</p>
+<ul class="simple">
+<li><p><strong>currentState</strong>: the name the current state of <code class="docutils literal notranslate"><span class="pre">qa</span></code>;</p></li>
+<li><p><strong>currentMsg</strong>: the msgId of the message that qa is processing;</p></li>
+<li><p><strong>kaq</strong>: the message-queue of the Kotlin <a class="reference internal" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#kactor"><span class="std std-ref">kactor</span></a>;</p></li>
+<li><p><strong>msgQueueStore</strong> the message-queue local ActorBasicFsm ;</p></li>
+<li><p><strong>tset</strong>: the set of messages mentioned in the transition related to the currentState.</p></li>
+</ul>
+<p>The method <a class="reference internal" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#fsmwork"><span class="std std-ref">fsmwork</span></a> is called in a message-driven way  by the <a class="reference internal" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#kactor"><span class="std std-ref">kactor</span></a> loop ,
+while <code class="docutils literal notranslate"><span class="pre">qa</span></code>  is in <strong>currentState</strong>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">suspend</span> <span class="n">fun</span> <span class="n">fsmwork</span><span class="p">(</span><span class="n">applMsg</span><span class="p">:</span> <span class="n">ApplMessage</span><span class="p">)</span> <span class="p">{</span>
+        <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Its behavior is:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">qa</span></code> checks for a transition related to <code class="docutils literal notranslate"><span class="pre">applMsg</span></code>:</p>
+<ul class="simple">
+<li><p>if it is possible to fire a transition, set <code class="docutils literal notranslate"><span class="pre">currentMsg=applMsg</span></code>, change the <code class="docutils literal notranslate"><span class="pre">currentState</span></code> and goto 2)</p></li>
+<li><p>if no transition can be fired and <code class="docutils literal notranslate"><span class="pre">discardMessages=false</span></code>, store the message in the <code class="docutils literal notranslate"><span class="pre">msgQueueStore</span></code>;</p></li>
+</ul>
+</li>
+<li><p>qa executes the actions of a state.
+When the state actions terminate, if there is an empty-move goto 3) else goto 4);</p></li>
+<li><p>qa executes a empty-move:
+<code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">currentMsg=NoMsg=noMsg</span></code> , change the <code class="docutils literal notranslate"><span class="pre">currentState</span></code>, and goto 2)</p></li>
+<li><p>qa looks at the <code class="docutils literal notranslate"><span class="pre">msgQueueStore</span></code> and</p></li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><p>if a message <code class="docutils literal notranslate"><span class="pre">ms</span></code> is found in <code class="docutils literal notranslate"><span class="pre">tset</span></code> : call <code class="docutils literal notranslate"><span class="pre">fsmwork(ms)</span></code>;</p></li>
+<li><p>if no message is found : terminate <code class="docutils literal notranslate"><span class="pre">fsmwork</span></code> (the next call will be perfomed by the <a class="reference internal" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#kactor"><span class="std std-ref">kactor</span></a> loop );</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="message-delivery-rules">
+<h3>Message delivery rules<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#message-delivery-rules" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>A message sent from actor <code class="docutils literal notranslate"><span class="pre">qa</span></code> to a local actor <code class="docutils literal notranslate"><span class="pre">qb</span></code>, is inserted in the <code class="docutils literal notranslate"><span class="pre">kaq</span></code> of the <a class="reference internal" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#kactor"><span class="std std-ref">kactor</span></a> of <code class="docutils literal notranslate"><span class="pre">qb</span></code>.</p></li>
+<li><p>An event raised in some Context, is delivered to all the other known Contexts of the system and to all the ‘alien’ connected via TCP or via MQTT.</p></li>
+</ul>
+<p>When a message sent from <code class="docutils literal notranslate"><span class="pre">qa</span></code> to actor <code class="docutils literal notranslate"><span class="pre">qb</span></code> working in a different context (on a different node),
+the Qak-Infrastructure attempts to find the <em>ipaddress-port</em> of the receiver context:</p>
+<ul class="simple">
+<li><p>If information about the context of <code class="docutils literal notranslate"><span class="pre">qb</span></code> is found and a MQTT broker is specified in the model,
+the message is sent via MQTT; otherwise it is sent via CoAP.</p></li>
+<li><p>If no information about the context of <code class="docutils literal notranslate"><span class="pre">qb</span></code> is found, the message to deliver should be a <em>reply</em>
+to a request made by some ‘alien’.
+The system first checks for the existence of an active TCP connection with the receiver
+(the ‘alien’ made a request via TCP).
+In such a connection is found, the message is sent over it.
+Otherwise, an attempt is made to send the <em>reply</em> via MQTT, hoping that the ‘alien’ was MQTT-connected.</p></li>
+</ul>
+</section>
+<section id="event-propagation-rules">
+<h3>Event propagation rules<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#event-propagation-rules" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li><p>The event emitted by a QActor that belongs to a qak-system (<code class="docutils literal notranslate"><span class="pre">qasys</span></code>) is propagated
+via Context to all the other QActor of <code class="docutils literal notranslate"><span class="pre">qasys</span></code>.</p></li>
+<li><p>A standalone QActor  that does not use MQTT, does not propagate events to QActors that use it,
+neither can perceive events emitted by them.</p></li>
+<li><p>An event emiited by an ‘alien’ component connected to a QActor via TCP will be perceived by
+the connected QActor only (i.e. it is not propagated to the other Contexts of the system).</p></li>
+<li><p>The event that reaches a Context (since propagated from another Contexts or emitted by an ‘alien’)
+is propagated only to the actors internal to that Context.</p></li>
+<li><p>The event emitted by a QActor of a <code class="docutils literal notranslate"><span class="pre">qasys</span></code> that uses MQTT are propagated on the specified topic.</p></li>
+</ol>
+</section>
+</section>
+<section id="high-level-message-operations">
+<h2>High-level message-operations<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#high-level-message-operations" title="Permalink to this headline">¶</a></h2>
+<p>The methods that an application designer can use to deliver messages are:</p>
+<ul class="simple">
+<li><p><span class="blue">forward</span> for a Dispatch</p></li>
+<li><p><span class="blue">request</span>, <span class="blue">replyTo</span>, <span class="blue">askFor</span> for a Request</p></li>
+<li><p><span class="blue">emit</span> for an Event</p></li>
+</ul>
+<p><span class="remark">The QActor metamodel does not define any explicit receive operation.</span></p>
+<p>In fact, the behavior of a QActor is modeled as a <a class="reference external" href="https://it.wikipedia.org/wiki/Macchina_di_Moore">Moore machine</a> in which state-transitions
+are triggered by messaged and events.</p>
+<section id="transitions-and-guards-in-qak">
+<h3>Transitions and guards in Qak<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#transitions-and-guards-in-qak" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>A <span class="blue">Transition</span> is ‘fired’ if the related condition (<code class="docutils literal notranslate"><span class="pre">whenTime,</span> <span class="pre">whenEvent,</span> <span class="pre">whenMsg,</span> <span class="pre">...</span></code>)
+together with the related guard (if any) is true.</p></li>
+<li><p>A <span class="blue">guard</span> is expressed as a condition written in user-defined Kotlin code.</p></li>
+</ul>
+</section>
+</section>
+<section id="startup-versione-valastro-marchegiani">
+<h2>StartUp (versione Valastro-Marchegiani)<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#startup-versione-valastro-marchegiani" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p>Scarica gradle (versione usata qui: <span class="blue">Gradle 7.4.2</span>)</p></li>
+<li><p>Scarica <a class="reference external" href="https://www.eclipse.org/Xtext/download.html">Eclipse Xtext</a>   (versione usata qui: <span class="blue">Eclipse  2022-03 (4.23.0)</span>)</p>
+<ul class="simple">
+<li><p>Java compiler compliance level:  <span class="blue">11</span></p></li>
+<li><p>Installed JRE: <span class="blue">jdk 11.08 (default)</span></p></li>
+</ul>
+</li>
+<li><p>Copia nella directory <strong>dropins</strong> di Eclipse i file che costituiscono il supporto al metamodello-qak:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><span class="blue">it.unibo.Qactork_1.2.5.jar</span></p></li>
+<li><p><span class="blue">it.unibo.Qactork.ui_1.2.5.jar</span></p></li>
+<li><p><span class="blue">it.unibo.Qactork.ide_1.2.5.jar</span></p></li>
+</ul>
+</div></blockquote>
+</li>
+</ol>
+<section id="creazione-di-un-nuovo-progetto">
+<h3>Creazione di un nuovo progetto<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#creazione-di-un-nuovo-progetto" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic">
+<li><p>In <strong>un’area di lavoro vuota</strong>, crea un nuovo progetto Java  utilizzando</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gradle</span> <span class="n">init</span>
+   <span class="n">selezionare</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="n">default</span>
+</pre></div>
+</div>
+</li>
+<li><p>Copiare nell’area di lavoro la directory <span class="blue">unibolibs</span> con le librerie</p></li>
+<li><p>Importare il progetto in Eclipse come <strong>Existing Gradle project</strong></p></li>
+<li><p>Aggiungere la <strong>natura Java</strong> al progetto</p></li>
+<li><p>Aggiungere due <strong>source folder</strong>: di nome <span class="blue">src</span> e di nome  <span class="blue">resources</span></p></li>
+<li><p>Creare in <strong>src</strong> un file <span class="blue">qak</span> e aggiungere la <strong>natura Xtext</strong></p>
+<p>A questo punto Eclipse dovrebbe presentare una finestra come la seguente:</p>
+<a class="reference internal image-reference" href="./QActor (meta)model_files/qakStarting.png"><img alt="_images/qakStarting.png" class="align-center" src="./QActor (meta)model_files/qakStarting.png" style="width: 50%;"></a>
+</li>
+<li><p>Scrivere il contenuto del file <strong>qak</strong> e salvare. I plugin <em>Qactork</em>:</p>
+<ul class="simple">
+<li><p>creano il file  <a class="reference external" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/_static/build2022.gradle">build2022.gradle</a></p></li>
+<li><p>creano i files <code class="docutils literal notranslate"><span class="pre">sysRules.pl</span></code> e <code class="docutils literal notranslate"><span class="pre">sysXXX.pl</span></code> essendo <code class="docutils literal notranslate"><span class="pre">sysXXX</span></code> il nome del <strong>System</strong> nel modello</p></li>
+</ul>
+</li>
+<li><p>Copiare il contenuto del  file <a class="reference external" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/_static/build2022.gradle">build2022.gradle</a> nel file <span class="blue">build.gradle</span>
+( o eliminare questo e ridenomicare il precedente. Il file <a class="reference external" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/_static/build2022.gradle">build2022.gradle</a> verrà rigenerato al prossimo
+salvataggio del modello)</p></li>
+<li><p>Inserire codice Kotlin di utilità usato nel modello entro la directory <span class="blue">resources</span></p></li>
+<li><p>Eseguire:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gradlew</span> <span class="n">run</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>Ricordamo che:</p>
+<blockquote>
+<div><p><span class="remark">Un file qak include la definizione (testuale) di un modello</span></p>
+<ul class="simple">
+<li><p>che definisce <span class="blue">struttura, interazione e comportamento</span> di un sistema distribuito.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="qak-specification-template">
+<h3>Qak specification template<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#qak-specification-template" title="Permalink to this headline">¶</a></h3>
+<p>Un modello Qak viene definito organizzando la sua descrizione in base al seguente template:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">System</span> <span class="o">&lt;</span> <span class="n">NAME</span> <span class="n">OF</span> <span class="n">THE</span> <span class="n">SYSTEM</span> <span class="o">&gt;</span>
+<span class="o">//</span><span class="n">mqttBroker</span> <span class="s2">"broker.hivemq.com"</span> <span class="p">:</span> <span class="mi">1883</span> <span class="o">//</span><span class="n">OPTIONAL</span>
+
+<span class="o">//</span><span class="n">DECLARATION</span> <span class="n">OF</span> <span class="n">MESSAGES</span> <span class="n">AND</span> <span class="n">EVENTS</span>
+
+<span class="o">//</span><span class="n">DECLARATION</span> <span class="n">OF</span> <span class="n">CONTEXTS</span>
+<span class="n">Context</span> <span class="n">CTXNAME</span> <span class="n">ip</span> <span class="p">[</span><span class="n">host</span><span class="o">=</span><span class="s2">"HOSTIP"</span> <span class="n">port</span><span class="o">=</span><span class="n">PORTNUM</span><span class="p">]</span>
+
+<span class="o">//</span><span class="n">DECLARATION</span> <span class="n">OF</span> <span class="n">ACTORS</span>
+</pre></div>
+</div>
+</section>
+<section id="the-qak-syntax">
+<h3>The Qak syntax<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#the-qak-syntax" title="Permalink to this headline">¶</a></h3>
+<p>The syntax of the language is defined in <a class="reference external" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/_static/Qactork.xtext">Qak syntax</a>) using the <a class="reference external" href="https://www.eclipse.org/Xtext/:https://www.eclipse.org/Xtext/">Xtext</a> framework. Riportiamo alcuni esempi.</p>
+<section id="dichiarazione-dei-messaggi">
+<h4>Dichiarazione dei messaggi<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#dichiarazione-dei-messaggi" title="Permalink to this headline">¶</a></h4>
+<p>I diversi tipi di messaggio sono dichiarati usando una <em>sintassi</em> Prolog-like (si veda <a class="reference external" href="http://amsacta.unibo.it/5450/7/tuprolog-guide.pdf">tuProlog</a> ):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Event</span><span class="p">:</span>    <span class="s2">"Event"</span>     <span class="n">name</span><span class="o">=</span><span class="n">ID</span>  <span class="s2">":"</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">PHead</span>  <span class="p">;</span>
+<span class="n">Dispatch</span><span class="p">:</span> <span class="s2">"Dispatch"</span>  <span class="n">name</span><span class="o">=</span><span class="n">ID</span>  <span class="s2">":"</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">PHead</span>  <span class="p">;</span>
+<span class="n">Request</span><span class="p">:</span>  <span class="s2">"Request"</span>   <span class="n">name</span><span class="o">=</span><span class="n">ID</span>  <span class="s2">":"</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">PHead</span>  <span class="p">;</span>
+<span class="n">Reply</span><span class="p">:</span>    <span class="s2">"Reply"</span>     <span class="n">name</span><span class="o">=</span><span class="n">ID</span>  <span class="s2">":"</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">PHead</span>  <span class="p">;</span>
+
+<span class="n">PHead</span> <span class="p">:</span>       <span class="n">PAtom</span> <span class="o">|</span> <span class="n">PStruct</span> <span class="o">|</span> <span class="n">PStructRef</span> <span class="p">;</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+</section>
+<section id="operazioni-di-invio-messaggi">
+<h4>Operazioni di invio-messaggi<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#operazioni-di-invio-messaggi" title="Permalink to this headline">¶</a></h4>
+<p>Le operazioni di invio messaggio sono le seguenti:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Forward</span>   <span class="p">:</span> <span class="s2">"forward"</span> <span class="n">dest</span><span class="o">=</span><span class="p">[</span><span class="n">QActorDeclaration</span><span class="p">]</span>
+                      <span class="s2">"-m"</span> <span class="n">msgref</span><span class="o">=</span><span class="p">[</span><span class="n">Dispatch</span><span class="p">]</span> <span class="s2">":"</span> <span class="n">val</span> <span class="o">=</span> <span class="n">PHead</span> <span class="p">;</span>
+<span class="n">Emit</span>      <span class="p">:</span> <span class="s2">"emit"</span> <span class="n">msgref</span><span class="o">=</span><span class="p">[</span><span class="n">Event</span><span class="p">]</span> <span class="s2">":"</span> <span class="n">val</span> <span class="o">=</span> <span class="n">PHead</span>     <span class="p">;</span>
+<span class="n">Demand</span>    <span class="p">:</span> <span class="s2">"request"</span> <span class="n">dest</span><span class="o">=</span><span class="p">[</span><span class="n">QActorDeclaration</span><span class="p">]</span>
+                      <span class="s2">"-m"</span> <span class="n">msgref</span><span class="o">=</span><span class="p">[</span><span class="n">Request</span><span class="p">]</span>  <span class="s2">":"</span> <span class="n">val</span> <span class="o">=</span> <span class="n">PHead</span> <span class="p">;</span>
+<span class="n">Answer</span>    <span class="p">:</span> <span class="s2">"replyTo"</span> <span class="n">reqref</span><span class="o">=</span><span class="p">[</span><span class="n">Request</span><span class="p">]</span>
+                      <span class="s2">"with"</span>    <span class="n">msgref</span><span class="o">=</span><span class="p">[</span><span class="n">Reply</span><span class="p">]</span>   <span class="s2">":"</span> <span class="n">val</span> <span class="o">=</span> <span class="n">PHead</span> <span class="p">;</span>
+<span class="n">ReplyReq</span>  <span class="p">:</span> <span class="s2">"askFor"</span>  <span class="n">reqref</span><span class="o">=</span><span class="p">[</span><span class="n">Request</span><span class="p">]</span>
+                      <span class="s2">"request"</span> <span class="n">msgref</span><span class="o">=</span><span class="p">[</span><span class="n">Request</span><span class="p">]</span> <span class="s2">":"</span> <span class="n">val</span> <span class="o">=</span> <span class="n">PHead</span> <span class="p">;</span>
+</pre></div>
+</div>
+<p>Vediamo ora alcuni esempi di uso del linguaggio.</p>
+<p>Progetto: <strong>unibo.introQak22</strong> code: <em>src/….</em></p>
+</section>
+</section>
+<section id="qak-primi-esempi">
+<h3>QAk: primi esempi<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#qak-primi-esempi" title="Permalink to this headline">¶</a></h3>
+<p>Il linguaggio Qak mira a esprimere modelli eseguibili, ma
+<strong>non è completo dal punto di vista computazionale</strong>.  Dunque, parte del comportamento potrebbe talvolta
+dover essere espresso direttamente in Kotlin. Ma occorre non  esagerare l’uso di una tale possibilità.</p>
+<section id="demonottodo-qak">
+<h4>demonottodo.qak<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#demonottodo-qak" title="Permalink to this headline">¶</a></h4>
+<p>Questo esempio definisce un attore che, una volta attivato, calcola il numero di Fibonacci di posizione <code class="docutils literal notranslate"><span class="pre">7</span></code>
+usando codice Kotlin.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">System</span> <span class="n">demonottodo</span>
+<span class="n">Context</span> <span class="n">ctxdemonottodo</span> <span class="n">ip</span> <span class="p">[</span><span class="n">host</span><span class="o">=</span><span class="s2">"localhost"</span> <span class="n">port</span><span class="o">=</span><span class="mi">8055</span><span class="p">]</span>
+
+<span class="n">QActor</span> <span class="n">demonottodo</span> <span class="n">context</span> <span class="n">ctxdemonottodo</span><span class="p">{</span>
+  <span class="n">State</span> <span class="n">s0</span> <span class="n">initial</span> <span class="p">{</span>
+  <span class="p">[</span><span class="c1">#</span>
+    <span class="n">fun</span> <span class="n">fibo</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">:</span> <span class="n">Int</span> <span class="p">{</span>
+      <span class="k">if</span><span class="p">(</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="p">)</span> <span class="n">throw</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">"fibo argument must be &gt;0"</span><span class="p">)</span>
+      <span class="k">if</span><span class="p">(</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">n</span><span class="o">==</span><span class="mi">1</span> <span class="p">)</span> <span class="k">return</span> <span class="n">n</span>
+      <span class="k">return</span> <span class="n">fibo</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="n">fibo</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="n">println</span><span class="p">(</span><span class="s2">"---------------------------------------------------- "</span><span class="p">)</span>
+    <span class="n">println</span><span class="p">(</span><span class="s2">"This actor definies its activity completelyin Kotlin"</span><span class="p">)</span>
+    <span class="n">val</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">7</span>
+    <span class="n">val</span> <span class="n">v</span> <span class="o">=</span> <span class="n">fibo</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">println</span><span class="p">(</span><span class="s2">"fibo($n)=$v"</span><span class="p">)</span>
+    <span class="n">println</span><span class="p">(</span><span class="s2">"----------------------------------------------------- "</span><span class="p">)</span>
+  <span class="c1">#]</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Quando questo file viene salvato, la Qak Software Factory genera il file <code class="docutils literal notranslate"><span class="pre">demonottodo.pl</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">context</span><span class="p">(</span><span class="n">ctxdemonottodo</span><span class="p">,</span> <span class="s2">"localhost"</span><span class="p">,</span>  <span class="s2">"TCP"</span><span class="p">,</span> <span class="s2">"8055"</span><span class="p">)</span><span class="o">.</span>
+<span class="n">qactor</span><span class="p">(</span> <span class="n">demonottodo</span><span class="p">,</span> <span class="n">ctxdemonottodo</span><span class="p">,</span> <span class="s2">"it.unibo.demonottodo.Demonottodo"</span><span class="p">)</span><span class="o">.</span>
+</pre></div>
+</div>
+</section>
+<section id="demobetter-qak">
+<h4>demobetter.qak<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#demobetter-qak" title="Permalink to this headline">¶</a></h4>
+<p>Per limitare l’uso diretto di codice Kotlin, è opportuno introdurre classi di utilità e invocarne i metodi.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">System</span> <span class="n">demobetter</span>
+<span class="n">Context</span> <span class="n">ctxdemobetter</span> <span class="n">ip</span> <span class="p">[</span><span class="n">host</span><span class="o">=</span><span class="s2">"localhost"</span> <span class="n">port</span><span class="o">=</span><span class="mi">8055</span><span class="p">]</span>
+
+<span class="n">QActor</span> <span class="n">demobetter</span> <span class="n">context</span> <span class="n">ctxdemobetter</span><span class="p">{</span>
+  <span class="p">[</span><span class="c1"># var n = 7  #] //Global variable</span>
+  <span class="n">State</span> <span class="n">s0</span> <span class="n">initial</span> <span class="p">{</span>
+    <span class="p">[</span><span class="c1">#  ut.outMsg( "fibo($n)=" + ut.fibo(n))    #]</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>La utility <strong>ut</strong> potrebbe essere codice scritto in Java o in Kotlin. Se viene definita nel progetto in corso (ad esempio
+in una directory <span class="blue">resource</span>) è bene sia scritta in Kotlin. Ad esempio:</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="kd">object</span> <span class="nc">ut</span> <span class="p">{</span>
+  <span class="kd">fun</span> <span class="nf">fibo</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span> <span class="p">:</span> <span class="kt">Int</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="m">0</span> <span class="p">)</span> <span class="k">throw</span> <span class="n">Exception</span><span class="p">(</span><span class="s">"fibo argument must be &gt;0"</span><span class="p">)</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">n</span> <span class="o">==</span> <span class="m">0</span> <span class="o">||</span> <span class="n">n</span><span class="o">==</span><span class="m">1</span> <span class="p">)</span> <span class="k">return</span> <span class="n">n</span>
+    <span class="kd">var</span> <span class="nv">v</span> <span class="o">=</span> <span class="n">fibo</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="m">1</span><span class="p">)</span><span class="o">+</span><span class="n">fibo</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="m">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">v</span>
+  <span class="p">}</span>
+  <span class="kd">fun</span> <span class="nf">outMsg</span><span class="p">(</span> <span class="n">m</span><span class="p">:</span> <span class="kt">String</span> <span class="p">){</span>
+    <span class="n">ColorsOut</span><span class="p">.</span><span class="na">outappl</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">ColorsOut</span><span class="p">.</span><span class="na">GREEN</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><span class="remark">Per usare codice Java, fare ricorso a file jar</span></p>
+</section>
+</section>
+<section id="run">
+<h3>run<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#run" title="Permalink to this headline">¶</a></h3>
+<p>L’operazione built-in <code class="docutils literal notranslate"><span class="pre">run</span> <span class="pre">ccc.xxx()</span></code>  invoca  il metodo <em>static</em> <code class="docutils literal notranslate"><span class="pre">xxx</span></code> della classe <code class="docutils literal notranslate"><span class="pre">ccc</span></code>.</p>
+</section>
+<section id="qrun">
+<h3>qrun<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#qrun" title="Permalink to this headline">¶</a></h3>
+<p>L’operazione built-in <code class="docutils literal notranslate"><span class="pre">qrun</span> <span class="pre">ccc.xxx()</span></code>  invoca  il metodo <em>static</em>  <code class="docutils literal notranslate"><span class="pre">xxx</span></code> della classe <code class="docutils literal notranslate"><span class="pre">ccc</span></code>. Il
+metodo deve avere come primo argomento un riferimento all’attore corrente (ad esempio <strong>myself</strong>).</p>
+</section>
+</section>
+<section id="codedqactors">
+<h2>CodedQActors<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#codedqactors" title="Permalink to this headline">¶</a></h2>
+<p>La <a class="reference internal" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#the-qactor-software-factory"><span class="std std-ref">Qak factory</span></a> introduce un editor guidato dalla sintassi che facilita la scrittura di modelli
+in linguaggio QAk.
+Questa facilitazione è utile soprattutto quando i modelli sono un <em>risultato della analisi del problema</em>
+(o anche, in qualche caso, dei requisiti).</p>
+<p>In altre situazioni però, non è escluso che sia preferibile introdurre attori scritti direttamente in Kotlin (o in Java)
+ed utlizzarli come una sorta di componenti predefiniti in modelli descritti in linguaggio QAk.</p>
+<section id="sonar-come-codedqactor">
+<h3>Sonar come CodedQActor<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#sonar-come-codedqactor" title="Permalink to this headline">¶</a></h3>
+<p>Si consideri ad esempio un sistema che deve utilizzare dati prodotti da un sonar ed è quindi logicamente composto
+da due componenti:</p>
+<ul class="simple">
+<li><p>un componente (<code class="docutils literal notranslate"><span class="pre">sonarDataGen</span></code>) che gestisce il Sonar, rendendo disponibili i dati che questo genera</p></li>
+<li><p>un componente (<code class="docutils literal notranslate"><span class="pre">datahandler</span></code>) interessato ai dati prodotti dal sonar</p></li>
+</ul>
+<p>Entrambi questi componenti possono essere modellati come attori che interagiscono tramite <strong>eventi</strong>.</p>
+<a class="reference internal image-reference" href="./QActor (meta)model_files/sonarDataGen.png"><img alt="_images/sonarDataGen.png" class="align-center" src="./QActor (meta)model_files/sonarDataGen.png" style="width: 50%;"></a>
+<section id="modello-logico">
+<h4>Modello logico<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#modello-logico" title="Permalink to this headline">¶</a></h4>
+<p>Un modello QAk del sistema può essere espresso come segue:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">System</span> <span class="o">/*-</span><span class="n">trace</span><span class="o">*/</span> <span class="n">democodedqactor</span>
+<span class="n">Dispatch</span> <span class="n">start</span>   <span class="p">:</span> <span class="n">start</span><span class="p">(</span> <span class="n">ARG</span> <span class="p">)</span>
+<span class="n">Event</span> <span class="n">sonarrobot</span> <span class="p">:</span> <span class="n">sonar</span><span class="p">(</span> <span class="n">DATA</span> <span class="p">)</span>
+
+<span class="n">Context</span> <span class="n">ctxdemocodedqactor</span> <span class="n">ip</span> <span class="p">[</span><span class="n">host</span><span class="o">=</span><span class="s2">"localhost"</span> <span class="n">port</span><span class="o">=</span><span class="mi">8065</span><span class="p">]</span>
+
+  <span class="n">CodedQActor</span> <span class="n">sonargen</span>  <span class="n">context</span> <span class="n">ctxdemocodedqactor</span>
+                        <span class="n">className</span> <span class="s2">"codedActor.sonarDataGen"</span>
+  <span class="n">QActor</span> <span class="n">datahandler</span> <span class="n">context</span> <span class="n">ctxdemocodedqactor</span><span class="p">{</span> <span class="o">...</span>   <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In questo modello, il sonar è introdotto come un <a class="reference internal" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#codedqactor"><span class="std std-ref">CodedQActor</span></a> di cui si specifica la classe che lo realizza.</p>
+</section>
+</section>
+<section id="codedqactor">
+<h3>CodedQActor<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#codedqactor" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p>A CodedQActor is an actor completely written in Kotlin that can be included in a QAk-model by specifying its class name.</p></li>
+<li><p>A CodedQActor is usually defined as a specilization of ActorBasic:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">qacoded</span> <span class="p">(</span><span class="n">name</span> <span class="p">:</span> <span class="n">String</span> <span class="p">)</span> <span class="p">:</span> <span class="n">ActorBasic</span><span class="p">(</span> <span class="n">name</span> <span class="p">)</span> <span class="p">{</span>
+  <span class="n">override</span> <span class="n">suspend</span> <span class="n">fun</span> <span class="n">actorBody</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">ApplMessage</span><span class="p">)</span> <span class="p">{</span>
+    <span class="o">//...</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>The QA-infrastructure handles a CodedQActor as a usual; in particular,
+it ‘injects’ into the CodedQActor the context specified by the model.</p></li>
+</ul>
+</section>
+<section id="sonardatagen-kt">
+<h3>sonarDataGen.kt<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#sonardatagen-kt" title="Permalink to this headline">¶</a></h3>
+<p>Come sempre, nelle fasi preliminari della costruzione di un sistema può essere opportuno introdurre un
+<a class="reference internal" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#codedqactor"><span class="std std-ref">CodedQActor</span></a> che realizza la simulazione di un Sonar, focalizzando l’attenzione sulla informazione
+emessa come evento.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">sonarDataGen</span> <span class="p">(</span> <span class="n">name</span> <span class="p">:</span> <span class="n">String</span> <span class="p">)</span> <span class="p">:</span> <span class="n">ActorBasic</span><span class="p">(</span> <span class="n">name</span> <span class="p">)</span> <span class="p">{</span>
+
+  <span class="n">val</span> <span class="n">data</span> <span class="o">=</span> <span class="n">sequence</span><span class="o">&lt;</span><span class="n">Int</span><span class="o">&gt;</span><span class="p">{</span>
+    <span class="n">var</span> <span class="n">v0</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="k">yield</span><span class="p">(</span><span class="n">v0</span><span class="p">)</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">true</span><span class="p">){</span>
+      <span class="n">v0</span> <span class="o">=</span> <span class="n">v0</span> <span class="o">-</span> <span class="mi">1</span>
+      <span class="k">yield</span><span class="p">(</span> <span class="n">v0</span> <span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="n">override</span> <span class="n">suspend</span> <span class="n">fun</span> <span class="n">actorBody</span><span class="p">(</span><span class="n">msg</span> <span class="p">:</span> <span class="n">IApplMessage</span><span class="p">){</span>
+    <span class="n">println</span><span class="p">(</span><span class="s2">"$tt $name | received  $msg "</span>  <span class="p">)</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">msg</span><span class="o">.</span><span class="n">msgId</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"start"</span><span class="p">)</span> <span class="n">startDataReadSimulation</span><span class="p">(</span>   <span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="n">suspend</span> <span class="n">fun</span> <span class="n">startDataReadSimulation</span><span class="p">(</span>    <span class="p">){</span>
+        <span class="n">var</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+      <span class="k">while</span><span class="p">(</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="p">){</span>
+        <span class="n">val</span> <span class="n">m1</span> <span class="o">=</span> <span class="s2">"sonar( ${data.elementAt(i*2)} )"</span>
+        <span class="n">i</span><span class="o">++</span>
+        <span class="n">val</span> <span class="n">event</span> <span class="o">=</span> <span class="n">MsgUtil</span><span class="o">.</span><span class="n">buildEvent</span><span class="p">(</span> <span class="n">name</span><span class="p">,</span><span class="s2">"sonarrobot"</span><span class="p">,</span><span class="n">m1</span><span class="p">)</span>
+        <span class="o">//</span><span class="n">println</span><span class="p">(</span><span class="s2">"$tt $name | emits $event"</span><span class="p">)</span>
+        <span class="n">this</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span> <span class="n">event</span> <span class="p">)</span>
+        <span class="n">delay</span><span class="p">(</span> <span class="mi">300</span> <span class="p">)</span>
+        <span class="p">}</span>
+      <span class="n">terminate</span><span class="p">()</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><span class="worktodo">WORKTODO: realizzare sonarDataGen per un sonar reale HC-SR04</span></p>
+<p><span class="remark">Codice vs. modelli</span></p>
+<ul>
+<li><p>notiamo che il <code class="docutils literal notranslate"><span class="pre">sonarDataGen</span></code> non esprime in modo evidente il tipo di informazione che emette come evento.
+Si tratta infatti di codice vero e proprio e <em>non di un modello</em> che intende catturare aspetti essenziali.</p></li>
+<li><p>leggendo il codice capiamo che l’evento emesso ha la forma <code class="docutils literal notranslate"><span class="pre">sonarrobot:sonar(DATA)</span></code> e che corrisponde quindi
+a una dichiarazione QAk quale quella introdotta in <a class="reference internal" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#modello-logico"><span class="std std-ref">Modello logico</span></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Event</span> <span class="n">sonarrobot</span> <span class="p">:</span> <span class="n">sonar</span><span class="p">(</span> <span class="n">DATA</span> <span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="datahandler">
+<h3>datahandler<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#datahandler" title="Permalink to this headline">¶</a></h3>
+<p>Il modello che esprime la logica di funzionamento del gestore dei dati emessi dal sonar è un attore che
+attiva il sonar inviando il dispatch start e poi attende gli eventi, terminando se non giunge nulla entro
+1 sec (si veda <a class="reference internal" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#whentime"><span class="std std-ref">whenTime</span></a>).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="n">QActor</span> <span class="n">datahandler</span> <span class="n">context</span> <span class="n">ctxdemocodedqactor</span><span class="p">{</span>
+  <span class="n">State</span> <span class="n">s0</span> <span class="n">initial</span> <span class="p">{</span>
+    <span class="n">printCurrentMessage</span>
+    <span class="n">forward</span> <span class="n">sonargen</span> <span class="o">-</span><span class="n">m</span> <span class="n">start</span> <span class="p">:</span> <span class="n">start</span><span class="p">(</span><span class="n">do</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="n">Transition</span> <span class="n">t0</span> <span class="n">whenEvent</span> <span class="n">sonarrobot</span> <span class="o">-&gt;</span> <span class="n">handleSonarevent</span>
+  <span class="n">State</span> <span class="n">handleSonarevent</span> <span class="p">{</span>
+    <span class="n">printCurrentMessage</span>
+  <span class="p">}</span>
+  <span class="n">Transition</span> <span class="n">t0</span> <span class="n">whenTime</span> <span class="mi">1000</span> <span class="o">-&gt;</span> <span class="n">end</span>
+                 <span class="n">whenEvent</span> <span class="n">sonarrobot</span> <span class="o">-&gt;</span> <span class="n">handleSonarevent</span>
+  <span class="n">State</span> <span class="n">end</span><span class="p">{</span>
+    <span class="n">println</span><span class="p">(</span><span class="s2">"BYE"</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="qak-un-esempio-piu-articolato">
+<h2>QAk: un esempio più articolato<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#qak-un-esempio-piu-articolato" title="Permalink to this headline">¶</a></h2>
+<p>Questo esempio descrive un attore che realizza l’automa rappresentato nella figura che segue:</p>
+<a class="reference internal image-reference" href="./QActor (meta)model_files/demoDSL.png"><img alt="_images/demoDSL.png" class="align-center" src="./QActor (meta)model_files/demoDSL.png" style="width: 50%;"></a>
+<section id="demo0-qak">
+<h3>demo0.qak<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#demo0-qak" title="Permalink to this headline">¶</a></h3>
+<p>In accordo alla  <a class="reference external" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/_static/Qactork.xtext">Qak syntax</a>, la descrizione del modello inizia con la <a class="reference internal" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#dichiarazione-dei-messaggi"><span class="std std-ref">Dichiarazione dei messaggi</span></a>
+e del Contesto:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">System</span> <span class="n">demo0</span>
+  <span class="n">Dispatch</span> <span class="n">msg1</span> <span class="p">:</span> <span class="n">msg1</span><span class="p">(</span><span class="n">ARG</span><span class="p">)</span>
+  <span class="n">Dispatch</span> <span class="n">msg2</span> <span class="p">:</span> <span class="n">msg2</span><span class="p">(</span><span class="n">ARG</span><span class="p">)</span>
+  <span class="n">Event</span> <span class="n">alarm</span>   <span class="p">:</span> <span class="n">alarm</span><span class="p">(</span> <span class="n">KIND</span> <span class="p">)</span>
+
+<span class="n">Context</span> <span class="n">ctxdemo0</span> <span class="n">ip</span><span class="p">[</span><span class="n">host</span><span class="o">=</span><span class="s2">"localhost"</span> <span class="n">port</span><span class="o">=</span><span class="mi">8095</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Successivamente vengono definiti gli attori</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">QActor</span> <span class="n">demo0</span> <span class="n">context</span> <span class="n">ctxdemo0</span><span class="p">{</span>
+<span class="p">}</span>
+
+<span class="n">QActor</span> <span class="n">sender</span> <span class="n">context</span> <span class="n">ctxdemo0</span><span class="p">{</span>
+  <span class="o">...</span>
+<span class="p">}</span>
+<span class="n">QActor</span> <span class="n">perceiver</span> <span class="n">context</span> <span class="n">ctxdemo0</span><span class="p">{</span>
+  <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">demo0</span></code> : definisce il modello eseguibile del  <a class="reference internal" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#demo0-qak"><span class="std std-ref">diagramma</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sender</span></code>: attore che invia i messaggi gestiti da <code class="docutils literal notranslate"><span class="pre">demo0</span></code> e genera (opzionalmente) un evento</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">perceiver</span></code>: attore che gestisce gli eventi emessi da <code class="docutils literal notranslate"><span class="pre">sender</span></code></p></li>
+</ul>
+<section id="qactor-demo0">
+<h4>QActor demo0<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#qactor-demo0" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">QActor</span> <span class="n">demo0</span> <span class="n">context</span> <span class="n">ctxdemo0</span><span class="p">{</span>
+  <span class="n">State</span> <span class="n">s0</span> <span class="n">initial</span> <span class="p">{</span>
+    <span class="n">discardMsg</span> <span class="n">Off</span>  <span class="o">//</span><span class="n">discardMsg</span> <span class="n">On</span>
+    <span class="o">//</span><span class="p">[</span><span class="c1"># sysUtil.logMsgs=true #]</span>
+  <span class="p">}</span>
+  <span class="n">Goto</span> <span class="n">s1</span>
+  <span class="n">State</span> <span class="n">s1</span><span class="p">{</span>
+    <span class="n">printCurrentMessage</span>
+  <span class="p">}</span>
+  <span class="n">Transition</span> <span class="n">t0</span> <span class="n">whenMsg</span> <span class="n">msg1</span> <span class="o">-&gt;</span> <span class="n">s2</span>
+                <span class="n">whenMsg</span> <span class="n">msg2</span> <span class="o">-&gt;</span> <span class="n">s3</span>
+  <span class="n">State</span> <span class="n">s2</span><span class="p">{</span>
+    <span class="n">printCurrentMessage</span>
+    <span class="n">onMsg</span><span class="p">(</span> <span class="n">msg1</span><span class="p">:</span><span class="n">msg1</span><span class="p">(</span><span class="n">ARG</span><span class="p">)</span> <span class="p">){</span>
+      <span class="n">println</span><span class="p">(</span><span class="s2">"s2: msg1(${payloadArg(0)})"</span><span class="p">)</span>
+      <span class="n">delay</span> <span class="mi">1000</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="n">Transition</span> <span class="n">t0</span> <span class="n">whenMsg</span> <span class="n">msg2</span> <span class="o">-&gt;</span> <span class="n">s3</span>
+  <span class="n">State</span> <span class="n">s3</span><span class="p">{</span>
+    <span class="n">printCurrentMessage</span>
+    <span class="n">onMsg</span><span class="p">(</span> <span class="n">msg2</span><span class="p">:</span><span class="n">msg2</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">){</span>
+      <span class="n">println</span><span class="p">(</span><span class="s2">"s3: msg2(${payloadArg(0)})"</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="n">Goto</span> <span class="n">s1</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>L’attore <code class="docutils literal notranslate"><span class="pre">demo0</span></code> mostra l’uso di:</p>
+<ul class="simple">
+<li><p><span class="blue">discardMsg On/Off</span>: seleziondando <code class="docutils literal notranslate"><span class="pre">discardMsg</span> <span class="pre">Off</span></code> i messaggi che non sono di interesse
+in un certo stato vengono conservati, mentre con <code class="docutils literal notranslate"><span class="pre">discardMsg</span> <span class="pre">On</span></code>, essi vengono eliminati.</p></li>
+<li><p><span class="blue">sysUtil.logMsgs</span>: crea dei file di log dei messaggi ricevuti</p></li>
+<li><p><span class="blue">onMsg( msg:msg(ARG1, ARG2, …) ){ … }`</span> : esegue il body solo se il <em>messaggio corrente</em>
+ha identificatore <code class="docutils literal notranslate"><span class="pre">msg</span></code> e se il suo payload
+può essere <strong>unificato in Prolog</strong> con il template di messaggio definito nella dichiarazione <strong>e</strong>
+con il template specificato in <em>onMsg</em>.</p></li>
+<li><p><span class="blue">payloadArg(N)</span>: si veda <a class="reference external" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/_static/LabQakPrologUsage2021.html#shortcut">shortcut</a>  (in <a class="reference external" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/_static/LabQakPrologUsage2021.html">Uso di Prolog</a>)</p></li>
+</ul>
+</section>
+<section id="qactor-sender">
+<h4>QActor sender<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#qactor-sender" title="Permalink to this headline">¶</a></h4>
+<p>Il <code class="docutils literal notranslate"><span class="pre">sender</span></code> invia alcuni messaggi e genera un evento se <code class="docutils literal notranslate"><span class="pre">emitEvents</span> <span class="pre">=</span> <span class="pre">true</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">QActor</span> <span class="n">sender</span> <span class="n">context</span> <span class="n">ctxdemo0</span><span class="p">{</span>
+<span class="p">[</span><span class="c1"># var emitEvents = false #]</span>
+  <span class="n">State</span> <span class="n">s0</span> <span class="n">initial</span> <span class="p">{</span>
+    <span class="n">forward</span> <span class="n">demo0</span> <span class="o">-</span><span class="n">m</span> <span class="n">msg1</span> <span class="p">:</span> <span class="n">msg1</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">delay</span> <span class="mi">300</span>
+    <span class="n">forward</span> <span class="n">demo0</span> <span class="o">-</span><span class="n">m</span> <span class="n">msg1</span> <span class="p">:</span> <span class="n">msg1</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">delay</span> <span class="mi">300</span>
+    <span class="n">forward</span> <span class="n">demo0</span> <span class="o">-</span><span class="n">m</span> <span class="n">msg2</span> <span class="p">:</span> <span class="n">msg2</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">[</span><span class="c1"># emitEvents #] {</span>
+      <span class="n">emit</span> <span class="n">alarm</span> <span class="p">:</span> <span class="n">alarm</span><span class="p">(</span> <span class="n">fire</span> <span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="qactor-perceiver">
+<h4>QActor perceiver<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#qactor-perceiver" title="Permalink to this headline">¶</a></h4>
+<p>Il <code class="docutils literal notranslate"><span class="pre">perceiver</span></code> gestisce l’evento <code class="docutils literal notranslate"><span class="pre">alarm</span></code> e poi ne attende un altro per un tempo (<code class="docutils literal notranslate"><span class="pre">timeout</span></code>) prefissato .
+Se il <code class="docutils literal notranslate"><span class="pre">timeout</span></code> scade, l’attore transita nello stato finale.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">QActor</span> <span class="n">perceiver</span> <span class="n">context</span> <span class="n">ctxdemo0</span><span class="p">{</span>
+  <span class="n">State</span> <span class="n">s0</span> <span class="n">initial</span> <span class="p">{</span>
+    <span class="n">println</span><span class="p">(</span><span class="s2">"perceiver waits .."</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="n">Transition</span> <span class="n">t0</span> <span class="n">whenEvent</span> <span class="n">alarm</span> <span class="o">-&gt;</span> <span class="n">s1</span>
+  <span class="n">State</span> <span class="n">s1</span><span class="p">{</span>
+    <span class="n">printCurrentMessage</span>
+  <span class="p">}</span>
+  <span class="n">Transition</span> <span class="n">t0</span> <span class="n">whenTime</span> <span class="mi">100</span> <span class="o">-&gt;</span> <span class="n">s2</span>
+                <span class="n">whenEvent</span> <span class="n">alarm</span> <span class="o">-&gt;</span> <span class="n">s1</span>
+  <span class="n">State</span> <span class="n">s2</span><span class="p">{</span>
+    <span class="n">printCurrentMessage</span>
+    <span class="n">println</span><span class="p">(</span><span class="s2">"BYE"</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="whentime">
+<h4>whenTime<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#whentime" title="Permalink to this headline">¶</a></h4>
+<p>Questo esempio evidenzia che:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>un attore non deve rimanare in attesa perenne di messaggi, in quanto può fare una empty-move
+dopo un certo tempo (<strong>timeOut</strong>)</p></li>
+<li><p>lo scadere del <em>timeOut</em> provoca l’emissione di un evento, con indentificatore
+<code class="docutils literal notranslate"><span class="pre">local_tout_aaa_sss</span></code> ove <code class="docutils literal notranslate"><span class="pre">aaa</span></code> è il nome dell’attore e <code class="docutils literal notranslate"><span class="pre">sss</span></code> è  il nome dello stato corrente</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="analisi-dei-risultati">
+<h4>Analisi dei risultati<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#analisi-dei-risultati" title="Permalink to this headline">¶</a></h4>
+<p><span class="blue">Output con discardMsg On</span></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Caso</span> <span class="n">sender</span><span class="p">:</span> <span class="n">emitEvents</span> <span class="o">=</span> <span class="n">false</span>
+<span class="n">perceiver</span> <span class="n">waits</span> <span class="o">..</span>
+<span class="n">demo0</span> <span class="ow">in</span> <span class="n">s1</span> <span class="o">|</span> <span class="n">msg</span><span class="p">(</span><span class="n">local_noMsg</span><span class="p">,</span><span class="n">event</span><span class="p">,</span><span class="n">demo0</span><span class="p">,</span><span class="n">none</span><span class="p">,</span><span class="n">noMsg</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">demo0</span> <span class="ow">in</span> <span class="n">s2</span> <span class="o">|</span> <span class="n">msg</span><span class="p">(</span><span class="n">msg1</span><span class="p">,</span><span class="n">dispatch</span><span class="p">,</span><span class="n">sender</span><span class="p">,</span><span class="n">demo0</span><span class="p">,</span><span class="n">msg1</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">s2</span><span class="p">:</span><span class="n">msg1</span><span class="p">:</span><span class="n">msg1</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">demo0</span> <span class="ow">in</span> <span class="n">s3</span> <span class="o">|</span> <span class="n">msg</span><span class="p">(</span><span class="n">msg2</span><span class="p">,</span><span class="n">dispatch</span><span class="p">,</span><span class="n">sender</span><span class="p">,</span><span class="n">demo0</span><span class="p">,</span><span class="n">msg2</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">s3</span><span class="p">:</span><span class="n">msg2</span><span class="p">:</span><span class="n">msg2</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">demo0</span> <span class="ow">in</span> <span class="n">s1</span> <span class="o">|</span> <span class="n">msg</span><span class="p">(</span><span class="n">local_noMsg</span><span class="p">,</span><span class="n">event</span><span class="p">,</span><span class="n">demo0</span><span class="p">,</span><span class="n">none</span><span class="p">,</span><span class="n">noMsg</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Questo caso evidenzia anche che:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>una empty-move è realizzata con emissione di un evento <code class="docutils literal notranslate"><span class="pre">local_noMsg</span></code></p></li>
+<li><p>una empty-move non crea indicazioni sui messaggi da elaborare: i messaggi in arrivo
+sono memorizzati in <a class="reference internal" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#message-handling-rules"><span class="std std-ref">msgQueueStore</span></a></p></li>
+</ul>
+</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">Caso</span> <span class="n">sender</span><span class="p">:</span> <span class="n">emitEvents</span> <span class="o">=</span> <span class="n">true</span>
+<span class="n">perceiver</span> <span class="n">waits</span> <span class="o">..</span>
+<span class="n">demo0</span> <span class="ow">in</span> <span class="n">s1</span> <span class="o">|</span> <span class="n">msg</span><span class="p">(</span><span class="n">local_noMsg</span><span class="p">,</span><span class="n">event</span><span class="p">,</span><span class="n">demo0</span><span class="p">,</span><span class="n">none</span><span class="p">,</span><span class="n">noMsg</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">demo0</span> <span class="ow">in</span> <span class="n">s2</span> <span class="o">|</span> <span class="n">msg</span><span class="p">(</span><span class="n">msg1</span><span class="p">,</span><span class="n">dispatch</span><span class="p">,</span><span class="n">sender</span><span class="p">,</span><span class="n">demo0</span><span class="p">,</span><span class="n">msg1</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">s2</span><span class="p">:</span><span class="n">msg1</span><span class="p">:</span><span class="n">msg1</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">perceiver</span> <span class="ow">in</span> <span class="n">s1</span> <span class="o">|</span> <span class="n">msg</span><span class="p">(</span><span class="n">alarm</span><span class="p">,</span><span class="n">event</span><span class="p">,</span><span class="n">sender</span><span class="p">,</span><span class="n">none</span><span class="p">,</span><span class="n">alarm</span><span class="p">(</span><span class="n">fire</span><span class="p">),</span><span class="mi">13</span><span class="p">)</span>
+<span class="n">perceiver</span> <span class="ow">in</span> <span class="n">s3</span> <span class="o">|</span> <span class="n">msg</span><span class="p">(</span><span class="n">local_tout_perceiver_s1</span><span class="p">,</span><span class="n">event</span><span class="p">,</span><span class="n">timer</span><span class="p">,</span><span class="n">none</span><span class="p">,</span><span class="n">local_tout_perceiver_s1</span><span class="p">,</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">BYE</span>
+<span class="n">demo0</span> <span class="ow">in</span> <span class="n">s3</span> <span class="o">|</span> <span class="n">msg</span><span class="p">(</span><span class="n">msg2</span><span class="p">,</span><span class="n">dispatch</span><span class="p">,</span><span class="n">sender</span><span class="p">,</span><span class="n">demo0</span><span class="p">,</span><span class="n">msg2</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">s3</span><span class="p">:</span><span class="n">msg2</span><span class="p">:</span><span class="n">msg2</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">demo0</span> <span class="ow">in</span> <span class="n">s1</span> <span class="o">|</span> <span class="n">msg</span><span class="p">(</span><span class="n">local_noMsg</span><span class="p">,</span><span class="n">event</span><span class="p">,</span><span class="n">demo0</span><span class="p">,</span><span class="n">none</span><span class="p">,</span><span class="n">noMsg</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Questo esempio evidenzia che:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>lo scadere del <em>timeOut</em> provoca l’emissione di un evento, con indentificatore  <code class="docutils literal notranslate"><span class="pre">local_tout_perceiver_s1</span></code>.</p></li>
+</ul>
+</div></blockquote>
+<p><span class="blue">Output con discardMsg Off</span></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="o">//</span><span class="n">Caso</span> <span class="n">sender</span><span class="p">:</span> <span class="n">emitEvents</span> <span class="o">=</span> <span class="n">false</span>
+<span class="n">perceiver</span> <span class="n">waits</span> <span class="o">..</span>
+<span class="n">demo0</span> <span class="ow">in</span> <span class="n">s1</span> <span class="o">|</span> <span class="n">msg</span><span class="p">(</span><span class="n">local_noMsg</span><span class="p">,</span><span class="n">event</span><span class="p">,</span><span class="n">demo0</span><span class="p">,</span><span class="n">none</span><span class="p">,</span><span class="n">noMsg</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">demo0</span> <span class="ow">in</span> <span class="n">s2</span> <span class="o">|</span> <span class="n">msg</span><span class="p">(</span><span class="n">msg1</span><span class="p">,</span><span class="n">dispatch</span><span class="p">,</span><span class="n">sender</span><span class="p">,</span><span class="n">demo0</span><span class="p">,</span><span class="n">msg1</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">s2</span><span class="p">:</span><span class="n">msg1</span><span class="p">:</span><span class="n">msg1</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="o">%%%</span>  <span class="n">ActorBasicFsm</span> <span class="n">demo0</span> <span class="o">|</span>
+   <span class="n">added</span> <span class="n">msg</span><span class="p">(</span><span class="n">msg1</span><span class="p">,</span><span class="n">dispatch</span><span class="p">,</span><span class="n">sender</span><span class="p">,</span><span class="n">demo0</span><span class="p">,</span><span class="n">msg1</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="mi">11</span><span class="p">)</span> <span class="ow">in</span> <span class="n">msgQueueStore</span>
+<span class="n">demo0</span> <span class="ow">in</span> <span class="n">s3</span> <span class="o">|</span> <span class="n">msg</span><span class="p">(</span><span class="n">msg2</span><span class="p">,</span><span class="n">dispatch</span><span class="p">,</span><span class="n">sender</span><span class="p">,</span><span class="n">demo0</span><span class="p">,</span><span class="n">msg2</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">s3</span><span class="p">:</span><span class="n">msg2</span><span class="p">:</span><span class="n">msg2</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">demo0</span> <span class="ow">in</span> <span class="n">s1</span> <span class="o">|</span> <span class="n">msg</span><span class="p">(</span><span class="n">local_noMsg</span><span class="p">,</span><span class="n">event</span><span class="p">,</span><span class="n">demo0</span><span class="p">,</span><span class="n">none</span><span class="p">,</span><span class="n">noMsg</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">demo0</span> <span class="ow">in</span> <span class="n">s2</span> <span class="o">|</span> <span class="n">msg</span><span class="p">(</span><span class="n">msg1</span><span class="p">,</span><span class="n">dispatch</span><span class="p">,</span><span class="n">sender</span><span class="p">,</span><span class="n">demo0</span><span class="p">,</span><span class="n">msg1</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="mi">11</span><span class="p">)</span>
+<span class="n">s2</span><span class="p">:</span><span class="n">msg1</span><span class="p">:</span><span class="n">msg1</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="demorequest-qak">
+<h2>demorequest.qak<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#demorequest-qak" title="Permalink to this headline">¶</a></h2>
+<p>Un esempio di attere (<code class="docutils literal notranslate"><span class="pre">caller</span></code>) che invia una request (<code class="docutils literal notranslate"><span class="pre">r1</span></code> con payload <em>hello(world)</em>)
+a un altro attore locale (<code class="docutils literal notranslate"><span class="pre">called</span></code>)
+e poi attende il messaggio di reply  (<code class="docutils literal notranslate"><span class="pre">a1</span></code>) che avrà payload <em>called_caller_hello(world)</em>.</p>
+<a class="reference internal image-reference" href="./QActor (meta)model_files/demorequest.png"><img alt="_images/demorequest.png" class="align-center" src="./QActor (meta)model_files/demorequest.png" style="width: 60%;"></a>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>System  /* -trace */ -msglog demorequest
+//mqttBroker "broker.hivemq.com" : 1883
+
+Request r1 : r1(X)
+Reply   a1 : a1(X)    //answer
+
+Context ctxdemoreq ip [host="localhost" port=8010]
+
+QActor caller context ctxdemoreq {
+  State init initial {
+    //[# sysUtil.logMsgs = true #]
+    println("       callera1 starts")
+    request called -m r1 : r1(10)
+  }
+  Goto work
+
+  State work{
+      //printCurrentMessage
+  }
+  Transition t0 whenReply a1 -&gt; handleReply
+
+  State handleReply{
+    printCurrentMessage
+  }
+  Goto work
+}
+
+QActor called context ctxdemoreq {
+  State init initial {
+    println("called waits ...")
+  }
+  Transition t0
+    whenRequest r1 -&gt; handleRequest
+
+  State handleRequest{
+    printCurrentMessage
+    onMsg( r1 : r1(X) ){
+      [# val Answer = "${currentMsg.msgSender()}_${payloadArg(0)}" #]
+      replyTo r1 with a1 : a1( $Answer )
+    }
+  }
+  Goto init
+}
+</pre></div>
+</div>
+</section>
+<section id="demorequest-a-qak">
+<h2>demorequest_a.qak<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#demorequest-a-qak" title="Permalink to this headline">¶</a></h2>
+<p>Un esempio di due attori che inviano richieste dello stesso tipo, ma con payload diverso ad un terzo attore,
+il quale invia la risposta all’attore chiamante.</p>
+<a class="reference internal image-reference" href="./QActor (meta)model_files/demorequest_a.png"><img alt="_images/demorequest_a.png" class="align-center" src="./QActor (meta)model_files/demorequest_a.png" style="width: 60%;"></a>
+<p>Il sistema viene inizialmente eseguito in un unico contesto, in modo da verificare la corretteza delle business logic in una
+configurazione ‘di testing confortevole’.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">System</span>  <span class="o">/*</span> <span class="o">-</span><span class="n">trace</span> <span class="o">*/</span> <span class="o">-</span><span class="n">msglog</span> <span class="n">demorequest_a</span>
+<span class="o">//</span><span class="n">mqttBroker</span> <span class="s2">"broker.hivemq.com"</span> <span class="p">:</span> <span class="mi">1883</span>
+
+<span class="n">Request</span> <span class="n">r1</span> <span class="p">:</span> <span class="n">r1</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">Reply</span>   <span class="n">a1</span> <span class="p">:</span> <span class="n">a1</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>    <span class="o">//</span><span class="n">answer</span>
+
+<span class="o">//</span><span class="k">for</span> <span class="n">first</span> <span class="n">run</span> <span class="p">(</span><span class="n">debug</span><span class="p">)</span>
+<span class="n">Context</span> <span class="n">ctxddemorequest_a</span> <span class="n">ip</span> <span class="p">[</span><span class="n">host</span><span class="o">=</span><span class="s2">"localhost"</span> <span class="n">port</span><span class="o">=</span><span class="mi">8010</span><span class="p">]</span>
+<span class="o">//</span><span class="n">Context</span> <span class="n">ctxcallers</span> <span class="n">ip</span> <span class="p">[</span><span class="n">host</span><span class="o">=</span><span class="s2">"localhost"</span> <span class="n">port</span><span class="o">=</span><span class="mi">8072</span><span class="p">]</span>     <span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="o">//</span><span class="n">Context</span> <span class="n">ctxcalled</span>  <span class="n">ip</span> <span class="p">[</span><span class="n">host</span><span class="o">=</span><span class="s2">"127.0.0.1"</span> <span class="n">port</span><span class="o">=</span><span class="mi">8074</span><span class="p">]</span>    <span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Il sistema viene inizialmente configurato con tutti i componenti in un unico contesto, in modo da verificare la corretteza delle business logic in una
+configurazione ‘di testing confortevole’.</p>
+<p>I componenti (attori) che inviano richieste sono strutturati nel medesimo modo:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">QActor</span> <span class="n">callerqa1</span> <span class="n">context</span> <span class="n">ctxddemorequest_a</span> <span class="p">{</span>
+  <span class="n">State</span> <span class="n">init</span> <span class="n">initial</span> <span class="p">{</span>
+    <span class="n">println</span><span class="p">(</span><span class="s2">"       callera1 starts"</span><span class="p">)</span>
+    <span class="n">request</span> <span class="n">qacalled</span> <span class="o">-</span><span class="n">m</span> <span class="n">r1</span> <span class="p">:</span> <span class="n">r1</span><span class="p">(</span><span class="n">data</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+    <span class="n">delay</span> <span class="mi">500</span>
+    <span class="n">request</span> <span class="n">qacalled</span> <span class="o">-</span><span class="n">m</span> <span class="n">r1</span> <span class="p">:</span> <span class="n">r1</span><span class="p">(</span><span class="n">data</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
+  <span class="p">}</span>
+  <span class="n">Goto</span> <span class="n">work</span>
+
+  <span class="n">State</span> <span class="n">work</span><span class="p">{</span>
+  <span class="p">}</span>
+  <span class="n">Transition</span> <span class="n">t0</span> <span class="n">whenReply</span>   <span class="n">a1</span> <span class="o">-&gt;</span> <span class="n">handleReply</span>
+
+  <span class="n">State</span> <span class="n">handleReply</span><span class="p">{</span>
+    <span class="n">printCurrentMessage</span>
+  <span class="p">}</span>
+  <span class="n">Goto</span> <span class="n">work</span>
+<span class="p">}</span>
+
+
+<span class="n">QActor</span> <span class="n">callerqa2</span> <span class="n">context</span> <span class="n">ctxddemorequest_a</span> <span class="p">{</span>
+  <span class="n">State</span> <span class="n">init</span> <span class="n">initial</span> <span class="p">{</span>
+    <span class="n">println</span><span class="p">(</span><span class="s2">"       callera2 starts"</span><span class="p">)</span>
+    <span class="n">request</span> <span class="n">qacalled</span> <span class="o">-</span><span class="n">m</span> <span class="n">r1</span> <span class="p">:</span> <span class="n">r1</span><span class="p">(</span><span class="n">val</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span>
+    <span class="n">delay</span> <span class="mi">500</span>
+    <span class="n">request</span> <span class="n">qacalled</span> <span class="o">-</span><span class="n">m</span> <span class="n">r1</span> <span class="p">:</span> <span class="n">r1</span><span class="p">(</span><span class="n">val</span><span class="p">(</span><span class="mi">200</span><span class="p">))</span>
+  <span class="p">}</span>
+  <span class="n">Goto</span> <span class="n">work</span>
+
+  <span class="n">State</span> <span class="n">work</span><span class="p">{</span>
+  <span class="p">}</span>
+  <span class="n">Transition</span> <span class="n">t0</span> <span class="n">whenReply</span>   <span class="n">a1</span> <span class="o">-&gt;</span> <span class="n">handleReply</span>
+
+  <span class="n">State</span> <span class="n">handleReply</span><span class="p">{</span>
+    <span class="n">printCurrentMessage</span>
+  <span class="p">}</span>
+  <span class="n">Goto</span> <span class="n">work</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Il componente (attore) che riceve le richieste, invia una risposta ‘eco’ preceduta dal nome del mittente:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>QActor qacalled context ctxddemorequest_a {
+
+  State init initial {
+  }
+  Transition t0  whenRequest r1 -&gt; handleRequest
+
+  State handleRequest{
+    printCurrentMessage
+    onMsg( r1 : r1(X) ){
+      [# val Answer = "${currentMsg.msgSender()}_${payloadArg(0)}"
+        ut.outMsg( "${getName()} | answer=$Answer" )
+      #]
+      replyTo r1 with a1 : a1( $Answer )
+    }
+  }
+  Goto init
+}
+</pre></div>
+</div>
+<section id="demorequest-a-distribuito">
+<h3>demorequest_a distribuito<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#demorequest-a-distribuito" title="Permalink to this headline">¶</a></h3>
+<p>Una volta verificato che il sistema <em>funziona in locale</em> come ci si aspetta, si possono allocare i tre componenti su  nodi
+computazionali diversi. Ad esempio, per la configurazione di figura:</p>
+<a class="reference internal image-reference" href="./QActor (meta)model_files/demorequest_aDistr1.png"><img alt="_images/demorequest_aDistr1.png" class="align-center" src="./QActor (meta)model_files/demorequest_aDistr1.png" style="width: 40%;"></a>
+<p>la nuova specifica (del modello) del sistema diventa:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">System</span>  <span class="o">/*</span> <span class="o">-</span><span class="n">trace</span> <span class="o">*/</span> <span class="o">-</span><span class="n">msglog</span> <span class="n">demorequest_a</span>
+<span class="n">Request</span> <span class="n">r1</span> <span class="p">:</span> <span class="n">r1</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">Reply</span>   <span class="n">a1</span> <span class="p">:</span> <span class="n">a1</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>    <span class="o">//</span><span class="n">answer</span>
+
+<span class="n">Context</span> <span class="n">ctxcallers</span> <span class="n">ip</span> <span class="p">[</span><span class="n">host</span><span class="o">=</span><span class="s2">"localhost"</span> <span class="n">port</span><span class="o">=</span><span class="mi">8072</span><span class="p">]</span>     <span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">Context</span> <span class="n">ctxcalled</span> <span class="n">ip</span> <span class="p">[</span><span class="n">host</span><span class="o">=</span><span class="s2">"127.0.0.1"</span> <span class="n">port</span><span class="o">=</span><span class="mi">8074</span><span class="p">]</span>    <span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">QActor</span> <span class="n">callerqa1</span> <span class="n">context</span> <span class="n">ctxcallers</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>
+<span class="n">QActor</span> <span class="n">callerqa2</span> <span class="n">context</span> <span class="n">ctxcallers</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>
+<span class="n">QActor</span> <span class="n">qacalled</span> <span class="n">context</span> <span class="n">ctxcalled</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p>Una volta salavto il modello, viene generata la seguente descrizione del sistema:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">context</span><span class="p">(</span><span class="n">ctxcallers</span><span class="p">,</span> <span class="s2">"localhost"</span><span class="p">,</span>  <span class="s2">"TCP"</span><span class="p">,</span> <span class="s2">"8072"</span><span class="p">)</span><span class="o">.</span>
+<span class="n">context</span><span class="p">(</span><span class="n">ctxcalled</span><span class="p">,</span> <span class="s2">"127.0.0.1"</span><span class="p">,</span>  <span class="s2">"TCP"</span><span class="p">,</span> <span class="s2">"8074"</span><span class="p">)</span><span class="o">.</span>
+<span class="n">qactor</span><span class="p">(</span> <span class="n">callerqa1</span><span class="p">,</span> <span class="n">ctxcallers</span><span class="p">,</span> <span class="s2">"it.unibo.callerqa1.Callerqa1"</span><span class="p">)</span><span class="o">.</span>
+  <span class="n">qactor</span><span class="p">(</span> <span class="n">callerqa2</span><span class="p">,</span> <span class="n">ctxcallers</span><span class="p">,</span> <span class="s2">"it.unibo.callerqa2.Callerqa2"</span><span class="p">)</span><span class="o">.</span>
+  <span class="n">qactor</span><span class="p">(</span> <span class="n">qacalled</span><span class="p">,</span> <span class="n">ctxcalled</span><span class="p">,</span> <span class="s2">"it.unibo.qacalled.Qacalled"</span><span class="p">)</span><span class="o">.</span>
+<span class="n">msglogging</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>Per eseguire il sistema è ora necessario invocare due diversi Main:</p>
+<ul class="simple">
+<li><p><strong>it.unibo.ctxcalled.MainCtxcalledKt</strong> che attiva gli attori allocati sul contesto ctxcalled di <code class="docutils literal notranslate"><span class="pre">host=127.0.0.1</span></code>
+(l’attore <em>qacalled</em>)</p></li>
+<li><p><strong>it.unibo.ctxcallers.MainCtxcallersKt</strong> che attiva gli attori allocati sul contesto ctxcalled di
+<code class="docutils literal notranslate"><span class="pre">host=localhost</span></code> (<em>callerqa1</em> e <em>callerqa2</em>)</p></li>
+</ul>
+<p>Si deve ovviamente verificare che le risposte del sistema <strong>non devono cambiare dal punto di vista logico</strong>.</p>
+<p><span class="remark">Start-up di un sistema distribuito</span></p>
+<ul class="simple">
+<li><p>Si noti che nessun attore viene attivato prima che siano stati eseguiti <strong>tutti i Main</strong>. Ciò in quanto un sistema
+vine concepito come è un ‘organismo’ che funziona solo quando tutte le sue parti sono state create, anche se si trovano su nodi
+computazionali diversi</p></li>
+</ul>
+<p><span class="worktodo">WORKTODO: Altre configurazioni</span></p>
+<ul class="simple">
+<li><p>Si provi ad attivare il sistema in altre configurazioni distribuite, come ad esempio:</p></li>
+</ul>
+<table class="colwidths-given docutils align-default" style="width: 100%">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><a class="reference internal image-reference" href="./QActor (meta)model_files/demorequest_aDistr2.png"><img alt="_images/demorequest_aDistr2.png" class="align-center" src="./QActor (meta)model_files/demorequest_aDistr2.png" style="width: 80%;"></a>
+</td>
+<td><a class="reference internal image-reference" href="./QActor (meta)model_files/demorequest_aDistr3.png"><img alt="_images/demorequest_aDistr3.png" class="align-center" src="./QActor (meta)model_files/demorequest_aDistr3.png" style="width: 80%;"></a>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="externalqactor">
+<h2>ExternalQActor<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#externalqactor" title="Permalink to this headline">¶</a></h2>
+<p>Nell’esempio <a class="reference internal" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#demorequest-a-distribuito"><span class="std std-ref">demorequest_a distribuito</span></a> abbiamo concepito un sistema software come un organismo che comincia ad
+operare solo quando tutte le sue parti sono state costruite ed attivate.</p>
+<p>Vi sono però situazioni in cui un sistema si configura e si costruisce ‘incrementalmente’, partendo da un nucleo iniziale
+e poi aggiungendo parti (che interagiscono con il nucleo e tra loro sempre mediante scambio di messaggi).</p>
+<p><strong>Progetto</strong>: <em>it.unibo.resourcecore</em></p>
+<section id="resourcecore">
+<h3>resourcecore<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#resourcecore" title="Permalink to this headline">¶</a></h3>
+<p>Supponiamo ad esempio di introdurre come ‘nucleo di base’ una risorsa modellata come segue.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>System resourcecore
+Request cmd                 : cmd(X) // X =  w | s | a | d | h
+Reply   replytocmd  : replytocmd(X)
+Event    alarm      : alarm(V)
+
+Context ctxresourcecore ip [host="localhost" port=8045]
+
+QActor resourcecore context ctxresourcecore{
+  State s0 initial {
+      println("resourcecore READY")
+    }
+  Transition t0
+    whenRequest cmd   -&gt; handleRequestCmd
+    whenEvent   alarm -&gt; handleAlarm
+
+  State handleAlarm{
+      printCurrentMessage
+  }
+  Transition t0
+      whenRequest cmd -&gt; handleRequestCmd
+      whenEvent   alarm -&gt; handleAlarm
+
+
+  State handleRequestCmd{
+    printCurrentMessage
+    onMsg( cmd : cmd(X) ){
+      [# val ANSW = "answerFor_${payloadArg(0)}" #]
+      replyTo cmd with replytocmd : replytocmd( $ANSW )
+    }
+  }
+  Goto s0
+}
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="./QActor (meta)model_files/resourcecore.png"><img alt="_images/resourcecore.png" class="align-center" src="./QActor (meta)model_files/resourcecore.png" style="width: 30%;"></a>
+<p>Il sistema formato dalla sola <a class="reference internal" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#resourcecore"><span class="std std-ref">resourcecore</span></a> è descritto come segue:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">file</span> <span class="n">resourcecore</span><span class="o">.</span><span class="n">pl</span>
+<span class="n">context</span><span class="p">(</span><span class="n">ctxresourcecore</span><span class="p">,</span> <span class="s2">"localhost"</span><span class="p">,</span>  <span class="s2">"TCP"</span><span class="p">,</span> <span class="s2">"8045"</span><span class="p">)</span><span class="o">.</span>
+<span class="n">qactor</span><span class="p">(</span> <span class="n">resourcecore</span><span class="p">,</span> <span class="n">ctxresourcecore</span><span class="p">,</span> <span class="s2">"it.unibo.resourcecore.Resourcecore"</span><span class="p">)</span><span class="o">.</span>
+</pre></div>
+</div>
+</section>
+<section id="external-caller1">
+<h3>External caller1<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#external-caller1" title="Permalink to this headline">¶</a></h3>
+<p><strong>Progetto</strong>: <em>it.unibo.corecallers</em></p>
+<p>Supponiamo ora che un ulteriore componente QakActor software voglia ‘fare sistema’ con <a class="reference internal" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#resourcecore"><span class="std std-ref">resourcecore</span></a>, inviando una richiesta
+alla risorsa.</p>
+<a class="reference internal image-reference" href="./QActor (meta)model_files/corecaller.png"><img alt="_images/corecaller.png" class="align-center" src="./QActor (meta)model_files/corecaller.png" style="width: 60%;"></a>
+<p><span class="remark">I messaggi sono il ‘collante’ del sistema</span></p>
+<ul class="simple">
+<li><p>Il componente che vuole interagire con  <a class="reference internal" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#resourcecore"><span class="std std-ref">resourcecore</span></a> deve conoscerne il linguaggio di interazione. Dunque, oltre
+al protocollo usato dalla risorsa per ricevere i messaggi, occorre anche fare riferimento agli stessi tipi di messaaggio
+dichiarati in  <a class="reference internal" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#resourcecore"><span class="std std-ref">resourcecore</span></a></p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">System</span> <span class="n">corecaller1</span>
+
+<span class="n">Request</span> <span class="n">cmd</span>           <span class="p">:</span> <span class="n">cmd</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">//</span> <span class="n">X</span> <span class="o">=</span>  <span class="n">w</span> <span class="o">|</span> <span class="n">s</span> <span class="o">|</span> <span class="n">a</span> <span class="o">|</span> <span class="n">d</span> <span class="o">|</span> <span class="n">h</span>
+<span class="n">Reply</span>   <span class="n">replytocmd</span>  <span class="p">:</span> <span class="n">replytocmd</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">Event</span>    <span class="n">alarm</span>      <span class="p">:</span> <span class="n">alarm</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Agli occhi del nuovoco attore, la  <a class="reference internal" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#resourcecore"><span class="std std-ref">resourcecore</span></a> è un componente ‘esterno’ che deve essere solo
+dichiarato come tale, dando informazioni sul suo contesto.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Context</span> <span class="n">ctxcorecaller1</span>   <span class="n">ip</span> <span class="p">[</span><span class="n">host</span><span class="o">=</span> <span class="s2">"localhost"</span>   <span class="n">port</span><span class="o">=</span> <span class="mi">8038</span> <span class="p">]</span>
+<span class="n">Context</span> <span class="n">ctxresourcecore</span>  <span class="n">ip</span> <span class="p">[</span><span class="n">host</span><span class="o">=</span> <span class="s2">"127.0.0.1"</span>   <span class="n">port</span><span class="o">=</span> <span class="mi">8045</span> <span class="p">]</span>
+
+<span class="n">ExternalQActor</span> <span class="n">resourcecore</span> <span class="n">context</span> <span class="n">ctxresourcecore</span>
+
+<span class="n">QActor</span> <span class="n">corecaller1</span> <span class="n">context</span> <span class="n">ctxcorecaller1</span><span class="p">{</span> <span class="o">...</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p>La descrizione del sistema ‘visto’ da <code class="docutils literal notranslate"><span class="pre">corecaller1</span></code> diventa:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">file</span> <span class="n">corecaller1</span><span class="o">.</span><span class="n">pl</span>
+<span class="n">context</span><span class="p">(</span><span class="n">ctxresourcecore</span><span class="p">,</span> <span class="s2">"localhost"</span><span class="p">,</span>  <span class="s2">"TCP"</span><span class="p">,</span> <span class="s2">"8045"</span><span class="p">)</span><span class="o">.</span>
+<span class="n">qactor</span><span class="p">(</span> <span class="n">resourcecore</span><span class="p">,</span> <span class="n">ctxresourcecore</span><span class="p">,</span> <span class="s2">"it.unibo.resourcecore.Resourcecore"</span><span class="p">)</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>A questo punto possiamo definire un comportamento che prevede lo scambio di messaggi.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>QActor corecaller1 context ctxcorecaller1{
+   State s0 initial {
+      printCurrentMessage
+      request resourcecore -m cmd : cmd(caller1)
+  }
+      Transition t0
+              whenReply replytocmd -&gt; handleReply
+              whenEvent alarm      -&gt; handleAlarm
+
+      State handleReply{
+              printCurrentMessage
+              delay 5000
+              println("       --- caller1 handleReply: emit fire")
+              emit alarm : alarm(fire)
+      }
+      Transition t0
+              whenEvent   alarm -&gt; handleAlarm
+
+      State handleAlarm{
+              println("       --- caller1 handleAlarm   ")
+              printCurrentMessage
+  //emit alarm : alarm(fire)  //possible LOOP!!
+      }
+      Transition t0
+              whenReply replytocmd -&gt; handleReply
+              whenEvent   alarm -&gt; handleAlarm
+}
+</pre></div>
+</div>
+</section>
+</section>
+<section id="actors-as-streams">
+<h2>Actors as streams<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#actors-as-streams" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Reactive_programming">Reactive programming</a> is a combination of the best ideas from the <a class="reference external" href="https://en.wikipedia.org/wiki/Observer_pattern">Observer</a> pattern, the <a class="reference external" href="https://en.wikipedia.org/wiki/Iterator_pattern">Iterator</a> pattern,
+and <a class="reference external" href="https://en.wikipedia.org/wiki/Functional_programming">Functional programming</a>.</p>
+<p>In <a class="reference external" href="https://en.wikipedia.org/wiki/Reactive_programming">Reactive programming</a>, un consumatore reagisce ai dati non appena arrivano, con la capacità
+anche di <em>propagare le modifiche come eventi</em> agli osservatori registrati.</p>
+<p>Un QAkActor può lavorare come un produttore osservabile di dati; può essere <em>osservato da altri attori</em> che si
+‘iscrivono’ presso di lui.
+Ciascun sottoscrittore elaborerà i dati ‘in parallelo’ con gli altri e potrà a sua volta funzionare come osservabile.</p>
+<div class="highlight-Java notranslate"><div class="highlight"><pre><span></span><span class="kd">abstract</span> <span class="kd">class</span>  <span class="nf">ActorBasic</span><span class="p">(</span> <span class="p">...</span> <span class="p">)</span> <span class="p">{</span>
+<span class="kd">protected</span> <span class="n">val</span> <span class="n">subscribers</span> <span class="o">=</span> <span class="n">mutableListOf</span><span class="p">()</span>
+
+    <span class="n">fun</span> <span class="nf">subscribe</span><span class="p">(</span> <span class="n">a</span> <span class="p">:</span> <span class="n">ActorBasic</span><span class="p">)</span> <span class="p">:</span> <span class="n">ActorBasic</span> <span class="p">{</span>
+        <span class="n">subscribers</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">a</span>
+    <span class="p">}</span>
+    <span class="n">fun</span> <span class="nf">subscribeLocalActor</span><span class="p">(</span> <span class="n">actorName</span> <span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">:</span> <span class="n">ActorBasic</span> <span class="p">{</span>
+        <span class="n">val</span> <span class="n">a</span> <span class="o">=</span> <span class="n">sysUtil</span><span class="p">.</span><span class="na">getActor</span><span class="p">(</span><span class="n">actorName</span><span class="p">)</span>
+        <span class="k">if</span><span class="p">(</span> <span class="n">a</span> <span class="o">!=</span> <span class="kc">null</span>  <span class="p">){</span> <span class="n">subscribers</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">a</span><span class="p">);</span> <span class="k">return</span> <span class="n">a</span><span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">fun</span> <span class="nf">unsubscribe</span><span class="p">(</span> <span class="n">a</span> <span class="p">:</span> <span class="n">ActorBasic</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">subscribers</span><span class="p">.</span><span class="na">remove</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="n">suspend</span> <span class="n">fun</span> <span class="nf">emitLocalStreamEvent</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="n">ApplMessage</span> <span class="p">){</span>
+        <span class="n">subscribers</span><span class="p">.</span><span class="na">forEach</span> <span class="p">{</span> <span class="n">it</span><span class="p">.</span><span class="na">actor</span><span class="p">.</span><span class="na">send</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="p">}</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<section id="emitlocalstreamevent">
+<h3>emitLocalStreamEvent<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#emitlocalstreamevent" title="Permalink to this headline">¶</a></h3>
+<p>L’operazione <code class="docutils literal notranslate"><span class="pre">emitLocalStreamEvent</span></code> è una versione specializzata/ottimizzata del meccanismo di emissione di
+un evento che opera inserendo l’informazione direttamente nella coda associata agli attori sottoscrittori.</p>
+</section>
+<section id="creazione-di-una-pipe">
+<h3>Creazione di una pipe<a class="headerlink" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#creazione-di-una-pipe" title="Permalink to this headline">¶</a></h3>
+<p>Nel progetto <a class="reference internal" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/BasicRobot22.html#basicrobot22-requisiti"><span class="std std-ref">basicrobot22</span></a> si introduce un sistema che configura
+la pipe di figura</p>
+<a class="reference internal image-reference" href="./QActor (meta)model_files/sonarpipenano.png"><img alt="_images/sonarpipenano.png" class="align-center" src="./QActor (meta)model_files/sonarpipenano.png" style="width: 75%;"></a>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>firstActorInPipe = sysUtil.getActor("sonarsimulator")!!
+firstActorInPipe.
+  subscribeLocalActor("datalogger").
+  subscribeLocalActor("datacleaner").
+  subscribeLocalActor("distancefilter").
+  subscribeLocalActor("qasink")
+</pre></div>
+</div>
+<p>I dati generati da <em>firstActorInPipe</em> (un <code class="docutils literal notranslate"><span class="pre">sonarsimulator</span></code> come  <a class="reference internal" href="file:///D:/Michele%20Righi/Programmi/GitHub/issLab2022/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html#sonardatagen-kt"><span class="std std-ref">sonarDataGen.kt</span></a>) sono
+memorizzati dal  <code class="docutils literal notranslate"><span class="pre">datalogger</span></code>, filtrati dal <code class="docutils literal notranslate"><span class="pre">datacleaner</span></code> e gestiti dal <code class="docutils literal notranslate"><span class="pre">distancefilter</span></code>, che
+emette l’evento</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">obstacle:obstacle(V)</span></code></p>
+</div></blockquote>
+<p>nel caso che il valore corrente della distanza ‘pulita’ misurata risulti inferiore a un limite prefissato.</p>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+
+    
+
+    
+  
+</body></html>

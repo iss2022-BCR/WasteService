@@ -49,7 +49,7 @@ class Wasteservicestatusgui ( name: String, scope: CoroutineScope  ) : ActorBasi
 					action { //it:State
 						println("[WasteServiceStatusGUI] Waiting for updates...")
 					}
-					 transition(edgeName="t02",targetState="state_handle_update",cond=whenDispatch("updategui"))
+					 transition(edgeName="t09",targetState="state_handle_update",cond=whenDispatch("updategui"))
 				}	 
 				state("state_handle_update") { //this:State
 					action { //it:State

@@ -21,6 +21,35 @@ class Warningdevice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( na
 						println("[WarningDevice] Initializing...")
 					}
 				}	 
+				state("state_update") { //this:State
+					action { //it:State
+						if( checkMsgContent( Term.createTerm("updateled(LedState)"), Term.createTerm("update_led(ARG)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 newState = ws.LedState.valueOf(payloadArg(0))  
+								 val stateName = when(newState) {
+														ws.LedState.OFF -> "off"
+														ws.LedState.ON -> "on"
+														ws.LedState.BLINK -> "blink_on"
+													}
+												transitNow(stateName)
+						}
+					}
+				}	 
+				state("state_off") { //this:State
+					action { //it:State
+					}
+					 transition(edgeName="t06",targetState="state_update",cond=whenDispatch("updateled"))
+				}	 
+				state("state_on") { //this:State
+					action { //it:State
+					}
+					 transition(edgeName="t07",targetState="state_update",cond=whenDispatch("updateled"))
+				}	 
+				state("state_blinking") { //this:State
+					action { //it:State
+					}
+					 transition(edgeName="t08",targetState="state_update",cond=whenDispatch("updateled"))
+				}	 
 			}
 		}
 }
