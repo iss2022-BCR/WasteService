@@ -40,9 +40,7 @@
                 <div class="sidenavSubSection">
                     <a href="#Why-QAK">Why QAK</a>
                     <a href="#Logical-Architecture">Logical Architecture</a>
-                    <a href="#Interactions">Interactions</a>
                 </div>
-                <a href="#Test-Plans">Test Plans</a>
             </div>
             <a href="problem_analysis.html">Problem Analysis</a>
             <a href="conclusions.html">Conclusions</a>
@@ -620,7 +618,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>TrolleyState</td>
+                    <td><emn>TrolleyState</emn></td>
                     <td>Enumerative</td>
                     <td>
                         All the <b>possible states</b> of the transport trolley.
@@ -630,7 +628,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>LedState</td>
+                    <td><emn>LedState</emn></td>
                     <td>Enumerative</td>
                     <td>
                         All the <b>possible states</b> of the Led.
@@ -640,6 +638,72 @@
                     </td>
                 </tr>
             </table>
+
+            <!--<h3 id="Data">Data</h3>
+            <table class="dictionary">
+                <tr>
+                    <th>Data</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>truckLoad</td>
+                    <td>Floating point variable</td>
+                    <td>
+                        Indicates the <b>weight</b> of the waste that the truck wants <b>to dump</b>.
+                        Since the weight is expressed in kg, we have to use decimal too.
+                    </td>
+                </tr>
+                <tr>
+                    <td>wasteLoad</td>
+                    <td>Floating point variable</td>
+                    <td>
+                        Indicates the <b>weight</b> of waste that the transport trolley is going <b>to deposit</b>.
+                    </td>
+                </tr>
+                <tr>
+                    <td>WasteType</td>
+                    <td>Enumerative</td>
+                    <td>
+                        Indicates the <b>type of waste</b> to deposit.
+                    </td>
+                </tr>
+                <tr>
+                    <td>PICKUP_TIME</td>
+                    <td>Integer constant</td>
+                    <td>
+                        <b>Time</b> in seconds, known in advance, it takes the transport trolley to <b>pick up</b> the waste.
+                    </td>
+                </tr>
+                <tr>
+                    <td>MAXPB</td>
+                    <td>Floating point constant</td>
+                    <td>
+                        Maximum waste <b>capacity</b> that the <b>PlasticBox</b> can store.
+                    </td>
+                </tr>
+                <tr>
+                    <td>MAXGB</td>
+                    <td>Floating point constant</td>
+                    <td>
+                        Maximum waste <b>capacity</b> that the <b>GlassBox</b> can store.
+                    </td>
+                </tr>
+                <tr>
+                    <td>RD</td>
+                    <td>Integer constant</td>
+                    <td>
+                        <b>Length</b> of the <b>transport trolley</b>.
+                    </td>
+                </tr>
+                <tr>
+                    <td>DLIMT</td>
+                    <td>Floating point constant</td>
+                    <td>
+                        <b>Limit distance</b> beyond which the alarm is activated.
+                    </td>
+                </tr>
+            </table>-->
 
             <h3 id="Messages">Messages</h3>
             <table class="dictionary">
@@ -760,18 +824,10 @@
             </ul>
             <a href="../../../commons/qak/QAK_BCR_notes.html">QAK notes</a><br/>
             <a href="../../../commons/qak/QActor (meta)model.html">QAK documentation</a><br/>
-            
             <h3 id="Logical-Architecture">Logical Architecture</h3>
             Model: <a href="../../Sprint0_RequirementAnalysis/src/demo_system_overview_v0.qak">demo_system_overview_v0.qak</a>
-            <br/>
-            <br/>
+            <br/><br/>
             <img width="100%" src="../../resources/models/demo_system_overview_v0arch.png"/>
-            <br/>
-            <br/>
-            <h3 id="Interactions">Interactions</h3>
-            
-            <h2 id="Test-Plans">Test Plans</h2>
-            Executable Models
         </div>
     </body>
 </html>
