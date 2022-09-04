@@ -1,0 +1,296 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>QAK Notes</title>
+        <link rel="stylesheet" type="text/css" href="../resources/styles/templateISS.css">
+        <link rel="stylesheet" type="text/css" href="../resources/styles/main.css">
+        <link rel="stylesheet" type="text/css" href="../resources/styles/navbar.css">
+        <link rel="stylesheet" type="text/css" href="../resources/styles/table.css">
+        <link rel="stylesheet" type="text/css" href="../resources/styles/code.css">
+        <script type="text/javascript" src="../resources/scripts/myScripts.js"></script>
+    </head>
+    <style>
+        #main {
+            font-family: Georgia, serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: Georgia, serif;
+        }
+        pre {
+            white-space: pre-wrap;
+        }
+    </style>
+
+    <body onload="loadNav();">
+        <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
+        <div id="sidenav" class="sidenav">
+            <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
+            <a href="#What-is-QAK">What is QAK</a>
+            <a href="#Messages-and-Events">Messages and<br/>Events</a>
+            <a href="#QAK-Syntax">QAK Syntax</a>
+            <div class="sidenavSection">
+                <a href="#File-Structure-Template">File Structure<br/>Template</a>
+                <a href="#Messages">Messages</a>
+                <div class="sidenavSubSection">
+                    <a href="#Messages-Declaration">Messages Declaration</a>
+                    <a href="#Sending-messages-Operations">Sending-messages<br/>Operations</a>
+                </div>
+            </div>
+            <a href="#Project-Setup">Project Setup</a>
+            <div class="sidenavSection">
+                <a href="#IDE">IDE</a>
+                <a href="#Project-Creation-and-Execution">Project Creation<br/>and Execution</a>
+            </div>
+            <a href="#Build-the-Diagram">Build the Diagram</a>
+            <a href="#QAK-Legend">QAK Legend</a>
+            <p style="height: 100px; visibility: hidden"></p>
+        </div>
+
+        <div id="main">
+            <h1 align="center">QAK Notes</h1>
+            <h2 id="What-is-QAK">What is QAK</h2>
+            QActor (meta)model is the name given to the custom language inspired by
+            <a href="https://doc.akka.io//docs/akka/current/typed/guide/actors-motivation.html"><b>Akka actor model</b></a>, based on Hewitt's work at MIT.
+            <div class="remark">
+                The aim of QActor is to have a generic modeling language for the <i>analysis and project</i>
+                of distributed applications and for the definition of behavioral models of actors
+                that behave like <b>FSM</b> (Fine State Machines).<br/>
+                The 'k' in QAK means that the language is implemented with Kotlin (without any Akka support).
+            </div>
+            QAK is based on some fundamental concepts, which can be summarized as follows:
+            <ol>
+                <li>A <ksi>QA-System</ksi> is a collection of active entities (<i>QActors</i>) each working in a computational node (<ksi>Context</ksi>).</li>
+                <li><ksi>QActors interact</ksi> by using <ksi>Messages</ksi> of different types (<i>Dispatch, Request,</i>...) and <i>Events</i>.</li>
+                <li>A QActor can deliver information to another QActor (both local or remote) by using a proper operations or by emitting events.</li>
+                <li>High-level send-operations do not use low-level references, but only <b>actor-names</b>.</li>
+                <li>
+                    Each context owns a set QActors that can interact with components (actors or 'aliens') working on a different node, by means of the following protocols:
+                    <ul>
+                        <li><ksi>TCP</ksi>: on the port specified by the Context</li>
+                        <li><ksi>CoAP</ksi>: on the port specified by the Context</li>
+                        <li><ksi>MQTT</ksi>: using the broker specified in the <code>mqttBroker</code> declaration</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h2 id="Messages-and-Events">Messages and Events</h2>
+            In the QActor metamodel:
+            <ul>
+                <li>
+                    a <ksi>message</ksi> is intended as information sent in <b>asynchronous way</b>
+                    by some source to some specific destination.
+                    <br/>
+                    For <em>asynchronous transmission</em>, we intend that the messages can be 'buffered'
+                    by the infrastructure, while the 'unbuffered' transmission is said to be <em>synchronous</em>.
+                </li>
+                <li>
+                    an <ksi>event</ksi> is intended as information emitted by some source without any
+                    explicit destination.
+                    <br/>
+                    Events whose identifier start with the prefix <code>local_</code> are <em>not propagated outside</em>
+                    the context in which they are generated.
+                </li>
+            </ul>
+
+            <h2 id="QAK-Syntax">QAK Syntax</h2>
+            <h3 id="File-Structure-Template">File Structure Template</h3>
+            A QAK model is defined by organizing its description according to the following template:
+<pre>
+System < NAME OF THE SYSTEM >
+//mqttBroker "broker.hivemq.com" : 1883 //OPTIONAL
+
+//DECLARATION OF MESSAGES AND EVENTS
+
+//DECLARATION OF CONTEXTS
+Context CTXNAME ip [host="HOSTIP" port=PORTNUM]
+
+//DECLARATION OF ACTORS
+</pre>
+
+            <h3 id="Messages">Messages</h3>
+            An application designer can deliver messages by using the following methods:
+            <ul>
+                <li><ks><code>forward</code></ks> for a Dispatch;</li>
+                <li><ks><code>request</code></ks>, <ks><code>replyTo</code></ks> and <ks><code>askFor</code></ks> for a Request;</li>
+                <li><ks><code>emit</code></ks> for an Event.</li>
+            </ul>
+            <h4 id="Messages-Declaration">Messages Declaration</h4>
+            Different types of message are declared using a Prolog-like syntax:
+<pre>
+Event:    "Event"     name=ID  ":" msg = PHead  ;
+Dispatch: "Dispatch"  name=ID  ":" msg = PHead  ;
+Request:  "Request"   name=ID  ":" msg = PHead  ;
+Reply:    "Reply"     name=ID  ":" msg = PHead  ;
+
+PHead :       PAtom | PStruct | PStructRef ;
+...
+</pre>
+            <h4 id="Sending-messages-Operations">Sending-messages Operations</h4>
+<pre>
+Forward   : "forward" dest=[QActorDeclaration]
+                    "-m" msgref=[Dispatch] ":" val = PHead ;
+Emit      : "emit" msgref=[Event] ":" val = PHead     ;
+Demand    : "request" dest=[QActorDeclaration]
+                    "-m" msgref=[Request]  ":" val = PHead ;
+Answer    : "replyTo" reqref=[Request]
+                    "with"    msgref=[Reply]   ":" val = PHead ;
+ReplyReq  : "askFor"  reqref=[Request]
+                    "request" msgref=[Request] ":" val = PHead ;
+</pre>
+            
+            
+            <h2 id="Project-Setup">Project Setup</h2>
+            <h3 id="IDE">IDE</h3>
+            <ol>
+                <li>
+                    Download Gradle (version >= 7.4.2): <a href="https://gradle.org/releases/">Gradle Releases</a>
+                    <ul><li>Make sure to have its <code>bin/</code> directory added to the PATH system variable.</li></ul>
+                </li>
+                <li>Download <a href="https://www.eclipse.org/Xtext/download.html">Eclipse Xtext</a>: from the installer select Eclipse DSL Tools</li>
+                <li>Open Eclipse and create a <b>new workspace</b></li>
+                <li>Set the Java <b>compiler compliance level</b> as <ksi>11</ksi>: <code>Window > Preferences > Java > Compiler > Compiler compliance level: 11</code></li>
+                <li>Add and select the installed JRE as jdk <ksi>11.0.11</ksi>: <code>Window > Preferences > Java > Installed JREs > Add > Standard VM > JRE home: /path/to/jdk_folder</code></li>
+                <li>
+                    Add the following files to the Eclipse <code>dropins/</code> folder. Those are the support for the QAK (meta)modeling language:
+                    <ul>
+                        <li><ksi>it.unibo.Qactork_1.3.2.jar</ksi></li>
+                        <li><ksi>it.unibo.Qactork.ui_1.3.2.jar</ksi></li>
+                        <li><ksi>it.unibo.Qactork.ide_1.3.2.jar</ksi></li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3 id="Project-Creation-and-Execution">Project Creation and Execution</h3>
+            <ol>
+                <li>
+                    Create a new directory, and move inside it:
+<pre>
+mkdir &#60;project_name>
+cd &#60;project_name>
+</pre>
+                </li>
+                <li>
+                    Create a new Java project using <code>gradle</code>:
+<pre>
+gradle init
+
+(select 1, 1, enter, enter)
+</pre>
+                </li>
+                <li>
+                    Import the project in Eclipse as <b>Existing Gradle Project</b>: <code>File > Import > Gradle > Existing Gradle Project</code>
+                </li>
+                <li>
+                    Add <b>Java nature</b> to the project: <code>Project > Project Natures > Add > Java</code>
+                </li>
+                <li>
+                    Add two source folders <ksi>src</ksi> and <ksi>resources</ksi>: <code>File > New > Source Folder</code>
+                </li>
+                <li>Create a <ksi>.qak</ksi> file in <b>src</b>. Eclipse will ask if you want to convert to an Xtext project: select <code>Yes</code></li>
+                <li>
+                    Write the file content and save. Qactork plugins will:
+                    <ul>
+                        <li>create <code>build2022.gradle</code> file</li>
+                        <li>create <code>sysRules.pl</code> e <code>sysXXX.pl</code>, where <code>sysXXX</code> is the name of the </li>
+                    </ul>
+                </li>
+                <li>
+                    Copy the content of <code>build2022.gradle</code> file to <ksi>build.gradle</ksi>
+                </li>
+                <li>Insert Kotlin utility code used in the model into <ksi>resources</ksi> directory</li>
+                <li>
+                    Execute with:
+<pre>
+gradlew run
+</pre>
+                </li>
+            </ol>
+
+            <h2 id="Build-the-Diagram">Build the Diagram</h2>
+            <ol>
+                <li>
+                    Install Graphiz from <a href="https://graphviz.org/download/">https://graphviz.org/download/</a>
+                    <br/><br/>
+                    <ul><li>If the installer does not, add its <code>bin/</code> folder to the PATH system variable</li></ul>
+                </li>
+                <li>Make sure to be using at least version 1.3* of the QAK plugins</li>
+                <li>
+                    (Optional but recommended):
+                    <br/><br/>
+                    <ol>
+                        <li>
+                            Create a virtual environment (e.g. with anaconda):
+<pre>
+conda create -n iss2022 python=3.9
+</pre>
+                            That will create a virtual environment named <b>iss2022</b>, with python 3.9 installed.
+                        </li>
+                        <li>
+                            Activate the environment:
+<pre>
+conda activate iss2022
+</pre>
+                        </li>
+                    </ol>
+                <li>
+                    Run the generated <code>Arch_***.py</code> python script to generate the <code>.png</code> image:
+<pre>
+python Arch_file_name.py
+</pre>
+                </li>
+                <li value="4">
+                    bis. <b>Otherwise</b>: install <code>p2j</code> and <code>jupyter notebook</code>:
+<pre>
+pip install p2j
+pip install notebook
+</pre>
+                    Then convert the python script to a <code>.ipynb</code> file:
+<pre>
+p2j Arch_file_name.py
+</pre>
+                    And run the jupyter notebook:
+<pre>
+jupyter notebook Arch_file_name.ipynb
+</pre>
+                </li>
+            </ol>
+            
+            <h2 id="QAK-Legend">QAK Legend</h2>
+            <table class="dictionary">
+                <tr>
+                    <th>Image</th>
+                    <th>Meaning</th>
+                </tr>
+                <tr>
+                    <td><img src="qakicons/symActorSmall.png"/></td>
+                    <td>Actor</td>
+                </tr>
+                <tr>
+                    <td><img src="qakicons/externalQActor.png"/></td>
+                    <td>External Actor</td>
+                </tr>
+                <tr>
+                    <td><img width="50%" src="qakicons/system.PNG"/></td>
+                    <td>QAK Environment - it's used to represent the emission and reception of events</td>
+                </tr>
+                <tr>
+                    <td><img width="50%" src="qakicons/dispatch.png"/></td>
+                    <td>Dispatch</td>
+                </tr>
+                <tr>
+                    <td><img width="50%" src="qakicons/request.png"/></td>
+                    <td>Request</td>
+                </tr>
+                <tr>
+                    <td><img width="50%" src="qakicons/reply.png"/></td>
+                    <td>Reply</td>
+                </tr>
+                <tr>
+                    <td><img width="50%" src="qakicons/event.png"/></td>
+                    <td>Event</td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>
