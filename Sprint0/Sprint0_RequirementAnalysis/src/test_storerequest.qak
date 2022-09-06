@@ -1,0 +1,92 @@
+System test_storerequest
+
+// MESSAGES AND EVENTS ========================================================
+// SmartDevice (truck) -> WasteService
+Request storerequest:	storerequest(
+							TYPE, 
+							TRUCKLOAD
+						)
+
+// WasteService -> SmartDevice
+Reply loadaccepted:		loadaccepted(_)
+Reply loadrejected:		loadrejected(_)
+
+Context ctx_test_storerequest	ip [host="localhost" port=11820]
+
+/*QActor test_smartdevice context ctx_test_storerequest {
+	[#
+		var Type: wasteservice.WasteType = wasteservice.WasteType.GLASS
+		var TruckLoad: Float = 20.0f
+	#]
+	State state_init initial {
+		delay 2000
+		println("[SmartDevice_Test] Sending a store request to WasteService...")
+		request test_wasteservice -m storerequest: storerequest($Type, $TruckLoad)
+	}
+	Transition t1	whenReply loadaccepted	-> state_handle_accepted
+					whenReply loadrejected 	-> state_handle_rejected
+	
+	State state_handle_accepted {
+		printCurrentMessage
+		println("[SmartDevice_Test] Store accepted, waiting pickup...")
+		delay 1500
+		println("[SmartDevice_Test] Pickup completed, leaving")
+	}
+	
+	State state_handle_rejected {
+		printCurrentMessage
+		println("[SmartDevice_Test] Store rejected, leaving")
+	}
+}*/
+
+QActor test_wasteservice context ctx_test_storerequest {
+	[#
+		var CurrentPlastic: Float = 0.0f
+		var CurrentGlass: Float = 0.0f
+		var Type: wasteservice.WasteType
+		var TruckLoad: Float
+	#]
+	State state_init initial {
+		
+	}
+	Goto state_idle
+	
+	State state_idle {
+		println("[Test_WasteService] Waiting for messages...")
+	}
+	Transition t1	whenRequest storerequest	-> state_handle_store
+					
+	State state_handle_store {
+		printCurrentMessage
+		onMsg(storerequest: storerequest(TYPE, TRUCKLOAD)) {
+			[#
+				Type = wasteservice.WasteType.valueOf(payloadArg(0))
+				TruckLoad = payloadArg(1).toFloat()
+			#]
+			if	[#
+					// enough space
+					(Type == wasteservice.WasteType.PLASTIC && CurrentPlastic + TruckLoad <= wasteservice.Constants.MAXPB) ||
+					(Type == wasteservice.WasteType.GLASS && CurrentGlass + TruckLoad <= wasteservice.Constants.MAXGB)
+				#] 
+			{
+				[#
+					if (Type == wasteservice.WasteType.PLASTIC) {
+						CurrentPlastic += TruckLoad 
+					}
+					else {
+						CurrentGlass += TruckLoad
+					}
+				#]
+				println("[Test_WasteService] Load accepted ($TruckLoad KG of $Type).")
+				replyTo storerequest with loadaccepted: loadaccepted(_)
+			}
+			else {
+				println("[Test_WasteService] Load rejected")
+				replyTo storerequest with loadrejected: loadaccepted(_)
+			}
+			println("[Test_WasteService] State:")
+			println("\tPlastic: ${CurrentPlastic}/ ${wasteservice.Constants.MAXPB} KG, Glass: ${CurrentGlass} / ${wasteservice.Constants.MAXPB} KG")
+		}
+	}
+	Goto state_idle
+}

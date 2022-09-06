@@ -18,17 +18,27 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 		return { //this:ActionBasciFsm
 				state("state_init") { //this:State
 					action { //it:State
-						forward("updateled", "updateled($Led)" ,"warningdevice" ) 
+						forward("updateled", "updateled(_)" ,"warningdevice" ) 
 						forward("updategui", "updategui(_)" ,"wasteservicestatusgui" ) 
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 					 transition( edgeName="goto",targetState="state_idle", cond=doswitch() )
 				}	 
 				state("state_idle") { //this:State
 					action { //it:State
 						forward("updategui", "updategui(_)" ,"wasteservicestatusgui" ) 
-						stateTimer = TimerActor("timer_state_idle", 
-							scope, context!!, "local_tout_transporttrolley_state_idle", 5000.toLong() )
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+				 	 		//sysaction { //it:State
+				 	 		  stateTimer = TimerActor("timer_state_idle", 
+				 	 			scope, context!!, "local_tout_transporttrolley_state_idle", 5000.toLong() )
+				 	 		//}
+					}	 	 
 					 transition(edgeName="t02",targetState="state_idle",cond=whenTimeout("local_tout_transporttrolley_state_idle"))   
 					transition(edgeName="t03",targetState="state_deposit",cond=whenDispatch("doDeposit"))
 					transition(edgeName="t04",targetState="state_handle_stop",cond=whenDispatch("stop"))
@@ -38,21 +48,33 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 						println("[TransportTrolley] Performing deposit action...")
 						request("step", "step(_)" ,"basicrobot" )  
 						forward("cmd", "cmd(_)" ,"basicrobot" ) 
-						forward("updateled", "updateled($Led)" ,"warningdevice" ) 
+						forward("updateled", "updateled(_)" ,"warningdevice" ) 
 						forward("updategui", "updategui(_)" ,"wasteservicestatusgui" ) 
 						println("[TransportTrolley] Deposit action concluded.")
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 					 transition( edgeName="goto",targetState="state_idle", cond=doswitch() )
 				}	 
 				state("state_handle_stop") { //this:State
 					action { //it:State
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 					 transition(edgeName="t05",targetState="state_handle_resume",cond=whenDispatch("resume"))
 				}	 
 				state("state_handle_resume") { //this:State
 					action { //it:State
 						returnFromInterrupt(interruptedStateTransitions)
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 				}	 
 			}
 		}

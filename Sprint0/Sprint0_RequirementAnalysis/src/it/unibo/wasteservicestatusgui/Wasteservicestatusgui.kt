@@ -16,11 +16,11 @@ class Wasteservicestatusgui ( name: String, scope: CoroutineScope  ) : ActorBasi
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
 		
-				var trolleyState: wasteservice.TrolleyState
-				var trolleyPosition: wasteservice.TrolleyPosition
-				var currentPlastic: Float
-				var currentGlass: Float
-				var ledState: wasteservice.LedState
+				var trolleyState: wasteservice.TrolleyState = wasteservice.TrolleyState.IDLE
+				var trolleyPosition: wasteservice.TrolleyPosition = wasteservice.TrolleyPosition.HOME
+				var currentPlastic: Float = 0.0f
+				var currentGlass: Float = 0.0f
+				var ledStatus: wasteservice.LedStatus = wasteservice.LedStatus.OFF
 		return { //this:ActionBasciFsm
 				state("state_init") { //this:State
 					action { //it:State
@@ -30,40 +30,43 @@ class Wasteservicestatusgui ( name: String, scope: CoroutineScope  ) : ActorBasi
 									trolleyPosition = wasteservice.TrolleyPosition.HOME
 									currentPlastic = 0.0f
 									currentGlass = 0.0f
-									ledState = wasteservice.LedState.OFF
-						println("[WasteServiceStatusGUI] Initialization completed. Current state:
-						
-												TrolleyState: $trolleyState
-						
-												TrolleyPosition: $trolleyPosition
-						
-												Plastic: $currentPlastic KG
-						
-												Glass: $currentGlass KG
-						
-												LedState: $ledState")
+									ledStatus = wasteservice.LedStatus.OFF
+						println("[WasteServiceStatusGUI] Initialization completed. Current state:")
+						println("TrolleyState: $trolleyState")
+						println("TrolleyPosition: $trolleyPosition")
+						println("Plastic: $currentPlastic KG")
+						println("Glass: $currentGlass KG")
+						println("LedStatus: $ledStatus")
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 					 transition( edgeName="goto",targetState="state_idle", cond=doswitch() )
 				}	 
 				state("state_idle") { //this:State
 					action { //it:State
 						println("[WasteServiceStatusGUI] Waiting for updates...")
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 					 transition(edgeName="t09",targetState="state_handle_update",cond=whenDispatch("updategui"))
 				}	 
 				state("state_handle_update") { //this:State
 					action { //it:State
-						println("[WasteServiceStatusGUI] State:
-												TrolleyState: $trolleyState
-						
-												TrolleyPosition: $trolleyPosition
-						
-												Plastic: $currentPlastic KG
-						
-												Glass: $currentGlass KG
-						
-												LedState: $ledState")
+						println("[WasteServiceStatusGUI] State:")
+						println("TrolleyState: $trolleyState")
+						println("TrolleyPosition: $trolleyPosition")
+						println("Plastic: $currentPlastic KG")
+						println("Glass: $currentGlass KG")
+						println("LedStatus: $ledStatus")
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 					 transition( edgeName="goto",targetState="state_idle", cond=doswitch() )
 				}	 
 			}

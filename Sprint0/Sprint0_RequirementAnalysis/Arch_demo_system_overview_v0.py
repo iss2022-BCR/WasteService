@@ -32,7 +32,9 @@ with Diagram('demo_system_overview_v0Arch', show=False, outformat='png', graph_a
      with Cluster('ctx_basicrobot', graph_attr=nodeattr):
           basicrobot=Custom('basicrobot(ext)','./qakicons/externalQActor.png')
      smartdevice_test >> Edge(color='magenta', style='solid', xlabel='storerequest') >> wasteservice
+     wasteservice >> Edge(color='green', style='dashed', xlabel='loadaccepted') >> sys 
      wasteservice >> Edge(color='blue', style='solid', xlabel='doDeposit') >> transporttrolley
+     wasteservice >> Edge(color='green', style='dashed', xlabel='loadrejected') >> sys 
      wasteservice >> Edge(color='blue', style='solid', xlabel='updategui') >> wasteservicestatusgui
      wasteservice >> Edge(color='blue', style='solid', xlabel='stop') >> transporttrolley
      wasteservice >> Edge(color='blue', style='solid', xlabel='resume') >> transporttrolley

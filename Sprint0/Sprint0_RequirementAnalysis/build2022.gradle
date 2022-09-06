@@ -78,7 +78,7 @@ dependencies {
     /* UNIBO *************************************************************************************************************** */
     implementation name: 'uniboInterfaces'
     implementation name: '2p301'
-	implementation name: 'unibo.qakactor22-3.1'
+	implementation name: 'unibo.qakactor22-3.2'
 	implementation name: 'unibo.comm22-1.1'
 
     /* AIMA **************************************************************************************************************** */
@@ -105,7 +105,7 @@ eclipse {
 
 application {
     // Define the main class for the application.
-    mainClass = 'it.unibo.ctx_basicrobot.MainCtx_basicrobotKt'
+    mainClass = 'it.unibo.ctx_test_storerequest.MainCtx_test_storerequestKt'
 }
 
  jar {

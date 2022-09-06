@@ -18,9 +18,13 @@ class Smartdevice_test ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 		return { //this:ActionBasciFsm
 				state("state_init") { //this:State
 					action { //it:State
+						println("[SmartDevice_Test] Sending a store request to WasteService...")
 						request("storerequest", "storerequest(_)" ,"wasteservice" )  
-						delay(1000) 
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 				}	 
 			}
 		}

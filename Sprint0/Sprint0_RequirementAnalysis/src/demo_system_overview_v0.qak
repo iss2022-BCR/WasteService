@@ -30,7 +30,7 @@ Dispatch updategui: 	updategui(
 						)
 
 // WasteService -> Raspberry
-Dispatch updateled: 	updateled(LedState)
+Dispatch updateled: 	updateled(LedStatus)
 
 // AlarmDevice -> WasteService
 Dispatch distance:		distance(_)
@@ -41,7 +41,7 @@ Context ctx_wasteservice		ip [host="localhost" port=11800]
 Context ctx_monitor				ip [host="localhost" port=11801]
 Context ctx_raspdevice			ip [host="localhost" port=11802]
 Context ctx_smartdevice_test	ip [host="localhost" port=11803]
-Context ctx_basicrobot      	ip [host="localhost" port=11810] 
+Context ctx_basicrobot      	ip [host="localhost" port=11810]
 
 // ACTORS =====================================================================
 ExternalQActor basicrobot context ctx_basicrobot
@@ -53,21 +53,33 @@ ExternalQActor basicrobot context ctx_basicrobot
  */
 QActor smartdevice_test context ctx_smartdevice_test {
 	State state_init initial {
-		request wasteservice -m storerequest: storerequest(_)
-		
-		delay 1000
+		println("[SmartDevice_Test] Sending a store request to WasteService...")
+		request wasteservice -m		storerequest: storerequest(_)
 	}
 }
 
 // ACTORS for ctx_wasteservice ------------------------------------------------
 QActor wasteservice context ctx_wasteservice {
+	[#
+		var CurrentPlastic: Float = 0.0f
+		var CurrentGlass: Float = 0.0f
+		var Type: wasteservice.WasteType
+		var TruckLoad: Float
+	#]
 	State state_init initial {
+		[#
+			var CurrentPlastic = 0.0f
+			var CurrentGlass = 0.0f
+		#]
 		printCurrentMessage
-		println("[WasteService] Initializing...")
+		println("[WasteService] Reset:")
+		println("\tPlastic: $CurrentPlastic / ${wasteservice.Constants.MAXPB} KG")
+		println("\tGlass: $CurrentGlass / ${wasteservice.Constants.MAXGB} KG")
 	}
 	Goto state_idle
 	
 	State state_idle {
+		println("[WasteService] Idle...")
 		// wait for messages...
 	}
 	Transition t0	whenRequest storerequest	-> state_handle_store
@@ -75,24 +87,45 @@ QActor wasteservice context ctx_wasteservice {
 					
 	State state_handle_store {
 		printCurrentMessage
-		onMsg(storerequest: storerequest(TYPE, WEIGHT)) {
-			// Check if there is enough space
-			if [# /*enough space*/ #] {
+		onMsg(storerequest: storerequest(TYPE, TRUCKLOAD)) {
+			[#
+				Type = wasteservice.WasteType.valueOf(payloadArg(0))
+				TruckLoad = payloadArg(1).toFloat()
+			#]
+			if	[#
+					// enough space
+					(Type == wasteservice.WasteType.PLASTIC && CurrentPlastic + TruckLoad <= wasteservice.Constants.MAXPB) ||
+					(Type == wasteservice.WasteType.GLASS && CurrentGlass + TruckLoad <= wasteservice.Constants.MAXGB)
+				#] 
+			{
+				[#
+				if (Type == wasteservice.WasteType.PLASTIC) {
+					CurrentPlastic += TruckLoad 
+				}
+				else {
+					CurrentGlass += TruckLoad
+				}
+				#]
 				replyTo storerequest with loadaccepted: loadaccepted(_)
 				forward transporttrolley -m doDeposit: doDeposit(TYPE, WEIGHT)
+				
+				delay 1000 // pickup time (known)
 			}
 			else {
 				replyTo storerequest with loadrejected: loadaccepted(_)
 			}
 			forward wasteservicestatusgui -m updategui: updategui(_)
+			
+			println("\tPlastic: $CurrentPlastic / ${wasteservice.Constants.MAXPB} KG")
+			println("\tGlass: $CurrentGlass / ${wasteservice.Constants.MAXGB} KG")
 		}
 		
-		delay 1000 // pickup time (known)
+		
 	}
 	Goto state_idle
 	
 	State state_handle_distance {
-		if [# payloadArg(0) >= wasteservice.Constants.DLIMT #] {
+		if [# payloadArg(0).toFloat() >= wasteservice.Constants.DLIMT #] {
 			// state_handle_stop
 			forward transporttrolley -m stop: stop(_)
 		} else {
@@ -106,7 +139,7 @@ QActor wasteservice context ctx_wasteservice {
 QActor transporttrolley context ctx_wasteservice {
 	State state_init initial {
 		// go at home
-		forward warningdevice -m updateled: updateled($Led)
+		forward warningdevice -m updateled: updateled(_)
 		forward wasteservicestatusgui -m updategui: updategui(_)
 	}
 	Goto state_idle
@@ -128,7 +161,7 @@ QActor transporttrolley context ctx_wasteservice {
 		request basicrobot -m step : step(_)
 		forward basicrobot -m cmd : cmd(_)
 		
-		forward warningdevice -m updateled: updateled($Led)
+		forward warningdevice -m updateled: updateled(_)
 		forward wasteservicestatusgui -m updategui: updategui(_)
 		
 		println("[TransportTrolley] Deposit action concluded.")
@@ -153,7 +186,7 @@ QActor transporttrolley context ctx_wasteservice {
  */
 QActor alarmdevice context ctx_raspdevice {
 	State state_init initial {
-		
+		println("[AlarmDevice] Init")
 	}
 	Goto state_alarm
 	
@@ -171,15 +204,15 @@ QActor warningdevice context ctx_raspdevice {
 	
 	State state_update {
 		onMsg(updateled:	update_led(ARG)){
-			[# newState = ws.LedState.valueOf(payloadArg(0)) #]
+			/*[# newState = wasteservice.LedStatus.valueOf(payloadArg(0)) #]*/
 			//println("update_led(${newState})")
-			[# val stateName = when(newState) {
-						ws.LedState.OFF -> "off"
-						ws.LedState.ON -> "on"
-						ws.LedState.BLINK -> "blink_on"
+			/*[# val stateName = when(newState) {
+						wasteservice.LedStatus.OFF -> "off"
+						wasteservice.LedStatus.ON -> "on"
+						wasteservice.LedStatus.BLINK -> "blink_on"
 					}
 				transitNow(stateName)
-			#]
+			#]*/
 		}
 	}
 	
@@ -205,11 +238,11 @@ QActor warningdevice context ctx_raspdevice {
  */
 QActor wasteservicestatusgui context ctx_monitor {
 	[#
-		var trolleyState: wasteservice.TrolleyState
-		var trolleyPosition: wasteservice.TrolleyPosition
-		var currentPlastic: Float
-		var currentGlass: Float
-		var ledState: wasteservice.LedState
+		var trolleyState: wasteservice.TrolleyState = wasteservice.TrolleyState.IDLE
+		var trolleyPosition: wasteservice.TrolleyPosition = wasteservice.TrolleyPosition.HOME
+		var currentPlastic: Float = 0.0f
+		var currentGlass: Float = 0.0f
+		var ledStatus: wasteservice.LedStatus = wasteservice.LedStatus.OFF
 	#]
 	State state_init initial {
 		println("[WasteServiceStatusGUI] Initializing...")
@@ -218,14 +251,14 @@ QActor wasteservicestatusgui context ctx_monitor {
 			trolleyPosition = wasteservice.TrolleyPosition.HOME
 			currentPlastic = 0.0f
 			currentGlass = 0.0f
-			ledState = wasteservice.LedState.OFF
+			ledStatus = wasteservice.LedStatus.OFF
 		#]
-		println("[WasteServiceStatusGUI] Initialization completed. Current state:\n
-					\tTrolleyState: $trolleyState\n
-					\tTrolleyPosition: $trolleyPosition\n
-					\tPlastic: $currentPlastic KG\n
-					\tGlass: $currentGlass KG\n
-					\tLedState: $ledState")
+		println("[WasteServiceStatusGUI] Initialization completed. Current state:")
+		println("TrolleyState: $trolleyState")
+		println("TrolleyPosition: $trolleyPosition")
+		println("Plastic: $currentPlastic KG")
+		println("Glass: $currentGlass KG")
+		println("LedStatus: $ledStatus")
 	}
 	Goto state_idle
 	
@@ -237,12 +270,12 @@ QActor wasteservicestatusgui context ctx_monitor {
 	
 	State state_handle_update {
 		// TO-DO: get message info and update state
-		println("[WasteServiceStatusGUI] State:
-					\tTrolleyState: $trolleyState\n
-					\tTrolleyPosition: $trolleyPosition\n
-					\tPlastic: $currentPlastic KG\n
-					\tGlass: $currentGlass KG\n
-					\tLedState: $ledState")
+		println("[WasteServiceStatusGUI] State:")
+		println("TrolleyState: $trolleyState")
+		println("TrolleyPosition: $trolleyPosition")
+		println("Plastic: $currentPlastic KG")
+		println("Glass: $currentGlass KG")
+		println("LedStatus: $ledStatus")
 	}
 	Goto state_idle
 }

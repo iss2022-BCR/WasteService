@@ -1,0 +1,4 @@
+package wasteservice
+
+object func {
+}

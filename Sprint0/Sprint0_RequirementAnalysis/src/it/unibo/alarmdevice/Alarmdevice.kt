@@ -18,14 +18,23 @@ class Alarmdevice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name
 		return { //this:ActionBasciFsm
 				state("state_init") { //this:State
 					action { //it:State
+						println("[AlarmDevice] Init")
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 					 transition( edgeName="goto",targetState="state_alarm", cond=doswitch() )
 				}	 
 				state("state_alarm") { //this:State
 					action { //it:State
 						delay(2000) 
 						forward("distance", "distance(_)" ,"wasteservice" ) 
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 				}	 
 			}
 		}

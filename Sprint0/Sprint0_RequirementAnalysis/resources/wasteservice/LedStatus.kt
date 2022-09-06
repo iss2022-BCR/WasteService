@@ -1,5 +1,5 @@
 package wasteservice
 
-enum class LedState {
+enum class LedStatus {
   OFF, ON, BLINKING
 }
