@@ -38,3 +38,7 @@ table a:link, table a:visited {
 table a:hover {
     background-color: yellow;
 }
+
+.repository a:link, .repository a:visited, .repository a:hover {
+    color: black;
+}
