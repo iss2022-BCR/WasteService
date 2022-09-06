@@ -769,8 +769,19 @@
             
             <h2 id="Test-Plans">Test Plans</h2>
             <h4>Interaction: SmartDevice &rarr; WasteService</h4>
-            The 
-            Executable Models
+            Simulation that involves the issuing of multiple <a href="#Messages">storeRequest</a> from the SmartDevice.
+            The test aims to check how the system should behave when receiving different types of requests:
+            <ul>
+                <li>Store request of Plastic, if there is enough space (loadaccepted);</li>
+                <li>Store request of Plastic, if there is not enough space (loadrejected);</li>
+                <li>Store request of Glass, if there is enough space (loadaccepted);</li>
+                <li>Store request of Glass, if there is not enough space (loadrejected);</li>
+            </ul>
+            
+            <b>File</b>: <a href="../../Sprint0_RequirementAnalysis/test/it/unibo/wasteservice/sprint0/TestInteractions.java">TestInteractions.java</a> (Executable)
+            <br/>
+            <b>Results</b>: <a href="../../Sprint0_RequirementAnalysis/build/reports/tests/test/index.html">Gradle test report</a> (Generated automatically)
+            <br/><br/><br/><br/>
         </div>
     </body>
 </html>

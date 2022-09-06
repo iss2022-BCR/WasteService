@@ -165,6 +165,10 @@ table, th, td {
   border-collapse: collapse;
 }
 
+li:first-child {
+    margin-top: 5px;
+}
+
 ol, ul, li {
   margin: 0;
   margin-left: 10px;

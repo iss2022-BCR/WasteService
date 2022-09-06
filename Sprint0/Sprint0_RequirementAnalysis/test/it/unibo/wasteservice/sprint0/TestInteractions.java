@@ -68,9 +68,9 @@ public class TestInteractions {
 
 
     @Test
-    public void testLoadAccepted1() {
+    public void testLoadAcceptedPlastic() {
         try {
-            IApplMessage msg = MsgUtil.buildRequest("testPlasticOK(1)", "storerequest", "storerequest(" + WasteType.PLASTIC + ", " + (Constants.MAXPB / 3) + ")", actorName);
+            IApplMessage msg = MsgUtil.buildRequest("testPlasticOK", "storerequest", "storerequest(" + WasteType.PLASTIC + ", " + (Constants.MAXPB / 3) + ")", actorName);
             ColorsOut.outappl("[Test_SmartDevice] " + msg.toString(), ColorsOut.MAGENTA);
 
             String reply = interaction.request(msg.toString());
@@ -85,9 +85,9 @@ public class TestInteractions {
     }
 
     @Test
-    public void testLoadAccepted2() {
+    public void testLoadRejectedPlastic() {
         try {
-            IApplMessage msg = MsgUtil.buildRequest("testPlasticOK(2)", "storerequest", "storerequest(" + WasteType.PLASTIC + ", " + (Constants.MAXPB / 2) + ")", actorName);
+            IApplMessage msg = MsgUtil.buildRequest("testPlasticFAIL", "storerequest", "storerequest(" + WasteType.GLASS + ", " + (Constants.MAXGB / 2) + ")", actorName);
             ColorsOut.outappl("[Test_SmartDevice] " + msg.toString(), ColorsOut.MAGENTA);
 
             String reply = interaction.request(msg.toString());
@@ -102,9 +102,9 @@ public class TestInteractions {
     }
 
     @Test
-    public void testLoadRejected1() {
+    public void testLoadAcceptedGlass() {
         try {
-            IApplMessage msg = MsgUtil.buildRequest("testPlasticFAIL", "storerequest", "storerequest(" + WasteType.PLASTIC + ", " + (Constants.MAXPB + 10.0f) + ")", actorName);
+            IApplMessage msg = MsgUtil.buildRequest("testGlassOK", "storerequest", "storerequest(" + WasteType.PLASTIC + ", " + (Constants.MAXPB + 10.0f) + ")", actorName);
             ColorsOut.outappl("[Test_SmartDevice] " + msg.toString(), ColorsOut.MAGENTA);
 
             String reply = interaction.request(msg.toString());
@@ -120,7 +120,7 @@ public class TestInteractions {
 
     @Test
     @Order(4)
-    public void testLoadRejected2() {
+    public void testLoadRejectedGlass() {
         try {
             IApplMessage msg = MsgUtil.buildRequest("testGlassFAIL", "storerequest", "storerequest(" + WasteType.GLASS + ", " + (Constants.MAXGB + 23.3f) + ")", actorName);
             ColorsOut.outappl("[Test_SmartDevice] " + msg.toString(), ColorsOut.MAGENTA);
