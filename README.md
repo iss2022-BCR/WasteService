@@ -18,7 +18,8 @@
   
 </div>
 
-
+[Clicca qui](https://htmlpreview.github.io/?https://raw.githubusercontent.com/iss2022-BCR/WasteService/main/Sprint0/index.html)
+per visualizzare i documenti di progetto.
 
 ### Descrizione
 - c'è un pot di ingresso dove arrivano dei camion (indoor)
@@ -46,7 +47,7 @@ Sfruttare il ricevimento del giovedì per farlo (ore 16-18), gli mandiamo una ma
 
 ### Roadmap
 - [ ] Ripassare gli HTML sulla teoria (TemaFinale2022, Conclusioni, Costruire Software, QActor, ...)
-- [ ] Guardare videolezioni degli scorsi ricevimenti, per capire come vuole le cose
+
 
 [java-shield]: https://img.shields.io/badge/Java-ED8B00?logo=java&logoColor=white
 [java-url]: https://www.java.com
