@@ -3,18 +3,19 @@
 <html>
     <head>
         <title>Sprint0</title>
-        <link rel="stylesheet" type="text/css" href="../styles/templateISS.css">
-        <link rel="stylesheet" type="text/css" href="../styles/main.css">
-        <link rel="stylesheet" type="text/css" href="../styles/navbar.css">
-        <link rel="stylesheet" type="text/css" href="../styles/table.css">
-        <link rel="stylesheet" type="text/css" href="../styles/code.css">
-        <script type="text/javascript" src="../scripts/myScripts.js"></script>
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/templateISS.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/main.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/navbar.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/table.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/code.css">
+        <script type="text/javascript" src="../../../commons/resources/scripts/myScripts.js"></script>
     </head>
 
     <body onload="loadNav(); setupSort(); setupCode();">
         <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
         <div id="sidenav" class="sidenav">
             <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
+            <a id="currentSprint" class="sprint" href="#">&#8211;&#8212; Sprint0 &#8212;&#8211;</a>
             <a href="../../index.html">Index</a>
             <a href="final_theme.html">Final Theme</a>
             <a class="selected" href="requirement_analysis.html">Requirement<br/>Analysis</a>
@@ -44,9 +45,14 @@
                 <a href="#Test-Plans">Test Plans</a>
             </div>
             <a href="problem_analysis.html">Problem Analysis</a>
+            <a href="project.html">Project</a>
             <a href="conclusions.html">Conclusions</a>
             <a href="team.html">Team</a>
-            <p style="height: 100px; visibility: hidden"></p><!-- tmp -->
+            <p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
+            <a class="sprint" href="../../../Sprint1/index.html">Sprint1</a>
+            <a class="sprint" href="../../../Sprint2/index.html">Sprint2</a>
+            <a class="sprint" href="../../../Sprint3/index.html">Sprint3</a>
+            <bottom-spacer/>
         </div>
 
         <div id="main">
@@ -420,7 +426,36 @@
                 <img id="map-legend" class="overlay-image2" width="100%" src="../../resources/diagrams/system_abstract_v4_legend.png"/>
             </div>
             <input type="checkbox" onclick="showOverlay(this, 'map-legend');" checked>Show the legend</input><br/>
-            
+            <br/>
+
+            <div class="remark">
+                Given the architecture above, we can group the project requirements into
+                <b>3 macro components</b>, ordered by priority:
+                <ol>
+                    <li>
+                        <ksi>WasteService</ksi> component (requirements <b>1 & 2</b>): includes the service area, the transport trolley,
+                        and the software that manages those and the comunication correlated to them.
+                        That's the <i>core-business</i> of the system.
+                        <br/>
+                        <emni>High priority</emni>: the system cannot provide the service without it.
+                    </li>
+                    <li>
+                        <ksi>RaspberryPi</ksi> component (requirement <b>4</b>), includes all the hardware that's going to be
+                        attached to the Raspberry Pi device, and the software that handles the alarm and
+                        warning interactions.
+                        <br/>
+                        <emni>Medium priority</emni>: it involves the security of the service.
+                    </li>
+                    <li>
+                        <ksi>Monitoring</ksi> component (requirement <b>3</b>): comprehends the software used by the supervisor,
+                        which displays up-to-date information about the current state of the service and its
+                        components.
+                        <br/>
+                        <emni>Low priority</emni>: it can be seen as a "<i>secondary, fancier and remote output</i>"
+                        (in addition to the textual output), and depends on the other 2 components.
+                    </li>
+                </ol>
+            </div>
 
             <h4 id="Service-Area">Service Area</h4>
             Given the description and the image provided by the customer, we've modeled the service area as

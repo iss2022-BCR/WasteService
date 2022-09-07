@@ -56,16 +56,24 @@ em{
 	font-family: "Arial";
     font-size: 80%;
 	font-weight: bold;
-	border-style:solid;
+	border-style: solid;
 	border-color: #abe876;
     color: #1632cc;
 }
 emn {
     font-family: "Arial";
 	font-weight: bold;
-	border-style:solid;
+	border-style: solid;
 	border-color: #abe876;
     color: #1632cc;
+}
+emni {
+    font-family: "Arial";
+	font-weight: bold;
+    font-style: italic;
+	border-style: solid;
+	border-color: #abe876;
+    color: #6b0b74;
 }
 bc{
 	font-family: "Arial";
@@ -163,6 +171,10 @@ div.remark{
 table, th, td {
   border: 1px solid black;
   border-collapse: collapse;
+}
+
+li:first-child {
+    margin-top: 5px;
 }
 
 ol, ul, li {

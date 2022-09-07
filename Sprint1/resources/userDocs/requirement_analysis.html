@@ -2,34 +2,459 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
     <head>
-        <title>Sprint0</title>
-        <link rel="stylesheet" type="text/css" href="../styles/templateISS.css">
-        <link rel="stylesheet" type="text/css" href="../styles/main.css">
-        <link rel="stylesheet" type="text/css" href="../styles/navbar.css">
-        <link rel="stylesheet" type="text/css" href="../styles/table.css">
-        <link rel="stylesheet" type="text/css" href="../styles/code.css">
-        <script type="text/javascript" src="../scripts/myScripts.js"></script>
+        <title>Sprint1</title>
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/templateISS.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/main.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/navbar.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/table.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/code.css">
+        <script type="text/javascript" src="../../../commons/resources/scripts/myScripts.js"></script>
     </head>
 
     <body onload="loadNav(); setupSort(); setupCode();">
         <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
         <div id="sidenav" class="sidenav">
             <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
+            <a class="sprint" href="../../../Sprint0/index.html">Sprint0</a>
+            <a id="currentSprint" class="sprint" href="#">&#8211;&#8212; Sprint1 &#8212;&#8211;</a>
             <a href="../../index.html">Index</a>
             <a href="final_theme.html">Final Theme</a>
             <a class="selected" href="requirement_analysis.html">Requirement<br/>Analysis</a>
             <div class="sidenavSection">
-                
+                <a href="#General-Overview">General Overview</a>
+                <div class="sidenavSubSection">
+                    <a href="#Software-Provided-by-the-Customer">Software Provided by<br/>the Customer</a>
+                    <a href="#System-Abstract">System Abstract</a>
+                </div>
+                <a href="#Requirements-Formalization">Requirements<br/>Formalization</a>
+                <div class="sidenavSubSection">
+                    <a href="#Entities">Entities</a>
+                    <a href="#Data">Data</a>
+                    <a href="#Messages">Messages</a>
+                </div>
+                <a href="#Models">Models</a>
+                <div class="sidenavSubSection">
+                    <a href="#Why-QAK">Why QAK</a>
+                    <a href="#Logical-Architecture">Logical Architecture</a>
+                </div>
+                <a href="#Test-Plans">Test Plans</a>
             </div>
             <a href="problem_analysis.html">Problem Analysis</a>
+            <a href="project.html">Project</a>
             <a href="conclusions.html">Conclusions</a>
             <a href="team.html">Team</a>
-            <p style="height: 100px; visibility: hidden"></p><!-- tmp -->
+            <p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
+            <a class="sprint">Sprint2</a>
+            <a class="sprint">Sprint3</a>
+            <bottom-spacer/>
         </div>
 
         <div id="main">
             <h1 align="center">Requirement Analysis</h1>
+            The purpose of the final product is to <b>manage a waste-disposal service</b>.
+
+            <h2 id="General-Overview">General Overview</h2>
+            <h3 id="Software-Provided-by-the-Customer">Software Provided by the Customer</h3>
+            <ul>
+                <li>
+                    <a href="../../../commons/basicRobot/BasicRobot22.html"><b>BasicRobot</b></a> -
+                    software component which executes movement commands of a DDR-robot "independently 
+                    of the technology" with which the robot is implemented (virtual or real); 
+                </li>
+                <li>
+                    <a href="../../../commons/it.unibo.raspIntro2022/code/"><b>RaspberryPi utility software</b></a> - 
+                </li>
+                <li>
+                    <b>SmartDevice</b> - a software already implemented and usable which allows the truck driver to send
+                    store requests.
+                </li>
+            </ul>
+
+            <h3 id="System-Abstract">System Abstract</h3>
+            From the analysis of text provided by the customer, we are able to draft one
+            main evidence: the software system is going to comprehend at least 4 computational
+            nodes:
+            <ul>
+                <li><b>WasteService</b> node</li>
+                <li><b>Smart device</b> (waste truck) node</li>
+                <li><b>Raspberry Pi</b> (alarm-warning) node</li>
+                <li><b>Monitoring</b> node</li>
+            </ul>
+            However, since the WasteService software doesn't run on the robot
+            machine, it must comunicate with it. Therefore we're going to consider an ulterior one:
+            the <b>DDR robot</b> node, which task is to drive the robot, according to the TransportTrolley
+            "orders".
+            <h4 id="Computational-Nodes">Computational Nodes</h4>
+            <highlight2>Focalizzarsi solo sui nodi coinvolti in questo sprint</highlight2>
+            <div class="image-container">
+                <img id="map" class="base-image" width="100%" src="../../resources/diagrams/system_abstract_v4.png"/>
+                <img id="map-legend" class="overlay-image2" width="100%" src="../../resources/diagrams/system_abstract_v4_legend.png"/>
+            </div>
+            <input type="checkbox" onclick="showOverlay(this, 'map-legend');" checked>Show the legend</input><br/>
+
+            <h4 id="Service-Area">Service Area</h4>
+            Given the description and the image provided by the customer, we've modeled the service area as
+            a rectangle free from obstacles and surrounded by 4 walls, within which there are 4 relevant areas:
+            <ul>
+                <li>
+                    <b>HOME</b>, an area of the same size as the transport trolley, in which it will be placed
+                    each time the WasteService software is run;
+                </li>
+                <li>
+                    <b>INDOOR</b>, a zone along the perimeter, where the transport trolley will have to go
+                    every time the WasteService receives a StoreRequest, and from which it will pick up the waste;
+                </li>
+                <li>
+                    <b>GLASSBOX</b> and <b>PLASTICBOX</b>, an area along the perimeter, where the transport trolley 
+                    will have to deposit the respective waste.
+                </li>
+            </ul>
+            The transport trolley is considered "at HOME" when it is above the HOME area, while it is considered
+            "at INDOOR", "at GLASSBOX" or "at PLASTICBOX", when it hits the wall of that area.
+            <br/><br/>
+            <img width="100%" src="../../resources/imgs/modello_stanza_vuota_descritta.png"/>
+
+            <h2 id="Requirements-Formalization">Requirements Formalization</h2>
+            <highlight2>Escludere i termini non coinvolti in questo sprint</highlight2>
+            <h3 id="Entities">Entities</h3>
+            <table class="dictionary">
+                <tr>
+                    <th>Entity</th>
+                    <th>Activity</th>
+                    <th>Type</th>
+                    <th>Description/Behaviour</th>
+                </tr>
+                <tr>
+                    <td>wasteTruck</td>
+                    <td>Reactive</td>
+                    <td>(Test) Actor</td>
+                    <td>
+                        Entity that approaches the INDOOR of the service area to dump some wasteLoad.
+                        It's represented as an actor for testing/simulation purposes: it sends dummy 
+                        requests once in a while.
+                    </td>
+                </tr>
+                <tr>
+                    <td>wasteService</td>
+                    <td>Proactive&nbsp& Reactive</td>
+                    <td>Actor</td>
+                    <td>
+                        Handles the wasteTruck requests and manages the transport trolley actions.
+                        It also sends updates to the wasteServiceStatusGUI and to the alarmDevice.
+                    </td>
+                </tr>
+                <tr>
+                    <td><emn>basicRobot</emn></td>
+                    <td>Reactive</td>
+                    <td>Actor</td>
+                    <td>Entity that receives commands from the transportTrolley and drives the DDR robot.</td>
+                </tr>
+                <tr>
+                    <td>transportTrolley</td>
+                    <td>Proactive&nbsp& Reactive</td>
+                    <td>Actor</td>
+                    <td>
+                        Main entity of the wasteService system, which moves within the service area and
+                        performs the deposit actions.
+                    </td>
+                </tr>
+                <tr>
+                    <td>wasteService-<br/>StatusGUI</td>
+                    <td>Reactive</td>
+                    <td>Actor</td>
+                    <td>
+                        Entity that receives data from the wasteService and updates a GUI,
+                        used to monitor the status of the service area.
+                        We model it as an actor beacuse it processes messages one by one and
+                        updates the GUI accordingly.
+                    </td>
+                </tr>
+                <tr>
+                    <td>alarmDevice</td>
+                    <td>Proactive</td>
+                    <td>Actor</td>
+                    <td>
+                        Entity, which is part of a smart device, that sends a message to the
+                        wasteService when it detects the presence of an obstacle.
+                        We formalize the alarmDevice as an actor because it has its own autonomous
+                        flow of control, and sends messages to wasteService.
+                    </td>
+                </tr>
+                <tr>
+                    <td>warningDevice</td>
+                    <td>Reactive</td>
+                    <td>Actor</td>
+                    <td>
+                        Entity, which is part of a smart device, used to monitor the state of the trolley,
+                        We model it as an actor beacuse it processes messages one by one and
+                        updates the Led state accordingly.
+                    </td>
+                </tr>
+            </table>
+            <h4 id="notesEntities">Notes</h4>
+            <div>
+                <ol>
+                    <li><b>Proactive</b>: entity which creates or controls a situation rather than just responding passively after it has happened.</li>
+                    <li><b>Reactive</b>: entity which acts in response to a situation rather than creating or controlling it.</li>
+                </ol>
+            </div>
+
+            <h3 id="Data">Data</h3>
+            We had chosen <ksi>Kotlin</ksi> because it provides the built-in syntax necessary
+            to declare our model elements and can be included in QAK code.<br/>
+            <table class="dictionary">
+                <tr>
+                    <th>Data</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>truckLoad</td>
+                    <td>Floating point variable</td>
+                    <td>
+                        Indicates the <b>weight</b> of the waste that the truck wants <b>to dump</b>.
+                        Since the weight is expressed in kg, we have to use decimal too.
+                        <pre>
+                            var truckLoad : Float
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>wasteLoad</td>
+                    <td>Floating point variable</td>
+                    <td>
+                        Indicates the <b>weight</b> of waste that the transport trolley is going <b>to deposit</b>.
+                        <pre>
+                            var wasteLoad : Float
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>WasteType</td>
+                    <td>Enumerative</td>
+                    <td>
+                        Indicates the <b>type of waste</b> to deposit.
+                        <pre>
+                            enum class WasteType { PLASTIC, GLASS }
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>PICKUP_TIME</td>
+                    <td>Integer constant</td>
+                    <td>
+                        <b>Time</b> in seconds, known in advance, it takes the transport trolley to <b>pick up</b> the waste.
+                        <pre>
+                            const val PICKUP_TIME : Int
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>MAXPB</td>
+                    <td>Floating point constant</td>
+                    <td>
+                        Maximum waste <b>capacity</b> that the <b>PlasticBox</b> can store.
+                        <pre>
+                            const val MAXPB : Float
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>MAXGB</td>
+                    <td>Floating point constant</td>
+                    <td>
+                        Maximum waste <b>capacity</b> that the <b>GlassBox</b> can store.
+                        <pre>
+                            const val MAXGB : Float
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>RD</td>
+                    <td>Integer constant</td>
+                    <td>
+                        <b>Length</b> of the <b>transport trolley</b>.
+                        <pre>
+                            const val RD : Int
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>DLIMT</td>
+                    <td>Floating point constant</td>
+                    <td>
+                        <b>Limit distance</b> beyond which the alarm is activated.
+                        <pre>
+                            const val DLIMT : Float
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>TrolleyState</td>
+                    <td>Enumerative</td>
+                    <td>
+                        All the <b>possible states</b> of the transport trolley.
+                        <pre>
+                            enum class TTState { IDLE, MOVING, PICKINGUP, STORING, STOPPED }
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>LedState</td>
+                    <td>Enumerative</td>
+                    <td>
+                        All the <b>possible states</b> of the Led.
+                        <pre>
+                            enum class LedState { OFF, ON, BLINKING }
+                        </pre>
+                    </td>
+                </tr>
+            </table>
+
+            <h3 id="Messages">Messages</h3>
+            <table class="dictionary">
+                <tr>
+                    <th>Message</th>
+                    <th>Type</th>
+                    <th>Sender</th>
+                    <th>Receiver</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>storeRequest</td>
+                    <td>Request</td>
+                    <td>truck driver<br/> (<i>smart device</i>)</td>
+                    <td>WasteService</td>
+                    <td>
+                        Ask if TruckLoad kg of waste can be dumped to the waste service.
+                    </td>
+                </tr>
+                <tr>
+                    <td>loadAccepted</td>
+                    <td>Reply</td>
+                    <td>WasteService</td>
+                    <td>truck driver<br/> (<i>smart device</i>)</td>
+                    <td>
+                        There is enough space for the waste to be deposited.
+                    </td>
+                </tr>
+                <tr>
+                    <td>loadRejected</td>
+                    <td>Reply</td>
+                    <td>WasteService</td>
+                    <td>truck driver<br/> (<i>smart device</i>)</td>
+                    <td>
+                        There is NOT enough space for the waste to be deposited.
+                    </td>
+                </tr>
+                <tr>
+                    <td>doDeposit</td>
+                    <td>Dispatch</td>
+                    <td>WasteService</td>
+                    <td>Transport Trolley</td>
+                    <td>
+                        Start a deposit action.
+                    </td>
+                </tr>
+                <tr>
+                    <td>updateGui</td>
+                    <td>Dispatch</td>
+                    <td>WasteService<br/>or<br/>Transport Trolley</td>
+                    <td>WasteService-<br/>StatusGUI</td>
+                    <td>
+                        Update the information displayed on the GUI of the monitor node.
+                    </td>
+                </tr>
+                <tr>
+                    <td>updateLed</td>
+                    <td>Dispatch</td>
+                    <td>Transport Trolley</td>
+                    <td>Warning Device</td>
+                    <td>
+                        Update the Led state.
+                    </td>
+                </tr>
+                <tr>
+                    <td>distance</td>
+                    <td>Dispatch</td>
+                    <td>Alarm Device</td>
+                    <td>WasteService</td>
+                    <td>
+                        Tell the distance of eventually detected obstacles.
+                    </td>
+                </tr>
+                <tr>
+                    <td>stop</td>
+                    <td>Dispatch</td>
+                    <td>WasteService</td>
+                    <td>Transport Trolley</td>
+                    <td>
+                        Stop the robot and prevent it from doing any activity.
+                    </td>
+                </tr>
+                <tr>
+                    <td>resume</td>
+                    <td>Dispatch</td>
+                    <td>WasteService</td>
+                    <td>Transport Trolley</td>
+                    <td>
+                        Resume the robot activity.
+                    </td>
+                </tr>
+            </table>
+            <h2 id="Models">Models</h2>
+            <h3 id="Why-QAK">Why QAK</h3>
+            <b>Problem</b>: we need to fill the abstraction gap related to the concept of <i>service</i>.<br/>
+            <b>Solution</b>: <ksi>QAK meta-modeling language</ksi>.<br/>
+            <b>Reasons</b>:
+            <ul>
+                <li>
+                    It's was entirely implemented whitin our
+                    <a href="https://github.com/anatali/issLab2022">software house</a>, which makes
+                    it easier to get information and support from the actual creator of the language. 
+                </li>
+                <li>
+                    It provides a way to represent concepts related to services, such as
+                    request, response, dispatch, etc.; while other general-purpose languages
+                    would need external libraries (e.g. Java would need some kind of JAR to
+                    implement Actors), frameworks or resources to do the same.
+                </li>
+                <li>
+                    It allows you to create executable models, directly from the language,
+                    which capture the salient aspects of the requirements or problems.
+                </li>
+                <li>
+                    Our software house already has some project and components we could
+                    exploit and use.
+                </li>
+            </ul>
+            <a href="../../../commons/qak/QAK_BCR_notes.html">QAK notes</a><br/>
+            <a href="../../../commons/qak/QActor (meta)model.html">QAK documentation</a><br/>
             
+            <h3 id="Logical-Architecture">Logical Architecture</h3>
+            Model: <a href="../../Sprint1_RequirementAnalysis/src/demo_*.qak">demo_*.qak</a>
+            <br/>
+            <br/>
+            <!-- In questo diagramma deve comparire solo roba che esce dai requisiti! Non possiamo infilarci ad esempio un observer! -->
+            <img width="100%" src="../../resources/models/demo_*.png"/>
+            
+            <h2 id="Test-Plans">Test Plans</h2>
+            <h4>Interaction: SmartDevice &rarr; WasteService</h4>
+            Simulation that involves the issuing of multiple <a href="#Messages">storeRequest</a> from the SmartDevice.
+            The test aims to check how the system should behave when receiving different types of requests:
+            <ul>
+                <li>Store request of Plastic, if there is enough space (loadaccepted);</li>
+                <li>Store request of Plastic, if there is not enough space (loadrejected);</li>
+                <li>Store request of Glass, if there is enough space (loadaccepted);</li>
+                <li>Store request of Glass, if there is not enough space (loadrejected);</li>
+            </ul>
+            
+            <b>QAK</b>:  <a href="../../Sprint1_RequirementAnalysis/src/test_*.qak">test_*.qak</a> (Reference model)
+            <br/>
+            <b>File</b>: <a href="../../Sprint1_RequirementAnalysis/test/it/unibo/wasteservice/sprint1/Test*.java">Test*.java</a> (Executable)
+            <br/>
+            <b>Results</b>: <a href="../../Sprint1_RequirementAnalysis/build/reports/tests/test/index.html">Gradle test report</a> (Generated automatically)
+            <br/><br/><br/><br/>
         </div>
     </body>
 </html>

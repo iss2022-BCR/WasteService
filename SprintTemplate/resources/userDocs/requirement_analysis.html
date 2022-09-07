@@ -1,30 +1,794 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-    <!--
-    <script type="text/javascript" src="../css/issStyle.js"></script>
-    -->
     <head>
-        <title>Requirement Analysis</title>
-        <link rel="stylesheet" type="text/css" href="../style/templateISS.css">
-        <link rel="stylesheet" type="text/css" href="../style/main.css">
-        <link rel="stylesheet" type="text/css" href="../style/sidenav.css">
+        <title>Sprint0</title>
+        <link rel="stylesheet" type="text/css" href="../styles/templateISS.css">
+        <link rel="stylesheet" type="text/css" href="../styles/main.css">
+        <link rel="stylesheet" type="text/css" href="../styles/navbar.css">
+        <link rel="stylesheet" type="text/css" href="../styles/table.css">
+        <link rel="stylesheet" type="text/css" href="../styles/code.css">
+        <script type="text/javascript" src="../scripts/myScripts.js"></script>
     </head>
 
-
-
-    <body>
-        <div class="sidenav">
+    <body onload="loadNav(); setupSort(); setupCode();">
+        <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
+        <div id="sidenav" class="sidenav">
+            <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
+            <a id="currentSprint" class="sprint" href="#">&#8211;&#8212; Sprint0 &#8212;&#8211;</a>
             <a href="../../index.html">Index</a>
             <a href="final_theme.html">Final Theme</a>
-            <a class="selected" href="#">Requirement Analysis</a>
+            <a class="selected" href="requirement_analysis.html">Requirement<br/>Analysis</a>
+            <div class="sidenavSection">
+                <a href="#Customer-Clarifications">Customer<br/>Clarifications</a>
+                <a href="#Dictionary">Dictionary</a>
+                <div class="sidenavSubSection">
+                    <a href="#Nouns">Nouns</a>
+                    <a href="#Verbs">Verbs</a>
+                </div>
+                <a href="#General-Overview">General Overview</a>
+                <div class="sidenavSubSection">
+                    <a href="#Software-Provided-by-the-Customer">Software Provided by<br/>the Customer</a>
+                    <a href="#System-Abstract">System Abstract</a>
+                </div>
+                <a href="#Requirements-Formalization">Requirements<br/>Formalization</a>
+                <div class="sidenavSubSection">
+                    <a href="#Entities">Entities</a>
+                    <a href="#Data">Data</a>
+                    <a href="#Messages">Messages</a>
+                </div>
+                <a href="#Models">Models</a>
+                <div class="sidenavSubSection">
+                    <a href="#Why-QAK">Why QAK</a>
+                    <a href="#Logical-Architecture">Logical Architecture</a>
+                </div>
+                <a href="#Test-Plans">Test Plans</a>
+            </div>
             <a href="problem_analysis.html">Problem Analysis</a>
+            <a href="conclusions.html">Conclusions</a>
             <a href="team.html">Team</a>
+            <p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
+            <a class="sprint" href="../../../Sprint1/index.html">Sprint1</a>
+            <a class="sprint">Sprint2</a>
+            <a class="sprint">Sprint3</a>
+            <bottom-spacer/>
         </div>
 
-        <div class="main">
+        <div id="main">
             <h1 align="center">Requirement Analysis</h1>
+            The purpose of the final product is to <b>manage a waste-disposal service</b>.
+            
+            <h2 id="Customer-Clarifications">Customer Clarifications</h2>
+            The interaction with the customer pointed out the following clarifications:
+            <ul>
+                <li>Waste truck driver is a human operator external to the system.</li>
+                <li>
+                    The messages sent by the truck driver through a smart device are however 
+                    part of the system
+                </li>
+                <li>The waste truck should be dismissed as soon as possible.</li>
+                <li>
+                    WasteService might receive a new request while it's still processing the
+                    deposit action of the previous one.
+                </li>
+                <li>Once full, containers aren't emptied until the application is restarted.</li>
+                <li>
+                    The trolley position could be represented as qualitative indications,
+                    for example "at indoor", "at glassbox", etc.
+                </li>
+                <li>
+                    The robot is not required to move optimally, but it shouldn't wander around
+                    the room too much either.
+                </li>
+                <li>
+                    The collection time of the material from the truck is always limited and predictable, 
+                    while the time required for storage could be quite long (also due to the not-optimal movement).
+                </li>
+                <li>Sonar and led are NOT on the trolley, but on a separate Raspberry Pi.</li>
+                <li>The sonar detects objects that we place in front of it.</li>
+                <li>The trolley stop, as a consequence of an "alarm" from the Sonar, should occur "as soon as possible".</li>
+                <li>
+                    The DDR provided by the customer has an on-board sonar, but this is used
+                    to detect obstacles when the robot is moving (e.g. the room walls).
+                </li>
+            </ul>
+
+            <h2 id="Dictionary">Dictionary</h2>
+            <h3 id="Nouns">Nouns</h3>
+            <table class="dictionary">
+                <tr>
+                    <th title="Click to sort alphabetically">Term</th>
+                    <th title="Click to sort alphabetically">Definition</th>
+                </tr>
+                <tr>
+                    <td>WasteService</td>
+                    <td><a href="https://en.wikipedia.org/wiki/Distributed_computing">Distributed software system</a> to manage and coordinate the separate collection of waste.
+                        That's the <b>final product</b> as a whole, to be delivered to the customer.</td>
+                </tr>
+                <tr>
+                    <td>Service area</td>
+                    <td>Rectangular flat surface, free from internal obstacles.</td>
+                </tr>
+                <tr>
+                    <td>INDOOR</td>
+                    <td>Location situated on the perimeter of the <b>service area</b>, where the waste enters from.</td>
+                </tr>
+                <tr>
+                    <td>PlasticBox</td>
+                    <td>Container which contains waste made of plastic, and has a maximum capacity of <b>MAXPB</b>.</td>
+                </tr>
+                <tr>
+                    <td>MAXPB</td>
+                    <td>The maximum capacity of <b>PlasticBox</b>.</td>
+                </tr>
+                <tr>
+                    <td>GlassBox</td>
+                    <td>Container which contains waste made of glass, and has a maximum capacity of <b>MAXGB</b>.</td>
+                </tr>
+                <tr>
+                    <td>MAXGB</td>
+                    <td>The maximum capacity of <b>GlassBox</b>.</td>
+                </tr>
+                <tr>
+                    <td>DDR robot</td>
+                    <td>
+                        Differential Drive Robot (DDR), provided by the customer, which is confined inside the service area.
+                        It's the actual physical robot, and can be controlled through a software provided by the customer: <a href="">BasicRobot</a>
+                        <!--that is capable of:
+                        <ul>
+                            <li>moving (according to the commands it receives) forward, backward and rotate left and right by 90°;</li>
+                            <li>picking up and carry objects (i.e. waste).</li>
+                        </ul>
+                        It's also equipped with different devices (including a sonar). <a href="./others/devsDdr.html">DDR robot reference</a>.-->
+                    </td>
+                </tr>
+                <tr>
+                    <td>Transport trolley<a class="footnote" href="#notesNouns">¹</a></td>
+                    <td>
+                        Square-shaped virtual robot, with side length of <b>RD</b>, which is initially situated
+                        in its <b>HOME</b> location and performs a deposit action. It can move forward, backward, stop and rotate by 90°.<br/>
+                        The transport trolley is a <u>command actuator</u>: it can use the <b>DDR robot</b> to perform actions in a real environment.
+                    </td>
+                </tr>
+                <tr>
+                    <td>RD</td>
+                    <td>Length of each side of the <b>transport trolley</b>.</td>
+                </tr>
+                <tr>
+                    <td>HOME</td>
+                    <td>Starting position of the <b>transport trolley</b>, inside the service area.</td>
+                </tr>
+                <tr>
+                    <td>Deposit action</td>
+                    <td>
+                        Operation that describes the deposit of the <b>WasteLoad</b> in a container and consists in 3 phases:
+                        <ol>
+                            <li>pick up a <b>WasteLoad</b> from a <b>waste truck</b> on the <b>INDOOR</b>;</li>
+                            <li>go from the <b>INDOOR</b> to the proper waste container</li>
+                            <li>deposit the <b>WasteLoad</b> into the container</li>
+                        </ol>
+                        Once that action is terminated, the <b>Transport trolley</b> either executes another <b>deposit action</b>
+                        (if there are any) or returns to its <b>HOME</b>.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Waste truck</td>
+                    <td>A generic entity external to the system, which deposits <b>TruckLoad</b> kg of waste at the INDOOR location.</td>
+                </tr>
+                <tr>
+                    <td>Truck driver</td>
+                    <td>A person who drives the <b>waste truck</b>, which is not part of the system.</td>
+                </tr>
+                <tr>
+                    <td>TruckLoad</td>
+                    <td>The amount (kg) of waste that had been deposited by the <b>waste truck</b> at <b>INDOOR</b>.</td>
+                </tr>
+                <tr>
+                    <td>WasteLoad</td>
+                    <td>The amount (kg) of waste the <b>transport trolley</b> has to pick up from the <b>waste truck</b> at <b>INDOOR</b>.</td>
+                </tr>
+                <tr>
+                    <td>Service-manager</td>
+                    <td>An human supervisor which monitors the state of the <b>service area</b> through a <b>WasteServiceStatusGUI</b>.</td>
+                </tr>
+                <tr>
+                    <td>State of the service area</td>
+                    <td>
+                        Information about the <b>WasteService</b> at a certain time, which include:
+                        <ul>
+                            <li>the current state of the <b>transport trolley</b> and its position inside the room;</li>
+                            <li>the current weight (kg) of the material stored in the two waste-containers;</li>
+                            <li>the current state of the <b>Led</b>.</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>WasteServiceStatusGUI</td>
+                    <td>Graphical User Interface of a specific software (which will run on a smart device), that shows the <b>state of the service area</b> and can be monitored by a supervisor.</td>
+                </tr>
+                <tr>
+                    <td>Sonar</td>
+                    <td>
+                        Concrete component, provided by the customer along with the software to use it: <a href=""></a>.
+                        It can detect the presence of obstacle within a certain scope, and tell its distance.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Alarm device</td>
+                    <td>
+                        Abstract component which uses the <b>Sonar</b> (through the software provided by the customer), and will be installed on a RaspberryPi.
+                        When it measures a distance which is less than a prefixed value <b>DLIMT</b>, the <b>transport trolley</b> must be <i>stopped</i>.<br/>
+                        It will be <i>resumed</i> when the Sonar detects again a distance higher than <b>DLIMT</b>.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Led</td>
+                    <td>
+                        Concrete component, provided by the customer along with the software necessary to use it: <a href=""></a>
+                        It can emit light.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Warning device</td>
+                    <td>
+                        Abstract component which uses the <b>Led</b> (through the software provided by the customer), and will be installed on a RaspberryPi.
+                        It will give information about the current state of the trolley:
+                        <ul>
+                            <li><b>OFF</b> when the transport trolley is at <b>HOME</b>;</li>
+                            <li><b>blinks</b> when the transport trolley is <i>moving</i>;</li>
+                            <li><b>ON</b> when the transport trolley is <i>stopped</i>.</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>RaspberryPi</td>
+                    <td>Single-board computer. Refers to the <a href="https://www.raspberrypi.com/products/raspberry-pi-4-model-b/">model Pi 4 B</a>.</td>
+                </tr>
+                <tr>
+                    <td>DLIMT</td>
+                    <td>Prefixed distance used to trigger the alarm system that stops the <b>transport trolley</b>.</td>
+                </tr>
+            </table>
+
+            <h4 id="notesNouns">Notes</h4>
+            <div>
+                <ol>
+                    <li><b>DDR robot</b> and <b>transport trolley</b> are not the same.</li>
+                </ol>
+            </div>
+
+            <h3 id="Verbs">Verbs</h3>
+            <table class="dictionary">
+                <tr>
+                    <th title="Click to sort alphabetically">Term</th>
+                    <th title="Click to sort alphabetically">Subject</th>
+                    <th title="Click to sort alphabetically">Object</th>
+                    <th title="Click to sort alphabetically">Description</th>
+                </tr>
+                <tr>
+                    <td>To send a store request</td>
+                    <td>Waste truck/ truck driver</td>
+                    <td>WasteService</td>
+                    <td>
+                        The <b>truck driver</b> approaches the INDOOR of the service area
+                        and asks the <b>WasteService</b> (through a smart device) if he can deposit TruckLoad kg of a certain type of material.
+                    </td>
+                </tr>
+                <tr>
+                    <td>To send a store answer</td>
+                    <td>WasteService</td>
+                    <td>Waste truck/ truck driver</td>
+                    <td>
+                        Action that occurs after the <b>WasteService</b> had received a <i>store request</i>. The <b>WasteService</b> sends a reply to the <b>waste truck</b>, that might be:
+                        <ul>
+                            <li>positive (<i>loadaccept</i>), if the container has enough space to store the waste that the truck wants to deposit;</li>
+                            <li>negative (<i>loadrejected</i>), if the container has NOT enough space. In this case the waste truck will leave and free the <b>INDOOR</b> area.</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>To perform a deposit action</td>
+                    <td>Transport trolley</td>
+                    <td>WasteLoad</td>
+                    <td>
+                        That task consists in the completion of 3 actions, by the <b>transport trolley</b>:
+                        <ol>
+                            <li>pick up the WasteLoad at INDOOR;</li>
+                            <li>transfer the WasteLoad from the INDOOR to the proper waste container;</li>
+                            <li>actually deposit the WasteLoad into the container.</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>To pick up the waste</td>
+                    <td>Transport trolley</td>
+                    <td>WasteLoad</td>
+                    <td>The <b>transport trolley</b> collects the <b>WasteLoad</b> dumped by the waste truck at INDOOR.</td>
+                </tr>
+                <tr>
+                    <td>To transfer the waste</td>
+                    <td>Transport trolley</td>
+                    <td>WasteLoad</td>
+                    <td>The <b>transport trolley</b> carries the <b>WasteLoad</b> from the INDOOR to the container used for the collection of waste of that type (specified in the store request).</td>
+                </tr>
+                <tr>
+                    <td>To deposit the WasteLoad</td>
+                    <td>Transport trolley</td>
+                    <td>WasteLoad</td>
+                    <td>The <b>transport trolley</b> dumps the <b>WasteLoad</b> into the container, that must have enough space to fit the waste, and </td>
+                </tr>
+                <tr>
+                    <td>To be ON</td>
+                    <td>Led</td>
+                    <td>-</td>
+                    <td>The <b>Led</b> is turned on and emits light.</td>
+                </tr>
+                <tr>
+                    <td>To be OFF</td>
+                    <td>Led</td>
+                    <td>-</td>
+                    <td>The <b>Led</b> is turned on and does not emit light.</td>
+                </tr>
+                <tr>
+                    <td>To blink</td>
+                    <td>Led</td>
+                    <td>-</td>
+                    <td>The <b>Led</b> is switching on/off in a rapid sequence.</td>
+                </tr>
+                <tr>
+                    <td>To measure the distance</td>
+                    <td>Sonar</td>
+                    <td>Obstacle</td>
+                    <td>The <b>sonar</b> is detecting the presence of an obstacle (e.g. through the emission of ultrasound waves).</td>
+                </tr>
+                <tr>
+                    <td>To start the activity</td>
+                    <td>WasteService</td>
+                    <td>Transport trolley</td>
+                    <td>To start the <b>WasteService</b> software. When the execution begins, the robot is positioned in its HOME location.</td>
+                </tr>
+                <tr>
+                    <td>To be ready</td>
+                    <td>Transport trolley</td>
+                    <td>-</td>
+                    <td>The <b>Transport trolley</b> is prepared to handle the next deposit action.</td>
+                </tr>
+                <tr>
+                    <td>To be moving</td>
+                    <td>Transport trolley</td>
+                    <td>-</td>
+                    <td>
+                        The <b>Transport trolley</b> is moving inside the service area.
+                        It's considered moving also when it's settled doing an action (e.g. picking up the waste at INDOOR).
+                    </td>
+                </tr>
+                <tr>
+                    <td>To terminate the deposit action</td>
+                    <td>Transport trolley</td>
+                    <td>-</td>
+                    <td>
+                        The <b>transport trolley</b> has completed the deposit action and is ready to handle the next one,
+                        if there are any, otherwise it will return to its HOME.
+                    </td>
+                </tr>
+                <tr>
+                    <td>To stop the activity</td>
+                    <td>Sonar</td>
+                    <td>Transport trolley</td>
+                    <td>
+                        The <b>transport trolley</b>, while moving forward or backward, can be stopped due to the alarm device. 
+                        While the transport trolley is stopped, it cannot move until a resume message occurs.
+                    </td>
+                </tr>
+                <tr>
+                    <td>To resume the activity</td>
+                    <td>Sonar</td>
+                    <td>Transport trolley</td>
+                    <td>The <b>transport trolley</b> resumes the activity and continues performing deposit actions.</td>
+                </tr>
+            </table>
+
+            <h2 id="General-Overview">General Overview</h2>
+            <h3 id="Software-Provided-by-the-Customer">Software Provided by the Customer</h3>
+            <ul>
+                <li>
+                    <a href="../../../commons/basicRobot/BasicRobot22.html"><b>BasicRobot</b></a> -
+                    software component which executes movement commands of a DDR-robot "independently 
+                    of the technology" with which the robot is implemented (virtual or real); 
+                </li>
+                <li>
+                    <a href="../../../commons/it.unibo.raspIntro2022/code/"><b>RaspberryPi utility software</b></a> - 
+                </li>
+                <li>
+                    <b>SmartDevice</b> - a software already implemented and usable which allows the truck driver to send
+                    store requests.
+                </li>
+            </ul>
+
+            <h3 id="System-Abstract">System Abstract</h3>
+            From the analysis of text provided by the customer, we are able to draft one
+            main evidence: the software system is going to comprehend at least 4 computational
+            nodes:
+            <ul>
+                <li><b>WasteService</b> node</li>
+                <li><b>Smart device</b> (waste truck) node</li>
+                <li><b>Raspberry Pi</b> (alarm-warning) node</li>
+                <li><b>Monitoring</b> node</li>
+            </ul>
+            However, since the WasteService software doesn't run on the robot
+            machine, it must comunicate with it. Therefore we're going to consider an ulterior one:
+            the <b>DDR robot</b> node, which task is to drive the robot, according to the TransportTrolley
+            "orders".
+            <h4 id="Computational-Nodes">Computational Nodes</h4>
+            <div class="image-container">
+                <img id="map" class="base-image" width="100%" src="../../resources/diagrams/system_abstract_v4.png"/>
+                <img id="map-legend" class="overlay-image2" width="100%" src="../../resources/diagrams/system_abstract_v4_legend.png"/>
+            </div>
+            <input type="checkbox" onclick="showOverlay(this, 'map-legend');" checked>Show the legend</input><br/>
+            
+
+            <h4 id="Service-Area">Service Area</h4>
+            Given the description and the image provided by the customer, we've modeled the service area as
+            a rectangle free from obstacles and surrounded by 4 walls, within which there are 4 relevant areas:
+            <ul>
+                <li>
+                    <b>HOME</b>, an area of the same size as the transport trolley, in which it will be placed
+                    each time the WasteService software is run;
+                </li>
+                <li>
+                    <b>INDOOR</b>, a zone along the perimeter, where the transport trolley will have to go
+                    every time the WasteService receives a StoreRequest, and from which it will pick up the waste;
+                </li>
+                <li>
+                    <b>GLASSBOX</b> and <b>PLASTICBOX</b>, an area along the perimeter, where the transport trolley 
+                    will have to deposit the respective waste.
+                </li>
+            </ul>
+            The transport trolley is considered "at HOME" when it is above the HOME area, while it is considered
+            "at INDOOR", "at GLASSBOX" or "at PLASTICBOX", when it hits the wall of that area.
+            <br/><br/>
+            <img width="100%" src="../../resources/imgs/modello_stanza_vuota_descritta.png"/>
+
+            <h2 id="Requirements-Formalization">Requirements Formalization</h2>
+            <h3 id="Entities">Entities</h3>
+            <table class="dictionary">
+                <tr>
+                    <th>Entity</th>
+                    <th>Activity</th>
+                    <th>Type</th>
+                    <th>Description/Behaviour</th>
+                </tr>
+                <tr>
+                    <td>wasteTruck</td>
+                    <td>Reactive</td>
+                    <td>(Test) Actor</td>
+                    <td>
+                        Entity that approaches the INDOOR of the service area to dump some wasteLoad.
+                        It's represented as an actor for testing/simulation purposes: it sends dummy 
+                        requests once in a while.
+                    </td>
+                </tr>
+                <tr>
+                    <td>wasteService</td>
+                    <td>Proactive&nbsp& Reactive</td>
+                    <td>Actor</td>
+                    <td>
+                        Handles the wasteTruck requests and manages the transport trolley actions.
+                        It also sends updates to the wasteServiceStatusGUI and to the alarmDevice.
+                    </td>
+                </tr>
+                <tr>
+                    <td><emn>basicRobot</emn></td>
+                    <td>Reactive</td>
+                    <td>Actor</td>
+                    <td>Entity that receives commands from the transportTrolley and drives the DDR robot.</td>
+                </tr>
+                <tr>
+                    <td>transportTrolley</td>
+                    <td>Proactive&nbsp& Reactive</td>
+                    <td>Actor</td>
+                    <td>
+                        Main entity of the wasteService system, which moves within the service area and
+                        performs the deposit actions.
+                    </td>
+                </tr>
+                <tr>
+                    <td>wasteService-<br/>StatusGUI</td>
+                    <td>Reactive</td>
+                    <td>Actor</td>
+                    <td>
+                        Entity that receives data from the wasteService and updates a GUI,
+                        used to monitor the status of the service area.
+                        We model it as an actor beacuse it processes messages one by one and
+                        updates the GUI accordingly.
+                    </td>
+                </tr>
+                <tr>
+                    <td>alarmDevice</td>
+                    <td>Proactive</td>
+                    <td>Actor</td>
+                    <td>
+                        Entity, which is part of a smart device, that sends a message to the
+                        wasteService when it detects the presence of an obstacle.
+                        We formalize the alarmDevice as an actor because it has its own autonomous
+                        flow of control, and sends messages to wasteService.
+                    </td>
+                </tr>
+                <tr>
+                    <td>warningDevice</td>
+                    <td>Reactive</td>
+                    <td>Actor</td>
+                    <td>
+                        Entity, which is part of a smart device, used to monitor the state of the trolley,
+                        We model it as an actor beacuse it processes messages one by one and
+                        updates the Led state accordingly.
+                    </td>
+                </tr>
+            </table>
+            <h4 id="notesEntities">Notes</h4>
+            <div>
+                <ol>
+                    <li><b>Proactive</b>: entity which creates or controls a situation rather than just responding passively after it has happened.</li>
+                    <li><b>Reactive</b>: entity which acts in response to a situation rather than creating or controlling it.</li>
+                </ol>
+            </div>
+
+            <h3 id="Data">Data</h3>
+            We had chosen <ksi>Kotlin</ksi> because it provides the built-in syntax necessary
+            to declare our model elements and can be included in QAK code.<br/>
+            <table class="dictionary">
+                <tr>
+                    <th>Data</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>truckLoad</td>
+                    <td>Floating point variable</td>
+                    <td>
+                        Indicates the <b>weight</b> of the waste that the truck wants <b>to dump</b>.
+                        Since the weight is expressed in kg, we have to use decimal too.
+                        <pre>
+                            var truckLoad : Float
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>wasteLoad</td>
+                    <td>Floating point variable</td>
+                    <td>
+                        Indicates the <b>weight</b> of waste that the transport trolley is going <b>to deposit</b>.
+                        <pre>
+                            var wasteLoad : Float
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>WasteType</td>
+                    <td>Enumerative</td>
+                    <td>
+                        Indicates the <b>type of waste</b> to deposit.
+                        <pre>
+                            enum class WasteType { PLASTIC, GLASS }
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>PICKUP_TIME</td>
+                    <td>Integer constant</td>
+                    <td>
+                        <b>Time</b> in seconds, known in advance, it takes the transport trolley to <b>pick up</b> the waste.
+                        <pre>
+                            const val PICKUP_TIME : Int
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>MAXPB</td>
+                    <td>Floating point constant</td>
+                    <td>
+                        Maximum waste <b>capacity</b> that the <b>PlasticBox</b> can store.
+                        <pre>
+                            const val MAXPB : Float
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>MAXGB</td>
+                    <td>Floating point constant</td>
+                    <td>
+                        Maximum waste <b>capacity</b> that the <b>GlassBox</b> can store.
+                        <pre>
+                            const val MAXGB : Float
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>RD</td>
+                    <td>Integer constant</td>
+                    <td>
+                        <b>Length</b> of the <b>transport trolley</b>.
+                        <pre>
+                            const val RD : Int
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>DLIMT</td>
+                    <td>Floating point constant</td>
+                    <td>
+                        <b>Limit distance</b> beyond which the alarm is activated.
+                        <pre>
+                            const val DLIMT : Float
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>TrolleyState</td>
+                    <td>Enumerative</td>
+                    <td>
+                        All the <b>possible states</b> of the transport trolley.
+                        <pre>
+                            enum class TTState { IDLE, MOVING, PICKINGUP, STORING, STOPPED }
+                        </pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>LedState</td>
+                    <td>Enumerative</td>
+                    <td>
+                        All the <b>possible states</b> of the Led.
+                        <pre>
+                            enum class LedState { OFF, ON, BLINKING }
+                        </pre>
+                    </td>
+                </tr>
+            </table>
+
+            <h3 id="Messages">Messages</h3>
+            <table class="dictionary">
+                <tr>
+                    <th>Message</th>
+                    <th>Type</th>
+                    <th>Sender</th>
+                    <th>Receiver</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>storeRequest</td>
+                    <td>Request</td>
+                    <td>truck driver<br/> (<i>smart device</i>)</td>
+                    <td>WasteService</td>
+                    <td>
+                        Ask if TruckLoad kg of waste can be dumped to the waste service.
+                    </td>
+                </tr>
+                <tr>
+                    <td>loadAccepted</td>
+                    <td>Reply</td>
+                    <td>WasteService</td>
+                    <td>truck driver<br/> (<i>smart device</i>)</td>
+                    <td>
+                        There is enough space for the waste to be deposited.
+                    </td>
+                </tr>
+                <tr>
+                    <td>loadRejected</td>
+                    <td>Reply</td>
+                    <td>WasteService</td>
+                    <td>truck driver<br/> (<i>smart device</i>)</td>
+                    <td>
+                        There is NOT enough space for the waste to be deposited.
+                    </td>
+                </tr>
+                <tr>
+                    <td>doDeposit</td>
+                    <td>Dispatch</td>
+                    <td>WasteService</td>
+                    <td>Transport Trolley</td>
+                    <td>
+                        Start a deposit action.
+                    </td>
+                </tr>
+                <tr>
+                    <td>updateGui</td>
+                    <td>Dispatch</td>
+                    <td>WasteService<br/>or<br/>Transport Trolley</td>
+                    <td>WasteService-<br/>StatusGUI</td>
+                    <td>
+                        Update the information displayed on the GUI of the monitor node.
+                    </td>
+                </tr>
+                <tr>
+                    <td>updateLed</td>
+                    <td>Dispatch</td>
+                    <td>Transport Trolley</td>
+                    <td>Warning Device</td>
+                    <td>
+                        Update the Led state.
+                    </td>
+                </tr>
+                <tr>
+                    <td>distance</td>
+                    <td>Dispatch</td>
+                    <td>Alarm Device</td>
+                    <td>WasteService</td>
+                    <td>
+                        Tell the distance of eventually detected obstacles.
+                    </td>
+                </tr>
+                <tr>
+                    <td>stop</td>
+                    <td>Dispatch</td>
+                    <td>WasteService</td>
+                    <td>Transport Trolley</td>
+                    <td>
+                        Stop the robot and prevent it from doing any activity.
+                    </td>
+                </tr>
+                <tr>
+                    <td>resume</td>
+                    <td>Dispatch</td>
+                    <td>WasteService</td>
+                    <td>Transport Trolley</td>
+                    <td>
+                        Resume the robot activity.
+                    </td>
+                </tr>
+            </table>
+            <h2 id="Models">Models</h2>
+            <h3 id="Why-QAK">Why QAK</h3>
+            <b>Problem</b>: we need to fill the abstraction gap related to the concept of <i>service</i>.<br/>
+            <b>Solution</b>: <ksi>QAK meta-modeling language</ksi>.<br/>
+            <b>Reasons</b>:
+            <ul>
+                <li>
+                    It's was entirely implemented whitin our
+                    <a href="https://github.com/anatali/issLab2022">software house</a>, which makes
+                    it easier to get information and support from the actual creator of the language. 
+                </li>
+                <li>
+                    It provides a way to represent concepts related to services, such as
+                    request, response, dispatch, etc.; while other general-purpose languages
+                    would need external libraries (e.g. Java would need some kind of JAR to
+                    implement Actors), frameworks or resources to do the same.
+                </li>
+                <li>
+                    It allows you to create executable models, directly from the language,
+                    which capture the salient aspects of the requirements or problems.
+                </li>
+                <li>
+                    Our software house already has some project and components we could
+                    exploit and use.
+                </li>
+            </ul>
+            <a href="../../../commons/qak/QAK_BCR_notes.html">QAK notes</a><br/>
+            <a href="../../../commons/qak/QActor (meta)model.html">QAK documentation</a><br/>
+            
+            <h3 id="Logical-Architecture">Logical Architecture</h3>
+            Model: <a href="../../Sprint0_RequirementAnalysis/src/demo_system_overview_v0.qak">demo_system_overview_v0.qak</a>
+            <br/>
+            <br/>
+            <!-- In questo diagramma deve comparire solo roba che esce dai requisiti! Non possiamo infilarci ad esempio un observer! -->
+            <img width="100%" src="../../resources/models/demo_system_overview_v0arch.png"/>
+            
+            <h2 id="Test-Plans">Test Plans</h2>
+            <h4>Interaction: SmartDevice &rarr; WasteService</h4>
+            Simulation that involves the issuing of multiple <a href="#Messages">storeRequest</a> from the SmartDevice.
+            The test aims to check how the system should behave when receiving different types of requests:
+            <ul>
+                <li>Store request of Plastic, if there is enough space (loadaccepted);</li>
+                <li>Store request of Plastic, if there is not enough space (loadrejected);</li>
+                <li>Store request of Glass, if there is enough space (loadaccepted);</li>
+                <li>Store request of Glass, if there is not enough space (loadrejected);</li>
+            </ul>
+            
+            <b>QAK</b>:  <a href="../../Sprint0_RequirementAnalysis/src/test_storerequest.qak">test_storerequest.qak</a> (Reference model)
+            <br/>
+            <b>File</b>: <a href="../../Sprint0_RequirementAnalysis/test/it/unibo/wasteservice/sprint0/TestInteractions.java">TestInteractions.java</a> (Executable)
+            <br/>
+            <b>Results</b>: <a href="../../Sprint0_RequirementAnalysis/build/reports/tests/test/index.html">Gradle test report</a> (Generated automatically)
+            <br/><br/><br/><br/>
         </div>
-
     </body>
-
 </html>

@@ -1,0 +1,78 @@
+System demo_system_overview
+
+// CONTEXTS ===================================================================
+Context ctx_wasteservice	ip [host="localhost" port=11800]
+Context ctx_monitor			ip [host="localhost" port=11801]
+Context ctx_alarm			ip [host="localhost" port=11802]
+Context ctx_test			ip [host="localhost" port=11803]
+
+// MESSAGES ===================================================================
+// truckdriver <-> wasteservice
+Request storerequest :		storerequest( WasteType, TruckLoad )
+Reply loadaccept :			loadaccept()
+Reply loadrejected :		loadrejected()
+
+// wasteservice -> monitor
+Dispatch servicestate :		servicestate(TrolleyState, TrolleyPosition, PlasticWeight, GlassWeight, LedState)
+
+// ACTORS =====================================================================
+QActor wasteservice context ctx_wasteservice {
+	
+	State state_init initial {
+		// init (reset system)
+		[#
+			var currentPlastic =	0.0F
+			var currentGlass =		0.0F
+			// reset trolley position to Home
+		#]
+		println("[WasteService] ")
+	}
+	Goto state_idle
+	
+	State state_idle {
+		// wait for messages:
+	}
+	Transition t0 whenMsg storerequest -> state_handle_store
+	// begin to accept requests
+
+	State state_handle_deposit {
+		// check if there is enough space
+		// yes: send accept and make the trolley do the deposit action
+		if [# utils.checkEnoughSpace(WasteType, TruckLoad) #] {
+			replyTo depositrequest with loadaccept : loadaccept()
+			// vai trolley
+		}
+		// no: send rejected
+		else {
+			replyTo depositrequest with loadrejected : loadrejected()
+			// trolley stai a casa porcodio che cazzo fai c'è il covid
+		}
+	}
+	Goto state_idle
+
+	State state_handle_stop {
+
+	}
+
+	State state_handle_resume {
+		
+	}
+}
+
+QActor transporttrolley context ctx_wasteservice {
+	
+}
+
+QActor wasteservicestatusgui context ctx_monitor {
+	
+}
+
+QActor raspdevice context ctx_alarm {
+	
+}
+
+QActor testdriver context ctx_test {
+	
+}
+
+// Additional actor for test/simulation purposes only

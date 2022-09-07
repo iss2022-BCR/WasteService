@@ -51,3 +51,8 @@ footer a:link, footer a:visited, footer a:hover {
   visibility: visible;
   z-index: 2;
 }
+
+/* List */
+.summary li {
+  margin-bottom: 5px;
+}

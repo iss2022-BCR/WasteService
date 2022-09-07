@@ -3,13 +3,12 @@ table {
     border-collapse: separate;
     border-spacing: 0px;
     border-radius: 25px;
-    border: solid black 2px;
+    border: solid #4ea2d3 2px;
     background-color: #9ed8ff;
     color: black;
 }
 td, th {
-    border-left: solid black 1px;
-    border-top: solid black 1px;
+    border: solid #4ea2d3 1px;
     padding: 15px;
 }
 tr {
@@ -37,4 +36,8 @@ table a:link, table a:visited {
 }
 table a:hover {
     background-color: yellow;
+}
+
+.repository a:link, .repository a:visited, .repository a:hover {
+    color: black;
 }
