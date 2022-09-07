@@ -85,7 +85,7 @@ public class TestInteractions {
     }
 
     @Test
-    public void testLoadRejectedPlastic() {
+    public void testLoadAcceptedGlass() {
         try {
             IApplMessage msg = MsgUtil.buildRequest("testPlasticFAIL", "storerequest", "storerequest(" + WasteType.GLASS + ", " + (Constants.MAXGB / 2) + ")", actorName);
             ColorsOut.outappl("[Test_SmartDevice] " + msg.toString(), ColorsOut.MAGENTA);
@@ -102,7 +102,7 @@ public class TestInteractions {
     }
 
     @Test
-    public void testLoadAcceptedGlass() {
+    public void testLoadRejectedPlastic() {
         try {
             IApplMessage msg = MsgUtil.buildRequest("testGlassOK", "storerequest", "storerequest(" + WasteType.PLASTIC + ", " + (Constants.MAXPB + 10.0f) + ")", actorName);
             ColorsOut.outappl("[Test_SmartDevice] " + msg.toString(), ColorsOut.MAGENTA);
@@ -119,7 +119,6 @@ public class TestInteractions {
     }
 
     @Test
-    @Order(4)
     public void testLoadRejectedGlass() {
         try {
             IApplMessage msg = MsgUtil.buildRequest("testGlassFAIL", "storerequest", "storerequest(" + WasteType.GLASS + ", " + (Constants.MAXGB + 23.3f) + ")", actorName);
