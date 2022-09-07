@@ -13,32 +13,6 @@ Reply loadrejected:		loadrejected(_)
 
 Context ctx_test_storerequest	ip [host="localhost" port=11820]
 
-/*QActor test_smartdevice context ctx_test_storerequest {
-	[#
-		var Type: wasteservice.WasteType = wasteservice.WasteType.GLASS
-		var TruckLoad: Float = 20.0f
-	#]
-	State state_init initial {
-		delay 2000
-		println("[SmartDevice_Test] Sending a store request to WasteService...")
-		request test_wasteservice -m storerequest: storerequest($Type, $TruckLoad)
-	}
-	Transition t1	whenReply loadaccepted	-> state_handle_accepted
-					whenReply loadrejected 	-> state_handle_rejected
-	
-	State state_handle_accepted {
-		printCurrentMessage
-		println("[SmartDevice_Test] Store accepted, waiting pickup...")
-		delay 1500
-		println("[SmartDevice_Test] Pickup completed, leaving")
-	}
-	
-	State state_handle_rejected {
-		printCurrentMessage
-		println("[SmartDevice_Test] Store rejected, leaving")
-	}
-}*/
-
 QActor test_wasteservice context ctx_test_storerequest {
 	[#
 		var CurrentPlastic: Float = 0.0f
