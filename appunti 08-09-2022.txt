@@ -1,0 +1,35 @@
+noi guardiamo tutto, discutiamo tra di noi di EVENTUALI partizioni degli sprint
+
+per ora è importante stabilire lo sprint1 ed il suo goal
+
+a questo livello di conoscenza potremmo pensare di lavorare con questi sprint
+
+
+finito lo sprint 1, si fanno le sprint review e si confermano le cose pensate all'inizio o si aggiornate
+
+il committente potrebbe dire:
+quando ci fai vedere la prima demo? 
+Noi: alla fine del primo sprint guardiamo cosa abbiamo fatto e insieme al committente si decide se va bene il lavoro organizzato in seguito.
+
+
+
+Problematica:
+se voglio fare un test plan alla fine del sprint1 (automatizzato):
+se io suppongo che ci sia questa richiesta, 
+
+come si fa a sapere lo stato del sistema? In cosa consiste? Bisogna discutere queste problematiche (a livello generale o una rappresentazione anche temporanea dello stato - riservandoci di riguardarci in futuro).
+
+
+
+poi nel secondo sprint si potrebbe specializzare una problematica, approfondendo.
+
+Problemi ne abbiamo più avanti perché man mano che andiamo avanti sorgono nuovi problemi
+
+
+----
+se ce la facciamo basic robot lanciarlo con docker compose, perché è una sorta di standard che il committente ha fornito. Facciamo prima le prove in locale, poi se ci riusciamo tentiamo le prove in remoto.
+
+Quando si va da locale a remoto può succedere di tutto.
+
+-----
+

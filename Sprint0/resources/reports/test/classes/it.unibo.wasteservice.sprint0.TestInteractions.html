@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - Class it.unibo.wasteservice.sprint0.TestInteractions</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>Class it.unibo.wasteservice.sprint0.TestInteractions</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/it.unibo.wasteservice.sprint0.html">it.unibo.wasteservice.sprint0</a> &gt; TestInteractions</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">4</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">0.877s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+<li>
+<a href="#tab2">Standard error</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">testLoadAcceptedGlass</td>
+<td class="success">0.826s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testLoadAcceptedPlastic</td>
+<td class="success">0.010s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testLoadRejectedGlass</td>
+<td class="success">0.011s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testLoadRejectedPlastic</td>
+<td class="success">0.030s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>               %%% sysUtil | createTheContext ctx_test_storerequest for LOCAL node (host=localhost)  
+               %%% QakContext | createScope  ++++++++++++++++++++++++++++++++++  
+               %%% QakContextServer serverctx_test_storerequest | READY TO RECEIVE TCP CONNS on 11820 
+?[34m%%% QakContextServer serverctx_test_storerequest | waitForConnection protocol=true?[0m
+               %%% CoapResourceCtx ctx_test_storerequest | addActorResource test_wasteservice
+[Test_WasteService] Waiting for messages...
+?[35m[Test_WasteService] UP?[0m
+		?[33mTcpClient | attempt 1 to connect with host:localhost port=11820?[0m
+?[35m[Test_SmartDevice] msg(storerequest,request,testPlasticFAIL,test_wasteservice,storerequest(GLASS,25.0),6)?[0m
+test_wasteservice in state_handle_store | msg(storerequest,request,testPlasticFAIL,test_wasteservice,storerequest(GLASS,25.0),6)
+[Test_WasteService] Load accepted (25.0 KG of GLASS).
+[Test_WasteService] State:
+?[32mTEST LoadAccepted: PASSED?[0m
+	Plastic: 0.0/ 50.0 KG, Glass: 25.0 / 50.0 KG
+[Test_WasteService] Waiting for messages...
+?[35m[Test_WasteService] UP?[0m
+?[35m[Test_SmartDevice] msg(storerequest,request,testGlassFAIL,test_wasteservice,storerequest(GLASS,73.3),8)?[0m
+test_wasteservice in state_handle_store | msg(storerequest,request,testGlassFAIL,test_wasteservice,storerequest(GLASS,73.3),8)
+[Test_WasteService] Load rejected
+[Test_WasteService] State:
+	Plastic: 0.0/ 50.0 KG, Glass: 25.0 / 50.0 KG
+?[32mTEST LoadRejected: PASSED?[0m
+?[35m[Test_WasteService] UP?[0m
+[Test_WasteService] Waiting for messages...
+?[35m[Test_SmartDevice] msg(storerequest,request,testPlasticOK,test_wasteservice,storerequest(PLASTIC,16.666666),10)?[0m
+test_wasteservice in state_handle_store | msg(storerequest,request,testPlasticOK,test_wasteservice,storerequest(PLASTIC,16.666666),10)
+[Test_WasteService] Load accepted (16.666666 KG of PLASTIC).
+[Test_WasteService] State:
+?[32mTEST LoadAccepted: PASSED?[0m
+	Plastic: 16.666666/ 50.0 KG, Glass: 25.0 / 50.0 KG
+?[35m[Test_WasteService] UP?[0m
+[Test_WasteService] Waiting for messages...
+?[35m[Test_SmartDevice] msg(storerequest,request,testGlassOK,test_wasteservice,storerequest(PLASTIC,60.0),12)?[0m
+test_wasteservice in state_handle_store | msg(storerequest,request,testGlassOK,test_wasteservice,storerequest(PLASTIC,60.0),12)
+[Test_WasteService] Load rejected
+               %%% sysUtil | createTheContext ctx_test_storerequest for LOCAL node (host=localhost)  
+[Test_WasteService] State:
+?[32mTEST LoadRejected: PASSED?[0m
+</pre>
+</span>
+</div>
+<div id="tab2" class="tab">
+<h2>Standard error</h2>
+<span class="code">
+<pre>log4j:WARN No appenders could be found for logger (org.eclipse.californium.elements.config.Configuration).
+log4j:WARN Please initialize the log4j system properly.
+log4j:WARN See http://logging.apache.org/log4j/1.2/faq.html#noconfig for more info.
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 7.4.2</a> at 7 set 2022, 04:17:05</p>
+</div>
+</div>
+</body>
+</html>

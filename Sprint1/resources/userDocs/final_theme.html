@@ -61,7 +61,7 @@
                             <li>a <ksi>GlassBox</ksi> container, devoted to store objects made of glass, up to <b>MAXGB</b> kg of material.</li>
                         </ul>
                         The service area is free from internal obstacles, as shown in the following picture:<br/>
-                        <center><img width="70%" src="../imgs/finalTheme/WasteServiceRoom.PNG"/></center>
+                        <center><img width="70%" src="../../../commons/temaFinale/_images/WasteServiceRoom.PNG"/></center>
                     </li>
                     <li>a DDR robot working as a <ksi>transport trolley</ksi>, that is initially situated in its <ksi>HOME</ksi> location. The transport trolley has the form of a square of side length <b>RD</b>.
                         <br><br>
@@ -92,7 +92,7 @@
                 <br><br>
                 The global story can be described as follows:
                 <ol>
-                    <li>The <i>Waste truck</i> driver approaches the <i>INDOOR</i> and sends (using a smart device) a request to store the load, by specifyng the <i>type of the material</i> (plastic or glass) and its <i>TruckLoad</i>.</li>
+                    <li>The <i>Waste truck</i> driver approaches the <i>INDOOR</i> and sends (using a smart device) a request to store the load, by specifying the <i>type of the material</i> (plastic or glass) and its <i>TruckLoad</i>.</li>
                     <li>The <i>WasteService</i> sends the answer <i>loadaccept</i> if the final content of proper container will not surpass the maximum value allowed (<i>MAXPB</i> or <i>MAXGB</i>). Otherwise, it sends the answer <i>loadrejecetd</i> and the <i>Waste truck</i> leaves the <i>INDOOR</i> area.</li>
                     <li>When the load is accepted, the <i>transport trolley</i> reaches the <i>INDOOR</i>, picks up the material, goes to the proper container and settles the material. During this activity, the <i>WasteService</i> <b>blinks</b> the <i>Led</i></li>
                     <li>When the deposit action is terminated, the <i>transport trolley</i> excutes another deposit command (if any) or returns to its <i>HOME</i>.</li>
@@ -110,7 +110,7 @@
             <div>
                 <h3 id="Non-functional-requirements">Non functional requirements</h3>
                 <ol>
-                    <li>The ideal work team is composed of 33 persons. Teams of 1 or 2 persons (<ksi>NOT 4 or more</ksi>) are also allowed.</li>
+                    <li>The ideal work team is composed of 3 members. Teams of 1 or 2 people (<ksi>NOT 4 or more</ksi>) are also allowed.</li>
                     <li>The team must present a work plan as the result of the requirements/problem analysis, including some significant TestPlan.</li>
                     <li>The team must present the sequence of SPRINT performed, with appropriate motivations.</li>
                     <li>Each SPRINT must be associated with its own ‘chronicle’ (see <a href="templateToFill.html">templateToFill.html</a>) that presents, in concise way, the key-points related to each phase of development.
