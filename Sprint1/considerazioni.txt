@@ -1,0 +1,38 @@
+> Problema1: 
+lo smart device deve sapere la lista dei tipi di waste che deve scaricare
+Possibile soluzione:
+=>	1. inserisce informazioni di host (IP/port) e prova a connettersi via TCP al WasteService;
+	2. quando la connessione va a buon fine, riceve la lista dei tipi di waste.
+	3. una volta connesso può inviare store request
+
+Alternative:
+avere un hostname noto, dunque nell'interfaccia dello smart device non serve avere i campi per inserire ip e porta, perché quando l'app viene avviata, prova a connettersi automaticamente.
+
+
+
+
+TO-DO:
+- SmartDevice (finire)
+- scrivere qualche tabella per l'analisi dei requisiti/analisi del problema, focalizzata su core-business
+- QAK del core-business (in analisi dei requisiti) + QAK singoli specifici - interazioni (in analisi del problema)
+- Scrivere i Test Plan (descritti + prova usando gli attori definiti coi QAK)
+- Service Area (fare digressione sul perché usare un sistema di coordinate)
+- capire quale WEnv usare, leggersi le doc di Natali, in particolare Applicazioni22 e
+	vedere se c'è qualcosa che ci può tornare utile.
+	Esempio:
+	- unibo.pathexecutor (USARE)
+	- unibo.mapperQak22 (USARE)
+	- unibo.robotappl (Utile come riferimento per capire come usare path exec e basic robot)
+- WasteService code (lo facciamo alla fine, dopo aver fatto
+- diagrammi UML(?)
+
+Compiti per Lunedì:
+Miky:
+- finire smart device (stupido)
+- QAK
+- Service Area
+Kary:
+capire quale WEnv usare, leggersi le doc di Natali, in particolare Applicazioni22 e
+	vedere se c'è qualcosa che ci può tornare utile
+Raffa:
+Test Plan

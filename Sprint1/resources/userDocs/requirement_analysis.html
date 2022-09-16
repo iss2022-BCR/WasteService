@@ -116,7 +116,7 @@
 
             <h2 id="Requirements-Formalization">Requirements Formalization</h2>
             <highlight2>Escludere i termini non coinvolti in questo sprint</highlight2>
-            <h3 id="Entities">Entities</h3>
+            <h3 id="Entities">Core-Business Entities</h3>
             <table class="dictionary">
                 <tr>
                     <th>Entity</th>
@@ -125,13 +125,12 @@
                     <th>Description/Behaviour</th>
                 </tr>
                 <tr>
-                    <td>wasteTruck</td>
+                    <td>smartDevice-<br/>Simulator</td>
                     <td>Reactive</td>
-                    <td>(Test) Actor</td>
+                    <td>-</td>
                     <td>
-                        Entity that approaches the INDOOR of the service area to dump some wasteLoad.
-                        It's represented as an actor for testing/simulation purposes: it sends dummy 
-                        requests once in a while.
+                        Test Entity that simulates the approaching of a waste truck
+                        at INDOOR and sends a mock store requests to the wasteService.
                     </td>
                 </tr>
                 <tr>
@@ -139,8 +138,16 @@
                     <td>Proactive&nbsp& Reactive</td>
                     <td>Actor</td>
                     <td>
-                        Handles the wasteTruck requests and manages the transport trolley actions.
-                        It also sends updates to the wasteServiceStatusGUI and to the alarmDevice.
+                        Handles the store requests and manages the transport trolley with high-level abstraction actions.
+                        It contains an internal representation of the waste service area.
+                    </td>
+                </tr>
+                <tr>
+                    <td>transportTrolley</td>
+                    <td>Proactive&nbsp& Reactive</td>
+                    <td>Actor</td>
+                    <td>
+                        Handles the wasteService requests and sends lower-level commands to the basicRobot.
                     </td>
                 </tr>
                 <tr>
@@ -149,59 +156,9 @@
                     <td>Actor</td>
                     <td>Entity that receives commands from the transportTrolley and drives the DDR robot.</td>
                 </tr>
-                <tr>
-                    <td>transportTrolley</td>
-                    <td>Proactive&nbsp& Reactive</td>
-                    <td>Actor</td>
-                    <td>
-                        Main entity of the wasteService system, which moves within the service area and
-                        performs the deposit actions.
-                    </td>
-                </tr>
-                <tr>
-                    <td>wasteService-<br/>StatusGUI</td>
-                    <td>Reactive</td>
-                    <td>Actor</td>
-                    <td>
-                        Entity that receives data from the wasteService and updates a GUI,
-                        used to monitor the status of the service area.
-                        We model it as an actor beacuse it processes messages one by one and
-                        updates the GUI accordingly.
-                    </td>
-                </tr>
-                <tr>
-                    <td>alarmDevice</td>
-                    <td>Proactive</td>
-                    <td>Actor</td>
-                    <td>
-                        Entity, which is part of a smart device, that sends a message to the
-                        wasteService when it detects the presence of an obstacle.
-                        We formalize the alarmDevice as an actor because it has its own autonomous
-                        flow of control, and sends messages to wasteService.
-                    </td>
-                </tr>
-                <tr>
-                    <td>warningDevice</td>
-                    <td>Reactive</td>
-                    <td>Actor</td>
-                    <td>
-                        Entity, which is part of a smart device, used to monitor the state of the trolley,
-                        We model it as an actor beacuse it processes messages one by one and
-                        updates the Led state accordingly.
-                    </td>
-                </tr>
             </table>
-            <h4 id="notesEntities">Notes</h4>
-            <div>
-                <ol>
-                    <li><b>Proactive</b>: entity which creates or controls a situation rather than just responding passively after it has happened.</li>
-                    <li><b>Reactive</b>: entity which acts in response to a situation rather than creating or controlling it.</li>
-                </ol>
-            </div>
 
             <h3 id="Data">Data</h3>
-            We had chosen <ksi>Kotlin</ksi> because it provides the built-in syntax necessary
-            to declare our model elements and can be included in QAK code.<br/>
             <table class="dictionary">
                 <tr>
                     <th>Data</th>
@@ -209,13 +166,12 @@
                     <th>Description</th>
                 </tr>
                 <tr>
-                    <td>truckLoad</td>
-                    <td>Floating point variable</td>
+                    <td>WasteType</td>
+                    <td>Enumerative</td>
                     <td>
-                        Indicates the <b>weight</b> of the waste that the truck wants <b>to dump</b>.
-                        Since the weight is expressed in kg, we have to use decimal too.
+                        Indicates the possible <b>types of waste</b>.
                         <pre>
-                            var truckLoad : Float
+                            enum class WasteType { PLASTIC, GLASS }
                         </pre>
                     </td>
                 </tr>
@@ -223,19 +179,19 @@
                     <td>wasteLoad</td>
                     <td>Floating point variable</td>
                     <td>
-                        Indicates the <b>weight</b> of waste that the transport trolley is going <b>to deposit</b>.
+                        Indicates the <b>weight of waste</b> (in KG) to deposit.
                         <pre>
                             var wasteLoad : Float
                         </pre>
                     </td>
                 </tr>
                 <tr>
-                    <td>WasteType</td>
-                    <td>Enumerative</td>
+                    <td>wasteType</td>
+                    <td>Enumerative variable</td>
                     <td>
                         Indicates the <b>type of waste</b> to deposit.
                         <pre>
-                            enum class WasteType { PLASTIC, GLASS }
+                            var wasteType : WasteType
                         </pre>
                     </td>
                 </tr>
@@ -279,36 +235,6 @@
                         </pre>
                     </td>
                 </tr>
-                <tr>
-                    <td>DLIMT</td>
-                    <td>Floating point constant</td>
-                    <td>
-                        <b>Limit distance</b> beyond which the alarm is activated.
-                        <pre>
-                            const val DLIMT : Float
-                        </pre>
-                    </td>
-                </tr>
-                <tr>
-                    <td>TrolleyState</td>
-                    <td>Enumerative</td>
-                    <td>
-                        All the <b>possible states</b> of the transport trolley.
-                        <pre>
-                            enum class TTState { IDLE, MOVING, PICKINGUP, STORING, STOPPED }
-                        </pre>
-                    </td>
-                </tr>
-                <tr>
-                    <td>LedState</td>
-                    <td>Enumerative</td>
-                    <td>
-                        All the <b>possible states</b> of the Led.
-                        <pre>
-                            enum class LedState { OFF, ON, BLINKING }
-                        </pre>
-                    </td>
-                </tr>
             </table>
 
             <h3 id="Messages">Messages</h3>
@@ -323,10 +249,10 @@
                 <tr>
                     <td>storeRequest</td>
                     <td>Request</td>
-                    <td>truck driver<br/> (<i>smart device</i>)</td>
+                    <td>SmartDevice-<br/>Simulator</td>
                     <td>WasteService</td>
                     <td>
-                        Ask if TruckLoad kg of waste can be dumped to the waste service.
+                        Ask if <ks><code>truckLoad</code></ks> kg of <ks><code>wasteType</code></ks> can be dumped to the waste service.
                     </td>
                 </tr>
                 <tr>
@@ -335,7 +261,7 @@
                     <td>WasteService</td>
                     <td>truck driver<br/> (<i>smart device</i>)</td>
                     <td>
-                        There is enough space for the waste to be deposited.
+                        Positive response: there is enough space.
                     </td>
                 </tr>
                 <tr>
@@ -344,61 +270,16 @@
                     <td>WasteService</td>
                     <td>truck driver<br/> (<i>smart device</i>)</td>
                     <td>
-                        There is NOT enough space for the waste to be deposited.
+                        Negative response: there is NOT enough space.
                     </td>
                 </tr>
                 <tr>
-                    <td>doDeposit</td>
-                    <td>Dispatch</td>
+                    <td>moveTo</td>
+                    <td>-</td>
                     <td>WasteService</td>
-                    <td>Transport Trolley</td>
+                    <td>TransportTrolley<br/> (<i>smart device</i>)</td>
                     <td>
-                        Start a deposit action.
-                    </td>
-                </tr>
-                <tr>
-                    <td>updateGui</td>
-                    <td>Dispatch</td>
-                    <td>WasteService<br/>or<br/>Transport Trolley</td>
-                    <td>WasteService-<br/>StatusGUI</td>
-                    <td>
-                        Update the information displayed on the GUI of the monitor node.
-                    </td>
-                </tr>
-                <tr>
-                    <td>updateLed</td>
-                    <td>Dispatch</td>
-                    <td>Transport Trolley</td>
-                    <td>Warning Device</td>
-                    <td>
-                        Update the Led state.
-                    </td>
-                </tr>
-                <tr>
-                    <td>distance</td>
-                    <td>Dispatch</td>
-                    <td>Alarm Device</td>
-                    <td>WasteService</td>
-                    <td>
-                        Tell the distance of eventually detected obstacles.
-                    </td>
-                </tr>
-                <tr>
-                    <td>stop</td>
-                    <td>Dispatch</td>
-                    <td>WasteService</td>
-                    <td>Transport Trolley</td>
-                    <td>
-                        Stop the robot and prevent it from doing any activity.
-                    </td>
-                </tr>
-                <tr>
-                    <td>resume</td>
-                    <td>Dispatch</td>
-                    <td>WasteService</td>
-                    <td>Transport Trolley</td>
-                    <td>
-                        Resume the robot activity.
+                        Moves the transport trolley to <ks><code>location</code></ks>
                     </td>
                 </tr>
             </table>
