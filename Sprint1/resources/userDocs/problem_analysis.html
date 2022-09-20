@@ -20,6 +20,9 @@
             <a href="final_theme.html">Final Theme</a>
             <a href="requirement_analysis.html">Requirement<br/>Analysis</a>
             <a class="selected" href="problem_analysis.html">Problem Analysis</a>
+            <div class="sidenavSection">
+                <a href="#Core-Business-Software">Core-Business<br/>Software</a>
+            </div>
             <a href="project.html">Project</a>
             <a href="conclusions.html">Conclusions</a>
             <a href="team.html">Team</a>
@@ -44,7 +47,44 @@
                 Spiegare perché origine del piano cartesiano sta in alto a sinistra
             </highlight3>
 
+            <br/><br/>
+
+            <highlight2>
+                Come formalizzare i messaggi
+
+                formato: JSON, perché? -> semplice, leggero, compatto, facile da leggere, ci sono numerosi parser (tra cui Gson, di Google)
+                + layer di sicurezza? Eventuale Sprint4 tratterà questo argomento.
+            </highlight2>
+
+            <br/><br/>
+
+            <highlight1>Nei requisiti formalizziamo le interazioni note, qui scriviamo info su come decidiamo di implementarle o come funzioneranno</highlight1>
+
+            <h2 id="Core-Business-Software">Core-Business Software</h2>
+            <h3 id="Smart-Device">Smart Device</h3>
+            <b>Problem</b>: creating an application to test the interaction between the truck driver and the waste service.<br/>
+            <b>Solution</b>: <ksi>Flutter application</ksi>.<br/>
+            <b>Reasons</b>:
+            <ul>
+                <li>Our software house has a developer with great experience in it.</li>
+                <li>Google framework based on Dart language, an object-oriented language with a syntax much similiar to Java.</li>
+                <li>
+                    Simple to use and learn, since the documentation is full of examples and tutorials,
+                    which makes it easier to develop prototype and production applications, and it's becoming
+                    more and more popular lately.
+                </li>
+                <li>Allows to write the code once and build it for many platforms (web, desktop, <b>mobile</b>).</li>
+                <li>
+                    Extremely handy: we can show off a more practical demo to the customer, since we can give him
+                    an application that he can <b>install and try directly on his smartphone</b>.
+                </li>
+            </ul>
+            <a href="https://flutter.dev/">Flutter: Build apps for any screen.</a>
             
+            <h3 id="Waste-Service">Waste Service</h3>
+            The customer requirements don't specify priority rules regarding the truck requrests,
+            therefore, they'll be served in order of arrival.
+
             <h2 id="Service-Area">Service Area</h2>
             <b>Problem</b>: we need a proper <i>representation</i> of the service area to optimally move and monitor the transport trolley.<br/>
             <b>Solution</b>: <ksi>2x2 matrix</ksi>, where each element represents a different position, starting from the top-left corner.<br/>
@@ -86,6 +126,28 @@
                 </ul>
             </div>
 
+            <h2 id="">Interactions</h2>
+            <h3>SmartDevice - WasteService</h3>
+            <ol>
+                <li>SmartDevice sends a <code>store_request</code> to the WasteService</li>
+                <li>WasteService sends a <code>store_reply</code>.</li>
+                <li>Pickup of the waste and deposit action.</li>
+            </ol>
+            <b>Problem:</b> the WasteService might be already performing a deposit action. Therefore,
+            
+            <br/>
+            Il waste service 
+            
+            <div class="remark">
+                
+            </div>
+            diagramma di sequenza(?) + QAK
+
+            <h2>Test Plan</h2>
+            Forse è meglio metterli in una sezione a parte<br/>
+            Per lo smart device simulator usare il testing dei widget
+            (ma forse non serve, visto che deve semplicemente simulare l'invio di richieste)
+            
         </div>
 
     </body>
