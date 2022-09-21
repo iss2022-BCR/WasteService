@@ -14,21 +14,33 @@
         <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
         <div id="sidenav" class="sidenav">
             <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
-            <a class="sprint" href="../../../Sprint0/index.html">Sprint0</a>
-            <a id="currentSprint" class="sprint" href="#">&#8211;&#8212; Sprint1 &#8212;&#8211;</a>
-            <a href="../../index.html">Index</a>
-            <a href="final_theme.html">Final Theme</a>
-            <a href="requirement_analysis.html">Requirement<br/>Analysis</a>
-            <a class="selected" href="problem_analysis.html">Problem Analysis</a>
+            <a class="sprint" href="../../../Sprint0/index.html #currentSprint">Sprint0</a>
+            <a id="currentSprint" class="sprint" href="#currentSprint">&#8211;&#8212; Sprint1 &#8212;&#8211;</a>
+            <a href="../../index.html   #currentSprint">Index</a>
+            <a href="final_theme.html   #currentSprint">Final Theme</a>
+            <a href="requirement_analysis.html  #currentSprint">Requirement<br/>Analysis</a>
+            <a class="selected" href="problem_analysis.html #currentSprint">Problem Analysis</a>
             <div class="sidenavSection">
                 <a href="#Core-Business-Software">Core-Business<br/>Software</a>
+                <div class="sidenavSubSection">
+                    <a href="#Smart-Device">Smart Device</a>
+                    <a href="#Waste-Service">Waste Service</a>
+                    <a href="#Transport-Trolley">Transport Trolley</a>
+                </div>
+                <a href="#Interactions">Interactions</a>
+                <div class="sidenavSubSection">
+                    <a href="#Smart-Device-Waste-Service">Smart Device /<br/>Waste Service</a>
+                    <a href="#Waste-Service-Transport-Trolley">Waste Service /<br/>Transport Trolley</a>
+                    <a href="#Transport-Trolley-DDR-Robot">Transport Trolley /<br/>DDR Robot</a>
+                </div>
             </div>
-            <a href="project.html">Project</a>
-            <a href="conclusions.html">Conclusions</a>
-            <a href="team.html">Team</a>
+            <a href="test_plans.html    #currentSprint">Test Plans</a>
+            <a href="project.html   #currentSprint">Project</a>
+            <a href="conclusions.html   #currentSprint">Conclusions</a>
+            <a href="team.html  #currentSprint">Team</a>
             <p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
-            <a class="sprint">Sprint2</a>
-            <a class="sprint">Sprint3</a>
+            <a class="sprint" href="../../../Sprint2/index.html #currentSprint">Sprint2</a>
+            <a class="sprint" href="../../../Sprint3/index.html #currentSprint">Sprint3</a>
             <bottom-spacer/>
         </div>
 
@@ -85,7 +97,7 @@
             The customer requirements don't specify priority rules regarding the truck requrests,
             therefore, they'll be served in order of arrival.
 
-            <h2 id="Service-Area">Service Area</h2>
+            <h4 id="Service-Area">Service Area</h4>
             <b>Problem</b>: we need a proper <i>representation</i> of the service area to optimally move and monitor the transport trolley.<br/>
             <b>Solution</b>: <ksi>2x2 matrix</ksi>, where each element represents a different position, starting from the top-left corner.<br/>
             <b>Reasons</b>:
@@ -112,7 +124,7 @@
             <input type="checkbox" onclick="showOverlay(this, 'map-legend');" checked>Show the legend</input><br/>
             <input type="checkbox" onclick="showOverlay(this, 'map-coordinates');" checked>Show the coordinate system</input>
             <br/>
-            <h3 id="Relevant-Positions">Relevant Positions</h3>
+            <h5 id="Relevant-Positions">Relevant Positions</h5>
             The matrix number of rows and columns depend on RD (which is the size of the DDR robot),
             therefore for the moment we assume to have an M x N matrix, i.e. with respectively M rows (x axis)
             and N columns (y axis).<br/>
@@ -126,23 +138,33 @@
                 </ul>
             </div>
 
-            <h2 id="">Interactions</h2>
-            <h3>SmartDevice - WasteService</h3>
+            <h3 id="Transport-Trolley">Transport Trolley</h3>
+            
+
+            <h2 id="Interactions">Interactions</h2>
+            <h3 id="Smart-Device-Waste-Service">Smart Device / Waste Service</h3>
             <ol>
                 <li>SmartDevice sends a <code>store_request</code> to the WasteService</li>
+                <li>SmartDevice waits for a reply</li>
                 <li>WasteService sends a <code>store_reply</code>.</li>
-                <li>Pickup of the waste and deposit action.</li>
             </ol>
             <b>Problem:</b> the WasteService might be already performing a deposit action. Therefore,
-            
+            Tipi di messaggio?
+            Interazione sincrona? Non per il waste service, visto che può ricevere più richieste
+
             <br/>
             Il waste service 
             
             <div class="remark">
                 
             </div>
-            diagramma di sequenza(?) + QAK
-
+            <img width="100%" src="../diagrams/sprint1_seq-SM-WS_v2.png"/>
+            <highlight2>diagramma di sequenza(?) + QAK</highlight2>
+            
+            <h3 id="Waste-Service-Transport-Trolley">Waste Service / Transport Trolley</h3>
+            
+            <h3 id="Transport-Trolley-DDR-Robot">Transport Trolley / DDR Robot</h3>
+            
             <h2>Test Plan</h2>
             Forse è meglio metterli in una sezione a parte<br/>
             Per lo smart device simulator usare il testing dei widget

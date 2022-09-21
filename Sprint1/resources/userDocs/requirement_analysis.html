@@ -15,11 +15,11 @@
         <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
         <div id="sidenav" class="sidenav">
             <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
-            <a class="sprint" href="../../../Sprint0/index.html">Sprint0</a>
-            <a id="currentSprint" class="sprint" href="#">&#8211;&#8212; Sprint1 &#8212;&#8211;</a>
-            <a href="../../index.html">Index</a>
-            <a href="final_theme.html">Final Theme</a>
-            <a class="selected" href="requirement_analysis.html">Requirement<br/>Analysis</a>
+            <a class="sprint" href="../../../Sprint0/index.html #currentSprint">Sprint0</a>
+            <a id="currentSprint" class="sprint" href="#currentSprint">&#8211;&#8212; Sprint1 &#8212;&#8211;</a>
+            <a href="../../index.html   #currentSprint">Index</a>
+            <a href="final_theme.html   #currentSprint">Final Theme</a>
+            <a class="selected" href="requirement_analysis.html #currentSprint">Requirement<br/>Analysis</a>
             <div class="sidenavSection">
                 <a href="#General-Overview">General Overview</a>
                 <div class="sidenavSubSection">
@@ -39,13 +39,14 @@
                 </div>
                 <a href="#Test-Plans">Test Plans</a>
             </div>
-            <a href="problem_analysis.html">Problem Analysis</a>
-            <a href="project.html">Project</a>
-            <a href="conclusions.html">Conclusions</a>
-            <a href="team.html">Team</a>
+            <a href="problem_analysis.html  #currentSprint">Problem Analysis</a>
+            <a href="test_plans.html    #currentSprint">Test Plans</a>
+            <a href="project.html   #currentSprint">Project</a>
+            <a href="conclusions.html   #currentSprint">Conclusions</a>
+            <a href="team.html  #currentSprint">Team</a>
             <p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
-            <a class="sprint">Sprint2</a>
-            <a class="sprint">Sprint3</a>
+            <a class="sprint" href="../../../Sprint2/index.html #currentSprint">Sprint2</a>
+            <a class="sprint" href="../../../Sprint3/index.html #currentSprint">Sprint3</a>
             <bottom-spacer/>
         </div>
 
@@ -260,8 +261,11 @@
             <h2 id="Core-Business-Software">Core-Business Software</h2>
             <h3 id="Smart-Device">Smart Device</h3>
             To simulate the behaviour of the waste truck, we are going to introduce a simple application, external to the system: <ksi>Smart Device Simulator</ksi>.
-
-            <br/><br/>
+            <br/>
+            Smart Device Simulator allows the truck driver to contact the Waste Service to know if he can store or not its truck load.
+            
+            
+            <!--
             Il Waste truck driver è un operatore umano che non fa parte del sistema.
             Fanno invece parte del sistema i messaggi che questo deve inviare usando uno smart device (telefonino).
             Può essere opportuno simulare il Waste truck driver e viene consigliato di farlo
@@ -272,7 +276,8 @@
             <br/>
             Il WasteSerice potrebbe ricevere un nuova richiesta mentre sta ancora
             eseguendo la deposit action di quella precedente.
-            
+            -->
+
             <h3 id="Waste-Service">Waste Service</h3>
             Il tempo di raccolta del materiale dal truck è sempre limitato e prevedibile, mentre il tempo necessario per il deposito potrebbe essere anche alquanto lungo (anche in relazione al punto preceente).
             <h4 id="Service-Area">Service Area</h4>
