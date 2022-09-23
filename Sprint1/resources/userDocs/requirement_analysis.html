@@ -279,21 +279,34 @@
             -->
 
             <h3 id="Waste-Service">Waste Service</h3>
-            Il tempo di raccolta del materiale dal truck è sempre limitato e prevedibile, mentre il tempo necessario per il deposito potrebbe essere anche alquanto lungo (anche in relazione al punto preceente).
+            The waste truck should be dismissed <i>as soon as possible</i> and the time
+            for the pickup of the waste is always limited and predictable, therefore:
+            <ul>
+                <li>
+                    If the WasteService replies with a <code>load_accepted</code>,
+                    then it must wait until the completion of the pickup, and be sent away
+                    just after that.
+                </li>
+                <li>
+                    If the WasteService replies with a <code>load_rejected</code>,
+                    then it must be sent away immediately.
+                </li>
+            </ul>
+
             <h4 id="Service-Area">Service Area</h4>
             Given the description and the image provided by the customer, we've modeled the service area as
             a rectangle free from obstacles and surrounded by 4 walls, within which there are 4 relevant areas:
             <ul>
                 <li>
-                    <b>HOME</b>, an area of the same size as the transport trolley, in which it will be placed
+                    <red>HOME</red>, an area of the same size as the transport trolley, in which it will be placed
                     each time the WasteService software is run;
                 </li>
                 <li>
-                    <b>INDOOR</b>, a zone along the perimeter, where the transport trolley will have to go
+                    <cyan>INDOOR</cyan>, a zone along the perimeter, where the transport trolley will have to go
                     every time the WasteService receives a StoreRequest, and from which it will pick up the waste;
                 </li>
                 <li>
-                    <b>GLASSBOX</b> and <b>PLASTICBOX</b>, an area along the perimeter, where the transport trolley 
+                    <green>GLASSBOX</green> and <yellow>PLASTICBOX</yellow>, an area along the perimeter, where the transport trolley 
                     will have to deposit the respective waste.
                 </li>
             </ul>
