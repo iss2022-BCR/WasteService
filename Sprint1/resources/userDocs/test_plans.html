@@ -21,6 +21,9 @@
             <a href="requirement_analysis.html  #currentSprint">Requirement<br/>Analysis</a>
             <a href="problem_analysis.html  #currentSprint">Problem Analysis</a>
             <a class="selected" href="test_plans.html   #currentSprint">Test Plans</a>
+            <div class="sidenavSection">
+                <a href="#Interactions">Interactions</a>
+            </div>
             <a href="project.html   #currentSprint">Project</a>
             <a href="conclusions.html   #currentSprint">Conclusions</a>
             <a href="team.html  #currentSprint">Team</a>
@@ -33,7 +36,46 @@
         <div id="main">
             <h1 align="center">Test Plans</h1>
 
-            
+            <h2 id="Interactions">Interactions</h2>
+
+            <h4>Setup Remote Communications</h4>
+            <div class="remark">
+                <b>Port Forwarding</b>
+                <ol>
+                    <li>
+                        Access to the router page: search <code>192.168.1.1</code> in a browser, and login with the credentials:
+                        <img width="100%" src="../imgs/test_plan/port_forwarding/access.png"/>
+                    </li>
+                    <li>
+                        Make sure you have selected the <code>expert user mode</code>:
+                        <img width="100%" src="../imgs/test_plan/port_forwarding/expert_user_mode.png"/>
+                    </li>
+                    <li>Select the <code>Internet</code> section and then <code>Port mapping</code>.</li>
+                    <li>
+                        Specify the information needed:
+                        <ul>
+                            <li>Service: <code>TCP</code>.</li>
+                            <li>(Optional) Device: <code>your_device_name</code>.</li>
+                            <li>LAN IP address: the IP address of the device where the service runs.</li>
+                            <li>Port/Interval.</li>
+                            <li><highlight1>Public port</highlight1>: the port you want to be use (connections to that will be forwarded to the LAN port).</li>
+                            <li>LAN port: the port the service is using.</li>
+                        </ul>
+                        Example:
+                        <img width="100%" src="../imgs/test_plan/port_forwarding/port_association.png"/>
+                    </li>
+                    <li>
+                        Check the <highlight2><code>router public IP</code></highlight2>:
+                        <img width="100%" src="../imgs/test_plan/port_forwarding/router_public_ip_address.png"/>
+                    </li>
+                </ol>
+                To connect to the WasteService from a remote device, you'll then need to use:
+                <pre><b><highlight2>router_public_ip</highlight2>:<highlight1>public_port</highlight1></b>
+                </pre>
+            </div>
+
+            <h3 id="">SmartDevice &harr; WasteService</h3>
+            <h4>Store Request Success</h4>
         </div>
 
     </body>
