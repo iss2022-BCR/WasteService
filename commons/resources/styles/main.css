@@ -14,7 +14,7 @@ body {
 }
 
 h3, h4, h5, h6 {
-  margin-bottom: 30px;
+  margin-bottom: 15px;
 }
 
 footer {
@@ -55,4 +55,27 @@ footer a:link, footer a:visited, footer a:hover {
 /* List */
 .summary li {
   margin-bottom: 5px;
+}
+
+/* Problem Analysis */
+problem {
+  display: block;
+  background-color: rgba(255, 0, 0, 0.4);
+  padding: 4px;
+  border-radius: 7px;
+  margin-bottom: 10px;
+}
+
+/* Extra */
+highlight1 {
+  background-color: yellow;
+}
+highlight2 {
+  background-color: orange;
+}
+highlight3 {
+  background-color: lime;
+}
+highlight4 {
+  background-color: cyan;
 }
