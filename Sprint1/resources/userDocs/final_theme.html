@@ -55,7 +55,7 @@
             <div class>
                 A company intends to build a <ksi>WasteService</ksi> for the <i>separate collection of waste</i>, composed of a set of elements:
                 <ol>
-                    <li>a service area (rectangular, flat) that includes:
+                    <li id="requirement-1">a service area (rectangular, flat) that includes:
                         <ul>
                             <li>an <ksi>INDOOR</ksi> port, to enter waste material</li>
                             <li>a <ksi>PlasticBox</ksi> container, devoted to store objects made of plastic, up to <b>MAXPB</b> kg of material.</li>
@@ -64,7 +64,7 @@
                         The service area is free from internal obstacles, as shown in the following picture:<br/>
                         <center><img width="70%" src="../../../commons/temaFinale/_images/WasteServiceRoom.PNG"/></center>
                     </li>
-                    <li>a DDR robot working as a <ksi>transport trolley</ksi>, that is initially situated in its <ksi>HOME</ksi> location. The transport trolley has the form of a square of side length <b>RD</b>.
+                    <li id="requirement-2">a DDR robot working as a <ksi>transport trolley</ksi>, that is initially situated in its <ksi>HOME</ksi> location. The transport trolley has the form of a square of side length <b>RD</b>.
                         <br><br>
                         The <i>transport trolley</i> is used to perform a <ksi>deposit action</ksi> that consists in the following phases:
                         <ol>
@@ -73,8 +73,8 @@
                             <li>deposit the waste-load in the container</li>
                         </ol>
                     </li>
-                    <li>a <ksi>Service-manager</ksi> (a human being) which supervises the state of the service-area by using a <ksi>WasteServiceStatusGUI</ksi>.</li>
-                    <li>a <ksi>Sonar</ksi> and a <ksi>Led</ksi> connected to a RaspberryPi. The Led is used as a warning devices, according to the following scheme:
+                    <li id="requirement-3">a <ksi>Service-manager</ksi> (a human being) which supervises the state of the service-area by using a <ksi>WasteServiceStatusGUI</ksi>.</li>
+                    <li id="requirement-4">a <ksi>Sonar</ksi> and a <ksi>Led</ksi> connected to a RaspberryPi. The Led is used as a warning devices, according to the following scheme:
                         <ul>
                             <li>the <i>Led</i> is <b>off</b> when the <i>transport trolley</i> is at HOME</li>
                             <li>the <i>Led</i> <b>blinks</b> while the <i>transport trolley</i> is moving</li>
