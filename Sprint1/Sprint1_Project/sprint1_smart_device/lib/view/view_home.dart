@@ -1,12 +1,12 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sprint1_smart_device/model/networking/tcp_client_connection.dart';
 
+import '../model/networking/client_connection.dart';
 import 'view_request.dart';
 
 const String defaultAddress = "127.0.0.1";
-const int defaultPort = 4001;
+const int defaultPort = 11800;
 
 class ViewHome extends StatefulWidget {
   const ViewHome({Key? key}) : super(key: key);
@@ -20,6 +20,8 @@ class _ViewHomeState extends State<ViewHome> {
 
   final TextEditingController _textControllerAddress = TextEditingController();
   final TextEditingController _textControllerPort = TextEditingController();
+
+  late ClientConnection _tcpClientConnection;
 
   bool _isLoading = false;
 
@@ -44,19 +46,30 @@ class _ViewHomeState extends State<ViewHome> {
     return false;
   }
 
-  Future<Socket?> _connect(String ip, int port) async {
-    Socket? res;
+  void _connect(String ip, int port) async {
     setState(() {
-      _error = false;
+      _isLoading = true;
     });
-
-    try {
-      res = await Socket.connect(ip, port, timeout: const Duration(seconds: 5));
-    } catch (e) {
-      _showAlertDialog("Connection Failed", e.toString());
-      res = null;
-    }
-    return res;
+    _tcpClientConnection = TcpClientConnection();
+    _tcpClientConnection
+        .connect(ip, port, timeout: const Duration(seconds: 5))
+        .then((value) {
+      setState(() {
+        _isLoading = false;
+      });
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ViewRequest(
+                  connection: _tcpClientConnection,
+                  notifyParent: _showAlertDialog)));
+    }).onError((error, stackTrace) {
+      setState(() {
+        _isLoading = false;
+      });
+      _showAlertDialog(
+          "Connection Failed", "Couldn't connect to server at $ip:$port.");
+    });
   }
 
   void _showAlertDialog(String title, String message) {
@@ -106,6 +119,7 @@ class _ViewHomeState extends State<ViewHome> {
                         style: TextStyle(fontSize: 24),
                       ),
                       TextFormField(
+                        key: const ValueKey('connectionIP'),
                         controller: _textControllerAddress,
                         validator: (value) {
                           if (value == null || !_checkIPaddress(value)) {
@@ -127,6 +141,7 @@ class _ViewHomeState extends State<ViewHome> {
                         ),
                       ),
                       TextFormField(
+                        key: const ValueKey('connectionPort'),
                         controller: _textControllerPort,
                         validator: (value) {
                           if (value == null || !_checkPort(value)) {
@@ -153,9 +168,11 @@ class _ViewHomeState extends State<ViewHome> {
                 ),
               ),
       ),
+      // CONNECT
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(top: 32.0, left: 32.0, right: 32.0),
         child: ElevatedButton(
+          key: const ValueKey('connect'),
           onPressed: _error
               ? null
               : () {
@@ -163,39 +180,19 @@ class _ViewHomeState extends State<ViewHome> {
                     String ip = _textControllerAddress.text;
                     String port = _textControllerPort.text;
 
-                    setState(() {
-                      _isLoading = true;
-
-                      if (ip.isEmpty) {
-                        _textControllerAddress.text = defaultAddress;
-                        ip = defaultAddress;
-                      }
-                      if (port.isEmpty) {
-                        _textControllerPort.text = defaultPort.toString();
-                        port = defaultPort.toString();
-                      }
-                    });
-                    _connect(ip, int.tryParse(port) ?? defaultPort)
-                        .then((socket) {
+                    if (ip.isEmpty) {
                       setState(() {
-                        _isLoading = false;
+                        _textControllerAddress.text = defaultAddress;
                       });
-                      if (socket != null) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ViewRequest(
-                                    socket: socket,
-                                    notifyParent: _showAlertDialog)));
-                      } else {
-                        setState(() {
-                          _error = true;
-                          _errorTitle = "Connection failed";
-                          _errorMessage =
-                              "Couldn't connect to server at $ip:$port";
-                        });
-                      }
-                    });
+                      ip = defaultAddress;
+                    }
+                    if (port.isEmpty) {
+                      setState(() {
+                        _textControllerPort.text = defaultPort.toString();
+                      });
+                      port = defaultPort.toString();
+                    }
+                    _connect(ip, int.parse(port));
                   }
                 },
           style: ElevatedButton.styleFrom(
@@ -210,7 +207,7 @@ class _ViewHomeState extends State<ViewHome> {
                     Padding(
                       padding: EdgeInsets.only(left: 16.0, right: 8.0),
                       child: Text(
-                        'Connecting Attempt...',
+                        'Connection Attempt...',
                       ),
                     ),
                   ],

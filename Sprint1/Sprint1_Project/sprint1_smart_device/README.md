@@ -11,6 +11,28 @@ in **/android/app/src/main/AndroidManifest.xml** add the following line:
 <uses-permission android:name="android.permission.INTERNET"/>
 ```
 
+## Generate UML Diagrams
+1. Install [`dcdg`](https://pub.dev/packages/dcdg) package
+```
+flutter pub add dcdg
+```
+2. in `main.dart` import the package:
+```
+import 'package:dcdg/dcdg.dart';
+```
+3. Install PlantUML extension
+```lang-none
+Extensions > PlantUML > Install
+```
+4. Activate 
+```
+flutter pub global activate dcdg
+```
+5. Run
+```
+flutter pub global run dcdg
+```
+
 ## References
 
 - [Flutter Form Validation](https://docs.flutter.dev/cookbook/forms/validation)

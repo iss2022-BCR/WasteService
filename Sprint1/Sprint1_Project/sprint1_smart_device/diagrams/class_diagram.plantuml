@@ -1,0 +1,79 @@
+@startuml
+set namespaceSeparator ::
+
+class "sprint1_smart_device::main.dart::MyApp" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "sprint1_smart_device::main.dart::MyApp"
+
+class "sprint1_smart_device::view::view_home.dart::ViewHome" {
+  +State<ViewHome> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "sprint1_smart_device::view::view_home.dart::ViewHome"
+
+class "sprint1_smart_device::view::view_home.dart::_ViewHomeState" {
+  -GlobalKey<FormState> _formKeyConnection
+  -TextEditingController _textControllerAddress
+  -TextEditingController _textControllerPort
+  -bool _isLoading
+  -bool _error
+  -String _errorTitle
+  -String _errorMessage
+  -bool _checkIPaddress()
+  -bool _checkPort()
+  -Future<Socket?> _connect()
+  -void _showAlertDialog()
+  +Widget build()
+}
+
+"sprint1_smart_device::view::view_home.dart::_ViewHomeState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"
+"sprint1_smart_device::view::view_home.dart::_ViewHomeState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"flutter::src::widgets::framework.dart::State" <|-- "sprint1_smart_device::view::view_home.dart::_ViewHomeState"
+
+class "sprint1_smart_device::view::view_request.dart::ViewRequest" {
+  +Socket? socket
+  +dynamic Function(String, String) notifyParent
+  +State<ViewRequest> createState()
+}
+
+"sprint1_smart_device::view::view_request.dart::ViewRequest" o-- "dart::io::Socket"
+"sprint1_smart_device::view::view_request.dart::ViewRequest" o-- "null::dynamic Function(String, String)"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "sprint1_smart_device::view::view_request.dart::ViewRequest"
+
+class "sprint1_smart_device::view::view_request.dart::_ViewRequestState" {
+  -GlobalKey<FormState> _formKeyRequest
+  -TextEditingController _textControllerWeight
+  -ScrollController _scrollController
+  -bool _debug
+  -String _currentWasteType
+  -String _response
+  -bool _waitingResponse
+  -String _waitingDots
+  -Timer _timer
+  -int _timeoutCounter
+  -List<String> _messages
+  -bool _checkWeight()
+  -void _quit()
+  -void _disconnect()
+  -void _logMessage()
+  -String _getTimeStamp()
+  -Future<void> _sendMessage()
+  -void _messageHandler()
+  -void _errorHandler()
+  -void _doneHandler()
+  -void _startTimer()
+  +void didChangeDependencies()
+  +void initState()
+  +Widget build()
+}
+
+"sprint1_smart_device::view::view_request.dart::_ViewRequestState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"
+"sprint1_smart_device::view::view_request.dart::_ViewRequestState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"sprint1_smart_device::view::view_request.dart::_ViewRequestState" o-- "flutter::src::widgets::scroll_controller.dart::ScrollController"
+"sprint1_smart_device::view::view_request.dart::_ViewRequestState" o-- "dart::async::Timer"
+"flutter::src::widgets::framework.dart::State" <|-- "sprint1_smart_device::view::view_request.dart::_ViewRequestState"
+
+
+@enduml

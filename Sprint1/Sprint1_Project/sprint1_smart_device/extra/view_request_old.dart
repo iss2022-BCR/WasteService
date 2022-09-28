@@ -1,24 +1,24 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:sprint1_smart_device/model/networking/client_connection.dart';
-import '../model/waste_service/store_request.dart';
-import '../model/waste_service/waste_type.dart';
 
 const String dateTimeFormat = "yyyy/MM/dd HH:mm:ss";
 
 const double maxWasteWeight = 100000.0;
+const List<String> wasteTypes = <String>['PLASTIC', 'GLASS'];
 
 const int timeoutSeconds = 5;
 
 class ViewRequest extends StatefulWidget {
-  ViewRequest({Key? key, required this.connection, required this.notifyParent})
+  ViewRequest({Key? key, required this.socket, required this.notifyParent})
       : super(key: key);
 
-  ClientConnection connection;
+  Socket? socket;
   final Function(String, String) notifyParent;
 
   @override
@@ -32,7 +32,7 @@ class _ViewRequestState extends State<ViewRequest> {
 
   bool _debug = false;
 
-  WasteType _currentWasteType = WasteType.PLASTIC;
+  String _currentWasteType = wasteTypes.first;
   String _response = "";
 
   bool _waitingResponse = false;
@@ -52,6 +52,20 @@ class _ViewRequestState extends State<ViewRequest> {
     return false;
   }
 
+  void _quit() {
+    if (widget.socket != null) {
+      widget.socket!.close();
+      widget.socket = null;
+    }
+  }
+
+  void _disconnect() {
+    if (widget.socket != null) {
+      widget.socket!.destroy();
+      widget.socket = null;
+    }
+  }
+
   void _logMessage(String msg) {
     setState(() {
       _messages.add("${_getTimeStamp()} $msg");
@@ -69,42 +83,38 @@ class _ViewRequestState extends State<ViewRequest> {
     return result;
   }
 
-  Future<void> _sendStoreRequest({timeout = Duration}) async {
-    StoreRequest req = StoreRequest(
-        double.parse(_textControllerWeight.text), _currentWasteType);
-
-    String msg = req.toJsonString();
-    _logMessage("Store request: $msg");
-    widget.connection.sendMessage(msg);
-
-    if (timeout != null) {
-      _startTimer();
-    }
+  Future<void> _sendMessage(String message) async {
+    _logMessage("Store request: $message");
+    widget.socket!.write(message);
   }
 
   void _messageHandler(Uint8List data) {
     final serverResponse = String.fromCharCodes(data);
-    _stopTimer();
     setState(() {
+      _waitingResponse = false;
       _response = serverResponse;
     });
+    _timer.cancel();
     _logMessage(serverResponse);
+    //print("Response: $serverResponse"); // test
   }
 
   void _errorHandler(error) {
     widget.notifyParent("Disconnected", error.toString());
     //print("Test error: ${error.toString()}"); // test
 
-    widget.connection.destroy();
+    _disconnect();
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
     }
   }
 
   void _doneHandler() {
-    widget.notifyParent("Disconnected", "Connection closed by the server.");
+    if (widget.socket != null) {
+      widget.notifyParent("Disconnected", "Connection closed by the server.");
+    }
 
-    widget.connection.close();
+    _quit();
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
     }
@@ -128,19 +138,13 @@ class _ViewRequestState extends State<ViewRequest> {
             _timeoutCounter--;
           });
         } else {
-          _stopTimer();
+          _timer.cancel();
           setState(() {
+            _waitingResponse = false;
             _response = "Timeout expired.";
           });
         }
       });
-    });
-  }
-
-  void _stopTimer() {
-    _timer.isActive ? _timer.cancel() : null;
-    setState(() {
-      _waitingResponse = false;
     });
   }
 
@@ -149,7 +153,7 @@ class _ViewRequestState extends State<ViewRequest> {
     Locale myLocale = Localizations.localeOf(context);
     Intl.defaultLocale = myLocale.toString();
     _logMessage(
-        "Connected to ${widget.connection.address.address}:${widget.connection.remotePort}");
+        "Connected to ${widget.socket!.address.address}:${widget.socket!.remotePort}");
 
     super.didChangeDependencies();
   }
@@ -159,8 +163,18 @@ class _ViewRequestState extends State<ViewRequest> {
     super.initState();
 
     // listen for responses from the server
-    widget.connection.listen(_messageHandler,
-        onError: _errorHandler, onDone: _doneHandler, cancelOnError: true);
+    widget.socket!.listen(
+      // handle data from the server
+      _messageHandler,
+
+      // handle errors
+      onError: _errorHandler,
+
+      // handle server ending connection
+      onDone: _doneHandler,
+
+      cancelOnError: true,
+    );
   }
 
   @override
@@ -169,7 +183,7 @@ class _ViewRequestState extends State<ViewRequest> {
       onWillPop: () async {
         widget.notifyParent(
             "Disconnected", "You disconnecred from the server.");
-        widget.connection.close();
+        _quit();
 
         return true;
       },
@@ -183,7 +197,7 @@ class _ViewRequestState extends State<ViewRequest> {
               onPressed: () {
                 widget.notifyParent(
                     "Disconnected", "You disconnecred from the server.");
-                widget.connection.close();
+                _quit();
 
                 if (Navigator.canPop(context)) {
                   Navigator.pop(context);
@@ -245,16 +259,18 @@ class _ViewRequestState extends State<ViewRequest> {
                         labelText: 'Load Weight',
                       ),
                     ),
-                    DropdownButtonFormField<WasteType>(
+                    DropdownButtonFormField(
                       value: _currentWasteType,
-                      items: WasteType.values
-                          .map<DropdownMenuItem<WasteType>>((WasteType value) {
+                      items: wasteTypes
+                          .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem(
-                            value: value, child: Text(value.name));
+                          value: value,
+                          child: Text(value),
+                        );
                       }).toList(),
-                      onChanged: (WasteType? newValue) {
+                      onChanged: (String? value) {
                         setState(() {
-                          _currentWasteType = newValue!;
+                          _currentWasteType = value!;
                         });
                       },
                     ),
@@ -349,7 +365,12 @@ class _ViewRequestState extends State<ViewRequest> {
                 ? null
                 : () {
                     if (_formKeyRequest.currentState!.validate()) {
-                      _sendStoreRequest(timeout: 10);
+                      // test
+                      //_sendMessage('{"distance": 100, "angle": 45}');
+
+                      _sendMessage(
+                          '{"wasteWeight": ${double.parse(_textControllerWeight.text)}, "wasteType": "$_currentWasteType"}');
+                      _startTimer();
                     }
                   },
             style: ElevatedButton.styleFrom(
