@@ -11,12 +11,15 @@ function openNav(transition) {
     if(transition) {
         document.getElementById("sidenav").style.transition = "0.5s";
         document.getElementById("main").style.transition = "margin-left 0.5s";
+        document.getElementsByClassName("closeButton")[0].style.transition = "left 0.5s";
     } else {
         document.getElementById("sidenav").style.transition = "none";
         document.getElementById("main").style.transition = "none";
+        document.getElementsByClassName("closeButton")[0].style.transition = "none";
     }
     document.getElementById("sidenav").style.width = "250px";
     document.getElementById("main").style.marginLeft = "250px";
+    document.getElementsByClassName("closeButton")[0].style.left = "180px";
     
     sessionStorage.setItem("sideNavOpen", true);
 }
@@ -25,12 +28,15 @@ function closeNav(transition) {
     if(transition) {
         document.getElementById("sidenav").style.transition = "0.5s";
         document.getElementById("main").style.transition = "margin-left 0.5s";
+        document.getElementsByClassName("closeButton")[0].style.transition = "left 0.5s";
     } else {
         document.getElementById("sidenav").style.transition = "none";
         document.getElementById("main").style.transition = "none";
+        document.getElementsByClassName("closeButton")[0].style.transition = "none";
     }
     document.getElementById("sidenav").style.width = "0";
-    document.getElementById("main").style.marginLeft= "0";
+    document.getElementById("main").style.marginLeft = "0";
+    document.getElementsByClassName("closeButton")[0].style.left = "-70px";
 
     sessionStorage.setItem("sideNavOpen", false);
 }

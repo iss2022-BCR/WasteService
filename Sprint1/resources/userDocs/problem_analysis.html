@@ -14,18 +14,34 @@
         <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
         <div id="sidenav" class="sidenav">
             <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
-            <a class="sprint" href="../../../Sprint0/index.html">Sprint0</a>
-            <a id="currentSprint" class="sprint" href="#">&#8211;&#8212; Sprint1 &#8212;&#8211;</a>
-            <a href="../../index.html">Index</a>
-            <a href="final_theme.html">Final Theme</a>
-            <a href="requirement_analysis.html">Requirement<br/>Analysis</a>
-            <a class="selected" href="problem_analysis.html">Problem Analysis</a>
-            <a href="project.html">Project</a>
-            <a href="conclusions.html">Conclusions</a>
-            <a href="team.html">Team</a>
+            <a class="sprint" href="../../../Sprint0/index.html #currentSprint">Sprint0</a>
+            <a id="currentSprint" class="sprint" href="#currentSprint">&#8211;&#8212; Sprint1 &#8212;&#8211;</a>
+            <a href="../../index.html   #currentSprint">Index</a>
+            <a href="final_theme.html   #currentSprint">Final Theme</a>
+            <a href="requirement_analysis.html  #currentSprint">Requirement<br/>Analysis</a>
+            <a class="selected" href="problem_analysis.html #currentSprint">Problem Analysis</a>
+            <div class="sidenavSection">
+                <a href="#Core-Business-Software">Core-Business<br/>Software</a>
+                <div class="sidenavSubSection">
+                    <a href="#Smart-Device">Smart Device</a>
+                    <a href="#Waste-Service">Waste Service</a>
+                    <a href="#Transport-Trolley">Transport Trolley</a>
+                </div>
+                <a href="#Interactions">Interactions</a>
+                <div class="sidenavSubSection">
+                    <a href="#Smart-Device-Waste-Service">Smart Device &harr;<br/>Waste Service</a>
+                    <a href="#Waste-Service-Transport-Trolley">Waste Service &harr;<br/>Transport Trolley</a>
+                    <a href="#Transport-Trolley-DDR-Robot">Transport Trolley &harr;<br/>DDR Robot</a>
+                </div>
+                <a href="#Logical-Architecture">Logical Architecture</a>
+            </div>
+            <a href="test_plans.html    #currentSprint">Test Plans</a>
+            <a href="project.html   #currentSprint">Project</a>
+            <a href="conclusions.html   #currentSprint">Conclusions</a>
+            <a href="team.html  #currentSprint">Team</a>
             <p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
-            <a class="sprint">Sprint2</a>
-            <a class="sprint">Sprint3</a>
+            <a class="sprint" href="../../../Sprint2/index.html #currentSprint">Sprint2</a>
+            <a class="sprint" href="../../../Sprint3/index.html #currentSprint">Sprint3</a>
             <bottom-spacer/>
         </div>
 
@@ -44,8 +60,95 @@
                 Spiegare perché origine del piano cartesiano sta in alto a sinistra
             </highlight3>
 
+            <br/><br/>
+
+            <highlight2>
+                Come formalizzare i messaggi
+
+                formato: JSON, perché? -> semplice, leggero, compatto, facile da leggere, ci sono numerosi parser (tra cui Gson, di Google)
+                + layer di sicurezza? Eventuale Sprint4 tratterà questo argomento.
+            </highlight2>
+
+            <br/><br/>
+
+            <highlight1>Nei requisiti formalizziamo le interazioni note, qui scriviamo info su come decidiamo di implementarle o come funzioneranno</highlight1>
+
+            <br/><br/>
+
+            <highlight4>Problemi:
+                <ul>
+                    <li>Tecnologia per SmartDevice (Flutter)</li>
+                    <li>Formato messaggi da scambiare (JSON)</li>
+                    <li>Attesa risposta alla store_request e meccanica pickup:
+                        il truck driver come fa a sapere se sta aspettando inutilmente?
+                        Come chiarito dal committente, il waste service potrebbe star gestendo un'altra richiesta.
+                        Cosa fa lo smart device? Attende finché non riceve una risposta?
+                        Presenta un timer oltre il quale se ne va (eventualmente presso un altro waste service)?
+                        E quando riceve una loadaccepted, come fa ad attendere il termine della pickup, prima di liberare INDOOR?
+
+                        Inseriamo una meccanica automatica nello smart device, che quando riceve una load accepted aspetta TOT secondi della pickup, poi si disconnette?
+                        Avrebbe senso.
+                    </li>
+                    <li>Rappresentazione della service area (Coordinate cartesiane in TT, e enum in WasteService)</li>
+                    <li></li>
+                </ul>
+            </highlight4>
+            <h3 id="Software-Provided-by-the-Customer">Software Provided by the Customer</h3>
+            <highlight2>Cosa potremmo usare, del software fornito dal committente? (Applicazioni22)</highlight2>
+            <ul>
+                <li>
+                    <a href="../../../commons/basicRobot/BasicRobot22.html"><b>BasicRobot</b></a> -
+                    software component which executes movement commands of a DDR-robot "independently 
+                    of the technology" with which the robot is implemented (virtual or real); 
+                </li>
+                <li>
+                    <a href="../../../commons/it.unibo.raspIntro2022/code/"><b>RaspberryPi utility software</b></a> - 
+                </li>
+                <li>
+                    
+                </li>
+            </ul>
+
+            <h2 id="Core-Business-Software">Core-Business Software</h2>
+            <h3 id="Smart-Device">Smart Device</h3>
+            <problem><b>Problem #1</b>: WasteTruck dismiss</problem>
+
+            <problem><b>Problem #2</b>: SmartDevice Technology</problem>
+            <b>Problem</b>: implementation of an application to test the interaction between the truck driver and the waste service.<br/>
+            <b>Solution</b>: <ksi>Flutter application</ksi>.<br/>
+            <b>Reasons</b>:
+            <ul>
+                <!--<li>Our software house has a developer with great experience in it.</li>-->
+                <li>Google framework released recently (end of 2018) and with a great active support.</li>
+                <li>Based on Dart language (also developed by Google), an object-oriented language with a syntax much similiar to Java.</li>
+                <li>
+                    Simple to use and learn, since the documentation is full of examples and tutorials,
+                    which makes it easier to develop prototypes and production applications, and it's becoming
+                    more and more popular lately.
+                </li>
+                <li>Material design: everything is a Widget, which make it perfect when it comes to apply OOP principles and design patterns.</li>
+                <li>Cross-platform: it allows to write one codebase and build it for many platforms (web, desktop, <b>mobile</b>).</li>
+                <li>Hot reload allows to see changes directly while using the application, without having to rebuild it entirely.</li>
+                <li>
+                    Extremely handy: we can show off a more practical demo to the customer, since we can give him
+                    an application that he can <b>install and try directly on his smartphone</b>.
+                </li>
+            </ul>
+            <a href="https://flutter.dev/">Flutter: Build apps for any screen.</a>
             
-            <h2 id="Service-Area">Service Area</h2>
+            <h3 id="Waste-Service">Waste Service</h3>
+            The customer requirements don't specify priority rules regarding the truck requrests,
+            therefore, they'll be served in order of arrival.
+
+            We decide to send a <code>load_rejected</code> even if the <code>store_request</code>
+            contains a invalid data:
+            <ul>
+                <li>Not properly formatted according to the JSON object.</li>
+                <li>Negative or too big WasteLoad.</li>
+                <li>WasteType not present in the Service Area.</li>
+            </ul>   
+
+            <h4 id="Service-Area">Service Area</h4>
             <b>Problem</b>: we need a proper <i>representation</i> of the service area to optimally move and monitor the transport trolley.<br/>
             <b>Solution</b>: <ksi>2x2 matrix</ksi>, where each element represents a different position, starting from the top-left corner.<br/>
             <b>Reasons</b>:
@@ -72,20 +175,65 @@
             <input type="checkbox" onclick="showOverlay(this, 'map-legend');" checked>Show the legend</input><br/>
             <input type="checkbox" onclick="showOverlay(this, 'map-coordinates');" checked>Show the coordinate system</input>
             <br/>
-            <h3 id="Relevant-Positions">Relevant Positions</h3>
+            <h5 id="Relevant-Positions">Relevant Positions</h5>
             The matrix number of rows and columns depend on RD (which is the size of the DDR robot),
             therefore for the moment we assume to have an M x N matrix, i.e. with respectively M rows (x axis)
             and N columns (y axis).<br/>
             <div class="remark">
                 The relevant positions are:
                 <ul>
-                    <li>[0,0] = <ks>HOME</ks></li>
-                    <li>from [0,M] to [4,M] = <ks>INDOOR</ks></li>
-                    <li>from [N,0] to [N,4] = <ks>GLASSBOX</ks></li>
-                    <li>from [N,M-4] to [N,M] = <ks>PLASTICBOX</ks></li>
+                    <li>[0,0] = <red>HOME</red></li>
+                    <li>from [0,M] to [4,M] = <cyan>INDOOR</cyan></li>
+                    <li>from [N,0] to [N,4] = <green>GLASSBOX</green></li>
+                    <li>from [N,M-4] to [N,M] = <yellow>PLASTICBOX</yellow></li>
                 </ul>
             </div>
 
+            <h3 id="Transport-Trolley">Transport Trolley</h3>
+
+            <problem>Problem #: Robot Movement</problem>
+            We might use the software provided by the customer: Applicazioni22
+
+            <br/>
+
+            We assume that the deposit action cannot fail and the trolley cannot be stopped, for the moment.
+            However, since we know in the next sprint we'll implement the stop/resume mechanics, we decide to model the interaction in an asynchronous way.
+            
+            <h3 id="DDR-Robot">DDR Robot</h3>
+            WEnv -> Virtual Enviromnent fornito dal committente, spieghiamo perché usiamo questo
+
+            <h2 id="Interactions">Interactions</h2>
+            <h3 id="Smart-Device-Waste-Service">Smart Device &harr; Waste Service</h3>
+            <ol>
+                <li>SmartDevice sends a <code>store_request</code> to the WasteService</li>
+                <li>SmartDevice waits for a reply</li>
+                <li>WasteService sends a <code>store_reply</code>.</li>
+            </ol>
+            <b>Problem</b>: the WasteService might be already performing a deposit action. Therefore,
+            Tipi di messaggio?
+            Interazione sincrona? Non per il waste service, visto che può ricevere più richieste
+
+            <br/>
+            Il waste service 
+            
+            <div class="remark">
+                
+            </div>
+            <img width="100%" src="../diagrams/sprint1_seq-SM-WS_v2.png"/>
+            <highlight2>diagramma di sequenza(?) + QAK</highlight2>
+            
+            <h3 id="Waste-Service-Transport-Trolley">Waste Service &harr; Transport Trolley</h3>
+            
+            <h3 id="Transport-Trolley-DDR-Robot">Transport Trolley &harr; DDR Robot</h3>
+            
+            <h2>Test Plan</h2>
+            Forse è meglio metterli in una sezione a parte<br/>
+            Per lo smart device simulator usare il testing dei widget
+            (ma forse non serve, visto che deve semplicemente simulare l'invio di richieste)
+            
+            <h2 id="Logical-Architecture">Logical Architecture</h2>
+            QAK del core-business generale
+            
         </div>
 
     </body>

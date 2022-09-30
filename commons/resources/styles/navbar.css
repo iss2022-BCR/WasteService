@@ -34,6 +34,7 @@
   color: #818181;
   display: block;
   white-space: nowrap;
+  outline: none;
 }
 
 .sidenavSection {
@@ -60,11 +61,16 @@
 }
 
 .sidenav .closeButton {
-  position: absolute;
-  top: 0;
-  right: 25px;
+  display: block;
+  position: fixed;
+  z-index: 5;
+  width: 40px;
+  height: 40px;
+  top: 10px;
+  backdrop-filter: blur(2px);
   font-size: 36px;
-  margin-left: 50px;
+  padding: 0px;
+  text-align: center;
 }
 
 

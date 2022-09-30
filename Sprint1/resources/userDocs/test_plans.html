@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>Sprint1</title>
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/templateISS.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/main.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/navbar.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/table.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/code.css">
+        <script type="text/javascript" src="../../../commons/resources/scripts/myScripts.js"></script>
+    </head>
+
+    <body onload="loadNav();">
+        <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
+        <div id="sidenav" class="sidenav">
+            <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
+            <a class="sprint" href="../../../Sprint0/index.html #currentSprint">Sprint0</a>
+            <a id="currentSprint" class="sprint" href="#currentSprint">&#8211;&#8212; Sprint1 &#8212;&#8211;</a>
+            <a href="../../index.html   #currentSprint">Index</a>
+            <a href="final_theme.html   #currentSprint">Final Theme</a>
+            <a href="requirement_analysis.html  #currentSprint">Requirement<br/>Analysis</a>
+            <a href="problem_analysis.html  #currentSprint">Problem Analysis</a>
+            <a class="selected" href="test_plans.html   #currentSprint">Test Plans</a>
+            <div class="sidenavSection">
+                <a href="#Interactions">Interactions</a>
+                <div class="sidenavSubSection">
+                    <a href="#Smart-Device-Waste-Service">SmartDevice &harr;<br/>WasteService</a>
+                    <a href="#Waste-Service-Transport-Trolley">WasteService &harr;<br/>TransportTrolley</a>
+                    <a href="#Transport-Trolley-DDR-Robot">TransportTrolley &harr;<br/>DDR Robot</a>
+                </div>
+            </div>
+            <a href="project.html   #currentSprint">Project</a>
+            <a href="conclusions.html   #currentSprint">Conclusions</a>
+            <a href="team.html  #currentSprint">Team</a>
+            <p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
+            <a class="sprint" href="../../../Sprint2/index.html #currentSprint">Sprint2</a>
+            <a class="sprint" href="../../../Sprint3/index.html #currentSprint">Sprint3</a>
+            <bottom-spacer/>
+        </div>
+
+        <div id="main">
+            <h1 align="center">Test Plans</h1>
+
+            <h2 id="Interactions">Interactions</h2>
+
+            <h4>Setup Remote Communications</h4>
+            <div class="remark">
+                <b>Port Forwarding</b>
+                <ol>
+                    <li>
+                        Access to the router page: search <code>192.168.1.1</code> in a browser, and login with the credentials:
+                        <img width="100%" src="../imgs/test_plan/port_forwarding/access.png"/>
+                    </li>
+                    <li>
+                        Make sure you have selected the <code>expert user mode</code>:
+                        <img width="100%" src="../imgs/test_plan/port_forwarding/expert_user_mode.png"/>
+                    </li>
+                    <li>Select the <code>Internet</code> section and then <code>Port mapping</code>.</li>
+                    <li>
+                        Specify the information needed:
+                        <ul>
+                            <li>Service: <code>TCP</code>.</li>
+                            <li>(Optional) Device: <code>your_device_name</code>.</li>
+                            <li>LAN IP address: the IP address of the device where the service runs.</li>
+                            <li>Port/Interval.</li>
+                            <li><highlight1>Public port</highlight1>: the port you want to be use (connections to that will be forwarded to the LAN port).</li>
+                            <li>LAN port: the port the service is using.</li>
+                        </ul>
+                        Example:
+                        <img width="100%" src="../imgs/test_plan/port_forwarding/port_association.png"/>
+                    </li>
+                    <li>
+                        Check the <highlight2><code>router public IP</code></highlight2>:
+                        <img width="100%" src="../imgs/test_plan/port_forwarding/router_public_ip_address.png"/>
+                    </li>
+                </ol>
+                To connect to the WasteService from a remote device, you'll then need to use:
+                <pre><b><highlight2>router_public_ip</highlight2>:<highlight1>public_port</highlight1></b>
+                </pre>
+            </div>
+
+            <h3 id="Smart-Device-Waste-Service">SmartDevice &harr; WasteService</h3>
+            <h4>Store Request Success</h4>
+
+            <h3 id="Waste-Service-Transport-Trolley">WasteService &harr; TransportTrolley</h3>
+
+            <h3 id="Transport-Trolley-DDR-Robot">TransportTrolley &harr; DDR Robot</h3>
+        </div>
+
+    </body>
+
+</html>

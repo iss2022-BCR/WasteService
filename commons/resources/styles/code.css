@@ -7,3 +7,29 @@ code {
     font-family: "Consolas";
     font-size: 100%;
 }
+
+/* Colors */
+red {
+    color: #FF0000;
+    font-family: "Consolas";
+    font-size: 110%;
+    font-weight: bold;
+}
+cyan {
+    color: #0094FF;
+    font-family: "Consolas";
+    font-size: 110%;
+    font-weight: bold;
+}
+green {
+    color: #007F0E;
+    font-family: "Consolas";
+    font-size: 110%;
+    font-weight: bold;
+}
+yellow {
+    color: #E5BF00;
+    font-family: "Consolas";
+    font-size: 110%;
+    font-weight: bold;
+}
