@@ -15,7 +15,7 @@
     cursor: pointer;
     position: sticky;
     z-index: 1;
-    top: 55px;
+    top: 0px;
     background-color: white;
 }
 .dictionary td {
