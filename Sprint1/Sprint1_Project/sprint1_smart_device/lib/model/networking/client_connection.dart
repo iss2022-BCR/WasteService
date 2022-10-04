@@ -7,7 +7,7 @@ class ClientConnection {
   get remotePort {}
 
   // Tries to enstablish a connection an host
-  Future<void> connect(String host, int port, {timeout = Duration}) async {}
+  Future<void> connect(String host, int port, {Duration? timeout}) async {}
 
   // Close this endpoint of the connection
   Future<void> close() async {}

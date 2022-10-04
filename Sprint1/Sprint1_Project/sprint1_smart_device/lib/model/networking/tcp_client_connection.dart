@@ -31,7 +31,7 @@ class TcpClientConnection implements ClientConnection {
   TcpClientConnection();
 
   @override
-  Future<void> connect(String host, int port, {timeout = Duration}) async {
+  Future<void> connect(String host, int port, {Duration? timeout}) async {
     _socket = await Socket.connect(host, port, timeout: timeout);
   }
 

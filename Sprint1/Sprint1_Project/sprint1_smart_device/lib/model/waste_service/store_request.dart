@@ -46,4 +46,9 @@ class StoreRequest {
   String toJsonString() {
     return '{"wasteWeight": $wasteWeight, "wasteType": "${wasteType.name}"}';
   }
+
+  bool equals(StoreRequest storeRequest) {
+    return wasteWeight == storeRequest.wasteWeight &&
+        wasteType == storeRequest.wasteType;
+  }
 }

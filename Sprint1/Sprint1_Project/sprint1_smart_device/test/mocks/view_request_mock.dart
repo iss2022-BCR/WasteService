@@ -6,24 +6,28 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:sprint1_smart_device/model/networking/client_connection.dart';
-import '../model/waste_service/store_request.dart';
-import '../model/waste_service/waste_type.dart';
+import 'package:sprint1_smart_device/model/waste_service/store_request.dart';
+import 'package:sprint1_smart_device/model/waste_service/waste_type.dart';
 
-import '../model/constants.dart' as Constants;
+import 'package:sprint1_smart_device/model/constants.dart' as Constants;
 
-class ViewRequest extends StatefulWidget {
-  ViewRequest({Key? key, required this.connection, required this.notifyParent})
-      : super(key: key);
+class ViewRequestMock extends StatefulWidget {
+  const ViewRequestMock({
+    Key? key,
+    required this.storeRequestAccepted,
+    required this.storeRequestRejected,
+    required this.waitingTimeoutSeconds,
+  }) : super(key: key);
 
-  ClientConnection connection;
-  final Function(String, String) notifyParent;
+  final StoreRequest storeRequestAccepted;
+  final StoreRequest storeRequestRejected;
+  final int waitingTimeoutSeconds;
 
   @override
-  State<ViewRequest> createState() => _ViewRequestState();
+  State<ViewRequestMock> createState() => _ViewRequestMockState();
 }
 
-class _ViewRequestState extends State<ViewRequest> {
+class _ViewRequestMockState extends State<ViewRequestMock> {
   final _formKeyRequest = GlobalKey<FormState>();
   final TextEditingController _textControllerWeight = TextEditingController();
   final ScrollController _scrollController = ScrollController();
@@ -80,39 +84,25 @@ class _ViewRequestState extends State<ViewRequest> {
 
     String msg = req.toJsonString();
     _logMessage("Store request: $msg");
-    widget.connection.sendMessage(msg);
-
-    if (timeout != null) {
+    if (req.equals(widget.storeRequestAccepted)) {
+      // store request accepted
+      _messageHandler(Uint8List.fromList("LoadAccepted".codeUnits));
+    } else if (req.equals(widget.storeRequestRejected)) {
+      // store request rejected
+      _messageHandler(Uint8List.fromList("LoadRejected".codeUnits));
+    } else {
+      // store request wait: start timer
       _startTimer();
     }
   }
 
   void _messageHandler(Uint8List data) {
     final serverResponse = String.fromCharCodes(data);
-    _stopTimer();
+    //_stopTimer();
     setState(() {
       _response = serverResponse;
     });
     _logMessage(serverResponse);
-  }
-
-  void _errorHandler(error) {
-    widget.notifyParent("Disconnected", error.toString());
-    //print("Test error: ${error.toString()}"); // test
-
-    widget.connection.destroy();
-    if (Navigator.canPop(context)) {
-      Navigator.pop(context);
-    }
-  }
-
-  void _doneHandler() {
-    widget.notifyParent("Disconnected", "Connection closed by the server.");
-
-    widget.connection.close();
-    if (Navigator.canPop(context)) {
-      Navigator.pop(context);
-    }
   }
 
   void _startTimer() {
@@ -153,29 +143,14 @@ class _ViewRequestState extends State<ViewRequest> {
   void didChangeDependencies() {
     Locale myLocale = Localizations.localeOf(context);
     Intl.defaultLocale = myLocale.toString();
-    _logMessage(
-        "Connected to ${widget.connection.address.address}:${widget.connection.remotePort}");
 
     super.didChangeDependencies();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    // listen for responses from the server
-    widget.connection.listen(_messageHandler,
-        onError: _errorHandler, onDone: _doneHandler, cancelOnError: true);
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        widget.notifyParent(
-            "Disconnected", "You disconnecred from the server.");
-        widget.connection.close();
-
         return true;
       },
       child: Scaffold(
@@ -186,10 +161,6 @@ class _ViewRequestState extends State<ViewRequest> {
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios),
               onPressed: () {
-                widget.notifyParent(
-                    "Disconnected", "You disconnecred from the server.");
-                widget.connection.close();
-
                 if (Navigator.canPop(context)) {
                   Navigator.pop(context);
                 }
@@ -358,6 +329,30 @@ class _ViewRequestState extends State<ViewRequest> {
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      ),
+    );
+  }
+}
+
+// DEBUG TEST
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'SmartDevice Simulator',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: ViewRequestMock(
+        storeRequestAccepted: StoreRequest(10.0, WasteType.PLASTIC),
+        storeRequestRejected: StoreRequest(5000.0, WasteType.GLASS),
+        waitingTimeoutSeconds: 5,
       ),
     );
   }

@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
+import '../model/waste_type.dart';
+
 const String dateTimeFormat = "yyyy/MM/dd HH:mm:ss";
 
 const defaultPort = 4001;
@@ -77,12 +79,12 @@ class _ViewServerState extends State<ViewServer> {
     _logMessage("StoreRequest from #$iSock: $result");
 
     final jsonObj = jsonDecode(result);
-    print(jsonObj['wasteWeight']); // test
-    print(jsonObj['wasteType']); // test
+    //print(jsonObj['wasteWeight']); // test
+    //print(jsonObj['wasteType']); // test
 
     final wasteWeight =
         double.tryParse(jsonObj['wasteWeight'].toString()) ?? -1.0;
-    final wasteType = jsonObj['wasteType'].toString().toUpperCase();
+    final wasteType = jsonObj['wasteType'];
 
     if (wasteWeight == -1.0) {
       _logMessage("#$iSock INVALID MESSAGE");
@@ -96,10 +98,10 @@ class _ViewServerState extends State<ViewServer> {
             _plastic += wasteWeight;
           });
           _logMessage("Sent LoadAccepted to #$iSock");
-          socket.write("loadaccepted");
+          socket.write("LoadAccepted");
         } else {
           _logMessage("Sent LoadRejected to #$iSock");
-          socket.write("loadrejected");
+          socket.write("LoadRejected");
         }
         break;
       case "GLASS":
@@ -115,6 +117,7 @@ class _ViewServerState extends State<ViewServer> {
         }
         break;
       default:
+        _logMessage("#$iSock INVALID MESSAGE (wasteType)");
         break;
     }
   }
