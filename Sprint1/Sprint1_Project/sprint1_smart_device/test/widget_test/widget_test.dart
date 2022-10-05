@@ -5,8 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sprint1_smart_device/model/waste_service/store_request.dart';
 import 'package:sprint1_smart_device/model/waste_service/waste_type.dart';
 
-import '../mocks/view_home_mock.dart';
-import '../mocks/view_request_mock.dart';
+import '../mocks/views/view_home_mock.dart';
+import '../mocks/views/view_request_mock.dart';
 
 import 'package:sprint1_smart_device/model/constants.dart' as Constants;
 
@@ -156,7 +156,7 @@ void main() async {
 
   // ViewRequest ===============================================================
   // Test #5: Validation StoreRequest (wasteWeight and wasteType)
-  testWidgets('ViewRequest: StoreRequest Validation',
+  testWidgets('ViewRequest: StoreRequest validation',
       (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(createMockViewRequest());

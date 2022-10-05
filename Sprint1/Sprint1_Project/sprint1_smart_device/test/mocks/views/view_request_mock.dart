@@ -191,119 +191,122 @@ class _ViewRequestMockState extends State<ViewRequestMock> {
             child: Form(
               key: _formKeyRequest,
               child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Request Parameters',
-                      style: TextStyle(fontSize: 26.0),
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Spacer(flex: 1),
+                  const Text(
+                    'Request Parameters',
+                    style: TextStyle(fontSize: 26.0),
+                  ),
+                  TextFormField(
+                    key: const ValueKey('parameterWasteWeight'),
+                    validator: (value) {
+                      if (value == null || !_checkWeight(value)) {
+                        return 'Invalid weight';
+                      }
+                      return null;
+                    },
+                    controller: _textControllerWeight,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.allow(
+                        RegExp(
+                            r'[0-9]+[,.]{0,1}[0-9]*'), // this regex allows only decimal numbers
+                      )
+                    ],
+                    decoration: const InputDecoration(
+                      suffixText: 'KG',
+                      hintText: 'Weight',
+                      border: UnderlineInputBorder(),
+                      labelText: 'Waste Weight',
                     ),
-                    TextFormField(
-                      key: const ValueKey('parameterWasteWeight'),
-                      validator: (value) {
-                        if (value == null || !_checkWeight(value)) {
-                          return 'Invalid weight';
-                        }
-                        return null;
-                      },
-                      controller: _textControllerWeight,
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.allow(
-                          RegExp(
-                              r'[0-9]+[,.]{0,1}[0-9]*'), // this regex allows only decimal numbers
-                        )
-                      ],
-                      decoration: const InputDecoration(
-                        suffixText: 'KG',
-                        hintText: 'Weight',
-                        border: UnderlineInputBorder(),
-                        labelText: 'Waste Weight',
-                      ),
+                  ),
+                  DropdownButtonFormField<WasteType>(
+                    key: const ValueKey('parameterWasteType'),
+                    value: _currentWasteType,
+                    items: WasteType.values
+                        .map<DropdownMenuItem<WasteType>>((WasteType value) {
+                      return DropdownMenuItem(
+                          value: value, child: Text(value.name));
+                    }).toList(),
+                    onChanged: (WasteType? newValue) {
+                      setState(() {
+                        _currentWasteType = newValue!;
+                      });
+                    },
+                    decoration: const InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Waste Type',
                     ),
-                    DropdownButtonFormField<WasteType>(
-                      key: const ValueKey('parameterWasteType'),
-                      value: _currentWasteType,
-                      items: WasteType.values
-                          .map<DropdownMenuItem<WasteType>>((WasteType value) {
-                        return DropdownMenuItem(
-                            value: value, child: Text(value.name));
-                      }).toList(),
-                      onChanged: (WasteType? newValue) {
-                        setState(() {
-                          _currentWasteType = newValue!;
-                        });
-                      },
-                      decoration: const InputDecoration(
-                        border: UnderlineInputBorder(),
-                        labelText: 'Waste Type',
-                      ),
-                    ),
-                    const SizedBox(height: 20.0),
-                    Text(
-                      _debug ? 'Log' : 'Response',
-                      style: const TextStyle(fontSize: 26.0),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
-                      child: _debug
-                          ? Container(
-                              width: double.infinity,
-                              height: 150.0,
-                              decoration: BoxDecoration(
+                  ),
+                  const SizedBox(height: 20.0),
+                  Text(
+                    _debug ? 'Log' : 'Response',
+                    style: const TextStyle(fontSize: 26.0),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: _debug
+                        ? Container(
+                            width: double.infinity,
+                            height: 150.0,
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.7),
+                              border: Border.all(
                                 color: Colors.black.withOpacity(0.7),
-                                border: Border.all(
-                                  color: Colors.black.withOpacity(0.7),
-                                ),
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ListView.builder(
-                                  controller: _scrollController,
-                                  itemCount: _messages.length,
-                                  itemBuilder: (_, index) => Padding(
-                                    padding: const EdgeInsets.only(bottom: 8.0),
-                                    child: Text(
-                                      _messages[index],
-                                      style: TextStyle(
-                                        color: _messages[index]
-                                                .contains('loadaccepted')
-                                            ? Colors.green
-                                            : _messages[index]
-                                                    .contains('loadrejected')
-                                                ? Colors.red
-                                                : Colors.white,
-                                        fontFeatures: const [
-                                          FontFeature.tabularFigures()
-                                        ],
-                                      ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ListView.builder(
+                                controller: _scrollController,
+                                itemCount: _messages.length,
+                                itemBuilder: (_, index) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                  child: Text(
+                                    _messages[index],
+                                    style: TextStyle(
+                                      color: _messages[index]
+                                              .contains('loadaccepted')
+                                          ? Colors.green
+                                          : _messages[index]
+                                                  .contains('loadrejected')
+                                              ? Colors.red
+                                              : Colors.white,
+                                      fontFeatures: const [
+                                        FontFeature.tabularFigures()
+                                      ],
                                     ),
                                   ),
                                 ),
                               ),
-                            )
-                          : Container(
-                              width: double.infinity,
-                              height: 40.0,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.0),
-                                color: _response
-                                        .toLowerCase()
-                                        .contains("loadaccepted")
-                                    ? Colors.green
-                                    : _response
-                                            .toLowerCase()
-                                            .contains("loadrejected")
-                                        ? Colors.red
-                                        : Colors.grey,
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                  _waitingResponse ? _waitingDots : _response,
-                                  style: const TextStyle(fontSize: 16.0))),
-                    ),
-                  ]),
+                            ),
+                          )
+                        : Container(
+                            width: double.infinity,
+                            height: 40.0,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8.0),
+                              color: _response
+                                      .toLowerCase()
+                                      .contains("loadaccepted")
+                                  ? Colors.green
+                                  : _response
+                                          .toLowerCase()
+                                          .contains("loadrejected")
+                                      ? Colors.red
+                                      : Colors.grey,
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                                _waitingResponse ? _waitingDots : _response,
+                                style: const TextStyle(fontSize: 16.0))),
+                  ),
+                  const Spacer(flex: 2),
+                ],
+              ),
             ),
           ),
         ),
