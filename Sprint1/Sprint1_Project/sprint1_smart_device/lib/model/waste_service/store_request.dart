@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'waste_type.dart';
 
 const double minWasteWeight = 1.0;
@@ -32,6 +34,12 @@ class StoreRequest {
     } catch (e) {
       wasteType = WasteType.values.first;
     }
+  }
+
+  StoreRequest.fromJsonString(String json) {
+    final jsonObj = jsonDecode(json);
+    wasteWeight = jsonObj['wasteWeight'];
+    wasteType = WasteType.values.byName(jsonObj['wasteType']);
   }
 
   StoreRequest.fromJson(Map<String, dynamic> json)
