@@ -41,43 +41,219 @@
         <div id="main">
             <h1 align="center">Test Plans</h1>
 
-            <h2 id="Interactions">Interactions</h2>
+            <h2 id="Smart-Device">Smart Device</h2>
+            <problem>Assumptions</problem>
+            To run the following tests one needs to install Flutter: <a href="https://docs.flutter.dev/get-started/install">Get started with Flutter</a>.
+            <br/><br/>
+            The SmartDevice tests have been made by using <a href="../../Sprint1_Project/sprint1_smart_device/test/mocks/"><ksi>mock dependencies</ksi></a>,
+            especially for the connections, otherwise it would have been impossible to have always reliable executions which behave in the same way.
+            Moreover, some functions would have technically be impossible to test, due to logic limitations.
+            
 
-            <h4>Setup Remote Communications</h4>
-            <div class="remark">
-                <b>Port Forwarding</b>
-                <ol>
-                    <li>
-                        Access to the router page: search <code>192.168.1.1</code> in a browser, and login with the credentials:
-                        <img width="100%" src="../imgs/test_plan/port_forwarding/access.png"/>
-                    </li>
-                    <li>
-                        Make sure you have selected the <code>expert user mode</code>:
-                        <img width="100%" src="../imgs/test_plan/port_forwarding/expert_user_mode.png"/>
-                    </li>
-                    <li>Select the <code>Internet</code> section and then <code>Port mapping</code>.</li>
-                    <li>
-                        Specify the information needed:
+            <h3 id="Unit-Test">Unit Test</h3>
+            Unit tests aim to verify the correct behaviour of specific functionalities.
+            <h4>Interactions</h4>
+            The main functionality the SmartDevice needs to provide is the <i>interaction with the WasteService</i>,
+            in particular the ability to send a StoreRequest and receive a Reply.
+            <br/>
+            Therefore, we are going to setup and perform the following tests:
+            
+            <table class="dictionary">
+                <tr>
+                    <th>Test</th>
+                    <th>Entities</th>
+                    <th>Description</th>
+                    <th>Expected Behaviour</th>
+                    <th>Notes</th>
+                </tr>
+                <tr>
+                    <td>Connection</td>
+                    <td>
                         <ul>
-                            <li>Service: <code>TCP</code>.</li>
-                            <li>(Optional) Device: <code>your_device_name</code>.</li>
-                            <li>LAN IP address: the IP address of the device where the service runs.</li>
-                            <li>Port/Interval.</li>
-                            <li><highlight1>Public port</highlight1>: the port you want to be use (connections to that will be forwarded to the LAN port).</li>
-                            <li>LAN port: the port the service is using.</li>
+                            <li>SmartDevice</li>
+                            <li>WasteService</li>
                         </ul>
-                        Example:
-                        <img width="100%" src="../imgs/test_plan/port_forwarding/port_association.png"/>
-                    </li>
-                    <li>
-                        Check the <highlight2><code>router public IP</code></highlight2>:
-                        <img width="100%" src="../imgs/test_plan/port_forwarding/router_public_ip_address.png"/>
-                    </li>
-                </ol>
-                To connect to the WasteService from a remote device, you'll then need to use:
-                <pre><b><highlight2>router_public_ip</highlight2>:<highlight1>public_port</highlight1></b>
-                </pre>
-            </div>
+                    </td>
+                    <td>The SmartDevice tries to connect to the WasteService.</td>
+                    <td>If the WasteService is online and reachable, the connections attempt succeeds.</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>StoreRequest +<br/>LoadAccepted</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                            <li>WasteService</li>
+                        </ul>
+                    </td>
+                    <td>The SmartDevice sends a StoreRequest to the WasteService and the WasteService has enough space to store the waste.</td>
+                    <td>The WasteService sends a LoadAccepted message, and the SmartDevice receives it.</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>StoreRequest +<br/>LoadRejected</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                            <li>WasteService</li>
+                        </ul>
+                    </td>
+                    <td>The SmartDevice sends a StoreRequest to the WasteService and the WasteService has not enough space to store the waste.</td>
+                    <td>The WasteService sends a LoadRejected message, and the SmartDevice receives it.</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Disconnection</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                            <li>WasteService</li>
+                        </ul>
+                    </td>
+                    <td>The SmartDevice disconnects from the WasteService.</td>
+                    <td>The WasteService is notified of the disconnection and handles it gracefully.</td>
+                    <td></td>
+                </tr>
+            </table>
+            <br/>
+            Test file: <a href="../../Sprint1_Project/sprint1_smart_device/test/unit_test/interaction_test.dart">interaction_test.dart</a>
+            <br/>
+            To run the test:
+            <pre>
+                flutter test test/unit_test/interaction_test.dart
+            </pre>
+            <!-- Test Report (il coverage è buggato as fuck, bisognerebbe capire come fixarlo) -->
+            Reference: <a href="https://docs.flutter.dev/testing#unit-tests">Flutter Unit Testing</a>
+            
+            <h3 id="Widget-Test">Widget Test</h3>
+            The goal of a widget test is to verify that the widget’s UI looks and interacts as expected.
+            <table class="dictionary">
+                <tr>
+                    <th>Test</th>
+                    <th>Entities</th>
+                    <th>Description</th>
+                    <th>Expected Behaviour</th>
+                    <th>Notes</th>
+                </tr>
+                <tr>
+                    <td>ViewHome: Validation</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                        </ul>
+                    </td>
+                    <td>The user enter valid and invalid values in the input fields of the connection form.</td>
+                    <td>
+                        If a field is invalid, the GUI shows an error messages and the connection attempt
+                        doesn't take place.
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>ViewHome: Connection Attempt</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                        </ul>
+                    </td>
+                    <td>The user starts a connection attempt to the WasteService.</td>
+                    <td>
+                        If the connection attempt doesn't succeeds instantly,
+                        the GUI shows a loading icon and message, so the user knows that the app did not freeze.
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>ViewHome: Connection Succeeds</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                        </ul>
+                    </td>
+                    <td>The user successfully connected to the WasteService.</td>
+                    <td>If the connection succeeds, the user is noticed with a message.</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>ViewHome: Connection Fails</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                        </ul>
+                    </td>
+                    <td>The connection attempt to the WasteService has failed.</td>
+                    <td>If the connection fails, the user is alerted with a dialog box with an error message.</td>
+                    <td></td>
+                </tr>
+            </table>
+            <br/>
+            Test file: <a href="../../Sprint1_Project/sprint1_smart_device/test/widget_test/widget_test.dart">widget_test.dart</a>
+            <br/>
+            To run the test:
+            <pre>
+                flutter test test/widget_test/widget_test.dart
+            </pre>
+            Reference: <a href="https://docs.flutter.dev/testing#widget-tests">Flutter Widget Testing</a>
+            
+            <h3 id="Integration-Test">Integration Test</h3>
+            Integration tests aim to test a complete application or a large part of it,
+            in order to verify that both functionalities and widgets behave as expected.
+            <br/>
+            Since generally an integration test runs on a real device or an OS emulator,
+            it's much slower than ordinary tests, but allows to see what's happening on the GUI
+            in real time.
+            <table class="dictionary">
+                <tr>
+                    <th>Test</th>
+                    <th>Entities</th>
+                    <th>Description</th>
+                    <th>Expected Behaviour</th>
+                    <th>Notes</th>
+                </tr>
+                <tr>
+                    <td>SmartDevice Demo</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                        </ul>
+                    </td>
+                    <td>Shows a demonstration of the complete execution flow of the application.</td>
+                    <td>Connect to the WasteService, send a StoreRequest and receive a Reply.</td>
+                    <td>In order to pass the test, a WasteService must be launched at 127.0.0.1:11800.</td>
+                </tr>
+            </table>
+
+            <br/>
+            Test file: <a href="../../Sprint1_Project/sprint1_smart_device/integration_test/smart_device_test.dart">smart_device_test.dart</a>
+            <br/>
+            To run the test:
+            <pre>
+                <b>flutter test integration_test</b>
+                    [--dart-define="IP=&#60;ip_address&#62;"]
+                    [--dart-define="PORT=&#60;port&#62;"]
+                    [--dart-define="WASTE_WEIGHT=&#60;waste_weight&#62;"]
+                    [--dart-define="WASTE_TYPE=&#60;waste_type&#62;"]
+            </pre>
+            Command line optional arguments:
+            <ul>
+                <li><code>&#60;ip_address&#62;</code>, is the address where the server is listening. Default: <kc>127.0.0.1</kc></li>
+                <li><code>&#60;port&#62;</code>, is the port on which the server is listening. Default: <kc>11800</kc></li>
+                <li><code>&#60;waste_weight&#62;</code>, is the amount of waste to deposit. Default: <kc>10.0</kc></li>
+                <li><code>&#60;waste_type&#62;</code>, is the type of waste to deposit. Default: <kc>WasteType.PLASTIC</kc></li>
+            </ul>
+            <br/>
+            If optional arguments are not present or they contain invalid values, the test will adopt default values.
+            <br/>
+            Example:
+            <pre>
+                flutter test integration_test --dart-define="IP=192.168.1.4" --dart-define="PORT=11234" --dart-define="WASTE_WEIGHT=1000.0" --dart-define="WASTE_TYPE=GLASS"
+            </pre>
+            <img width="40%" src="../../resources/imgs/test_plan/SmartDevice_Integration_test.png"/>
+            <br/>
+            Reference: <a href="https://docs.flutter.dev/testing#integration-tests">Flutter Integration Testing</a>
+            
+
+            <h2 id="Interactions">Interactions</h2>
 
             <h3 id="Smart-Device-Waste-Service">SmartDevice &harr; WasteService</h3>
             <h4>Store Request Success</h4>
