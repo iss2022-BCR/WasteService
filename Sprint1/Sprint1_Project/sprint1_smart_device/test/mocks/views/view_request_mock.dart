@@ -35,9 +35,9 @@ class _ViewRequestMockState extends State<ViewRequestMock> {
   bool _debug = false;
 
   WasteType _currentWasteType = WasteType.PLASTIC;
-  String _response = "";
+  String _reply = "";
 
-  bool _waitingResponse = false;
+  bool _waitingReply = false;
   String _waitingDots = "Waiting.";
   late Timer _timer;
   int _timeoutCounter = Constants.timeoutSeconds;
@@ -76,8 +76,8 @@ class _ViewRequestMockState extends State<ViewRequestMock> {
 
   Future<void> _sendStoreRequest({timeout = Duration}) async {
     setState(() {
-      _waitingResponse = false;
-      _response = "";
+      _waitingReply = false;
+      _reply = "";
     });
     StoreRequest req = StoreRequest(
         double.parse(_textControllerWeight.text), _currentWasteType);
@@ -97,23 +97,23 @@ class _ViewRequestMockState extends State<ViewRequestMock> {
   }
 
   void _messageHandler(Uint8List data) {
-    final serverResponse = String.fromCharCodes(data);
+    final serverReply = String.fromCharCodes(data);
     //_stopTimer();
     setState(() {
-      _response = serverResponse;
+      _reply = serverReply;
     });
-    _logMessage(serverResponse);
+    _logMessage(serverReply);
   }
 
   void _startTimer() {
     setState(() {
       _waitingDots = "Waiting.";
       _timeoutCounter = Constants.timeoutSeconds;
-      _waitingResponse = true;
+      _waitingReply = true;
     });
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
-        if (_waitingResponse && _timeoutCounter > 0) {
+        if (_waitingReply && _timeoutCounter > 0) {
           setState(() {
             if (_waitingDots == "Waiting...") {
               _waitingDots = "Waiting.";
@@ -125,7 +125,7 @@ class _ViewRequestMockState extends State<ViewRequestMock> {
         } else {
           _stopTimer();
           setState(() {
-            _response = "Timeout expired.";
+            _reply = "Timeout expired.";
           });
         }
       });
@@ -135,7 +135,7 @@ class _ViewRequestMockState extends State<ViewRequestMock> {
   void _stopTimer() {
     _timer.isActive ? _timer.cancel() : null;
     setState(() {
-      _waitingResponse = false;
+      _waitingReply = false;
     });
   }
 
@@ -243,7 +243,7 @@ class _ViewRequestMockState extends State<ViewRequestMock> {
                   ),
                   const SizedBox(height: 20.0),
                   Text(
-                    _debug ? 'Log' : 'Response',
+                    _debug ? 'Log' : 'Reply',
                     style: const TextStyle(fontSize: 26.0),
                   ),
                   Padding(
@@ -289,19 +289,17 @@ class _ViewRequestMockState extends State<ViewRequestMock> {
                             height: 40.0,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8.0),
-                              color: _response
-                                      .toLowerCase()
-                                      .contains("loadaccepted")
-                                  ? Colors.green
-                                  : _response
-                                          .toLowerCase()
-                                          .contains("loadrejected")
-                                      ? Colors.red
-                                      : Colors.grey,
+                              color:
+                                  _reply.toLowerCase().contains("loadaccepted")
+                                      ? Colors.green
+                                      : _reply
+                                              .toLowerCase()
+                                              .contains("loadrejected")
+                                          ? Colors.red
+                                          : Colors.grey,
                             ),
                             alignment: Alignment.center,
-                            child: Text(
-                                _waitingResponse ? _waitingDots : _response,
+                            child: Text(_waitingReply ? _waitingDots : _reply,
                                 style: const TextStyle(fontSize: 16.0))),
                   ),
                   const Spacer(flex: 2),
@@ -314,7 +312,7 @@ class _ViewRequestMockState extends State<ViewRequestMock> {
           padding: const EdgeInsets.only(top: 32.0, left: 32.0, right: 32.0),
           child: ElevatedButton(
             key: const ValueKey('sendStoreRequest'),
-            onPressed: _waitingResponse
+            onPressed: _waitingReply
                 ? null
                 : () {
                     if (_formKeyRequest.currentState!.validate()) {

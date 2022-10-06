@@ -52,6 +52,27 @@ class _ViewHomeState extends State<ViewHome> {
       _isLoading = true;
     });
     _tcpClientConnection = TcpClientConnection();
+    /*try {
+      _tcpClientConnection
+          .connect(ip, port, timeout: const Duration(seconds: 5))
+          .then((value) {
+        setState(() {
+          _isLoading = false;
+        });
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ViewRequest(
+                    connection: _tcpClientConnection,
+                    notifyParent: _showAlertDialog)));
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      _showAlertDialog(
+          "Connection Failed", "Couldn't connect to server at $ip:$port.");
+    }*/
     _tcpClientConnection
         .connect(ip, port, timeout: const Duration(seconds: 5))
         .then((value) {

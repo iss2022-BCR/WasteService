@@ -15,6 +15,7 @@ void main() {
       clientConnect = false,
       clientDisconnect = false;
   String reply = "";
+
   group('[TCP Interaction Test]', () {
     // start server
     print("[Mock_WasteServer] Starting...");
