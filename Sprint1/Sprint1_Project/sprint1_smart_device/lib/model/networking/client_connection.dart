@@ -19,7 +19,7 @@ class ClientConnection {
   listen(Function(Uint8List) onMsg,
       {Function(Error error)? onError,
       Function()? onDone,
-      bool? cancelOnError}) {}
+      bool? cancelOnError}) async {}
 
   // Send a message to the other endpoint
   sendMessage(String message) {}

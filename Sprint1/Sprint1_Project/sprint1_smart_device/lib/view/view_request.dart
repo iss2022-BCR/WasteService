@@ -35,7 +35,7 @@ class _ViewRequestState extends State<ViewRequest> {
 
   bool _waitingReply = false;
   String _waitingDots = "Waiting.";
-  late Timer _timer;
+  Timer? _timer;
   int _timeoutCounter = Constants.timeoutSeconds;
 
   // Message list
@@ -78,7 +78,7 @@ class _ViewRequestState extends State<ViewRequest> {
     StoreRequest req = StoreRequest(
         double.parse(_textControllerWeight.text), _currentWasteType);
 
-    String msg = req.toJsonString();
+    String msg = req.toQAKString("test_wasteservice");
     _logMessage("Store request: $msg");
     widget.connection.sendMessage(msg);
 
@@ -91,14 +91,18 @@ class _ViewRequestState extends State<ViewRequest> {
     final serverReply = String.fromCharCodes(data);
     _stopTimer();
     setState(() {
-      _reply = serverReply;
+      _reply = serverReply.toLowerCase().contains('loadaccepted')
+          ? "Accepted"
+          : "Rejected";
     });
     _logMessage(serverReply);
   }
 
   void _errorHandler(error) {
-    widget.notifyParent("Disconnected", error.toString());
-    //print("Test error: ${error.toString()}"); // test
+    _stopTimer();
+    widget.notifyParent(
+        "Disconnected", "You have been disconnected by the server.");
+    //widget.notifyParent("Disconnected", error.toString());
 
     widget.connection.destroy();
     if (Navigator.canPop(context)) {
@@ -107,9 +111,10 @@ class _ViewRequestState extends State<ViewRequest> {
   }
 
   void _doneHandler() {
+    _stopTimer();
     widget.notifyParent("Disconnected", "Connection closed by the server.");
 
-    widget.connection.close();
+    widget.connection.destroy();
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
     }
@@ -143,7 +148,10 @@ class _ViewRequestState extends State<ViewRequest> {
   }
 
   void _stopTimer() {
-    _timer.isActive ? _timer.cancel() : null;
+    if (_timer == null) {
+      return;
+    }
+    _timer!.isActive ? _timer!.cancel() : null;
     setState(() {
       _waitingReply = false;
     });
@@ -172,6 +180,7 @@ class _ViewRequestState extends State<ViewRequest> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
+        _stopTimer();
         widget.notifyParent(
             "Disconnected", "You disconnecred from the server.");
         widget.connection.close();
@@ -186,6 +195,7 @@ class _ViewRequestState extends State<ViewRequest> {
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios),
               onPressed: () {
+                _stopTimer();
                 widget.notifyParent(
                     "Disconnected", "You disconnecred from the server.");
                 widget.connection.close();
@@ -278,7 +288,9 @@ class _ViewRequestState extends State<ViewRequest> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10.0),
                     child: _debug
-                        ? Container(
+                        ?
+                        // Log
+                        Container(
                             width: double.infinity,
                             height: 150.0,
                             decoration: BoxDecoration(
@@ -313,19 +325,17 @@ class _ViewRequestState extends State<ViewRequest> {
                               ),
                             ),
                           )
+                        // Reply
                         : Container(
                             width: double.infinity,
                             height: 40.0,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8.0),
-                              color:
-                                  _reply.toLowerCase().contains("loadaccepted")
-                                      ? Colors.green
-                                      : _reply
-                                              .toLowerCase()
-                                              .contains("loadrejected")
-                                          ? Colors.red
-                                          : Colors.grey,
+                              color: _reply.toLowerCase().contains("accepted")
+                                  ? Colors.green
+                                  : _reply.toLowerCase().contains("rejected")
+                                      ? Colors.red
+                                      : Colors.grey,
                             ),
                             alignment: Alignment.center,
                             child: Text(_waitingReply ? _waitingDots : _reply,

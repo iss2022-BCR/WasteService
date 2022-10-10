@@ -49,7 +49,7 @@ class TcpClientConnection implements ClientConnection {
   listen(Function(Uint8List) onMsg,
       {Function(Error error)? onError,
       Function()? onDone,
-      bool? cancelOnError}) {
+      bool? cancelOnError}) async {
     _socket.listen(onMsg,
         onError: onError, onDone: onDone, cancelOnError: cancelOnError);
   }

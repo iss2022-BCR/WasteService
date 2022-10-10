@@ -55,6 +55,11 @@ class StoreRequest {
     return '{"wasteWeight": $wasteWeight, "wasteType": "${wasteType.name}"}';
   }
 
+  String toQAKString(String actorName) {
+    //return 'msg(storerequest, request,python,test_wasteservice,storerequest(${wasteType.name},$wasteWeight),1)';
+    return 'msg(storerequest, request, test_smartdevice, $actorName, storerequest(${wasteType.name}, $wasteWeight), 1)\n';
+  }
+
   bool equals(StoreRequest storeRequest) {
     return wasteWeight == storeRequest.wasteWeight &&
         wasteType == storeRequest.wasteType;
