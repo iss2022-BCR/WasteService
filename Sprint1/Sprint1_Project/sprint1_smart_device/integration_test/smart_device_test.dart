@@ -83,14 +83,10 @@ void main() {
     // Type WASTE_SERVICE_IP in the IP field
     await tester.enterText(
         find.byKey(const ValueKey('connectionIP')), wasteServiceIP);
-    // Verify that the text in the IP input field is correct
-    expect(find.text(wasteServiceIP), findsOneWidget);
 
     // Type WASTE_SERVICE_PORT in the Port field
     await tester.enterText(find.byKey(const ValueKey('connectionPort')),
         wasteServicePort.toString());
-    // Verify that the text in the port input field is correct
-    expect(find.text(wasteServicePort.toString()), findsOneWidget);
     await Future.delayed(const Duration(seconds: 1));
 
     // Tap the 'Connect' button
@@ -131,8 +127,7 @@ void main() {
 
     // Verify that we received a reply (positive or negative)
     expect(
-        find.textContaining(
-            RegExp(r'LoadAccepted|LoadRejected', caseSensitive: false)),
+        find.textContaining(RegExp(r'Accepted|Rejected', caseSensitive: false)),
         findsOneWidget);
 
     await Future.delayed(const Duration(seconds: 3));
