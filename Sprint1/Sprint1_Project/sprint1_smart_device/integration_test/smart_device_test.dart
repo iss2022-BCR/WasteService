@@ -5,13 +5,16 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'package:sprint1_smart_device/main.dart' as app;
+import 'package:sprint1_smart_device/model/waste_service/store_request.dart';
 import 'package:sprint1_smart_device/model/waste_service/waste_type.dart';
+
+import '../test/mocks/mock_waste_server.dart';
 
 const String HOME_VIEW_TITLE = "Smart Device Simulator";
 const String REQUEST_VIEW_TITLE = "Store Request";
 
-const String WASTE_SERVICE_IP = "192.168.1.4";
-const int WASTE_SERVICE_PORT = 4001;
+const String WASTE_SERVICE_IP = "127.0.0.1";
+const int WASTE_SERVICE_PORT = 11800;
 
 const double SR_WEIGHT = 10.0;
 const WasteType SR_TYPE = WasteType.PLASTIC;
@@ -40,6 +43,39 @@ void main() {
       storeRequestType = SR_TYPE;
     }
   });
+
+  print("[SmartDevice Test] Starting test with the following parameters:");
+  print("\tIP = $wasteServiceIP");
+  print("\tPort = $wasteServicePort");
+  print("\tPortStoreRequest_Weight = $storeRequestWeight");
+  print("\tStoreRequest_Type = $storeRequestType");
+
+  // Default: run mock server on localhost
+  if (wasteServiceIP == WASTE_SERVICE_IP) {
+    MockWasteServer mockServer = MockWasteServer();
+    mockServer.startServer(wasteServicePort, (data, sock, iSock) {
+      StoreRequest receivedSR =
+          StoreRequest.fromQAKString(String.fromCharCodes(data));
+
+      print(mockServer.getCurrentStorage());
+      if (mockServer.canStore(receivedSR.wasteWeight, receivedSR.wasteType)) {
+        print("[Mock_WasteServer] Load accepted.");
+        mockServer.deposit(receivedSR.wasteWeight, receivedSR.wasteType);
+        sock.write("LoadAccepted");
+      } else {
+        print("[Mock_WasteServer] Load rejected.");
+        sock.write("LoadRejected");
+      }
+    }, onConnect: (sock, iSock) {
+      print(
+          "[Mock_WasteServer] Accepted connection #$iSock from client ${sock.remoteAddress.address}:${sock.port}.");
+    }, onDisconnect: (sock, iSock) {
+      print(
+          "[Mock_WasteServer] Client ${sock.remoteAddress.address}:${sock.port} disconnected.");
+    }).then((_) {
+      print("[Mock_WasteServer] Listening for connections...");
+    });
+  }
 
   testWidgets("Test Run", (WidgetTester tester) async {
     app.main();

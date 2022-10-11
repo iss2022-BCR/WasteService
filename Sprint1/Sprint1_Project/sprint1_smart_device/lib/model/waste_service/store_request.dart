@@ -42,6 +42,21 @@ class StoreRequest {
     wasteType = WasteType.values.byName(jsonObj['wasteType']);
   }
 
+  StoreRequest.fromQAKString(String string) {
+    List<String> splitted = string.split('storerequest');
+    string = splitted[splitted.length - 1];
+    splitted = string.split(',');
+
+    String type = string.split(',')[0].substring(1).trim();
+    String weight = string
+        .split(',')[1]
+        .substring(0, string.split(',')[1].indexOf(')'))
+        .trim();
+
+    wasteType = WasteType.values.byName(type);
+    wasteWeight = double.parse(weight);
+  }
+
   StoreRequest.fromJson(Map<String, dynamic> json)
       : wasteWeight = json['wasteWeight'],
         wasteType = WasteType.values.byName(json['wasteType']);
