@@ -6,24 +6,28 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:sprint1_smart_device/model/networking/client_connection.dart';
-import '../model/waste_service/store_request.dart';
-import '../model/waste_service/waste_type.dart';
+import 'package:sprint1_smart_device/model/waste_service/store_request.dart';
+import 'package:sprint1_smart_device/model/waste_service/waste_type.dart';
 
-import '../model/constants.dart' as Constants;
+import 'package:sprint1_smart_device/model/constants.dart' as Constants;
 
-class ViewRequest extends StatefulWidget {
-  ViewRequest({Key? key, required this.connection, required this.notifyParent})
-      : super(key: key);
+class ViewRequestMock extends StatefulWidget {
+  const ViewRequestMock({
+    Key? key,
+    required this.storeRequestAccepted,
+    required this.storeRequestRejected,
+    required this.waitingTimeoutSeconds,
+  }) : super(key: key);
 
-  ClientConnection connection;
-  final Function(String, String) notifyParent;
+  final StoreRequest storeRequestAccepted;
+  final StoreRequest storeRequestRejected;
+  final int waitingTimeoutSeconds;
 
   @override
-  State<ViewRequest> createState() => _ViewRequestState();
+  State<ViewRequestMock> createState() => _ViewRequestMockState();
 }
 
-class _ViewRequestState extends State<ViewRequest> {
+class _ViewRequestMockState extends State<ViewRequestMock> {
   final _formKeyRequest = GlobalKey<FormState>();
   final TextEditingController _textControllerWeight = TextEditingController();
   final ScrollController _scrollController = ScrollController();
@@ -35,7 +39,7 @@ class _ViewRequestState extends State<ViewRequest> {
 
   bool _waitingReply = false;
   String _waitingDots = "Waiting.";
-  Timer? _timer;
+  late Timer _timer;
   int _timeoutCounter = Constants.timeoutSeconds;
 
   // Message list
@@ -78,46 +82,27 @@ class _ViewRequestState extends State<ViewRequest> {
     StoreRequest req = StoreRequest(
         double.parse(_textControllerWeight.text), _currentWasteType);
 
-    String msg = req.toQAKString("test_wasteservice");
+    String msg = req.toJsonString();
     _logMessage("Store request: $msg");
-    widget.connection.sendMessage(msg);
-
-    if (timeout != null) {
+    if (req.equals(widget.storeRequestAccepted)) {
+      // store request accepted
+      _messageHandler(Uint8List.fromList("LoadAccepted".codeUnits));
+    } else if (req.equals(widget.storeRequestRejected)) {
+      // store request rejected
+      _messageHandler(Uint8List.fromList("LoadRejected".codeUnits));
+    } else {
+      // store request wait: start timer
       _startTimer();
     }
   }
 
   void _messageHandler(Uint8List data) {
     final serverReply = String.fromCharCodes(data);
-    _stopTimer();
+    //_stopTimer();
     setState(() {
-      _reply = serverReply.toLowerCase().contains('loadaccepted')
-          ? "Accepted"
-          : "Rejected";
+      _reply = serverReply;
     });
     _logMessage(serverReply);
-  }
-
-  void _errorHandler(error) {
-    _stopTimer();
-    widget.notifyParent(
-        "Disconnected", "You have been disconnected by the server.");
-    //widget.notifyParent("Disconnected", error.toString());
-
-    widget.connection.destroy();
-    if (Navigator.canPop(context)) {
-      Navigator.pop(context);
-    }
-  }
-
-  void _doneHandler() {
-    _stopTimer();
-    widget.notifyParent("Disconnected", "Connection closed by the server.");
-
-    widget.connection.destroy();
-    if (Navigator.canPop(context)) {
-      Navigator.pop(context);
-    }
   }
 
   void _startTimer() {
@@ -148,10 +133,7 @@ class _ViewRequestState extends State<ViewRequest> {
   }
 
   void _stopTimer() {
-    if (_timer == null) {
-      return;
-    }
-    _timer!.isActive ? _timer!.cancel() : null;
+    _timer.isActive ? _timer.cancel() : null;
     setState(() {
       _waitingReply = false;
     });
@@ -161,30 +143,14 @@ class _ViewRequestState extends State<ViewRequest> {
   void didChangeDependencies() {
     Locale myLocale = Localizations.localeOf(context);
     Intl.defaultLocale = myLocale.toString();
-    _logMessage(
-        "Connected to ${widget.connection.address.address}:${widget.connection.remotePort}");
 
     super.didChangeDependencies();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    // listen for replies from the server
-    widget.connection.listen(_messageHandler,
-        onError: _errorHandler, onDone: _doneHandler, cancelOnError: true);
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        _stopTimer();
-        widget.notifyParent(
-            "Disconnected", "You disconnecred from the server.");
-        widget.connection.close();
-
         return true;
       },
       child: Scaffold(
@@ -195,11 +161,6 @@ class _ViewRequestState extends State<ViewRequest> {
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios),
               onPressed: () {
-                _stopTimer();
-                widget.notifyParent(
-                    "Disconnected", "You disconnecred from the server.");
-                widget.connection.close();
-
                 if (Navigator.canPop(context)) {
                   Navigator.pop(context);
                 }
@@ -288,9 +249,7 @@ class _ViewRequestState extends State<ViewRequest> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10.0),
                     child: _debug
-                        ?
-                        // Log
-                        Container(
+                        ? Container(
                             width: double.infinity,
                             height: 150.0,
                             decoration: BoxDecoration(
@@ -325,17 +284,19 @@ class _ViewRequestState extends State<ViewRequest> {
                               ),
                             ),
                           )
-                        // Reply
                         : Container(
                             width: double.infinity,
                             height: 40.0,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8.0),
-                              color: _reply.toLowerCase().contains("accepted")
-                                  ? Colors.green
-                                  : _reply.toLowerCase().contains("rejected")
-                                      ? Colors.red
-                                      : Colors.grey,
+                              color:
+                                  _reply.toLowerCase().contains("loadaccepted")
+                                      ? Colors.green
+                                      : _reply
+                                              .toLowerCase()
+                                              .contains("loadrejected")
+                                          ? Colors.red
+                                          : Colors.grey,
                             ),
                             alignment: Alignment.center,
                             child: Text(_waitingReply ? _waitingDots : _reply,
@@ -369,6 +330,30 @@ class _ViewRequestState extends State<ViewRequest> {
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      ),
+    );
+  }
+}
+
+// DEBUG TEST
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'SmartDevice Simulator',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: ViewRequestMock(
+        storeRequestAccepted: StoreRequest(10.0, WasteType.PLASTIC),
+        storeRequestRejected: StoreRequest(5000.0, WasteType.GLASS),
+        waitingTimeoutSeconds: 5,
       ),
     );
   }

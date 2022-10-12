@@ -31,7 +31,7 @@ class TcpClientConnection implements ClientConnection {
   TcpClientConnection();
 
   @override
-  Future<void> connect(String host, int port, {timeout = Duration}) async {
+  Future<void> connect(String host, int port, {Duration? timeout}) async {
     _socket = await Socket.connect(host, port, timeout: timeout);
   }
 
@@ -49,7 +49,7 @@ class TcpClientConnection implements ClientConnection {
   listen(Function(Uint8List) onMsg,
       {Function(Error error)? onError,
       Function()? onDone,
-      bool? cancelOnError}) {
+      bool? cancelOnError}) async {
     _socket.listen(onMsg,
         onError: onError, onDone: onDone, cancelOnError: cancelOnError);
   }

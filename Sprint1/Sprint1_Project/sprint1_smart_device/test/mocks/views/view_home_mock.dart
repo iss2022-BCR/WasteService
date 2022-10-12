@@ -1,34 +1,42 @@
 // ignore_for_file: library_prefixes
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sprint1_smart_device/model/networking/tcp_client_connection.dart';
 
-import '../model/networking/client_connection.dart';
-import 'view_request.dart';
+import 'package:sprint1_smart_device/model/constants.dart' as Constants;
 
-import '../model/constants.dart' as Constants;
+class ViewHomeMock extends StatefulWidget {
+  const ViewHomeMock(
+      {Key? key,
+      required this.correctIP,
+      required this.correctPort,
+      required this.timeoutSeconds})
+      : super(key: key);
 
-class ViewHome extends StatefulWidget {
-  const ViewHome({Key? key}) : super(key: key);
+  final String correctIP;
+  final int correctPort;
+  final int timeoutSeconds;
 
   @override
-  State<ViewHome> createState() => _ViewHomeState();
+  State<ViewHomeMock> createState() => _ViewHomeMockState();
 }
 
-class _ViewHomeState extends State<ViewHome> {
+class _ViewHomeMockState extends State<ViewHomeMock> {
   final _formKeyConnection = GlobalKey<FormState>();
 
   final TextEditingController _textControllerAddress = TextEditingController();
   final TextEditingController _textControllerPort = TextEditingController();
 
-  late ClientConnection _tcpClientConnection;
+  late Timer _timer;
+  late int _timeoutCounter;
 
   bool _isLoading = false;
 
-  bool _error = false;
-  String _errorTitle = "";
-  String _errorMessage = "";
+  bool _alert = false;
+  String _alertTitle = "";
+  String _alertMessage = "";
 
   bool _checkIPaddress(String address) {
     if (address.isEmpty) return true;
@@ -48,36 +56,48 @@ class _ViewHomeState extends State<ViewHome> {
   }
 
   void _connect(String ip, int port) async {
-    setState(() {
-      _isLoading = true;
-    });
-    _tcpClientConnection = TcpClientConnection();
-    _tcpClientConnection
-        .connect(ip, port, timeout: const Duration(seconds: 5))
-        .then((value) {
-      setState(() {
-        _isLoading = false;
-      });
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ViewRequest(
-                  connection: _tcpClientConnection,
-                  notifyParent: _showAlertDialog)));
-    }).onError((error, stackTrace) {
-      setState(() {
-        _isLoading = false;
-      });
+    if (ip == widget.correctIP && port == widget.correctPort) {
       _showAlertDialog(
-          "Connection Failed", "Couldn't connect to server at $ip:$port.");
-    });
+          "Connection Succeeded", "Successfully connected to $ip:$port");
+    } else {
+      _startTimer(ip, port);
+    }
   }
 
   void _showAlertDialog(String title, String message) {
     setState(() {
-      _error = true;
-      _errorTitle = title;
-      _errorMessage = message;
+      _alert = true;
+      _alertTitle = title;
+      _alertMessage = message;
+    });
+  }
+
+  void _startTimer(String ip, int port) {
+    setState(() {
+      _isLoading = true;
+      _timeoutCounter = widget.timeoutSeconds;
+    });
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_isLoading && _timeoutCounter > 0) {
+          setState(() {
+            _timeoutCounter--;
+          });
+        } else {
+          _stopTimer();
+          setState(() {
+            _showAlertDialog("Connection Failed",
+                "Couldn't connect to server at $ip:$port.");
+          });
+        }
+      });
+    });
+  }
+
+  void _stopTimer() {
+    _timer.isActive ? _timer.cancel() : null;
+    setState(() {
+      _isLoading = false;
     });
   }
 
@@ -90,17 +110,17 @@ class _ViewHomeState extends State<ViewHome> {
         automaticallyImplyLeading: true,
       ),
       body: Center(
-        child: _error
+        child: _alert
             ? AlertDialog(
-                title: Center(child: Text(_errorTitle)),
-                content: Text(_errorMessage),
+                title: Center(child: Text(_alertTitle)),
+                content: Text(_alertMessage),
                 actions: <Widget>[
                   TextButton(
                     onPressed: () {
                       setState(() {
-                        _error = false;
-                        _errorTitle = "";
-                        _errorMessage = "";
+                        _alert = false;
+                        _alertTitle = "";
+                        _alertMessage = "";
                       });
                     },
                     child: const Text('OK'),
@@ -174,7 +194,7 @@ class _ViewHomeState extends State<ViewHome> {
         padding: const EdgeInsets.only(top: 32.0, left: 32.0, right: 32.0),
         child: ElevatedButton(
           key: const ValueKey('connect'),
-          onPressed: _error
+          onPressed: _alert
               ? null
               : () {
                   if (_formKeyConnection.currentState!.validate()) {
@@ -220,6 +240,29 @@ class _ViewHomeState extends State<ViewHome> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+}
+
+// DEBUG TEST
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'SmartDevice Simulator',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const ViewHomeMock(
+          correctIP: Constants.defaultIP,
+          correctPort: Constants.defaultPort,
+          timeoutSeconds: 5),
     );
   }
 }

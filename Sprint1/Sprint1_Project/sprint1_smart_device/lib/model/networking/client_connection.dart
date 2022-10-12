@@ -7,7 +7,7 @@ class ClientConnection {
   get remotePort {}
 
   // Tries to enstablish a connection an host
-  Future<void> connect(String host, int port, {timeout = Duration}) async {}
+  Future<void> connect(String host, int port, {Duration? timeout}) async {}
 
   // Close this endpoint of the connection
   Future<void> close() async {}
@@ -19,7 +19,7 @@ class ClientConnection {
   listen(Function(Uint8List) onMsg,
       {Function(Error error)? onError,
       Function()? onDone,
-      bool? cancelOnError}) {}
+      bool? cancelOnError}) async {}
 
   // Send a message to the other endpoint
   sendMessage(String message) {}
