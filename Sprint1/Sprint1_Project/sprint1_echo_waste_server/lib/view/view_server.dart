@@ -7,11 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
+import '../model/store_request.dart';
 import '../model/waste_type.dart';
 
 const String dateTimeFormat = "yyyy/MM/dd HH:mm:ss";
 
-const defaultPort = 4001;
+const defaultPort = 11800;
 
 class ViewServer extends StatefulWidget {
   const ViewServer({Key? key}) : super(key: key);
@@ -78,20 +79,21 @@ class _ViewServerState extends State<ViewServer> {
     String result = String.fromCharCodes(data);
     _logMessage("StoreRequest from #$iSock: $result");
 
-    final jsonObj = jsonDecode(result);
+    StoreRequest receivedSR =
+        StoreRequest.fromQAKString(String.fromCharCodes(data));
+
     //print(jsonObj['wasteWeight']); // test
     //print(jsonObj['wasteType']); // test
 
-    final wasteWeight =
-        double.tryParse(jsonObj['wasteWeight'].toString()) ?? -1.0;
-    final wasteType = jsonObj['wasteType'];
+    final wasteWeight = receivedSR.wasteWeight;
+    final wasteType = receivedSR.wasteType;
 
     if (wasteWeight == -1.0) {
       _logMessage("#$iSock INVALID MESSAGE");
       return;
     }
 
-    switch (wasteType) {
+    switch (wasteType.name) {
       case "PLASTIC":
         if (_plastic + wasteWeight <= _max_plastic) {
           setState(() {
@@ -110,10 +112,10 @@ class _ViewServerState extends State<ViewServer> {
             _glass += wasteWeight;
           });
           _logMessage("Sent LoadAccepted to #$iSock");
-          socket.write("loadaccepted");
+          socket.write("LoadAccepted");
         } else {
           _logMessage("Sent LoadRejected to #$iSock");
-          socket.write("loadrejected");
+          socket.write("LoadRejected");
         }
         break;
       default:
@@ -121,6 +123,13 @@ class _ViewServerState extends State<ViewServer> {
         break;
     }
   }
+
+  /*bool canStore(WasteType type, double weight) {
+    if (!_storage.containsKey(type)) {
+      return false;
+    }
+    return _storage[type]! + weight <= _maxStorages[type]!;
+  }*/
 
   @override
   void didChangeDependencies() {

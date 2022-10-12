@@ -25,7 +25,7 @@ void main() {
           StoreRequest.fromJsonString(String.fromCharCodes(data));
 
       print(mockServer.getCurrentStorage());
-      if (mockServer.canStore(receivedSR.wasteWeight, receivedSR.wasteType)) {
+      if (mockServer.canStore(receivedSR.wasteType, receivedSR.wasteWeight)) {
         print("[Mock_WasteServer] Load accepted.");
         mockServer.deposit(receivedSR.wasteWeight, receivedSR.wasteType);
         sock.write("LoadAccepted");
@@ -49,7 +49,7 @@ void main() {
     ClientConnection connection = TcpClientConnection();
     print("[Mock_SmartDevice] Starting...");
 
-    test('Connect OK', () async {
+    test('Connect', () async {
       print(
           "[Mock_SmartDevice] Attempting a connection to Mock_WasteService...");
       await connection.connect(ip, port).then((value) {
@@ -69,8 +69,8 @@ void main() {
       });
     });
 
-    test('Store Request Succeeds OK', () async {
-      StoreRequest sr = StoreRequest(10.0, WasteType.PLASTIC);
+    test('Store Request Succeeds', () async {
+      StoreRequest sr = StoreRequest(WasteType.PLASTIC, 10.0);
 
       connection.sendMessage(sr.toJsonString());
       print("[Mock_SmartDevice] Sent Store Request ${sr.toJsonString()}");
@@ -79,8 +79,8 @@ void main() {
       expect(reply.toLowerCase() == "loadaccepted", true);
     });
 
-    test('Store Request Fails OK', () async {
-      StoreRequest sr = StoreRequest(1000.0, WasteType.GLASS);
+    test('Store Request Fails', () async {
+      StoreRequest sr = StoreRequest(WasteType.GLASS, 1000.0);
 
       connection.sendMessage(sr.toJsonString());
       print("[Mock_SmartDevice] Sent Store Request ${sr.toJsonString()}");
@@ -89,7 +89,7 @@ void main() {
       expect(reply.toLowerCase() == "loadrejected", true);
     });
 
-    test('Disconnect OK', () async {
+    test('Disconnect', () async {
       await connection.close().then((value) {
         clientDisconnect = true;
       });

@@ -1,0 +1,134 @@
+@startuml
+set namespaceSeparator ::
+
+class "sprint1_smart_device::main.dart::MyApp" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "sprint1_smart_device::main.dart::MyApp"
+
+class "sprint1_smart_device::model::networking::client_connection.dart::ClientConnection" {
+  +dynamic address
+  +dynamic remoteAddress
+  +dynamic port
+  +dynamic remotePort
+  +Future<void> connect()
+  +Future<void> close()
+  +Future<void> destroy()
+  +dynamic listen()
+  +dynamic sendMessage()
+}
+
+class "sprint1_smart_device::model::networking::server_connection.dart::ServerConnection" {
+}
+
+class "sprint1_smart_device::model::networking::tcp_client_connection.dart::TcpClientConnection" {
+  -Socket _socket
+  +InternetAddress address
+  +InternetAddress remoteAddress
+  +int port
+  +int remotePort
+  +Future<void> connect()
+  +Future<void> close()
+  +Future<void> destroy()
+  +dynamic listen()
+  +dynamic sendMessage()
+}
+
+"sprint1_smart_device::model::networking::tcp_client_connection.dart::TcpClientConnection" o-- "dart::io::Socket"
+"sprint1_smart_device::model::networking::tcp_client_connection.dart::TcpClientConnection" o-- "dart::io::InternetAddress"
+"sprint1_smart_device::model::networking::client_connection.dart::ClientConnection" <|-- "sprint1_smart_device::model::networking::tcp_client_connection.dart::TcpClientConnection"
+
+class "sprint1_smart_device::model::waste_service::store_request.dart::StoreRequest" {
+  +WasteType wasteType
+  +double wasteWeight
+  {static} +Map<String, dynamic> toJson()
+  +String toJsonString()
+  +String toQAKString()
+  +bool equals()
+}
+
+"sprint1_smart_device::model::waste_service::store_request.dart::StoreRequest" o-- "sprint1_smart_device::model::waste_service::waste_type.dart::WasteType"
+
+class "sprint1_smart_device::model::waste_service::waste_type.dart::WasteType" {
+  +int index
+  {static} +List<WasteType> values
+  {static} +WasteType PLASTIC
+  {static} +WasteType GLASS
+}
+
+"sprint1_smart_device::model::waste_service::waste_type.dart::WasteType" o-- "sprint1_smart_device::model::waste_service::waste_type.dart::WasteType"  
+"dart::core::Enum" <|-- "sprint1_smart_device::model::waste_service::waste_type.dart::WasteType"
+
+class "sprint1_smart_device::view::view_home.dart::ViewHome" {
+  +State<ViewHome> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "sprint1_smart_device::view::view_home.dart::ViewHome"
+
+class "sprint1_smart_device::view::view_home.dart::_ViewHomeState" {
+  -GlobalKey<FormState> _formKeyConnection
+  -TextEditingController _textControllerAddress
+  -TextEditingController _textControllerPort
+  -ClientConnection _tcpClientConnection
+  -bool _isLoading
+  -bool _error
+  -String _errorTitle
+  -String _errorMessage
+  -bool _checkIPaddress()
+  -bool _checkPort()
+  -void _connect()
+  -void _showAlertDialog()
+  +Widget build()
+}
+
+"sprint1_smart_device::view::view_home.dart::_ViewHomeState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"
+"sprint1_smart_device::view::view_home.dart::_ViewHomeState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"sprint1_smart_device::view::view_home.dart::_ViewHomeState" o-- "sprint1_smart_device::model::networking::client_connection.dart::ClientConnection"   
+"flutter::src::widgets::framework.dart::State" <|-- "sprint1_smart_device::view::view_home.dart::_ViewHomeState"
+
+class "sprint1_smart_device::view::view_request.dart::ViewRequest" {
+  +ClientConnection connection
+  +dynamic Function(String, String) notifyParent
+  +State<ViewRequest> createState()
+}
+
+"sprint1_smart_device::view::view_request.dart::ViewRequest" o-- "sprint1_smart_device::model::networking::client_connection.dart::ClientConnection"   
+"sprint1_smart_device::view::view_request.dart::ViewRequest" o-- "null::dynamic Function(String, String)"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "sprint1_smart_device::view::view_request.dart::ViewRequest"
+
+class "sprint1_smart_device::view::view_request.dart::_ViewRequestState" {
+  -GlobalKey<FormState> _formKeyRequest
+  -TextEditingController _textControllerWeight
+  -ScrollController _scrollController
+  -bool _debug
+  -WasteType _currentWasteType
+  -String _reply
+  -bool _waitingReply
+  -String _waitingDots
+  -Timer? _timer
+  -int _timeoutCounter
+  -List<String> _messages
+  -bool _checkWeight()
+  -void _logMessage()
+  -String _getTimeStamp()
+  -Future<void> _sendStoreRequest()
+  -void _messageHandler()
+  -void _errorHandler()
+  -void _doneHandler()
+  -void _startTimer()
+  -void _stopTimer()
+  +void didChangeDependencies()
+  +void initState()
+  +Widget build()
+}
+
+"sprint1_smart_device::view::view_request.dart::_ViewRequestState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"
+"sprint1_smart_device::view::view_request.dart::_ViewRequestState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"sprint1_smart_device::view::view_request.dart::_ViewRequestState" o-- "flutter::src::widgets::scroll_controller.dart::ScrollController"
+"sprint1_smart_device::view::view_request.dart::_ViewRequestState" o-- "sprint1_smart_device::model::waste_service::waste_type.dart::WasteType"        
+"sprint1_smart_device::view::view_request.dart::_ViewRequestState" o-- "dart::async::Timer"
+"flutter::src::widgets::framework.dart::State" <|-- "sprint1_smart_device::view::view_request.dart::_ViewRequestState"
+
+
+@enduml

@@ -80,7 +80,7 @@ class _ViewRequestMockState extends State<ViewRequestMock> {
       _reply = "";
     });
     StoreRequest req = StoreRequest(
-        double.parse(_textControllerWeight.text), _currentWasteType);
+        _currentWasteType, double.parse(_textControllerWeight.text));
 
     String msg = req.toJsonString();
     _logMessage("Store request: $msg");
@@ -351,8 +351,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: ViewRequestMock(
-        storeRequestAccepted: StoreRequest(10.0, WasteType.PLASTIC),
-        storeRequestRejected: StoreRequest(5000.0, WasteType.GLASS),
+        storeRequestAccepted: StoreRequest(WasteType.PLASTIC, 10.0),
+        storeRequestRejected: StoreRequest(WasteType.GLASS, 5000.0),
         waitingTimeoutSeconds: 5,
       ),
     );

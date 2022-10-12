@@ -222,7 +222,7 @@
                     <td>In order to pass the test, a WasteService must be launched at 127.0.0.1:11800.</td>
                 </tr>
             </table>
-            <img style="float: right; margin: 10px" width="300px" src="../../resources/imgs/test_plan/SmartDevice_Integration_test.png"/>
+            <img style="float: right; margin: 10px" width="300px" src="../../resources/imgs/test_plan/SmartDevice_Integration_test_v3.png"/>
 
             <br/>
             Test file: <a href="../../Sprint1_Project/sprint1_smart_device/integration_test/smart_device_test.dart">smart_device_test.dart</a>
@@ -237,7 +237,9 @@
             </pre>
             Command line optional arguments:
             <ul>
-                <li><code>&#60;ip_address&#62;</code>, is the address where the server is listening. Default: <kc>127.0.0.1</kc></li>
+                <li><code>&#60;ip_address&#62;</code>, is the address where the server is listening. Default: <kc>127.0.0.1</kc>.
+                    <br/>
+                    NB: in the case the default IP address is used, the integration test will start a <i>mock echo server</i>, which will reply to store requests.</li>
                 <li><code>&#60;port&#62;</code>, is the port on which the server is listening. Default: <kc>11800</kc></li>
                 <li><code>&#60;waste_weight&#62;</code>, is the amount of waste to deposit. Default: <kc>10.0</kc></li>
                 <li><code>&#60;waste_type&#62;</code>, is the type of waste to deposit. Default: <kc>WasteType.PLASTIC</kc></li>
