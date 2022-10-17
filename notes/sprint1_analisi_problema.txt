@@ -1,0 +1,104 @@
+Interaction SmartDevice <-> WasteService
+1) PROBLEM #1: Tipi di waste.
+Problem: how does the smart device know what types of waste can be dumped to the waste service?
+Possible solution: hard-code the types in the smart_device.
+Pros: easiest solution to implement;
+Cons: not scalable, since it doesn't allow the waste service to have different waste containers than the one specified by the customer in the requirements. It doesn't allow different kind of waste services.
+Better solution: ask for the possible types along with the connection message, and update the smart_device list.
+Considerations: that solution is much more scalable, but introduce a layer of interaction (a request-response).
+
+
+2) PROBLEM #2: Store_Request Validation
+Problem: what happens if the user enter invalid parameters of a store request? What happens if the waste service receives an invalid store request?
+Solution:
+	- client-side, validation of the store request fields (the application doesn't allow the user to send an invalid store request, and warns him on what's wrong);
+	- server-side, validation of the store request -> if the store request is missing some parameter, or they're invalid (eg: negative weight or too big, invalid type) it always sends back a loadrejected. That's the most robust solution, since it works even if the smart device is allowed to send invalid requests.
+Alternatives: have a security layer which allows only trusted devices to send store_requests. This way, knowing that the smart device will always be an original one, produced and deployed by our software house, we know for sure that a certain behaviour will be respected, therefore it won't be possible to send invalid store_requests.
+
+3) PROBLEM #3: Replies and WasteTruck Dismiss
+Problem: when is the reply sent? That's the main issue that will be discussed in the current sprint. We have to take into account different considerations:
+- the waste service can handle different requests, but only one at a time (only one deposit action can happen in a particular moment, since there is only on transport trolley)
+- since the pickup action takes some time
+
+
+States:
+- store_request
+- load_accepted/load_rejected
+if load_rejected:
+	- the truck leaves
+if load_accepted:
+	(- wait our turn, there is another deposit action in progress)
+	- picking_up
+	- pickup_completed
+
+Potrebbe essere problematico, perché non so come si manda un dispaccio da QAK senza conoscere l'alieno.
+
+Soluzione più semplice:
+mandare loadaccepted solo quando inizia la pickup, dopodiché sarà lo smart device ad aspettare tot secondi di pickup action e poi andarsene (mi sembra bruttissima)
+
+come facciamo a mandare un messaggio quando lo smart device si connette?
+
+CORREGGERE: temporary solution -> solo loadaccept, all'inizio di pickup o alla fine
+
+mettere Better solution come sviluppo futuro, spiegando però che il QAK attualmente non supporta questa funzionalità, quindi andrebbe esteso oppure bisognerebbe utilizzare i coded actors.
+
+======================================================
+######################################################
+======================================================
+
+Analisi del Problema - PROBLEMI:
+1) Messaggi invalidi
+	-> validazione lato client: lo smart device impedisce di mandare store_request invalide (weight negativo, o formattato male, o vuoto; type non presenti)
+	-> validazione lato server: per facilitare le cose, se si riceve una store_request con parametri non validi la rifiuta -> invia una loadrejected.
+
+2) Tipi di waste disponibili (per il deposito). Come fa lo smart device a conoscerli a priori? Supponiamo il caso che un giorno il waste service compri un nuovo container, per la carta, se l'enum del tipo è hard codato lato client, allora non sarà modificabile. => Il client potrebbe ricevere un messaggio subito dopo aver instaurato una connessione, in modo da rendere il progetto scalabile.
+
+3) timeout per la ricezione di una reply alla store_request
+
+4) Request multiple e quando mandare la reply.
+
+	Per il momento assumiamo che una volta avviata la deposit action, questa viene completata con successo dal TT. Questo potrebbe non essere sempre vero, ad esempio (se è possibile farlo), se il robot viene stoppato, ma non viene resumato.
+	Oppure se il truck driver, dopo un certo tot di tempo che aspetta la reply, e non la riceve, decide di andarsene.
+	- quando mandare la reply?
+	
+
+	- 2 contatori:
+		1) counterRequest -> preventivo per poter rispondere subito;
+		2) counterStorage -> viene aggiornato alla fine della deposit action;
+
+	Possibilità di interazione:
+	1) smart_device invia request
+		2.1) rejected viene inviata a prescindere subito -> va via subito
+		2.2) accepted dipende:
+			- si potrebbe mandare subito appena si sa che il carico può essere depositato -> in questo caso bisogna mandare un ulteriore messaggio alla fine della pickup action, per notificare il camion che può andarsene;
+			- oppure, si aspetta che la pickup termini, e si invia la loadaccepted al termine di questa action.
+
+
+sistema a due contatori con reject e accept immediati
+-oppure-
+un solo contatore aggiornato dopo una deposit con reject e accept ritardate <- questa soluzione è la peggiore perché si ha perdita di informazione ed è anche poco efficiente.
+
+[[[
+Possibilità aggiuntiva: specificare nella loadaccepted una stima del tempo di attesa. In caso, possibilità per lo smart device di scegliere se aspettare o andarsene (vedere in uno sprint successivo (forse))
+]]]
+
+5) Rappresentazione della service area? Un sistema di coordinate o uno descrittivo?
+
+6) dove mettere la "mappa"? nel waste service o nel transport trolley o in entrambi? Forse va solo nel transport trolley, in quanto il waste service invia solo comandi di "alto livello" (tipo deposita tot GLASS).
+
+
+WasteService: descrizione delle zone (at home, at indoor, at glassbox, ecc.)
+
+Il waste service dice al trolley di depositare tot in una box, poi è il transport trolley che sa/si calcola il percorso da fare ed esegue la deposit.
+
+
+7) La GUI deve sapere la posizione esatta del robot? Nel caso nella GUI bisogni mostrare anche una rappresentazione della mappa, forse sarebbe meglio se questa la invia il waste service.
+
+Ci guarderemo nello sprint#
+
+8) formato messaggi: formato QAK, anche se potremmo racchiudere il messaggio JSON in un parametro del messaggio QAK, e parsarlo con una funzione Kotlin, ma magari lo lasciamo come sviluppo futuro
+
+
+DOMANDE:
+1) il truck driver può mandare altre store_request? Oppure dopo la gestione viene mandato via?
+2) il truck driver può decidere di andarsene via se sta passando troppo tempo?

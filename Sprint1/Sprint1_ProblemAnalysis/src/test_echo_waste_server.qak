@@ -1,0 +1,65 @@
+System test_echo_waste_server
+
+// MESSAGES AND EVENTS ========================================================
+// SmartDevice (truck) -> WasteService
+Request storerequest	:	storerequest(
+							TYPE, 
+							TRUCKLOAD
+						)
+
+// WasteService -> SmartDevice
+Reply loadaccepted	:		loadaccepted(_)
+Reply loadrejected	:		loadrejected(_)
+
+// BasicRobot
+Dispatch cmd	: cmd(MOVE)
+Request step	: step(TIME)
+Reply stepdone	: stepdone(V)
+Reply stepfail	: stepfail(V)
+Event alarm		: alarm(X)
+
+// PathExecutor
+Request	dopath		: dopath( PATH, OWNER )
+Reply	dopathdone	: dopathdone( ARG )
+Reply	dopathfail	: dopathfail( ARG )
+Dispatch pathdone	: pathdone( P )
+Dispatch pathfail	: pathdone( P )
+Dispatch cmd		: cmd(MOVE)     
+Request step		: step( TIME )	
+Reply   stepdone	: stepdone(V)  
+Reply   stepfail	: stepfail(DURATION, CAUSE)
+Event	alarm		: alarm(X) 
+
+Context ctx_test_wasteservice	ip [host="localhost" port=11800]
+//Context ctxbasicrobot ip[host="localhost" port=11820]
+//Context ctxPathexecutor  ip [host="localhost" port=11830] 
+
+//ExternalQActor basicrobot context ctxbasicrobot
+//ExternalQActor pathexec context ctxPathexecutor
+
+QActor test_wasteservice context ctx_test_wasteservice {
+	State state_init initial {
+		
+	}
+	Goto state_idle
+	
+	State state_idle {
+		println("[Test_WasteService] Waiting for messages...")
+		discardMsg Off
+	}
+	Transition t1	whenRequest storerequest	-> state_echo
+	
+	State state_echo {
+		printCurrentMessage
+		onMsg(storerequest: storerequest(TYPE, TRUCKLOAD)) {
+			println("Received Store Request")
+			replyTo storerequest with loadaccepted: loadaccepted(_)
+			println("Replied: loadaccepted")	
+			//forward basicrobot -m cmd : cmd(w)
+			println("Sent BasicRobot: -> cmd(w)")
+			//println("Sent PathExecutor: -> dopath()")
+			
+		}
+	}
+	Goto state_idle
+}

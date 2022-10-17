@@ -1,0 +1,106 @@
+System waste_service
+
+// MESSAGES AND EVENTS ========================================================
+// SmartDevice (truck) -> WasteService
+Request wastetypes_request	:	wastetypes_request(_)
+Reply wastetypes_reply		:	wastetypes_reply(TYPES)
+Request storerequest	:	storerequest(
+							TYPE, 
+							LOAD
+						)
+
+// WasteService -> SmartDevice
+Reply loadaccepted	:		loadaccepted(_)
+Reply loadrejected	:		loadrejected(_)
+Dispatch pickupcompleted :	pickupcompleted(_)
+
+// BasicRobot
+Dispatch cmd	: cmd(MOVE)
+Request step	: step(TIME)
+Reply stepdone	: stepdone(V)
+Reply stepfail	: stepfail(V)
+Event alarm		: alarm(X)
+
+// PathExecutor
+Request	dopath		: dopath( PATH, OWNER )
+Reply	dopathdone	: dopathdone( ARG )
+Reply	dopathfail	: dopathfail( ARG )
+Dispatch pathdone	: pathdone( P )
+Dispatch pathfail	: pathdone( P )
+Dispatch cmd		: cmd(MOVE)     
+Request step		: step( TIME )	
+Reply   stepdone	: stepdone(V)  
+Reply   stepfail	: stepfail(DURATION, CAUSE)
+Event	alarm		: alarm(X) 
+
+Context ctx_wasteservice	ip [host="localhost" port=11800]
+//Context ctxbasicrobot ip[host="localhost" port=11820]
+//Context ctxPathexecutor  ip [host="localhost" port=11830] 
+
+//ExternalQActor basicrobot context ctxbasicrobot
+//ExternalQActor pathexec context ctxPathexecutor
+
+QActor typesprovider context ctx_wasteservice {
+	State state_init initial {
+		println("[TypesProvider] Started")
+	}
+	
+	State state_idle {
+		println("[TypesProvider] Waiting for type requests...")
+		discardMsg Off
+	}
+	Transition t1	whenRequest wastetypes_request	-> state_handle_wastetypes_request
+	
+	State state_handle_wastetypes_request {
+		printCurrentMessage
+		// Kotlin function to get types
+		replyTo wastetypes_request with wastetypes_reply: wastetypes_reply(_)
+		println("[TypesProvider] Replied with types list")	
+	}
+	Goto state_idle
+}
+
+QActor wasteservice context ctx_wasteservice {
+	State state_init initial {
+		println("[WasteService] Started")
+	}
+	Goto state_idle
+	
+	State state_idle {
+		println("[WasteService] Waiting for store requests...")
+		discardMsg Off
+	}
+	Transition t1	whenRequest storerequest	-> state_handle_storerequest
+					whenMsg pickupcompleted		-> state_handle_pickupcompleted
+	
+	State state_handle_storerequest {
+		printCurrentMessage
+		onMsg(storerequest: storerequest(TYPE, LOAD)) {
+			//println("[WasteService] Received storerequest($TYPE, $LOAD)")
+			replyTo storerequest with loadaccepted: loadaccepted(_)
+			println("[WasteService] Replied with loadaccepted")	
+			//forward basicrobot -m cmd : cmd(w)
+			//println("Sent BasicRobot: -> cmd(w)")
+			//println("Sent PathExecutor: -> dopath()")
+		}
+	}
+	Goto state_idle
+	
+	State state_handle_pickupcompleted {
+		printCurrentMessage
+		println("[WasteService] Pickup completed")
+		
+	}
+	Goto state_idle
+}
+
+QActor transporttrolley context ctx_wasteservice {
+	State state_init initial {
+		println("[TransportTrolley] Started")
+	}
+	Goto state_idle
+	
+	State state_idle {
+		println("[WasteService] Waiting for move requests...")
+	}
+}

@@ -142,9 +142,9 @@
                             <li>SmartDevice</li>
                         </ul>
                     </td>
-                    <td>The user enter valid and invalid values in the input fields of the connection form.</td>
+                    <td>The user enters valid and invalid values in the input fields of the connection form.</td>
                     <td>
-                        If a field is invalid, the GUI shows an error messages and the connection attempt
+                        If a field is invalid, the GUI shows an error message and the connection attempt
                         doesn't take place.
                     </td>
                     <td></td>
@@ -185,6 +185,50 @@
                     <td>If the connection fails, the user is alerted with a dialog box with an error message.</td>
                     <td></td>
                 </tr>
+                <tr>
+                    <td>ViewRequest: Validation</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                        </ul>
+                    </td>
+                    <td>The user enter valid and invalid values in the input fields of the store request form.</td>
+                    <td>If a field is invalid, the GUI shows an error message and the store request is not sent.</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>ViewRequest: LoadRejected</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                        </ul>
+                    </td>
+                    <td>The SmartDevice received a LoadRejected.</td>
+                    <td>If a LoadRejected message is received, the GUI must display a message showing the negative outcome.</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><highlight2>ViewRequest: Waiting for a reply</highlight2></td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                        </ul>
+                    </td>
+                    <td>The SmartDevice sent a StoreRequest and is waiting for a reply.</td>
+                    <td>If the SmartDevice is waiting for a reply, the GUI must display a proper message, informing the user about the status of the request, until a reply is received.</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>ViewRequest: LoadAccepted</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                        </ul>
+                    </td>
+                    <td>The SmartDevice received a LoadAccepted.</td>
+                    <td>If a LoadAccepted message is received, the GUI must display a message showing the positive outcome.</td>
+                    <td></td>
+                </tr>
             </table>
             <br/>
             Test file: <a href="../../Sprint1_Project/sprint1_smart_device/test/widget_test/widget_test.dart">widget_test.dart</a>
@@ -215,11 +259,12 @@
                     <td>
                         <ul>
                             <li>SmartDevice</li>
+                            <li>WasteService</li>
                         </ul>
                     </td>
                     <td>Shows a demonstration of the complete execution flow of the application.</td>
                     <td>Connect to the WasteService, send a StoreRequest and receive a Reply.</td>
-                    <td>In order to pass the test, a WasteService must be launched at 127.0.0.1:11800.</td>
+                    <td>In order to pass the test, if launched with specific address parameters, a proper WasteService able to respond must be running and ready.</td>
                 </tr>
             </table>
             <img style="float: right; margin: 10px" width="300px" src="../../resources/imgs/test_plan/SmartDevice_Integration_test_v3.png"/>
