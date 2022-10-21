@@ -58,7 +58,7 @@ void main() {
           StoreRequest.fromQAKString(String.fromCharCodes(data));
 
       print(mockServer.getCurrentStorage());
-      if (mockServer.canStore(receivedSR.wasteWeight, receivedSR.wasteType)) {
+      if (mockServer.canStore(receivedSR.wasteType, receivedSR.wasteWeight)) {
         print("[Mock_WasteServer] Load accepted.");
         mockServer.deposit(receivedSR.wasteWeight, receivedSR.wasteType);
         sock.write("LoadAccepted");
@@ -135,23 +135,24 @@ void main() {
 
     // Store Request ===========================================================
     expect(find.text('Store Request'), findsOneWidget);
-    // Verify that there's a text input field for the Waste Weight parameter
-    expect(find.byKey(const ValueKey('parameterWasteWeight')), findsOneWidget);
-    expect(find.text('Waste Weight'), findsOneWidget);
     // Verify that there's a text input field for the port
     expect(find.byKey(const ValueKey('parameterWasteType')), findsOneWidget);
     expect(find.text('Waste Type'), findsOneWidget);
+    // Verify that there's a text input field for the Waste Weight parameter
+    expect(find.byKey(const ValueKey('parameterWasteWeight')), findsOneWidget);
+    expect(find.text('Waste Weight'), findsOneWidget);
+
     await Future.delayed(const Duration(seconds: 1));
 
     // Send a StoreRequest and receive a Reply =================================
-    // Type SR_WEIGHT in the Waste Weight field
-    await tester.enterText(find.byKey(const ValueKey('parameterWasteWeight')),
-        storeRequestWeight.toString());
     // Select SR_TYPE in the Waste Type field
     await tester.tap(find.byKey(const ValueKey('parameterWasteType')));
     await tester.pumpAndSettle();
     await tester.tap(find.text(storeRequestType.name).last);
     await tester.pumpAndSettle();
+    // Type SR_WEIGHT in the Waste Weight field
+    await tester.enterText(find.byKey(const ValueKey('parameterWasteWeight')),
+        storeRequestWeight.toString());
     // Verify the Store Request parameters
     expect(find.text(storeRequestWeight.toString()), findsOneWidget);
     expect(find.text(storeRequestType.name), findsOneWidget);

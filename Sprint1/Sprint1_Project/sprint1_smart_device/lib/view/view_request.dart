@@ -76,7 +76,7 @@ class _ViewRequestState extends State<ViewRequest> {
       _reply = "";
     });
     StoreRequest req = StoreRequest(
-        double.parse(_textControllerWeight.text), _currentWasteType);
+        _currentWasteType, double.parse(_textControllerWeight.text));
 
     String msg = req.toQAKString("test_wasteservice");
     _logMessage("Store request: $msg");
@@ -238,6 +238,24 @@ class _ViewRequestState extends State<ViewRequest> {
                     'Request Parameters',
                     style: TextStyle(fontSize: 26.0),
                   ),
+                  DropdownButtonFormField<WasteType>(
+                    key: const ValueKey('parameterWasteType'),
+                    value: _currentWasteType,
+                    items: WasteType.values
+                        .map<DropdownMenuItem<WasteType>>((WasteType value) {
+                      return DropdownMenuItem(
+                          value: value, child: Text(value.name));
+                    }).toList(),
+                    onChanged: (WasteType? newValue) {
+                      setState(() {
+                        _currentWasteType = newValue!;
+                      });
+                    },
+                    decoration: const InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Waste Type',
+                    ),
+                  ),
                   TextFormField(
                     key: const ValueKey('parameterWasteWeight'),
                     validator: (value) {
@@ -260,24 +278,6 @@ class _ViewRequestState extends State<ViewRequest> {
                       hintText: 'Weight',
                       border: UnderlineInputBorder(),
                       labelText: 'Waste Weight',
-                    ),
-                  ),
-                  DropdownButtonFormField<WasteType>(
-                    key: const ValueKey('parameterWasteType'),
-                    value: _currentWasteType,
-                    items: WasteType.values
-                        .map<DropdownMenuItem<WasteType>>((WasteType value) {
-                      return DropdownMenuItem(
-                          value: value, child: Text(value.name));
-                    }).toList(),
-                    onChanged: (WasteType? newValue) {
-                      setState(() {
-                        _currentWasteType = newValue!;
-                      });
-                    },
-                    decoration: const InputDecoration(
-                      border: UnderlineInputBorder(),
-                      labelText: 'Waste Type',
                     ),
                   ),
                   const SizedBox(height: 20.0),
@@ -355,6 +355,16 @@ class _ViewRequestState extends State<ViewRequest> {
                 ? null
                 : () {
                     if (_formKeyRequest.currentState!.validate()) {
+                      // Add '.0' or '0' to the weight, in case it's missing
+                      setState(() {
+                        if (!_textControllerWeight.text.contains('.')) {
+                          _textControllerWeight.text += '.0';
+                        }
+                        if (_textControllerWeight.text.endsWith('.')) {
+                          _textControllerWeight.text += '0';
+                        }
+                      });
+
                       _sendStoreRequest(timeout: 10);
                     }
                   },

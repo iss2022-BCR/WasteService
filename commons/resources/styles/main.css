@@ -57,15 +57,6 @@ footer a:link, footer a:visited, footer a:hover {
   margin-bottom: 5px;
 }
 
-/* Problem Analysis */
-problem {
-  display: block;
-  background-color: rgba(255, 0, 0, 0.4);
-  padding: 4px;
-  border-radius: 7px;
-  margin-bottom: 10px;
-}
-
 /* Extra */
 highlight1 {
   background-color: yellow;

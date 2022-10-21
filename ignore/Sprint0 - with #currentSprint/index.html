@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Sprint0</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="../commons/resources/styles/templateISS.css">
+        <link rel="stylesheet" type="text/css" href="../commons/resources/styles/main.css">
+        <link rel="stylesheet" type="text/css" href="../commons/resources/styles/navbar.css">
+        <link rel="stylesheet" type="text/css" href="../commons/resources/styles/table.css">
+        <link rel="stylesheet" type="text/css" href="../commons/resources/styles/code.css">
+        <script type="text/javascript" src="../commons/resources/scripts/myScripts.js"></script>
+    </head>
+    
+    <body onload="loadNav();">
+        <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
+        <div id="sidenav" class="sidenav">
+            <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
+            <a id="currentSprint" class="sprint" href="#currentSprint">&#8211;&#8212; Sprint0 &#8212;&#8211;</a>
+            <a class="selected" href="#currentSprint">Index</a>
+            <div class="sidenavSection">
+                <a href="#Introduction">Introduction</a>
+                <a href="#Motto">Motto</a>
+                <a href="#Resources">Resources</a>
+            </div>
+            <a href="resources/userDocs/final_theme.html#currentSprint">Final Theme</a>
+            <a href="resources/userDocs/requirement_analysis.html#currentSprint">Requirement<br/>Analysis</a>
+            <a href="resources/userDocs/problem_analysis.html#currentSprint">Problem Analysis</a>
+            <a href="resources/userDocs/project.html#currentSprint">Project</a>
+            <a href="resources/userDocs/conclusions.html#currentSprint">Conclusions</a>
+            <a href="resources/userDocs/team.html#currentSprint">Team</a>
+            <p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
+            <a class="sprint" href="../Sprint1/index.html#currentSprint">Sprint1</a>
+            <a class="sprint" href="../Sprint2/index.html#currentSprint">Sprint2</a>
+            <a class="sprint" href="../Sprint3/index.html#currentSprint">Sprint3</a>
+            <bottom-spacer/>
+        </div>
+        
+        <div id="main">
+            <h1 align="center">Sprint 0</h1>
+            <h2 id="Introduction">Introduction</h2>
+            Our <a href="resources/userDocs/team.html">team</a> must project and develop a software system
+            to manage a waste-disposal service, as described in <a href="resources/userDocs/final_theme.html">Final Theme 2022</a>.
+            <br/>
+            <br/>
+            Sprint0 focuses on the <a href="resources/userDocs/requirement_analysis.html">analysis of requirements</a> provided by the customer.
+            Our task is to fully comprehend them, by <b>clarifying</b> doubts and uncertainties,
+            so that everyone (team members and the customer/product owner) agrees on their meaning.
+            <br/>
+            <br/>
+            In particular, Sprint0 aims:
+            <ul>
+                <li>to <b>formalize</b> requirements, in order to make them <i>machine-understandable</i>;</li>
+                <li>to draft one <b>model</b> of a general overview of the system, divided by computational nodes;</li>
+                <li>to draft a first-primitive <b>interaction scheme</b>;</li>
+                <li>
+                    to provide some <b>executable test plans</b>, which will serve to show the customer
+                    the main behaviour of the system, in order to discuss the correctness and eventual
+                    issues/differences.
+                </li>
+            </ul>
+            Sprint0 doesn't discuss any problem yet, therefore the
+            <a href="resources/userDocs/problem_analysis.html">problem analysis</a> section will be empty.
+            <br/>
+            <br/>
+            At the end of the Sprint0, we will draft some <a href="resources/userDocs/conclusions.html">conclusion</a> and provide a work plan
+            which will schedule the following Sprints. Especially, we're going to outline the
+            <ksi>core-business</ksi> of the project.
+
+            <h2 id="Motto">Motto</h2>
+            <div class="remark">
+                There is no code without a project, there is no project without problem analysis, there is no problem without requirements.
+            </div>
+
+            <h2 id="Resources">Resources</h2>
+            <ul>
+                <li>Course GitHub repository: <a href="https://github.com/anatali/issLab2022">anatali/issLab2022</a></li>
+                <li>Team GitHub repository: <a href="https://github.com/iss2022-BCR/WasteService">iss2022-BCR/WasteService</a></li>
+                <li>Scrum Guide: <a href="../commons/2020-Scrum-Guide-Italian.pdf">2020 Scrum Guide (IT)</a></li>
+            </ul>
+        </div>
+
+    </body>
+</html>

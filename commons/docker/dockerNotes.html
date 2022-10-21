@@ -1,0 +1,66 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>Docker Notes</title>
+        <link rel="stylesheet" type="text/css" href="../resources/styles/templateISS.css">
+        <link rel="stylesheet" type="text/css" href="../resources/styles/main.css">
+        <link rel="stylesheet" type="text/css" href="../resources/styles/navbar.css">
+        <link rel="stylesheet" type="text/css" href="../resources/styles/table.css">
+        <link rel="stylesheet" type="text/css" href="../resources/styles/code.css">
+        <script type="text/javascript" src="../resources/scripts/myScripts.js"></script>
+    </head>
+    <style>
+        #main {
+            font-family: Georgia, serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: Georgia, serif;
+        }
+        pre {
+            white-space: pre-wrap;
+        }
+    </style>
+
+    <body onload="loadNav();">
+        <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
+        <div id="sidenav" class="sidenav">
+            <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
+            <a href="../../Sprint0/index.html">&#8617; &nbsp;&nbsp;&nbsp; Back to<br/>WasteService</a>
+            <p class="separator" style="color: #818181;">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
+            <a href="#Edit-the-Docker-Image-Locally">Edit the Docker<br/>Image Locally</a>
+            <a href="#Edit-WEnv-Configuration">Edit WEnv<br/>Configuration</a>
+        </div>
+
+        <div id="main">
+            <h1 align="center">Docker Notes</h1>
+            <h2 id="Edit-the-Docker-Image-Locally">Edit the Docker Image Locally</h2>
+            <a href="https://jhooq.com/docker-edit-file-inside-container/">Reference</a>
+            
+            <h3 id="Edit-WEnv-Configuration">Edit WEnv Configuration</h3>
+            To edit the WEnv configuration we need to make changes to the file "sceneConfig.js":
+            <ol>
+                <li>
+                    First of all the container must be running, so we need to launch it:
+<pre>
+docker-compose -f .\basicrobot22.yaml up
+</pre>
+                </li>
+                <li>
+                    We need to find the container ID of the one running the WEnv. Therefore we search the container containing 'virtual' keyword and use the ID to login to the running image
+                    Find the container ID of 'virtual' image and login to the running container image.<br/>
+                    On <b>Windows</b> use the following command (NB: need to be run from Powershell):
+<pre>
+docker exec -it  $(docker ps -a | grep 'virtual' | cut -d' ' -f1) sh
+</pre>
+                </li>
+                <li>
+                    Then open and edit the file:
+<pre>
+vi ../../WebGLScene/sceneConfig.js
+</pre>
+                </li>
+            </ol>
+        </div>
+    </body>
+</html>

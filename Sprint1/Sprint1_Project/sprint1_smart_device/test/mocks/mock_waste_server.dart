@@ -112,7 +112,7 @@ class MockWasteServer {
     String result = String.fromCharCodes(data);
 
     StoreRequest sr = StoreRequest.fromJsonString(result);
-    if (canStore(sr.wasteWeight, sr.wasteType)) {
+    if (canStore(sr.wasteType, sr.wasteWeight)) {
       deposit(sr.wasteWeight, sr.wasteType);
       _logMessage("Sent LoadAccepted to #$iSock");
       socket.write("LoadAccepted");
@@ -159,7 +159,7 @@ class MockWasteServer {
     }*/
   }
 
-  bool canStore(double weight, WasteType type) {
+  bool canStore(WasteType type, double weight) {
     if (!_storage.containsKey(type)) {
       return false;
     }
@@ -167,7 +167,7 @@ class MockWasteServer {
   }
 
   void deposit(double weight, WasteType type) {
-    if (canStore(weight, type)) {
+    if (canStore(type, weight)) {
       _storage[type] = _storage[type]! + weight;
     }
   }
@@ -192,7 +192,7 @@ void main() async {
     StoreRequest receivedSR =
         StoreRequest.fromJsonString(String.fromCharCodes(data));
 
-    if (mockServer.canStore(receivedSR.wasteWeight, receivedSR.wasteType)) {
+    if (mockServer.canStore(receivedSR.wasteType, receivedSR.wasteWeight)) {
       print("[Mock_WasteServer] Load accepted.");
       mockServer.deposit(receivedSR.wasteWeight, receivedSR.wasteType);
       sock.write("LoadAccepted");
@@ -216,7 +216,7 @@ void main() async {
   conn.listen((data) {
     print(String.fromCharCodes(data));
   });
-  conn.sendMessage(StoreRequest(10.0, WasteType.PLASTIC).toJsonString());
+  conn.sendMessage(StoreRequest(WasteType.PLASTIC, 10.0).toJsonString());
   await Future.delayed(const Duration(seconds: 1));
-  conn.sendMessage(StoreRequest(1000.0, WasteType.GLASS).toJsonString());
+  conn.sendMessage(StoreRequest(WasteType.GLASS, 1000.0).toJsonString());
 }

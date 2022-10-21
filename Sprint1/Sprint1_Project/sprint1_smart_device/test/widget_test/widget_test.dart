@@ -36,8 +36,8 @@ Widget createMockViewRequest() {
       primarySwatch: Colors.blue,
     ),
     home: ViewRequestMock(
-      storeRequestAccepted: StoreRequest(weightAccepted, typeAccepted),
-      storeRequestRejected: StoreRequest(weightRejected, typeRejected),
+      storeRequestAccepted: StoreRequest(typeAccepted, weightAccepted),
+      storeRequestRejected: StoreRequest(typeRejected, weightRejected),
       waitingTimeoutSeconds: 5,
     ),
   );
@@ -165,8 +165,8 @@ void main() async {
     expect(find.text(Constants.titleRequest), findsOneWidget);
 
     // Verify that there are 2 input fields (wasteWeight and wasteType).
-    expect(find.byKey(const ValueKey('parameterWasteWeight')), findsOneWidget);
     expect(find.byKey(const ValueKey('parameterWasteType')), findsOneWidget);
+    expect(find.byKey(const ValueKey('parameterWasteWeight')), findsOneWidget);
 
     // Enter and invalid value in the weight input field.
     await tester.enterText(
@@ -188,16 +188,16 @@ void main() async {
     // Verify the page displayed
     expect(find.text(Constants.titleRequest), findsOneWidget);
 
-    // Enter too much weight (the container can NOT store) in the Waste Weight input field
-    await tester.enterText(find.byKey(const ValueKey('parameterWasteWeight')),
-        weightRejected.toString());
-
     // Tap the dropdown widget to open the menu
     await tester.tap(find.byKey(const ValueKey('parameterWasteType')));
     await tester.pump();
     // Choose a waste type
     await tester.tap(find.text(typeRejected.name).last);
     await tester.pump();
+
+    // Enter too much weight (the container can NOT store) in the Waste Weight input field
+    await tester.enterText(find.byKey(const ValueKey('parameterWasteWeight')),
+        weightRejected.toString());
 
     // Tap the Send button.
     await tester.tap(find.byKey(const ValueKey('sendStoreRequest')));
@@ -215,16 +215,16 @@ void main() async {
     // Verify the page displayed
     expect(find.text(Constants.titleRequest), findsOneWidget);
 
-    // Enter the value in the Waste Weight input field
-    await tester.enterText(find.byKey(const ValueKey('parameterWasteWeight')),
-        (weightAccepted + 1.0).toString());
-
     // Tap the dropdown widget to open the menu
     await tester.tap(find.byKey(const ValueKey('parameterWasteType')));
     await tester.pump();
     // Choose a waste type
     await tester.tap(find.text(typeRejected.name).last);
     await tester.pump();
+
+    // Enter the value in the Waste Weight input field
+    await tester.enterText(find.byKey(const ValueKey('parameterWasteWeight')),
+        (weightAccepted + 1.0).toString());
 
     // Tap the Send button.
     await tester.tap(find.byKey(const ValueKey('sendStoreRequest')));
@@ -246,16 +246,16 @@ void main() async {
     // Verify the page displayed
     expect(find.text(Constants.titleRequest), findsOneWidget);
 
-    // Enter an OK amount of weight (that the container can store) in the Waste Weight input field
-    await tester.enterText(find.byKey(const ValueKey('parameterWasteWeight')),
-        weightAccepted.toString());
-
     // Tap the dropdown widget to open the menu
     await tester.tap(find.byKey(const ValueKey('parameterWasteType')));
     await tester.pump();
     // Choose a waste type
     await tester.tap(find.text(typeAccepted.name).last);
     await tester.pump();
+
+    // Enter an OK amount of weight (that the container can store) in the Waste Weight input field
+    await tester.enterText(find.byKey(const ValueKey('parameterWasteWeight')),
+        weightAccepted.toString());
 
     // Tap the Send button.
     await tester.tap(find.byKey(const ValueKey('sendStoreRequest')));

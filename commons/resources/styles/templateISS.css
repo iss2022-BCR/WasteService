@@ -208,3 +208,32 @@ div.imagedesc{
 	width: 85%;
 	margin: auto;
 }
+
+/* Problem Analysis */
+problem {
+    display: block;
+    background-color: rgba(255, 0, 0, 0.4);
+    padding: 4px;
+    border-radius: 7px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+solution {
+    background-color: #c3fabe;
+    border: 1.5px solid #c3fabe;
+    padding: 5px;
+    margin: 5px;
+    margin-bottom: 20px;
+	border-radius: 15px;
+    display: block;
+}
+alternative {
+    background-color: #faf7be;
+    border: 1.5px solid #faf7be;
+    padding: 5px;
+    margin: 5px;
+    margin-bottom: 20px;
+	border-radius: 15px;
+    display: block;
+}

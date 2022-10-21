@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>Sprint1</title>
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/templateISS.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/main.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/navbar.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/table.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/code.css">
+        <script type="text/javascript" src="../../../commons/resources/scripts/myScripts.js"></script>
+    </head>
+
+    <body onload="loadNav();">
+        <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
+        <div id="sidenav" class="sidenav">
+            <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
+            <a class="sprint" href="../../../Sprint0/index.html #currentSprint">Sprint0</a>
+            <a id="currentSprint" class="sprint" href="#currentSprint">&#8211;&#8212; Sprint1 &#8212;&#8211;</a>
+            <a href="../../index.html#currentSprint">Index</a>
+            <a href="final_theme.html#currentSprint">Final Theme</a>
+            <a href="requirement_analysis.html#currentSprint">Requirement<br/>Analysis</a>
+            <a href="problem_analysis.html#currentSprint">Problem Analysis</a>
+            <a href="test_plans.html#currentSprint">Test Plans</a>
+            <a class="selected" href="project.html#currentSprint">Project</a>
+            <div class="sidenavSection">
+                <a href="#Smart-Device-Simulator">Smart Device<br/>Simulator</a>
+                <a href="#Echo-Waste-Server">Echo Waste Server</a>
+            </div>
+            <a href="conclusions.html#currentSprint">Conclusions</a>
+            <a href="team.html  #currentSprint">Team</a>
+            <p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
+            <a class="sprint" href="../../../Sprint2/index.html#currentSprint">Sprint2</a>
+            <a class="sprint" href="../../../Sprint3/index.html#currentSprint">Sprint3</a>
+            <bottom-spacer/>
+        </div>
+
+        <div id="main">
+            <h1 align="center">Project</h1>
+
+            <h4>Setup Remote Communications</h4>
+            <div class="remark">
+                <b>Port Forwarding</b>
+                <ol>
+                    <li>
+                        Access to the router page: search <code>192.168.1.1</code> in a browser, and login with the credentials:
+                        <img width="100%" src="../imgs/test_plan/port_forwarding/access.png"/>
+                    </li>
+                    <li>
+                        Make sure you have selected the <code>expert user mode</code>:
+                        <img width="100%" src="../imgs/test_plan/port_forwarding/expert_user_mode.png"/>
+                    </li>
+                    <li>Select the <code>Internet</code> section and then <code>Port mapping</code>.</li>
+                    <li>
+                        Specify the information needed:
+                        <ul>
+                            <li>Service: <code>TCP</code>.</li>
+                            <li>(Optional) Device: <code>your_device_name</code>.</li>
+                            <li>LAN IP address: the IP address of the device where the service runs.</li>
+                            <li>Port/Interval.</li>
+                            <li><highlight1>Public port</highlight1>: the port you want to be use (connections to that will be forwarded to the LAN port).</li>
+                            <li>LAN port: the port the service is using.</li>
+                        </ul>
+                        Example:
+                        <img width="100%" src="../imgs/test_plan/port_forwarding/port_association.png"/>
+                    </li>
+                    <li>
+                        Check the <highlight2><code>router public IP</code></highlight2>:
+                        <img width="100%" src="../imgs/test_plan/port_forwarding/router_public_ip_address.png"/>
+                    </li>
+                </ol>
+                To connect to the WasteService from a remote device, you'll then need to use:
+                <pre><b><highlight2>router_public_ip</highlight2>:<highlight1>public_port</highlight1></b>
+                </pre>
+            </div>
+
+            <h2 id="SmartDevice-Simulator">SmartDevice Simulator</h2>
+            <ksi>SmartDevice Simulator</ksi> is a mobile/desktop compatible application,
+            which will be used just for testing purposes, to simulate the interaction between the TruckDriver and the WasteService:
+            It will allow to send store requests, and display the response.
+            
+            <h4>Class Diagram</h4>
+            <img width="100%" src="../diagrams/sprint1_class_diagram_smart_device_simulator_v0.png"/>
+
+            <h4>Views</h4>
+            <img width="300px" src="../imgs/project/SmartDeviceSimulator_Home_v1.png"/><img width="300px" src="../imgs/project/SmartDeviceSimulator_Request_v2.png"/>
+
+            <h2 id="Echo-Waste-Server">Echo Waste Server</h2>
+            <ksi>Echo Waste Server</ksi> is a mobile/desktop application that simulates a dummy WasteService and acts like an echo server:
+            it accepts TCP connections and reply to <code>store_requests</code> with <code>load_accepted</code> / <code>load_rejected</code>,
+            updating the capacity of containers and logging messages.
+            <br/><br/>
+            Its purpose is to <i>test the SmartDevice directly and completely on smartphone</i>, without having to connect it to another device.
+            <img width="300px" src="../imgs/project/EchoWasteServer_v1.png"/>
+
+
+            <h2 id="Deployment">Deployment</h2>
+            Termine della fase di progettazione
+        </div>
+
+    </body>
+
+</html>

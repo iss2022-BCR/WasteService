@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Sprint1</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="../commons/resources/styles/templateISS.css">
+        <link rel="stylesheet" type="text/css" href="../commons/resources/styles/main.css">
+        <link rel="stylesheet" type="text/css" href="../commons/resources/styles/navbar.css">
+        <link rel="stylesheet" type="text/css" href="../commons/resources/styles/table.css">
+        <link rel="stylesheet" type="text/css" href="../commons/resources/styles/code.css">
+        <script type="text/javascript" src="../commons/resources/scripts/myScripts.js"></script>
+    </head>
+    
+    <body onload="loadNav();">
+        <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
+        <div id="sidenav" class="sidenav">
+            <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
+            <a class="sprint" href="../Sprint0/index.html#currentSprint">Sprint0</a>
+            <a id="currentSprint" class="sprint" href="#currentSprint">&#8211;&#8212; Sprint1 &#8212;&#8211;</a>
+            <a class="selected" href="#currentSprint">Index</a>
+            <div class="sidenavSection">
+                <a href="#Introduction">Introduction</a>
+                <div class="sidenavSubSection">
+                    <a href="#Scrum-Goal">Scrum Goal</a>
+                    <a href="#Work-Plan">Work Plan</a>
+                </div>
+                <a href="#Motto">Motto</a>
+                <a href="#Resources">Resources</a>
+            </div>
+            <a href="resources/userDocs/final_theme.html#currentSprint">Final Theme</a>
+            <a href="resources/userDocs/requirement_analysis.html#currentSprint">Requirement<br/>Analysis</a>
+            <a href="resources/userDocs/problem_analysis.html#currentSprint">Problem Analysis</a>
+            <a href="resources/userDocs/test_plans.html#currentSprint">Test Plans</a>
+            <a href="resources/userDocs/project.html#currentSprint">Project</a>
+            <a href="resources/userDocs/conclusions.html#currentSprint">Conclusions</a>
+            <a href="resources/userDocs/team.html#currentSprint">Team</a>
+            <p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
+            <a class="sprint" href="../Sprint2/index.html#currentSprint">Sprint2</a>
+            <a class="sprint" href="../Sprint3/index.html#currentSprint">Sprint3</a>
+            <bottom-spacer/>
+        </div>
+        
+        <div id="main">
+            <h1 align="center">Sprint 1</h1>
+            <h2 id="Introduction">Introduction</h2>
+            Our <a href="resources/userDocs/team.html">team</a> must project and develop a software system
+            to manage a waste-disposal service, as described in <a href="resources/userDocs/final_theme.html">Final Theme 2022</a>.
+            <br/>
+            <br/>
+
+            <h3 id="Scrum-Goal">Scrum Goal</h3>
+            We must provide the customer an <ksi>executable demo</ksi>,
+            involving the core-business of the system (requirements
+            <a href="resources/userDocs/final_theme.html">1</a> & <a href="resources/userDocs/final_theme.html">2</a>).
+            The core-business is the chain of the main nodes of the system
+            (smart device, waste service, transport trolley, basic robot).
+
+            <h3 id="Work-Plan">Work Plan</h3>
+            <ul>
+                <li>
+                    Interactions:
+                    <ul>
+                        <li>SmartDevice and WasteService</li>
+                        <li>WasteService and TransportTrolley</li>
+                        <li>TransportTrolley and DDR Robot</li>
+                    </ul>
+                </li>
+                <li>WasteService: request handling</li>
+                <li>Models & TestPlans for each interaction</li>
+                <li>Demonstrative Prototype of the whole core-business</li>
+            </ul>
+            NB: make use of the software provided by our software house.
+            
+            <h2 id="Motto">Motto</h2>
+            <div class="remark">
+                There is no code without a project, there is no project without problem analysis, there is no problem without requirements.
+            </div>
+
+            <h2 id="Resources">Resources</h2>
+            <ul>
+                <li>Course GitHub repository: <a href="https://github.com/anatali/issLab2022">anatali/issLab2022</a></li>
+                <li>Team GitHub repository: <a href="https://github.com/iss2022-BCR/WasteService">iss2022-BCR/WasteService</a></li>
+                <li>Scrum Guide: <a href="../commons/2020-Scrum-Guide-Italian.pdf">2020 Scrum Guide (IT)</a></li>
+            </ul>
+        </div>
+
+    </body>
+</html>
