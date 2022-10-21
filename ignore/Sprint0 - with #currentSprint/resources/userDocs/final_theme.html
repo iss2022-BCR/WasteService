@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
     <head>
-        <title>Sprint1</title>
+        <title>Sprint0</title>
         <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/templateISS.css">
         <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/main.css">
         <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/navbar.css">
@@ -14,10 +14,9 @@
         <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
         <div id="sidenav" class="sidenav">
             <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
-            <a class="sprint" href="../../../Sprint0/index.html">Sprint0</a>
-            <a id="currentSprint" class="sprint" href="#">&#8211;&#8212; Sprint1 &#8212;&#8211;</a>
-            <a href="../../index.html">Index</a>
-            <a class="selected" href="final_theme.html">Final Theme</a>
+            <a id="currentSprint" class="sprint" href="#currentSprint">&#8211;&#8212; Sprint0 &#8212;&#8211;</a>
+            <a href="../../index.html#currentSprint">Index</a>
+            <a class="selected" href="final_theme.html#currentSprint">Final Theme</a>
             <div class="sidenavSection">
                 <a href="#Requirements">Requirements</a>
                 <div class="sidenavSubSection">
@@ -33,15 +32,15 @@
                     <a href="#Notes-following-the-online-interactions">Notes following<br/>the online interactions</a>
                 </div>
             </div>
-            <a href="requirement_analysis.html">Requirement<br/>Analysis</a>
-            <a href="problem_analysis.html">Problem Analysis</a>
-            <a href="test_plans.html">Test Plans</a>
-            <a href="project.html">Project</a>
-            <a href="conclusions.html">Conclusions</a>
-            <a href="team.html">Team</a>
+            <a href="requirement_analysis.html#currentSprint">Requirement<br/>Analysis</a>
+            <a href="problem_analysis.html#currentSprint">Problem Analysis</a>
+            <a href="project.html#currentSprint">Project</a>
+            <a href="conclusions.html#currentSprint">Conclusions</a>
+            <a href="team.html#currentSprint">Team</a>
             <p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
-            <a class="sprint" href="../../../Sprint2/index.html">Sprint2</a>
-            <a class="sprint" href="../../../Sprint3/index.html">Sprint3</a>
+            <a class="sprint" href="../../../Sprint1/index.html#currentSprint">Sprint1</a>
+            <a class="sprint" href="../../../Sprint2/index.html#currentSprint">Sprint2</a>
+            <a class="sprint" href="../../../Sprint3/index.html#currentSprint">Sprint3</a>
             <bottom-spacer/>
         </div>
 
@@ -55,7 +54,7 @@
             <div class>
                 A company intends to build a <ksi>WasteService</ksi> for the <i>separate collection of waste</i>, composed of a set of elements:
                 <ol>
-                    <li id="requirement-1">a service area (rectangular, flat) that includes:
+                    <li>a service area (rectangular, flat) that includes:
                         <ul>
                             <li>an <ksi>INDOOR</ksi> port, to enter waste material</li>
                             <li>a <ksi>PlasticBox</ksi> container, devoted to store objects made of plastic, up to <b>MAXPB</b> kg of material.</li>
@@ -64,7 +63,7 @@
                         The service area is free from internal obstacles, as shown in the following picture:<br/>
                         <center><img width="70%" src="../../../commons/temaFinale/_images/WasteServiceRoom.PNG"/></center>
                     </li>
-                    <li id="requirement-2">a DDR robot working as a <ksi>transport trolley</ksi>, that is initially situated in its <ksi>HOME</ksi> location. The transport trolley has the form of a square of side length <b>RD</b>.
+                    <li>a DDR robot working as a <ksi>transport trolley</ksi>, that is initially situated in its <ksi>HOME</ksi> location. The transport trolley has the form of a square of side length <b>RD</b>.
                         <br><br>
                         The <i>transport trolley</i> is used to perform a <ksi>deposit action</ksi> that consists in the following phases:
                         <ol>
@@ -73,8 +72,8 @@
                             <li>deposit the waste-load in the container</li>
                         </ol>
                     </li>
-                    <li id="requirement-3">a <ksi>Service-manager</ksi> (a human being) which supervises the state of the service-area by using a <ksi>WasteServiceStatusGUI</ksi>.</li>
-                    <li id="requirement-4">a <ksi>Sonar</ksi> and a <ksi>Led</ksi> connected to a RaspberryPi. The Led is used as a warning devices, according to the following scheme:
+                    <li>a <ksi>Service-manager</ksi> (a human being) which supervises the state of the service-area by using a <ksi>WasteServiceStatusGUI</ksi>.</li>
+                    <li>a <ksi>Sonar</ksi> and a <ksi>Led</ksi> connected to a RaspberryPi. The Led is used as a warning devices, according to the following scheme:
                         <ul>
                             <li>the <i>Led</i> is <b>off</b> when the <i>transport trolley</i> is at HOME</li>
                             <li>the <i>Led</i> <b>blinks</b> while the <i>transport trolley</i> is moving</li>
