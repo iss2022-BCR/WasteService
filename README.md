@@ -10,7 +10,7 @@
 </div>
 
 <div align="center">
-  <img align="center" width="25%" src="./gfx/walle.jpg"/>
+  <img align="center" width="25%" src="commons/resources/imgs/walle.jpg"/>
   
   <h1>WasteService</h1>
   
