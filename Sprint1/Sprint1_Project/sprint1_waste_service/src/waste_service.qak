@@ -1,0 +1,237 @@
+// PROJECT
+System waste_service
+
+// MESSAGES AND EVENTS ========================================================
+// SmartDevice (truck) -> WasteService
+Request wastetypes_request	:	wastetypes_request(_)
+Reply wastetypes_reply		:	wastetypes_reply(TYPES)
+Request storerequest	:	storerequest(TYPE, LOAD)
+
+// WasteService -> SmartDevice
+Reply loadaccepted	:		loadaccepted(_)
+Reply loadrejected	:		loadrejected(_)
+
+// WasteService -> TransportTrolley
+Request deposit		:		deposit(TYPE)
+
+// TransportTrolley -> WasteService
+Reply depositcompleted	:	depositcompleted(_)
+Reply depositfailed		:	depositfailed(REASON)
+
+// BasicRobot
+Dispatch cmd	: cmd(MOVE)
+Request step	: step(TIME)
+Reply stepdone	: stepdone(V)
+Reply stepfail	: stepfail(V)
+Event alarm		: alarm(X)
+
+// PathExecutor
+Request	dopath		: dopath( PATH, OWNER )
+Reply	dopathdone	: dopathdone( ARG )
+Reply	dopathfail	: dopathfail( ARG )
+Dispatch pathdone	: pathdone( P )
+Dispatch pathfail	: pathdone( P )
+Dispatch cmd		: cmd(MOVE)     
+Request step		: step( TIME )	
+Reply   stepdone	: stepdone(V)  
+Reply   stepfail	: stepfail(DURATION, CAUSE)
+Event	alarm		: alarm(X) 
+
+Context ctx_wasteservice	ip [host="localhost" port=11800]
+Context ctxbasicrobot		ip [host="localhost" port=8020]
+//Context ctxPathexecutor  ip [host="localhost" port=11830] 
+
+ExternalQActor basicrobot context ctxbasicrobot
+//ExternalQActor pathexec context ctxPathexecutor
+
+// Actor that provides the types of waste that can be stored
+// in the waste service area, when a Smart Device connects
+QActor typesprovider context ctx_wasteservice {
+	State state_init initial {
+		println("[TypesProvider] Started")
+	}
+	Goto state_idle
+	
+	State state_idle {
+		println("[TypesProvider] Waiting for type requests...")
+		discardMsg Off
+	}
+	Transition t1	whenRequest wastetypes_request	-> state_handle_wastetypes_request
+	
+	State state_handle_wastetypes_request {
+		printCurrentMessage
+		// Kotlin function to get types
+		replyTo wastetypes_request with wastetypes_reply: wastetypes_reply(_)
+		println("[TypesProvider] Replied with types list")
+	}
+	Goto state_idle
+}
+
+QActor wasteservice context ctx_wasteservice {
+	[#
+		var Type = ""
+	#]
+	State state_init initial {
+		println("[WasteService] Started")
+	}
+	Goto state_idle
+	
+	State state_idle {
+		println("[WasteService] Waiting for store requests...")
+		discardMsg Off
+	}
+	Transition t1	whenRequest storerequest	-> state_handle_storerequest
+
+	State state_handle_storerequest {
+		printCurrentMessage
+		onMsg(storerequest: storerequest(TYPE, LOAD)) {
+			[#
+				var TYPE = payloadArg(0)
+				var LOAD = payloadArg(1)	
+			#]
+			println("[WasteService] Received storerequest($TYPE, $LOAD)")
+			//[# Type = $TYPE #]
+			request transporttrolley -m deposit : deposit( payloadArg(0) ) // $Type )
+			
+			replyTo storerequest with loadaccepted: loadaccepted(_)
+			println("[WasteService] Replied with loadaccepted")	
+			//forward basicrobot -m cmd : cmd(w)
+			//println("Sent BasicRobot: -> cmd(w)")
+			//println("Sent PathExecutor: -> dopath()")
+		}
+	}
+	// when reply?
+	Goto state_idle
+}
+
+QActor transporttrolley context ctx_wasteservice {
+	[# 
+		var Actions: String = "" 
+		var Progress = ""
+		planner.initAI()
+		planner.loadRoomMap("mapRoomEmpty")
+	#]
+	State state_init initial {
+		println("[TransportTrolley] Started")
+		forward basicrobot -m cmd : cmd(w) // test OK
+		
+	}
+	//Goto state_idle
+	
+	State state_idle {
+		println("[TransportTrolley] Waiting for deposit actions...")
+	}
+	Transition t1	whenRequest deposit		-> state_handle_deposit_request
+	
+	State state_handle_deposit_request {
+		printCurrentMessage
+		onMsg(deposit: deposit(_)) {
+			println("[TransportTrolley] Received deposit request...")
+			
+			[#
+				planner.setGoal(4, 3)
+				planner.doPlan()
+				Actions = planner.getActionsString()
+			#]
+			request pathexecutor -m dopath : dopath($Actions, trolleymover)
+			
+			replyTo deposit with depositcompleted: depositcompleted(_)
+		}
+		
+	}
+	Transition t1	whenReply dopathdone		-> state_handle_deposit_request
+	//Goto state_pickup
+	
+	State state_pickup {
+		println("[TransportTrolley] Handling deposit action...")
+		
+	}
+	Goto state_deposit
+	
+	State state_deposit {
+		
+	}
+	Goto state_dump
+	
+	State state_dump {
+		
+	}
+	Goto state_going_home
+	
+	State state_going_home {
+		
+	}
+	Goto state_idle
+}
+
+QActor pathexecutor context ctx_wasteservice {
+	[# 
+		var CurMoveTodo = ""
+		var MovesDone = "" 
+	#]
+	
+	State init initial {
+		[# CurMoveTodo = "" #]
+		[# sysUtil.logMsgs=true #]
+		println("[PathExecutor] started")
+	}
+	Transition t0 whenRequest dopath -> doThePath
+	
+	State doThePath {
+		printCurrentMessage
+		onMsg(dopath : dopath(P, C)) {
+			[# val path = payloadArg(0); println(path) #]
+			[# pathut.setPath(path) #]
+		}
+		
+		println("[PathExecutor] pathTodo: ${pathut.getPathTodo()}")
+	}
+	Goto nextMove
+	
+	State nextMove {
+		[# CurMoveTodo = pathut.nextMove() #]
+		[# MovesDone += CurMoveTodo #]
+		println("[PathExecutor] curMoveTodo: $CurMoveTodo")
+	}
+	Goto endWorkOk if [# CurMoveTodo.length == 0 #] else doMove
+	
+	State doMove {
+		[#
+			planner.updateMap(CurMoveTodo, "")
+			// planner.showMap()
+			// planner.showCurrentRobotState()	
+		#]
+		delay 350
+	}
+	Goto doMoveW if [# CurMoveTodo == "w" #] else doMoveTurn
+	
+	State doMoveTurn {
+		forward basicrobot -m cmd : cmd($CurMoveTodo)
+	}
+	Transition t1 whenTime 350 -> nextMove
+			
+	State doMoveW {
+		request basicrobot -m step : step(350)
+	}
+	Transition t2 whenEvent alarm -> handleAlarm
+				  whenReply stepdone -> nextMove
+				  whenReply stepfail -> endWorkKo
+				  
+	State handleAlarm {
+		[# var PathTodo = pathut.getPathTodo() #]
+		println("[PathExecutor] handleAlarm ... pathTodo: $PathTodo")
+	}
+	
+	State endWorkOk {
+		println("[PathExecutor] Path done - bye")
+		replyTo dopath with dopathdone : dopathdone( ok )
+	}
+	Goto init
+	
+	State endWorkKo {
+		[# var PathStillTodo = pathut.getPathTodo() #]
+		println("[PathExecutor] path failure - sorry. PathStillTodo: $PathStillTodo")
+		replyTo dopath with dopathfail : dopathfail( $PathStillTodo )
+	}
+	Transition t0 whenEvent alarm -> handleAlarm
+}
