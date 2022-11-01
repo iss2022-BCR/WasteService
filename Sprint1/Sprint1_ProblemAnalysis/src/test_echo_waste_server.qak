@@ -31,15 +31,15 @@ Reply   stepfail	: stepfail(DURATION, CAUSE)
 Event	alarm		: alarm(X) 
 
 Context ctx_test_wasteservice	ip [host="localhost" port=11800]
-//Context ctxbasicrobot ip[host="localhost" port=11820]
+Context ctxbasicrobot ip[host="localhost" port=8020]
 //Context ctxPathexecutor  ip [host="localhost" port=11830] 
 
-//ExternalQActor basicrobot context ctxbasicrobot
+ExternalQActor basicrobot context ctxbasicrobot
 //ExternalQActor pathexec context ctxPathexecutor
 
 QActor test_wasteservice context ctx_test_wasteservice {
 	State state_init initial {
-		
+		println("[Test_WasteService] Started.")
 	}
 	Goto state_idle
 	

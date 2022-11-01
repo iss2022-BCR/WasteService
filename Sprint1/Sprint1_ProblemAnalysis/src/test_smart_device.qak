@@ -1,0 +1,177 @@
+// PROBLEM ANALYSIS - TEST PLAN
+System test_smart_device
+/*
+// TEST ABSTRACT ==============================================================
+// Test1: get types list from TypesProvider actor
+	// the list corresponds one to the other
+
+// Test2: receive loadaccepted
+	// there is enough space so the deposit can take place
+
+// Test3: receive loadrejected
+	// the deposit cannot take place, for different reasons:
+	// Test 3.1: wrong type
+	// Test 3.2: invalid weight
+	// Test 3.3: not enough space
+
+// MESSAGES AND EVENTS ========================================================
+// SmartDevice (truck) -> TypesProvider
+Request typesrequest	:	typesrequest(_)
+// SmartDevice (truck) -> WasteService
+Request storerequest	:	storerequest(TYPE, LOAD)
+// TypesProvider -> SmartDevice
+Reply typesreply	:	typesreply(TYPES)
+// WasteService -> SmartDevice
+Reply loadaccepted	:	loadaccepted(_)
+Reply loadrejected	:	loadrejected(_)
+
+// CONTEXES ===================================================================
+Context ctx_smartdevice_test 	ip [host="localhost" port=11700]
+
+// ACTORS =====================================================================
+QActor smartdevice_simulator context ctx_smartdevice_test {
+	[#
+		var Types: String = ""
+		var TypesList = arrayListOf<wasteservice.WasteType>()
+		
+		var WasteType: wasteservice.WasteType = wasteservice.WasteType.PLASTIC
+		var WasteWeight: Double = 10.0
+	#]
+	State state_init initial {
+		println("[SmartDevice Simulator] Started")
+		discardMsg Off
+	}
+	Goto state_typesrequest
+	
+	State state_typesrequest {
+		delay 1000
+		request typesprovider -m typesrequest : typesrequest(_)
+		println("[SmartDevice Simulator] Sent typesrequest()")
+	}
+	Transition t1 whenReply	typesreply -> state_handle_types
+	
+	State state_handle_types {
+		printCurrentMessage
+		onMsg(typesreply : typesreply(TYPES)) {
+			[#
+				Types = payloadArg(0).toString()
+				TypesList = wasteservice.utils.getWasteTypesList(Types, "_")
+			#]
+		}
+		println("[SmartDevice Simulator] Types list: $Types")
+	}
+	Goto state_storerequest
+	
+	State state_storerequest {
+		println("TEST --- [SmartDevice Simulator] Types list: $TypesList")
+		[#
+			WasteType = wasteservice.WasteType.values()[kotlin.random.Random.nextInt(0, TypesList.size)]
+		#]
+		delay 1000
+		request wasteservice -m storerequest : storerequest($WasteType, $WasteWeight)
+		println("[SmartDevice Simulator] Sent storerequest($WasteType, $WasteWeight)")
+	}
+	Transition t2	whenReply	loadaccepted -> state_handle_loadaccepted
+					whenReply	loadrejected -> state_handle_loadrejected
+	
+	State state_handle_loadaccepted {
+		println("[SmartDevice Simulator] Received LoadAccepted")
+	}
+	Goto state_storerequest
+	
+	State state_handle_loadrejected {
+		println("[SmartDevice Simulator] Received LoadRejected")
+	}
+	Goto state_storerequest
+}
+
+QActor typesprovider context ctx_smartdevice_test {
+	[#
+		var WasteTypes: String = wasteservice.utils.getWasteTypesString("_")
+	#]
+	State state_init initial {
+		println("[TypesProvider] Started. WasteTypes: $WasteTypes")
+		discardMsg Off
+	}
+	Goto state_idle
+	
+	State state_idle {
+		println("[TypesProvider] Waiting for type requests...")
+	}
+	Transition t1	whenRequest typesrequest	-> state_handle_wastetypes_request
+	
+	State state_handle_wastetypes_request {
+		printCurrentMessage
+		replyTo typesrequest with typesreply	: typesreply($WasteTypes)
+		println("[TypesProvider] Replied with types list: $WasteTypes")
+	}
+	Goto state_idle
+}
+
+QActor wasteservice context ctx_smartdevice_test {
+	[#
+		var RequestedWasteType: wasteservice.WasteType
+		var RequestedWasteWeight: Double
+		
+		val WasteService = wasteservice.WasteService()
+		var StorageStats: String = WasteService.getFullStatusString()
+		
+		var WaitingPickup: Boolean = false
+	#]
+	State state_init initial {
+		println("[WasteService] Started.")
+		println("[WasteService] Current storage:")
+		println("$StorageStats")
+		discardMsg Off
+	}
+	Goto state_idle
+	
+	State state_idle {
+		println("[WasteService] Waiting for store requests...")
+	}
+	Transition t1	whenRequest storerequest	-> state_handle_storerequest
+
+	State state_handle_storerequest {
+		printCurrentMessage
+		onMsg(storerequest : storerequest(TYPE, LOAD)) {
+			[#
+				RequestedWasteType = wasteservice.WasteType.valueOf(payloadArg(0))
+				RequestedWasteWeight = payloadArg(1).toDouble()
+			#]
+			println("[WasteService] Received storerequest($RequestedWasteType, $RequestedWasteWeight)")
+			
+			if [# WasteService.canPreStore(RequestedWasteType, RequestedWasteWeight) #]
+			{
+				[#
+					WasteService.addToPreStorage(RequestedWasteType, RequestedWasteWeight)
+					StorageStats = WasteService.getFullStatusString()
+				
+					WaitingPickup = true
+				#]
+				println("[WasteService] There is enough space.")
+				request transporttrolley -m deposit : deposit( $RequestedWasteType )
+			}
+			else
+			{
+				[# WaitingPickup = false #]
+				println("[WasteService] Load rejected: there is not enough space in the container to store the load.")
+				replyTo storerequest with loadrejected: loadrejected(_)
+			}
+			println("[WasteService] Current storage:")
+			println("$StorageStats")
+		}
+	}
+	Goto state_idle if [# WaitingPickup == false #] else state_waiting_pickup
+	
+	State state_waiting_pickup {
+		println("[WasteService] Waiting for pickup completion...")
+	}
+	Transition t1 whenReply pickupcompleted	-> state_pickup_completed
+	
+	State state_pickup_completed {
+		[# WaitingPickup = true #]
+		println("[WasteService] Pickup completed, sent Load accepted.")
+		replyTo storerequest with loadaccepted: loadaccepted(_)
+	}
+	Goto state_idle
+}*/
