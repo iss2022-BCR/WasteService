@@ -1,0 +1,39 @@
+// PROBLEM ANALYSIS - TEST PLAN
+System test_types_provider
+
+// TEST ABSTRACT ==============================================================
+// Test: check that the sent list is the same as the received one
+
+// MESSAGES AND EVENTS ========================================================
+// SmartDevice (truck) -> TypesProvider
+Request typesrequest	:	typesrequest(_)
+
+// TypesProvider -> SmartDevice
+Reply typesreply	:	typesreply(TYPES)
+
+// CONTEXES ===================================================================
+Context ctx_typesprovider_test 	ip [host="localhost" port=11701]
+
+// ACTORS =====================================================================
+QActor typesprovider_test context ctx_typesprovider_test {
+	[#
+		var WasteTypes: String = wasteservice.Utils.getWasteTypesString()
+	#]
+	State state_init initial {
+		println("[TypesProvider] Started. WasteTypes: $WasteTypes")
+		discardMsg Off
+	}
+	Goto state_idle
+	
+	State state_idle {
+		println("[TypesProvider] Waiting for type requests...")
+	}
+	Transition t1	whenRequest typesrequest	-> state_handle_wastetypes_request
+	
+	State state_handle_wastetypes_request {
+		//printCurrentMessage
+		replyTo typesrequest with typesreply	: typesreply($WasteTypes)
+		println("[TypesProvider] Replied with types list: $WasteTypes")
+	}
+	Goto state_idle
+}

@@ -20,6 +20,6 @@ with Diagram('test_types_providerArch', show=False, outformat='png', graph_attr=
   with Cluster('env'):
      sys = Custom('','./qakicons/system.png')
      with Cluster('ctx_typesprovider_test', graph_attr=nodeattr):
-          typesprovider=Custom('typesprovider','./qakicons/symActorSmall.png')
-     typesprovider >> Edge(color='green', style='dashed', xlabel='typesreply') >> sys 
+          typesprovider_test=Custom('typesprovider_test','./qakicons/symActorSmall.png')
+     typesprovider_test >> Edge(color='green', style='dashed', xlabel='typesreply') >> sys 
 diag
