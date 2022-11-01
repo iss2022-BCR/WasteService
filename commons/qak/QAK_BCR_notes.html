@@ -42,9 +42,14 @@
             <a href="#Project-Setup">Project Setup</a>
             <div class="sidenavSection">
                 <a href="#IDE">IDE</a>
-                <a href="#Project-Creation-and-Execution">Project Creation<br/>and Execution</a>
+                <a href="#Project-Creation">Project Creation</a>
             </div>
-            <a href="#Build-the-Diagram">Build the Diagram</a>
+            <a href="#Model-Execution">Model Execution</a>
+            <div class="sidenavSection">
+                <a href="#Build-the-Model">Build the Model</a>
+                <a href="#Execute-the-Model">Execute the Model</a>
+            </div>
+            <a href="#Build-the-Diagram">Build the<br/>Diagram</a>
             <a href="#QAK-Legend">QAK Legend</a>
             <p style="height: 100px; visibility: hidden"></p>
         </div>
@@ -163,7 +168,7 @@ ReplyReq  : "askFor"  reqref=[Request]
                 </li>
             </ol>
 
-            <h3 id="Project-Creation-and-Execution">Project Creation and Execution</h3>
+            <h3 id="Project-Creation">Project Creation</h3>
             <ol>
                 <li>
                     Create a new directory, and move inside it:
@@ -213,21 +218,38 @@ gradle init
                 <li>
                     Write the file content and save. Qactork plugins will:
                     <ul>
+                        <li>generate the Kotlin classes for the actors and a main for each context</li>
                         <li>create <code>build2022.gradle</code> file</li>
                         <li>create <code>sysRules.pl</code> e <code>sysXXX.pl</code>, where <code>sysXXX</code> is the name of the </li>
                     </ul>
                 </li>
+            </ol>
+
+            <h2 id="Model-Execution">Model Execution</h2>
+            <h3 id="Build-the-Model">Build the Model</h3>
+            <ol>
                 <li>
                     Copy the content of <code>build2022.gradle</code> file to <ksi>build.gradle</ksi>
                 </li>
                 <li>Insert Kotlin utility code used in the model into <ksi>resources</ksi> directory</li>
                 <li>
-                    Execute with:
+                    Build the project using gradle:
 <pre>
-gradlew run
+gradlew build
 </pre>
                 </li>
             </ol>
+
+            <h3 id="Execute-the-Model">Execute the Model</h3>
+            You can then execute the project using gradle:
+<pre>
+gradlew run
+</pre>
+            
+            Or and IDE (e.g. IntelliJ), by running the main of the context.
+
+            <img src=""/>
+
 
             <h2 id="Build-the-Diagram">Build the Diagram</h2>
             <ol>
