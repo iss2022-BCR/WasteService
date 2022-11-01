@@ -144,12 +144,17 @@ QActor wasteservice context ctx_wasteservice {
 	State state_handle_storerequest {
 		printCurrentMessage
 		onMsg(storerequest : storerequest(TYPE, LOAD)) {
-			println("[WasteService] Received storerequest($RequestedWasteType, $RequestedWasteWeight)")
-			if [# wasteservice.Utils.isValidWasteType(payloadArg(0)) &&
-					wasteservice.Utils.isValidWasteWeight(payloadArg(1)) #]
+			[#
+				var Type = payloadArg(0)
+				var Load = payloadArg(1)
+			#]
+			println("[WasteService] Received storerequest($Type, $Load)")
+			
+			if [# wasteservice.Utils.isValidWasteType(Type) &&
+					wasteservice.Utils.isValidWasteWeight(Load) #]
 			{
 				[#
-					RequestedWasteType = wasteservice.WasteType.valueOf(payloadArg(0))
+					RequestedWasteType = wasteservice.WasteType.valueOf(Type)
 					RequestedWasteWeight = payloadArg(1).toDouble()
 				#]
 				
