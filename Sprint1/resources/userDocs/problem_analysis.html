@@ -25,7 +25,7 @@
                 <div class="sidenavSubSection">
                     <a href="#Smart-Device">Smart Device</a>
                     <a href="#Waste-Service">Waste Service</a>
-                    <a href="#Transport-Trolley">Transport Trolley</a>
+                    <a href="#Transport-Trolley-and-DDR-Robot">Transport Trolley<br/>and DDR Robot</a>
                 </div>
                 <a href="#Interactions">Interactions</a>
                 <div class="sidenavSubSection">
@@ -34,9 +34,10 @@
                     <a href="#Transport-Trolley-DDR-Robot">Transport Trolley &harr;<br/>DDR Robot</a>
                 </div>
                 <a href="#Logical-Architecture">Logical Architecture</a>
+                <a href="#Test-Plans">Test Plans</a>
             </div>
-            <a href="test_plans.html">Test Plans</a>
             <a href="project.html">Project</a>
+            <a href="test_plans.html">Test Plans</a>
             <a href="conclusions.html">Conclusions</a>
             <a href="team.html">Team</a>
             <p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
@@ -75,8 +76,31 @@
             Perché scegliamo il paradigma ad attori?
             motivazioni + QAK
 
+            <br/>
+            Spiegare le funzioni dei vari attori (magari inserire una tabella)
+            <ul>
+                <li>Il waste service gestisce le richieste. Gestisce le operazioni che il transport trolley deve eseguire:
+                    - pickup
+                    - deposit(smth)
+                    - 
+
+                </li>
+                <li>
+                    The transport trolley doesn't know what's a container or how much waste he's moving,
+                    he just executes commands (it's an actuator), with a predefined behaviour:
+                    - deposit(smth) -> go to indoor, pickup, move to deposit the material, dump, go home 
+                    sync or async, blocking or not blocking? Could be sync, but there are 2 problems:
+                    1) could arrive a new request while it's going home;
+                    2) could be stopped (requirement not yet to be analyzed -> sprint2)
+                </li>
+                
+            </ul>
+            <br/>
+            <highlight1>Spiegare perché usiamo il paradigma ad attori; Spiegare quanti e dove collocare i vari attori nei nodi (tabella alla fine?)</highlight1>
+            
+
             <h3 id="Smart-Device">Smart Device</h3>
-            <problem>Smart Device Technology</problem>
+            <!--<problem>Smart Device Technology</problem>
             <b>Problem</b>: implementation of an application to test the interaction between the truck driver and the waste service.<br/>
             <solution>
                 <b>Solution</b>: <ksi>Flutter application</ksi>.<br/>
@@ -102,7 +126,7 @@
                 <a href="https://flutter.dev/"><img width="90%" alt="Flutter: Build apps for any screen." title="Flutter: Build apps for any screen." src="../imgs/Flutter2.png"/></a>
                 <br/>
                 <b><i>Flutter: Build apps for any screen</i>.</b>
-            </center>
+            </center>-->
             
             
             <h3 id="Waste-Service">Waste Service</h3>
@@ -174,9 +198,62 @@
                 </ul>
             </div>
 
-            <h3 id="Transport-Trolley">Transport Trolley</h3>
+            Come otteniamo la rappresentazione della mappa? Possiamo utilizzare unibo.mapper (link al progetto),
+            che fornisce un modello QAK eseguibile, in particolare:
+            <br/>
+            mapperqak22.qak
+            <br/>
+            Eseguire unibo.mapperQak22\src\it\unibo\ctxmapemptyroom22\MainCtxmapperqak22.kt
+            <br/>
+            Che salva la mappa in <a href="">mapRoomEmpty.txt</a>
+
+            <h3 id="Transport-Trolley-and-DDR-Robot">Transport Trolley and DDR Robot</h3>
+            <problem>Robot Concepts</problem>
+            <b>Problem</b>: what is the Transport Trolley and what is the DDR Robot?
+            <solution>
+                <b>Considerations</b>: The DDR Robot is the final endpoint of the core-business chain,
+                the entity that performs the deposit actions and dumps the waste into the containers.
+                Therefore we can think of it as the actual "robot", which might be real or virtual (e.g. for
+                simulation purposes).
+                <br/>
+                On the other hand, the Transport Trolley is a more abstract concept, which encloses the logic
+                and controls the DDR Robot.
+
+                <table class="dictionary">
+                    <tr>
+                        <td style="color: black">Transport Trolley</td>
+                        <td>high-level control unit.</td>
+                    </tr>
+                    <tr>
+                        <td style="color: black">DDR Robot</td>
+                        <td>low-level technology agent.</td>
+                    </tr>
+                </table>
+
+                <br/>
+                <b>Solution</b>: we can use the BasicRobot QAK actor, provided by the customer together with unibo.basicRobot22 project,
+                to have both a <ksi>virtual environment</ksi> to simulate the DDR Robot (WEnv), and a <ksi>virtual interface</ksi> to communicate with it (VirtualRobot).
+                <br/><br/>
+                <center>
+                    <img width="60%" alt="WEnv" title="WEnv (Scene)" src="../imgs/WEnv.png"/>
+                    <br/>
+                    <b>WEnv (Scene)</b>
+                </center>
+                <br/>
+                <b>Reasons</b>:
+                <ul>
+                    <li>we reuse code that's already implemented</li>
+                    <li>
+                        basicRobot is built following the actors paradigm (and QAK meta-modeling lang),
+                        so it's easy to integrate it with the rest of the project
+                    </li>
+                </ul>
+            </solution>
+            <b>Alternatives</b>:
+
 
             <problem>Robot Movement</problem>
+            
             We might use the software provided by the customer: Applicazioni22
             The path executor wants ..., <highlight3>How to find the path to execute?</highlight3>
             <br/>
@@ -184,18 +261,37 @@
             We assume that the deposit action cannot fail and the trolley cannot be stopped, for the moment.
             However, since we know in the next sprint we'll implement the stop/resume mechanics, we decide to model the interaction in an asynchronous way.
             
-            <h3 id="DDR-Robot">DDR Robot</h3>
             WEnv -> Virtual Enviromnent fornito dal committente, spieghiamo perché usiamo questo
 
             <h2 id="Interactions">Interactions</h2>
             <problem>Messages format</problem>
-            <b>Problem</b>: 
+            <b>Problem</b>: What format to use for messages
             <solution>
-                <b>Solution</b>: QAK message format
+                <b>Solution</b>: Prolog terms syntax
                 <br/>
-                <b>Reasons</b>:
+                <b>Reasons</b>: it's the message format of the QAK (meta-)modeleing language
             </solution>
-            <b>Alternatives</b>: JSON object format
+            <b>Alternatives</b>: JSON object format. However, we would still need to parse that 
+
+            <h3 id="Messages">Core-Business Messages List</h3>
+            <table class="dictionary">
+                <tr>
+                    <th>Message</th>
+                    <th>Type</th>
+                    <th>Sender</th>
+                    <th>Receiver</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>storeRequest</td>
+                    <td>Request</td>
+                    <td>SmartDevice</td>
+                    <td>WasteService</td>
+                    <td>
+                        Ask if <ks><code>truckLoad</code></ks> kg of <ks><code>wasteType</code></ks> can be dumped to the waste service.
+                    </td>
+                </tr>
+            </table>
 
             <h3 id="Smart-Device-Waste-Service">Smart Device &harr; Waste Service</h3>
             
@@ -285,7 +381,7 @@
                 </li>
                 <li>
                     If we're able to know if the load can be deposited as soon as we receive the request,
-                    we could reply instantly, and therefore meet the requirement that the truck driver must
+                    we could reply instantly, and therefore meet the <em>requirement</em> that the truck driver must
                     be sent away <i>as soon as possible</i>.
                 </li>
             </ul>
@@ -352,8 +448,121 @@
             <h3 id="Transport-Trolley-DDR-Robot">Transport Trolley &harr; DDR Robot</h3>
             
             <h2 id="Logical-Architecture">Logical Architecture</h2>
-            QAK del core-business generale
+            <img width="100%" src="../../Sprint1_ProblemAnalysis/waste_servicearch.png"/>
+            QAK model: <a href="../../Sprint1_ProblemAnalysis/src/waste_service.qak">waste_service.qak</a>
             
+            <h2 id="Test-Plans">Test Plans</h2>
+            <table class="dictionary">
+                <tr>
+                    <th>Test</th>
+                    <th>Involved Actors</th>
+                    <th>Description</th>
+                    <th>Files</th>
+                </tr>
+                <tr>
+                    <td>Receive the correct WasteTypes List</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                            <li>TypesProvider</li>
+                        </ul>
+                    </td>
+                    <td>We check if the TypesProvider actor replies correctly to the SmartDevice, with the list of WasteTypes available.</td>
+                    <td>
+                        QAK: <a href="../../Sprint1_ProblemAnalysis/src/test_types_provider.qak">test_types_provider.qak</a>
+                        Test: <a href="../../Sprint1_ProblemAnalysis/test/it/unibo/wasteservice/TestTypesProvider.kt">TestTypesProvider.kt</a>
+                    </td>
+                    <!-- NB: to test the TypesProvider we can just use a TCP connection and analyze the reply content,
+                        we don't need COAP, since it's a simple task to verify -->
+                </tr>
+                <tr>
+                    <td>StoreRequest Handling: loadaccepted</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                            <li>WasteService</li>
+                            <li>TransportTrolley</li>
+                        </ul>
+                    </td>
+                    <td>.</td>
+                    <td rowspan="5">
+                        QAK: <a href="../../Sprint1_ProblemAnalysis/src/test_waste_service.qak">test_waste_service.qak</a>
+                        Test: <a href="../../Sprint1_ProblemAnalysis/test/it/unibo/wasteservice/TestWasteService.kt">TestWasteService.kt</a>
+                        <highlight1>Report</highlight1>
+                    </td>
+                </tr>
+                <tr>
+                    <td>StoreRequest Handling: storage update</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                            <li>WasteService</li>
+                        </ul>
+                    </td>
+                    <td>.</td>
+                </tr>
+                <tr>
+                    <td>StoreRequest Handling: loadrejected (invalid WasteType)</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                            <li>WasteService</li>
+                        </ul>
+                    </td>
+                    <td>.</td>
+                </tr>
+                <tr>
+                    <td>StoreRequest Handling: loadrejected (invalid WasteWeight)</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                            <li>WasteService</li>
+                        </ul>
+                    </td>
+                    <td>.</td>
+                </tr>
+                <tr>
+                    <td>StoreRequest Handling: loadrejected (not enough space)</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                            <li>WasteService</li>
+                        </ul>
+                    </td>
+                    <td>.</td>
+                </tr>
+                <tr>
+                    <td>...</td>
+                    <td>
+                        <ul>
+                            <li>WasteService</li>
+                            <li>TransportTrolley</li>
+                        </ul>
+                    </td>
+                    <td>-.</td>
+                    <td>
+                        QAK: <a href="../../Sprint1_ProblemAnalysis/src/test_transport_trolley.qak">test_transport_trolley.qak</a>
+                        Test: <a href="../../Sprint1_ProblemAnalysis/test/it/unibo/wasteservice/TestTransportTrolley.kt">TestTransportTrolley.kt</a>
+                    </td>
+                </tr>
+            </table>
+
+
+            <ul>
+                <li>
+                    TypesProvider: -> send a certain list, verify it's correct
+                    <br/>
+                    File: 
+                </li>
+                <li>
+                    WasteService -> receives store_request, answer loadaccepted/loadrejected
+                    loadrejected:
+                        - wrong type
+                        - invalid weight
+                        - not enough space
+                </li>
+                <li>TransportTrolley</li>
+            </ul>
         </div>
 
     </body>

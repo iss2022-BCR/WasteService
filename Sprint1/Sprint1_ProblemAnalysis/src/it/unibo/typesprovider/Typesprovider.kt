@@ -15,32 +15,35 @@ class Typesprovider ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( na
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
+		
+				var WasteTypes: String = wasteservice.Utils.getWasteTypesString("_")
 		return { //this:ActionBasciFsm
 				state("state_init") { //this:State
 					action { //it:State
-						println("[TypesProvider] Started")
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-				}	 
-				state("state_idle") { //this:State
-					action { //it:State
-						println("[TypesProvider] Waiting for type requests...")
+						println("[TypesProvider] Started. WasteTypes: $WasteTypes")
 						discardMessages = false
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t10",targetState="state_handle_wastetypes_request",cond=whenRequest("wastetypes_request"))
+					 transition( edgeName="goto",targetState="state_idle", cond=doswitch() )
+				}	 
+				state("state_idle") { //this:State
+					action { //it:State
+						println("[TypesProvider] Waiting for type requests...")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t13",targetState="state_handle_wastetypes_request",cond=whenRequest("typesrequest"))
 				}	 
 				state("state_handle_wastetypes_request") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						answer("wastetypes_request", "wastetypes_reply", "wastetypes_reply(_)"   )  
-						println("[TypesProvider] Replied with types list")
+						answer("typesrequest", "typesreply", "typesreply($WasteTypes)"   )  
+						println("[TypesProvider] Replied with types list: $WasteTypes")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
