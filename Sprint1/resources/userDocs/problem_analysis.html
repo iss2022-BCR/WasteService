@@ -488,7 +488,10 @@
                             <li>TransportTrolley</li>
                         </ul>
                     </td>
-                    <td>.</td>
+                    <td>
+                        We send a StoreRequest for a load that can be stored for sure, and we check if the SmartDevice receives a
+                        loadaccepted message from the WasteService, after the pickup action is completed.
+                    </td>
                     <td rowspan="5">
                         QAK: <a href="../../Sprint1_ProblemAnalysis/src/test_waste_service.qak">test_waste_service.qak</a>
                         Test: <a href="../../Sprint1_ProblemAnalysis/test/it/unibo/wasteservice/TestWasteService.kt">TestWasteService.kt</a>
@@ -503,7 +506,13 @@
                             <li>WasteService</li>
                         </ul>
                     </td>
-                    <td>.</td>
+                    <td>We check if the WasteService correctly updates the storage counter by sending 2 StoreRequest sequentially:
+                        <ol>
+                            <li>The first contains the maximum load a certain container can store.</li>
+                            <li>The second contains any value (we don't care, since the storage must be already full).</li>
+                        </ol>
+                        Then we check if we received a loadaccepted for the first and a loadrejected for the second.
+                    </td>
                 </tr>
                 <tr>
                     <td>StoreRequest Handling: loadrejected (invalid WasteType)</td>
@@ -513,7 +522,7 @@
                             <li>WasteService</li>
                         </ul>
                     </td>
-                    <td>.</td>
+                    <td>We check if the StoreRequest gets rejected when the WasteType is invalid (e.g. "ORGANIC").</td>
                 </tr>
                 <tr>
                     <td>StoreRequest Handling: loadrejected (invalid WasteWeight)</td>
@@ -523,7 +532,7 @@
                             <li>WasteService</li>
                         </ul>
                     </td>
-                    <td>.</td>
+                    <td>We check if the StoreRequest gets rejected when the WasteWeight is invalid (e.g. negative value).</td>
                 </tr>
                 <tr>
                     <td>StoreRequest Handling: loadrejected (not enough space)</td>
@@ -533,7 +542,7 @@
                             <li>WasteService</li>
                         </ul>
                     </td>
-                    <td>.</td>
+                    <td>We check if the StoreRequest gets rejected when the container of the given WasteType is full.</td>
                 </tr>
                 <tr>
                     <td>Deposit Handling:
