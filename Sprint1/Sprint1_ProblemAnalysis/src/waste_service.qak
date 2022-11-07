@@ -18,8 +18,8 @@ Request deposit		:	deposit(TYPE)
 
 // TransportTrolley -> WasteService
 Reply pickupcompleted	: pickupcompleted(_)
-Reply depositcompleted	:	depositcompleted(_)
-Reply depositfailed		:	depositfailed(REASON)
+Dispatch depositcompleted	:	depositcompleted(_)
+Dispatch depositfailed		:	depositfailed(REASON)
 
 // TransportTrolley -> BasicRobot
 Dispatch cmd	: cmd(MOVE)
@@ -127,6 +127,7 @@ QActor wasteservice context ctx_wasteservice {
 		var StorageStats: String = WasteService.getFullStatusString()
 		
 		var WaitingPickup: Boolean = false
+		var WaitingDeposit: Boolean = false
 	#]
 	State state_init initial {
 		println("[WasteService] Started.")
@@ -160,6 +161,7 @@ QActor wasteservice context ctx_wasteservice {
 				
 				if [# WasteService.canPreStore(RequestedWasteType, RequestedWasteWeight) #]
 				{
+					// Update the pre-storage counter
 					[#
 						WasteService.addToPreStorage(RequestedWasteType, RequestedWasteWeight)
 						StorageStats = WasteService.getFullStatusString()
@@ -196,13 +198,46 @@ QActor wasteservice context ctx_wasteservice {
 	
 	State state_pickup_completed {
 		[#
-			WasteService.addToStorage(RequestedWasteType, RequestedWasteWeight)
-			StorageStats = WasteService.getFullStatusString()
-			
-			WaitingPickup = true
+			WaitingPickup = false
+			WaitingDeposit = true
 		#]
 		println("[WasteService] Pickup completed, sent Load accepted.")
 		replyTo storerequest with loadaccepted: loadaccepted(_)
+	}
+	Goto state_waiting_deposit
+	
+	State state_waiting_deposit {
+		println("[WasteService] Waiting for deposit completion...")
+	}
+	Transition t1	whenMsg depositcompleted	-> state_deposit_completed
+					whenMsg depositfailed		-> state_deposit_failed
+	
+	State state_deposit_completed {
+		// Update the actual storage counter
+		[#
+			WasteService.addToStorage(RequestedWasteType, RequestedWasteWeight)
+			StorageStats = WasteService.getFullStatusString()
+			
+			WaitingDeposit = false
+		#]
+		println("[WasteService] Deposit completed. Current storage:")
+		println("$StorageStats")
+	}
+	Goto state_idle
+	
+	State state_deposit_failed {
+		onMsg(depositfailed : depositfailed(REASON)) {
+			// Reset the pre storage counter
+			[#
+				// Reset PreStorage
+				
+				WaitingDeposit = false
+				var Error = payloadArg(0)
+			#]
+			println("[WasteService] Deposit failed: $Error.")
+		}
+		println("[WasteService] Current storage:")
+		println("$StorageStats")
 	}
 	Goto state_idle
 }
@@ -212,7 +247,7 @@ QActor transporttrolley context ctx_wasteservice {
 		var WasteType: wasteservice.WasteType = wasteservice.WasteType.PLASTIC
 	#]
 	State state_init initial {
-		println("[TransportTrolley] Started")
+		println("[TransportTrolley] Started.")
 	}
 	Goto state_idle
 	
@@ -228,16 +263,16 @@ QActor transporttrolley context ctx_wasteservice {
 			println("[TransportTrolley] Deposit request received.")	
 		}
 	}
-	Goto state_movingToINDOOR
+	Goto state_move_to_indoor
 	
-	State state_movingToINDOOR {
+	State state_move_to_indoor {
 		println("[TransportTrolley] Moving to INDOOR...")
-		forward basicrobot -m cmd : cmd(w)
+		//forward basicrobot -m cmd : cmd(w)
 		delay 1200
-		forward basicrobot -m cmd : cmd(s)
+		/*forward basicrobot -m cmd : cmd(s)
 		delay 1200
 		request basicrobot -m step : step(500)
-		delay 600
+		delay 600*/
 	}
 	Goto state_pickup
 	
@@ -248,20 +283,20 @@ QActor transporttrolley context ctx_wasteservice {
 		
 		replyTo deposit with pickupcompleted: pickupcompleted(_)
 	}
-	Goto state_moveToGLASSBOX if [# WasteType == wasteservice.WasteType.GLASS #] else state_moveToPLASTICBOX
+	Goto state_move_to_glassbox if [# WasteType == wasteservice.WasteType.GLASS #] else state_move_to_plasticbox
 	
-	State state_moveToGLASSBOX {
+	State state_move_to_glassbox {
 		println("[TransportTrolley] Moving to GLASS_BOX...")
-		forward basicrobot -m cmd : cmd(w)
-		request basicrobot -m step : step(500)
+		//forward basicrobot -m cmd : cmd(w)
+		//request basicrobot -m step : step(500)
 		delay 1000
 	}
 	Goto state_dump
 	
-	State state_moveToPLASTICBOX {
+	State state_move_to_plasticbox {
 		println("[TransportTrolley] Moving to PLASTIC_BOX...")
-		forward basicrobot -m cmd : cmd(w)
-		request basicrobot -m step : step(500)
+		//forward basicrobot -m cmd : cmd(w)
+		//request basicrobot -m step : step(500)
 		delay 1000
 	}
 	Goto state_dump
@@ -269,13 +304,14 @@ QActor transporttrolley context ctx_wasteservice {
 	State state_dump {
 		println("[TransportTrolley] Dumping the load...")
 		delay 1000
+		forward wasteservice -m depositcompleted : depositcompleted(_)
 	}
-	Goto state_moveToHOME
+	Goto state_move_to_home
 	
-	State state_moveToHOME {
+	State state_move_to_home {
 		println("[TransportTrolley] Moving to HOME...")
-		forward basicrobot -m cmd : cmd(w)
-		request basicrobot -m step : step(500)
+		//forward basicrobot -m cmd : cmd(w)
+		//request basicrobot -m step : step(500)
 		delay 1000
 	}
 	Goto state_idle

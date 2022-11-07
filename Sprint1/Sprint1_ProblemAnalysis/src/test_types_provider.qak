@@ -15,7 +15,7 @@ Reply typesreply	:	typesreply(TYPES)
 Context ctx_typesprovider_test 	ip [host="localhost" port=11701]
 
 // ACTORS =====================================================================
-QActor typesprovider_test context ctx_typesprovider_test {
+QActor typesprovider_tp_test context ctx_typesprovider_test {
 	[#
 		var WasteTypes: String = wasteservice.Utils.getWasteTypesString()
 	#]

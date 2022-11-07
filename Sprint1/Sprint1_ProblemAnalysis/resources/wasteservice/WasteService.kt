@@ -26,16 +26,8 @@ class WasteService {
     fun getCurrentStorageString(): String {
         var res: String = ""
 
-        for(wt in storage.keys) {
+        for (wt in storage.keys) {
             res += "${wt.name}: ${storage[wt]}\n"
-        }
-
-        return res
-    }
-    fun getFullStatusString(): String {
-        var res: String = ""
-        for(wt in storage.keys) {
-            res += "${wt.name}: ${preStorage[wt]}/${storage[wt]}/${storageCapacity[wt]}\n"
         }
 
         return res
@@ -69,5 +61,21 @@ class WasteService {
             var oldLoad = storage[wType]
             storage[wType] = oldLoad!! + wWeight
         }
+    }
+
+    fun getStatusString(wType: WasteType): String {
+        var res = ""
+        try {
+            res = "${wType.name}: ${preStorage[wType]}/${storage[wType]}/${storageCapacity[wType]}"
+        } catch(e: Exception) {}
+        return res
+    }
+    fun getFullStatusString(): String {
+        var res: String = ""
+        for(wt in storage.keys) {
+            res += "${wt.name}: ${preStorage[wt]}/${storage[wt]}/${storageCapacity[wt]}\n"
+        }
+
+        return res
     }
 }

@@ -415,6 +415,10 @@
                         Using <i>2 separate storage counters</i> allows us to send a reply to the
                         Smart Device as soon as possible, since we know if the waste can be stored at any time.
                     </li>
+                    <li>
+                        (Related to Sprint3 - Monitoring) we can update the GUI with a more time-accurated value
+                        of how much space is left in each container.
+                    </li>
                 </ul>
             </solution>
             <alternative>
@@ -532,37 +536,35 @@
                     <td>.</td>
                 </tr>
                 <tr>
-                    <td>...</td>
+                    <td>Deposit Handling:
+                        GLASS
+                    </td>
                     <td>
                         <ul>
                             <li>WasteService</li>
                             <li>TransportTrolley</li>
                         </ul>
                     </td>
-                    <td>-.</td>
-                    <td>
+                    <td>We check if the TransportTrolley transits through all the states necessary for the execution of the GLASS deposit action..</td>
+                    <td rowspan="5">
                         QAK: <a href="../../Sprint1_ProblemAnalysis/src/test_transport_trolley.qak">test_transport_trolley.qak</a>
                         Test: <a href="../../Sprint1_ProblemAnalysis/test/it/unibo/wasteservice/TestTransportTrolley.kt">TestTransportTrolley.kt</a>
                     </td>
                 </tr>
+                <tr>
+                    <td>Deposit Handling:
+                        PLASTIC
+                    </td>
+                    <td>
+                        <ul>
+                            <li>WasteService</li>
+                            <li>TransportTrolley</li>
+                        </ul>
+                    </td>
+                    <td>We check if the TransportTrolley transits through all the states necessary for the execution of the PLASTIC deposit action.</td>
+                </tr>
             </table>
-
-
-            <ul>
-                <li>
-                    TypesProvider: -> send a certain list, verify it's correct
-                    <br/>
-                    File: 
-                </li>
-                <li>
-                    WasteService -> receives store_request, answer loadaccepted/loadrejected
-                    loadrejected:
-                        - wrong type
-                        - invalid weight
-                        - not enough space
-                </li>
-                <li>TransportTrolley</li>
-            </ul>
+            <highlight1>How to run the tests</highlight1>
         </div>
 
     </body>

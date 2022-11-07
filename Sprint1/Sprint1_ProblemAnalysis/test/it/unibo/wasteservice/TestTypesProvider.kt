@@ -22,17 +22,18 @@ class TestTypesProvider {
     companion object {
         private const val hostname = "localhost"
         private const val port = 11701
-        private const val actorName = "typesprovider_test"
+        private const val actorNameSD = "smartdevice_tp_test"
+        private const val actorNameTP = "typesprovider_tp_test"
     }
 
     private var actorTypesProvider: ActorBasic? = null
     private lateinit var interaction: Interaction2021
 
     private fun setupTypesProvider() {
-        actorTypesProvider = QakContext.getActor(actorName)
+        actorTypesProvider = QakContext.getActor(actorNameTP)
         while(actorTypesProvider == null) {
             CommUtils.delay(500)
-            actorTypesProvider = QakContext.getActor(actorName)
+            actorTypesProvider = QakContext.getActor(actorNameTP)
             println(actorTypesProvider)
         }
         ColorsOut.outappl("[TypesProvider] Actor correctly set up", ColorsOut.MAGENTA);
@@ -42,10 +43,10 @@ class TestTypesProvider {
     fun startup() {
         CommSystemConfig.tracing = false
 
-        ColorsOut.outappl("===== TEST TypesProvider =====", ColorsOut.CYAN);
+        ColorsOut.outappl("===== TEST Started =====", ColorsOut.CYAN);
 
         var thread = thread {
-            RunTypesProvider().main()
+            RunCtxTypesProviderTest().main()
         }
         setupTypesProvider();
 
@@ -72,17 +73,17 @@ class TestTypesProvider {
 
         CommUtils.delay(1000)
         ColorsOut.outappl("===== TEST Completed =====", ColorsOut.CYAN)
-        CommUtils.delay(3000)
+        CommUtils.delay(1000)
     }
 
     @Test
     fun testCorrectTypes() {
-        ColorsOut.outappl("TEST: The reply received from $actorName contains all the WasteType available.", ColorsOut.CYAN);
-        val req: String = MsgUtil.buildRequest("smartdevice_test", "typesrequest", "typesrequest()", actorName).toString()
+        ColorsOut.outappl("TEST: The reply received from $actorNameTP contains all the WasteType available.", ColorsOut.CYAN);
+        val req: String = MsgUtil.buildRequest(actorNameSD, "typesrequest", "typesrequest()", actorNameTP).toString()
         var reply: String = ""
 
         try {
-            ColorsOut.outappl("[SmartDevice] Sending typesrequest to $actorName.", ColorsOut.MAGENTA);
+            ColorsOut.outappl("[SmartDevice] Sending typesrequest to $actorNameTP.", ColorsOut.MAGENTA);
             reply = interaction.request(req)
             ColorsOut.outappl("[SmartDevice] Received reply: $reply.", ColorsOut.MAGENTA);
         } catch (e: Exception) {
@@ -101,7 +102,7 @@ class TestTypesProvider {
     /*@Test
     fun testListFormat() {
         ColorsOut.outappl("TEST: The reply contains a list in the expected format", ColorsOut.CYAN);
-        val req: String = MsgUtil.buildRequest("smartdevice_test", "typesrequest", "typesrequest()", actorName).toString()
+        val req: String = MsgUtil.buildRequest(actorNameSD, "typesrequest", "typesrequest()", actorName).toString()
         var reply: String = ""
 
         try {

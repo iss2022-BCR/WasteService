@@ -1,2 +1,227 @@
 // PROBLEM ANALYSIS - TEST PLAN
 System test_transport_trolley
+
+// TEST ABSTRACT ==============================================================
+// Test: deposit GLASS
+// Test: deposit PLASTIC
+
+// MESSAGES AND EVENTS ========================================================
+// SmartDevice (truck) -> WasteService
+Request storerequest	:	storerequest(TYPE, LOAD)
+
+// WasteService -> SmartDevice
+Reply loadaccepted	:	loadaccepted(_)
+Reply loadrejected	:	loadrejected(_)
+
+// WasteService -> TransportTrolley
+Request deposit		:	deposit(TYPE)
+
+// TransportTrolley -> WasteService
+Reply pickupcompleted	: pickupcompleted(_)
+Dispatch depositcompleted	:	depositcompleted(_)
+Dispatch depositfailed		:	depositfailed(REASON)
+
+// CONTEXES ===================================================================
+Context ctx_transporttrolley_test 	ip [host="localhost" port=11703]
+
+// ACTORS =====================================================================
+QActor wasteservice_tt_test context ctx_transporttrolley_test {
+	[#
+		var RequestedWasteType: wasteservice.WasteType = wasteservice.WasteType.values()[0]
+		var RequestedWasteWeight: Double = 1.0
+		
+		val WasteService = wasteservice.WasteService()
+		var StorageStats: String = WasteService.getFullStatusString()
+		
+		var WaitingPickup: Boolean = false
+		var WaitingDeposit: Boolean = false
+	#]
+	State state_init initial {
+		println("[WasteService] Started.")
+		println("[WasteService] Current storage:")
+		println("$StorageStats")
+		discardMsg Off
+	}
+	Goto state_idle
+	
+	State state_idle {
+		println("[WasteService] Waiting for store requests...")
+	}
+	Transition t1	whenRequest storerequest	-> state_handle_storerequest
+
+	State state_handle_storerequest {
+		printCurrentMessage
+		onMsg(storerequest : storerequest(TYPE, LOAD)) {
+			[#
+				var Type = payloadArg(0)
+				var Load = payloadArg(1)
+			#]
+			println("[WasteService] Received storerequest($Type, $Load)")
+			
+			if [# wasteservice.Utils.isValidWasteType(Type) &&
+					wasteservice.Utils.isValidWasteWeight(Load) #]
+			{
+				[#
+					RequestedWasteType = wasteservice.WasteType.valueOf(Type)
+					RequestedWasteWeight = payloadArg(1).toDouble()
+				#]
+				
+				if [# WasteService.canPreStore(RequestedWasteType, RequestedWasteWeight) #]
+				{
+					[#
+						WasteService.addToPreStorage(RequestedWasteType, RequestedWasteWeight)
+						StorageStats = WasteService.getFullStatusString()
+					
+						WaitingPickup = true
+					#]
+					println("[WasteService] There is enough space.")
+					request transporttrolley_tt_test -m deposit : deposit( $RequestedWasteType )
+				}
+				else
+				{
+					[# WaitingPickup = false #]
+					println("[WasteService] Load rejected: there is not enough space in the container to store the load.")
+					replyTo storerequest with loadrejected: loadrejected(_)
+				}
+			}
+			else
+			{
+				[# WaitingPickup = false #]
+				println("[WasteService] Load rejected: one or more parameters are invalid.")
+				replyTo storerequest with loadrejected: loadrejected(_)
+			}
+			
+			println("[WasteService] Current storage:")
+			println("$StorageStats")
+			
+			updateResource [# "wasteservice_tt_test(state_handle_storerequest(${WasteService.getStatusString(RequestedWasteType)}))" #]
+		}
+	}
+	Goto state_idle if [# WaitingPickup == false #] else state_waiting_pickup
+	
+	State state_waiting_pickup {
+		println("[WasteService] Waiting for pickup completion...")
+	}
+	Transition t1 whenReply pickupcompleted	-> state_pickup_completed
+	
+	State state_pickup_completed {
+		[#
+			WaitingPickup = false
+			WaitingDeposit = true
+		#]
+		println("[WasteService] Pickup completed, sent Load accepted.")
+		replyTo storerequest with loadaccepted: loadaccepted(_)
+	}
+	Goto state_waiting_deposit
+	
+	State state_waiting_deposit {
+		println("[WasteService] Waiting for deposit completion...")
+	}
+	Transition t1	whenMsg depositcompleted	-> state_deposit_completed
+					whenMsg depositfailed		-> state_deposit_failed
+	
+	State state_deposit_completed {
+		// Update the actual storage counter
+		[#
+			WasteService.addToStorage(RequestedWasteType, RequestedWasteWeight)
+			StorageStats = WasteService.getFullStatusString()
+			
+			WaitingDeposit = false
+		#]
+		println("[WasteService] Deposit completed. Current storage:")
+		println("$StorageStats")
+		
+		updateResource [# "wasteservice_tt_test(state_deposit_completed(${WasteService.getStatusString(RequestedWasteType)}))" #]
+		updateResource [# "wasteservice_tt_test(deposit_handled)" #]
+	}
+	Goto state_idle
+	
+	State state_deposit_failed {
+		onMsg(depositfailed : depositfailed(REASON)) {
+			// Reset the pre storage counter
+			[#
+				// Reset PreStorage
+				
+				WaitingDeposit = false
+				var Error = payloadArg(0)
+			#]
+			println("[WasteService] Deposit failed: $Error.")
+		}
+		println("[WasteService] Current storage:")
+		println("$StorageStats")
+		
+		updateResource [# "wasteservice_tt_test(deposit_handled)" #]
+	}
+	Goto state_idle
+}
+
+QActor transporttrolley_tt_test context ctx_transporttrolley_test {
+	[#
+		var WasteType: wasteservice.WasteType = wasteservice.WasteType.PLASTIC
+	#]
+	State state_init initial {
+		println("[TransportTrolley] Started.")
+	}
+	Goto state_idle
+	
+	State state_idle {
+		println("[TransportTrolley] Waiting for deposit requests...")
+	}
+	Transition t1	whenRequest deposit		-> state_handle_deposit_request
+	
+	State state_handle_deposit_request {
+		updateResource [# "transporttrolley_tt_test(handle_deposit_request)" #]
+		printCurrentMessage
+		onMsg(deposit: deposit(TYPE)) {
+			[# WasteType = wasteservice.WasteType.valueOf(payloadArg(0)) #]
+			println("[TransportTrolley] Deposit request received.")	
+		}
+	}
+	Goto state_move_to_indoor
+	
+	State state_move_to_indoor {
+		updateResource [# "transporttrolley_tt_test(move_to_indoor)" #]
+		println("[TransportTrolley] Moving to INDOOR...")
+		delay 1000
+	}
+	Goto state_pickup
+	
+	State state_pickup {
+		updateResource [# "transporttrolley_tt_test(pickup)" #]
+		println("[TransportTrolley] Picking up the load of $WasteType...")
+		delay 1000
+		println("[TransportTrolley] Pickup completed.")
+		replyTo deposit with pickupcompleted: pickupcompleted(_)
+		delay 1000
+	}
+	Goto state_move_to_glassbox if [# WasteType == wasteservice.WasteType.GLASS #] else state_move_to_plasticbox
+	
+	State state_move_to_glassbox {
+		updateResource [# "transporttrolley_tt_test(move_to_glassbox)" #]
+		println("[TransportTrolley] Moving to GLASS_BOX...")
+		delay 1500
+	}
+	Goto state_dump
+	
+	State state_move_to_plasticbox {
+		updateResource [# "transporttrolley_tt_test(move_to_plasticbox)" #]
+		println("[TransportTrolley] Moving to PLASTIC_BOX...")
+		delay 1000
+	}
+	Goto state_dump
+	
+	State state_dump {
+		updateResource [# "transporttrolley_tt_test(dump)" #]
+		println("[TransportTrolley] Dumping the load...")
+		forward wasteservice_tt_test -m depositcompleted : depositcompleted(_)
+		delay 1000
+	}
+	Goto state_move_to_home
+	
+	State state_move_to_home {
+		updateResource [# "transporttrolley_tt_test(move_to_home)" #]
+		println("[TransportTrolley] Moving to HOME...")
+		delay 1000
+	}
+	Goto state_idle
+}

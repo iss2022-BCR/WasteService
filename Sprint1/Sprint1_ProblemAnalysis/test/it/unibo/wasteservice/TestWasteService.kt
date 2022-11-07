@@ -16,12 +16,37 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
+/**
+ * WasteService Test: StoreRequest handling.
+ * Test1: loadaccepted
+ *  1) SmartDevice sends a StoreRequest
+ *  2) WasteService replies with a loadaccepted
+ *
+ * Test2: storage update
+ *  1) SmartDevice sends a StoreRequest with the max weight the service can store
+ *  2) WasteService sends a loadaccepted, since it can store the load
+ *  3) SmartDevice sends another StoreRequest
+ *  4) WasteService sends a loadrejected, which means the storage was successfully updated
+ *
+ * Test3: loadrejected (invalid WasteType)
+ *  1) SmartDevice sends a StoreRequest with an invalid WasteType
+ *  2) WasteService sends a loadrejected
+ *
+ * Test4: loadrejected (invalid WasteWeight)
+ *  1) SmartDevice sends a StoreRequest with an invalid WasteWeight
+ *  2) WasteService sends a loadrejected
+ *
+ * Test5: loadrejected (not enough space)
+ *  1) SmartDevice sends a StoreRequest with a negative WasteWeight
+ *  2) WasteService sends a loadrejected
+ */
 class TestWasteService {
     companion object {
         private const val hostname = "localhost"
         private const val port = 11702
-        private const val actorNameWS = "wasteservice_test"
-        private const val actorNameTT = "transporttrolley_test"
+        private const val actorNameSD = "smartdevice_ws_test"
+        private const val actorNameWS = "wasteservice_ws_test"
+        private const val actorNameTT = "transporttrolley_ws_test"
     }
 
     private var actorWasteService: ActorBasic? = null
@@ -51,10 +76,10 @@ class TestWasteService {
     fun startup() {
         CommSystemConfig.tracing = false
 
-        ColorsOut.outappl("===== TEST TypesProvider =====", ColorsOut.CYAN);
+        ColorsOut.outappl("===== TEST Started =====", ColorsOut.CYAN);
 
         var thread = thread {
-            RunWasteService().main()
+            RunCtxWasteServiceTest().main()
         }
         setup();
 
@@ -70,8 +95,19 @@ class TestWasteService {
 
     @AfterTest
     fun shutdown() {
+        actorWasteService?.terminate(0);
+        actorTransportTrolley?.terminate(0);
+        actorTransportTrolley?.terminateCtx(0);
+
+        try {
+            interaction.close()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+
         CommUtils.delay(1000)
         ColorsOut.outappl("===== TEST Completed =====", ColorsOut.CYAN)
+        CommUtils.delay(1000)
     }
 
     @Test
@@ -80,7 +116,7 @@ class TestWasteService {
         var wasteWeight = 10.0
 
         ColorsOut.outappl("TEST: Receive a loadaccepted reply when there is enough space to store the load.", ColorsOut.CYAN);
-        val req: String = MsgUtil.buildRequest("smartdevice_test", "storerequest", "storerequest(${wasteType.name}, ${wasteWeight})", actorNameWS).toString()
+        val req: String = MsgUtil.buildRequest(actorNameSD, "storerequest", "storerequest(${wasteType.name}, ${wasteWeight})", actorNameWS).toString()
         var reply: String = ""
 
         try {
@@ -104,7 +140,7 @@ class TestWasteService {
         var wasteWeight = WSconstants.DEFAULT_MAX;
 
         ColorsOut.outappl("TEST: Verify that the storage gets updated after a successful request.", ColorsOut.CYAN);
-        val req: String = MsgUtil.buildRequest("smartdevice_test", "storerequest", "storerequest(${wasteType.name}, ${wasteWeight})", actorNameWS).toString()
+        val req: String = MsgUtil.buildRequest(actorNameSD, "storerequest", "storerequest(${wasteType.name}, ${wasteWeight})", actorNameWS).toString()
         var reply: String = ""
 
         try {
@@ -137,12 +173,12 @@ class TestWasteService {
     }
 
     @Test
-    fun testLoadRejected1() {
+    fun testLoadRejectedInvalidWasteType() {
         var wasteType = "ORGANIC";
         var wasteWeight = 10.0
 
         ColorsOut.outappl("TEST: Receive a loadrejected reply when the WasteType is invalid.", ColorsOut.CYAN);
-        val req: String = MsgUtil.buildRequest("smartdevice_test", "storerequest", "storerequest(${wasteType}, ${wasteWeight})", actorNameWS).toString()
+        val req: String = MsgUtil.buildRequest(actorNameSD, "storerequest", "storerequest(${wasteType}, ${wasteWeight})", actorNameWS).toString()
         var reply: String = ""
 
         try {
@@ -161,12 +197,12 @@ class TestWasteService {
     }
 
     @Test
-    fun testLoadRejected2() {
+    fun testLoadRejectedInvalidWasteWeight() {
         var wasteType = WasteType.PLASTIC;
         var wasteWeight = 100000.0
 
         ColorsOut.outappl("TEST: Receive a loadrejected reply when the WasteWeight is invalid.", ColorsOut.CYAN);
-        val req: String = MsgUtil.buildRequest("smartdevice_test", "storerequest", "storerequest(${wasteType.name}, ${wasteWeight})", actorNameWS).toString()
+        val req: String = MsgUtil.buildRequest(actorNameSD, "storerequest", "storerequest(${wasteType.name}, ${wasteWeight})", actorNameWS).toString()
         var reply: String = ""
 
         try {
@@ -185,12 +221,12 @@ class TestWasteService {
     }
 
     @Test
-    fun testLoadRejected3() {
+    fun testLoadRejectedNotEnoughSpace() {
         var wasteType = WasteType.PLASTIC;
         var wasteWeight = WSconstants.DEFAULT_MAX + 10.0;
 
         ColorsOut.outappl("TEST: Receive a loadrejected reply when there is not enough space to store the load.", ColorsOut.CYAN);
-        val req: String = MsgUtil.buildRequest("smartdevice_test", "storerequest", "storerequest(${wasteType.name}, ${wasteWeight})", actorNameWS).toString()
+        val req: String = MsgUtil.buildRequest(actorNameSD, "storerequest", "storerequest(${wasteType.name}, ${wasteWeight})", actorNameWS).toString()
         var reply: String = ""
 
         try {

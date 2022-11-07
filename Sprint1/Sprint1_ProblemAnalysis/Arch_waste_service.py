@@ -34,7 +34,6 @@ with Diagram('waste_serviceArch', show=False, outformat='png', graph_attr=grapha
      wasteservice >> Edge(color='green', style='dashed', xlabel='loadrejected') >> sys 
      wasteservice >> Edge(color='green', style='dashed', xlabel='loadrejected') >> sys 
      wasteservice >> Edge(color='green', style='dashed', xlabel='loadaccepted') >> sys 
-     transporttrolley >> Edge(color='blue', style='solid', xlabel='cmd') >> basicrobot
-     transporttrolley >> Edge(color='magenta', style='solid', xlabel='step') >> basicrobot
      transporttrolley >> Edge(color='green', style='dashed', xlabel='pickupcompleted') >> sys 
+     transporttrolley >> Edge(color='blue', style='solid', xlabel='depositcompleted') >> wasteservice
 diag
