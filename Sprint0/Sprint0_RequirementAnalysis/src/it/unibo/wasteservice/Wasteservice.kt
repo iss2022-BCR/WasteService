@@ -28,8 +28,8 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 									var CurrentGlass = 0.0f
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("[WasteService] Reset:")
-						println("	Plastic: $CurrentPlastic / ${wasteservice.Constants.MAXPB} KG")
-						println("	Glass: $CurrentGlass / ${wasteservice.Constants.MAXGB} KG")
+						println("	Plastic: $CurrentPlastic")
+						println("	Glass: $CurrentGlass")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -39,7 +39,6 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 				}	 
 				state("state_idle") { //this:State
 					action { //it:State
-						println("[WasteService] Idle...")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -60,24 +59,15 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 													// enough space
 													(Type == wasteservice.WasteType.PLASTIC && CurrentPlastic + TruckLoad <= wasteservice.Constants.MAXPB) ||
 													(Type == wasteservice.WasteType.GLASS && CurrentGlass + TruckLoad <= wasteservice.Constants.MAXGB)
-								 ){
-												if (Type == wasteservice.WasteType.PLASTIC) {
-													CurrentPlastic += TruckLoad 
-												}
-												else {
-													CurrentGlass += TruckLoad
-												}
-								answer("storerequest", "loadaccepted", "loadaccepted(_)"   )  
+								 ){answer("storerequest", "loadaccepted", "loadaccepted(_)"   )  
 								forward("doDeposit", "doDeposit(TYPE,WEIGHT)" ,"transporttrolley" ) 
-								delay(1000) 
 								}
 								else
 								 {answer("storerequest", "loadrejected", "loadaccepted(_)"   )  
 								 }
 								forward("updategui", "updategui(_)" ,"wasteservicestatusgui" ) 
-								println("	Plastic: $CurrentPlastic / ${wasteservice.Constants.MAXPB} KG")
-								println("	Glass: $CurrentGlass / ${wasteservice.Constants.MAXGB} KG")
 						}
+						delay(1000) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
