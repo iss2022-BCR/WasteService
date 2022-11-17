@@ -4,7 +4,7 @@ import it.unibo.kactor.IApplMessage
 import unibo.comm22.tcp.TcpClientSupport
 import unibo.comm22.interfaces.Interaction2021
 
-class connQakTcp : connQakBase( ){
+class connQakTcp(  ) : connQakBase( ){
 	lateinit var conn   : Interaction2021 //IConnInteraction
 	
 	override fun createConnection( ){ //hostIP: String, port: String

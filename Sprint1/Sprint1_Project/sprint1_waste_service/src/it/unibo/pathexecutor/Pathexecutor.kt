@@ -29,7 +29,7 @@ class Pathexecutor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t04",targetState="doThePath",cond=whenRequest("dopath"))
+					 transition(edgeName="t019",targetState="doThePath",cond=whenRequest("dopath"))
 				}	 
 				state("doThePath") { //this:State
 					action { //it:State
@@ -65,9 +65,9 @@ class Pathexecutor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 				state("doMove") { //this:State
 					action { //it:State
 						
-									planner.updateMap(CurMoveTodo, "")
-									// planner.showMap()
-									// planner.showCurrentRobotState()	
+									plannerBCR.updateMap(CurMoveTodo, "")
+									// plannerBCR.showMap()
+									// plannerBCR.showCurrentRobotState()	
 						delay(350) 
 						//genTimer( actor, state )
 					}
@@ -91,7 +91,7 @@ class Pathexecutor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 				 	 			scope, context!!, "local_tout_pathexecutor_doMoveTurn", 350.toLong() )
 				 	 		//}
 					}	 	 
-					 transition(edgeName="t15",targetState="nextMove",cond=whenTimeout("local_tout_pathexecutor_doMoveTurn"))   
+					 transition(edgeName="t120",targetState="nextMove",cond=whenTimeout("local_tout_pathexecutor_doMoveTurn"))   
 				}	 
 				state("doMoveW") { //this:State
 					action { //it:State
@@ -101,9 +101,9 @@ class Pathexecutor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t26",targetState="handleAlarm",cond=whenEvent("alarm"))
-					transition(edgeName="t27",targetState="nextMove",cond=whenReply("stepdone"))
-					transition(edgeName="t28",targetState="endWorkKo",cond=whenReply("stepfail"))
+					 transition(edgeName="t221",targetState="handleAlarm",cond=whenEvent("alarm"))
+					transition(edgeName="t222",targetState="nextMove",cond=whenReply("stepdone"))
+					transition(edgeName="t223",targetState="endWorkKo",cond=whenReply("stepfail"))
 				}	 
 				state("handleAlarm") { //this:State
 					action { //it:State
@@ -136,7 +136,7 @@ class Pathexecutor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t09",targetState="handleAlarm",cond=whenEvent("alarm"))
+					 transition(edgeName="t024",targetState="handleAlarm",cond=whenEvent("alarm"))
 				}	 
 			}
 		}

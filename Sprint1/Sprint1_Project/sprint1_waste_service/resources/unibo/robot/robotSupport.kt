@@ -1,13 +1,27 @@
 package unibo.robot
 /*
  -------------------------------------------------------------------------------------------------
+ A factory that creates the proper support for each specific robot type
+ 
+ NOV 2019:
+ The operation create accept as last argument (filter) an ActorBasic to be used
+ as a data-stream handler
+ 
+ The operation subscribeToFilter subscribes to the given data-stream handler
+ (dsh) another ActorBasic that should work as a data-stream handler
+ -------------------------------------------------------------------------------------------------
  */
 
+import it.unibo.`is`.interfaces.protocols.IConnInteraction
 import it.unibo.kactor.ActorBasic
+import it.unibo.kactor.ActorBasicFsm
 import org.json.JSONObject
-import unibo.comm22.utils.CommSystemConfig
 import java.io.File
+import it.unibo.kactor.MsgUtil
+import it.unibo.kactor.QakContext
+import kotlinx.coroutines.runBlocking
 
+//import robotMbot.robotDataSourceArduino
  
 
 
@@ -15,27 +29,24 @@ object robotSupport{
 	lateinit var robotKind  :  String
 	var endPipehandler      :  ActorBasic? = null 
 	
-	fun readStepTime(   ) : Any? {
+	fun readStepTime(   ) : String{  
  		val config = File("stepTimeConfig.json").readText(Charsets.UTF_8)
 		val jsonObject   = JSONObject( config )
-		return jsonObject.getJSONObject("terms").getJSONArray("step")[0] //merda reversata json rotto
+		return jsonObject.getString("step") 
 	}
 	
 	fun create( owner: ActorBasic, configFileName: String, endPipe: ActorBasic? = null ){
 		endPipehandler      =  endPipe
- 		val config = File(configFileName).readText(Charsets.UTF_8)
+ 		val config = File("${configFileName}").readText(Charsets.UTF_8)
 		val jsonObject   = JSONObject( config )
 		val hostAddr     = jsonObject.getString("ipvirtualrobot") 
 		robotKind        = jsonObject.getString("type") 
-		val robotPort    = jsonObject.getString("port")
-		CommSystemConfig.tracing = jsonObject.getBoolean("commtrace")
+		val robotPort    = jsonObject.getString("port") 
 		println( "		--- robotSupport | CREATING for $robotKind host=$hostAddr port=$robotPort owner=$owner" )
 
 		when( robotKind ){		
 			//"mockrobot"  ->  { robotMock.mockrobotSupport.create(  ) }
-			"virtual"    ->  {
-				robotVirtual.virtualrobotSupport2021.create( owner, hostAddr, robotPort)
-			}
+			"virtual"    ->  { robotVirtual.virtualrobotSupport2021.create( owner, hostAddr, robotPort) }
   			"realnano"   ->  {
 				robotNano.nanoSupport.create( owner )
  				val realsonar = robotNano.sonarHCSR04SupportActor("realsonar")
@@ -44,7 +55,7 @@ object robotSupport{
   				println("		--- realnano robotSupport | has created the realsonar")
 			}
 			"realmbot" -> {
-				robotMbot.mbotSupport.create(owner, robotPort)
+				//robotMbot.mbotSupport.create(owner, robotPort)
 				/*
 				val realsonar = robotMbot.robotDataSourceArduino("realsonar", owner, conn)
 				//Context injection
@@ -68,7 +79,7 @@ object robotSupport{
 			//"mockrobot"  -> { robotMock.mockrobotSupport.move( cmd ) 					  }
 			"virtual"    -> { robotVirtual.virtualrobotSupport2021.move(  cmd ) 	  }
   			"realnano"   -> { robotNano.nanoSupport.move( cmd)	}
-            "realmbot"   -> { robotMbot.mbotSupport.move( cmd )	}
+            "realmbot"   -> { /*robotMbot.mbotSupport.move( cmd )*/	}
 			else         -> println( "		--- robotSupport: move| robot unknown")
 		}		
 	}
@@ -86,7 +97,7 @@ object robotSupport{
 	
 	fun createSonarPipe(robotsonar: ActorBasic?){
  		if( robotsonar != null ){ 
-			//runBlocking{
+			runBlocking{
 				//ACTIVATE THE DATA SOURCE  
 				//MsgUtil.sendMsg("robotSupport", "sonarstart", "sonarstart(do)", robotsonar)
 		 		//SET THE PIPE  
@@ -94,7 +105,7 @@ object robotSupport{
 		 			subscribeLocalActor("datacleaner").
 		 			subscribeLocalActor("distancefilter").
 		 			subscribeLocalActor("basicrobot")		//in order to perceive obstacle
-			//}
+			}
 			println("robotSupport | SONAR PIPE DONE NO runBlocking")
 		}else{
 	 		println("robotSupport | WARNING: sonar NOT FOUND")

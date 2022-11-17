@@ -1,5 +1,9 @@
 package rx
+ 
 
+import it.unibo.kactor.MsgUtil
+import kotlinx.coroutines.delay
+import it.unibo.kactor.ApplMessage
 import alice.tuprolog.Term
 import alice.tuprolog.Struct
 import it.unibo.kactor.*
@@ -23,7 +27,7 @@ val LimitHigh = 150
  		val data  = (Term.createTerm( msg.msgContent() ) as Struct).getArg(0).toString()
   		//println("$tt $name |  data = $data ")
 		val Distance = Integer.parseInt( data ) 
- 		if(Distance in (LimitLow + 1) until LimitHigh){
+ 		if( Distance > LimitLow && Distance < LimitHigh ){
 			emitLocalStreamEvent( msg ) //propagate
      	}else{
 			println("$tt $name |  DISCARDS $Distance ")
