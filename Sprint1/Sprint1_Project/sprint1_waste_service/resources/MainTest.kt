@@ -1,5 +1,5 @@
-import it.unibo.sprint1_map_editor.model.map_config.CellType
-import it.unibo.sprint1_map_editor.model.map_config.MapConfig
+import it.unibo.map_editor_bcr.model.map_config.CellType
+import it.unibo.map_editor_bcr.model.map_config.MapConfig
 import kotlinx.coroutines.runBlocking
 import wasteservice.WasteService
 import wasteservice.WasteType

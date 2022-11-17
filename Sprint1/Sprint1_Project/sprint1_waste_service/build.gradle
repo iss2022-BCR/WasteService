@@ -90,7 +90,7 @@ dependencies {
     // test
     implementation name: 'lib'
 
-    implementation files('../unibolibs/sprint1_map_editor.jar')
+    implementation files('../unibolibs/map_editor_bcr.jar')
 }
 
 sourceSets {

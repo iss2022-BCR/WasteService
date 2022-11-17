@@ -11,8 +11,8 @@ import java.io.FileOutputStream
 import java.io.ObjectInputStream
 import java.io.FileInputStream
 import unibo.planner22.model.*
-import it.unibo.sprint1_map_editor.model.map_config.CellType
-import it.unibo.sprint1_map_editor.model.room_map.RoomMapParser
+import it.unibo.map_editor_bcr.model.map_config.CellType
+import it.unibo.map_editor_bcr.model.room_map.RoomMapParser
 
 
 object plannerBCR {

@@ -1,8 +1,8 @@
 package wasteservice
 
-import it.unibo.sprint1_map_editor.model.MapLoader
-import it.unibo.sprint1_map_editor.model.map_config.CellType
-import it.unibo.sprint1_map_editor.model.map_config.MapConfig
+import it.unibo.map_editor_bcr.model.MapLoader
+import it.unibo.map_editor_bcr.model.map_config.CellType
+import it.unibo.map_editor_bcr.model.map_config.MapConfig
 import kotlin.random.Random
 
 object MapConfigUtils {
