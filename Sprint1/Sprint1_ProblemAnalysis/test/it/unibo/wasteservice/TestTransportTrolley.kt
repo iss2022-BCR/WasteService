@@ -17,8 +17,9 @@ import kotlin.concurrent.thread
 import kotlin.test.assertTrue
 
 /**
- *
- *
+ * TransportTrolley Test:
+ * We check if the transport trolley transits through all the states necessary for the execution of a GLASS or PLASTIC
+ * deposit action.
  */
 class TestTransportTrolley {
     companion object {

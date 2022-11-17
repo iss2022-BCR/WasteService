@@ -18,6 +18,7 @@ import kotlin.test.Test
 
 /**
  * WasteService Test: StoreRequest handling.
+ * Test Recap:
  * Test1: loadaccepted
  *  1) SmartDevice sends a StoreRequest
  *  2) WasteService replies with a loadaccepted

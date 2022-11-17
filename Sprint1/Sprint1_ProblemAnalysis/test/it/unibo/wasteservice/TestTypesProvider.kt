@@ -15,8 +15,9 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-/*
- * Test: check that the sent list is the same as the received one
+/**
+ * TypesProvider Test:
+ * We check that the sent list is the same as the received one.
  */
 class TestTypesProvider {
     companion object {
