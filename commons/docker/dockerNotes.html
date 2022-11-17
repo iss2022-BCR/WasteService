@@ -29,7 +29,10 @@
             <a href="../../Sprint0/index.html">&#8617; &nbsp;&nbsp;&nbsp; Back to<br/>WasteService</a>
             <p class="separator" style="color: #818181;">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
             <a href="#Edit-the-Docker-Image-Locally">Edit the Docker<br/>Image Locally</a>
-            <a href="#Edit-WEnv-Configuration">Edit WEnv<br/>Configuration</a>
+            <div class="sidenavSection">
+                <a href="#Edit-WEnv-Configuration">Edit WEnv<br/>Configuration</a>
+                <a href="#BCR-sceneConfig">BCR sceneConfig.js</a>
+            </div>
         </div>
 
         <div id="main">
@@ -60,7 +63,66 @@ docker exec -it  $(docker ps -a | grep 'virtual' | cut -d' ' -f1) sh
 vi ../../WebGLScene/sceneConfig.js
 </pre>
                 </li>
+                <li>
+                    Finally save changes and quit (type ":wq" and press enter):
+<pre>
+:wq
+</pre>
+                </li>
             </ol>
+
+            <h3 id="BCR-sceneConfig">BCR sceneConfig.js</h3>
+            We edited the scene configuration file to <b>remove the obstacle</b> in the center and
+            to make the <b>room walls more homogeneous</b>:
+<pre>
+{
+    name: "wallUp",
+    centerPosition: { x: 0.5, y: 0.98},
+    size: { x: 0.98, y: 0.02}
+},
+{
+    name: "wallDown",
+    centerPosition: { x: 0.5, y: 0.02},
+    size: { x: 0.98, y: 0.02}
+},
+{
+    name: "wallLeft",
+    centerPosition: { x: 0.02, y: 0.5},
+    size: { x: 0.02, y: 0.98}
+},
+{
+    name: "wallRight",
+    centerPosition: { x: 0.98, y: 0.5},
+    size: { x: 0.02, y: 0.98}
+}
+</pre>            
+            and add static obstacles into walls to highlight the <b>relevant locations</b>:
+<pre>
+{
+    name: "indoor",
+    centerPosition: { x: 0.23, y: 0.0},
+    size: { x: 0.4, y: 0.02}
+},
+{
+    name: "glassBox",
+    centerPosition: { x: 0.77, y: 1.0},
+    size: { x: 0.4, y: 0.02}
+},
+{
+    name: "plasticBox",
+    centerPosition: { x: 0.77, y: 0.0},
+    size: { x: 0.4, y: 0.02}
+},
+</pre>
+            Before:
+            <center><img width="100%" src="imgs/WEnv_before.png"></center>
+            
+            After:
+            <center><img width="100%" src="imgs/WEnv_after.png"></center>
+            <center><img width="100%" src="imgs/WEnv_after_highlight.png"></center>
+            
+            <br/>
+            File: <a href="sceneConfig.js">sceneConfig.js</a>
         </div>
     </body>
 </html>
