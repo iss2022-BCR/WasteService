@@ -30,6 +30,6 @@ public class RemoveMapConfigOperation implements MapConfigOperation {
 
     @Override
     public String getDescription() {
-        return "Remove element in ["+x+","+y+"] from " + this.cellBefore.code + " to " + CellType.NONE.code;
+        return "Remove element in ["+x+","+y+"] from " + this.cellBefore.code;
     }
 }

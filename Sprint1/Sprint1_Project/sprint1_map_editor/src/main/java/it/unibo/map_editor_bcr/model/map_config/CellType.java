@@ -115,4 +115,8 @@ public enum CellType {
                 this.color.getBlue()*100.0 + "%, " +
                 this.color.getOpacity() + ")";
     }
+
+    public boolean equalsCode(String cellTypeCode) {
+        return this.code.equals(cellTypeCode) || (this.code.equals("-") && cellTypeCode.isEmpty());
+    }
 }

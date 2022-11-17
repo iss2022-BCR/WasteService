@@ -84,11 +84,8 @@ public class ControllerEditor {
     private Pane paneMapConfig;
 
     private Label[][] labelConfig;
-    private int rows, columns;
 
     private int mode = -1;
-
-    private int iEdit = -1;
 
     public ControllerEditor(/*Map map*/) {
         String filename = "mapRoomEmpty";
@@ -144,8 +141,8 @@ public class ControllerEditor {
         });
 
         // TO-DO: fix move and swap (exec/undo/redo)
-        this.buttonMove.setDisable(true);
-        this.buttonSwap.setDisable(true);
+        //this.buttonMove.setDisable(true);
+        //this.buttonSwap.setDisable(true);
     }
 
     /**
@@ -169,6 +166,7 @@ public class ControllerEditor {
         this.anchorPaneRoot.getChildren().remove(this.paneRoomMap);
 
         this.paneRoomMap = new Pane();
+        this.paneRoomMap.setVisible(false);
         this.paneRoomMap.setPrefSize(ELEMENT_SIZE * dimX + 2, ELEMENT_SIZE * dimY + 2);
         this.paneRoomMap.setSnapToPixel(false);
         this.paneRoomMap.setStyle("-fx-border-color: black");
@@ -182,6 +180,10 @@ public class ControllerEditor {
             }
         }
         this.anchorPaneRoot.getChildren().add(this.paneRoomMap);
+
+        this.paneRoomMap.setLayoutX((MapEditor.WINDOW_WIDTH - ELEMENT_SIZE * dimX) / 2);
+        this.paneRoomMap.setLayoutY((MapEditor.WINDOW_HEIGHT - ELEMENT_SIZE * dimY) / 4);
+        this.paneRoomMap.setVisible(true);
     }
 
     private Label buildRoomMapElement(it.unibo.map_editor_bcr.model.room_map.CellType ct, double x, double y, double opacity) {
@@ -201,7 +203,8 @@ public class ControllerEditor {
 
         this.labelConfig = new Label[dimY][dimX];
         this.paneMapConfig = new Pane();
-        this.paneMapConfig.setPrefSize(ELEMENT_SIZE * rows, ELEMENT_SIZE * columns);
+        this.paneMapConfig.setVisible(false); // make it visible when it finished building
+        this.paneMapConfig.setPrefSize(ELEMENT_SIZE * dimX, ELEMENT_SIZE * dimY);
         this.paneMapConfig.setSnapToPixel(false);
         this.paneMapConfig.getChildren().clear();
 
@@ -213,6 +216,10 @@ public class ControllerEditor {
             }
         }
         this.anchorPaneRoot.getChildren().add(this.paneMapConfig);
+
+        this.paneMapConfig.setLayoutX(((MapEditor.WINDOW_WIDTH - ELEMENT_SIZE * dimX) / 2) + 1.0);
+        this.paneMapConfig.setLayoutY(((MapEditor.WINDOW_HEIGHT - ELEMENT_SIZE * dimY) / 4) + 1.0);
+        this.paneMapConfig.setVisible(true);
     }
 
     private Label buildMapConfigElement(CellType ct, double x, double y) {
@@ -449,39 +456,62 @@ public class ControllerEditor {
     @FXML
     public void newMap(ActionEvent event) {
         // check if there are changes
-        Alert alert = new Alert(AlertType.CONFIRMATION, "", ButtonType.YES, ButtonType.NO);
-        alert.setTitle("Dialog window");
-        alert.setHeaderText("You have changes in progress.");
-        alert.setContentText("Creating a new map will overwrite the current state of the map.\n" +
-                "Continue anyway?");
-        alert.getDialogPane().getStylesheets().add(
-                ControllerEditor.class.getResource("/it/unibo/sprint1_map_editor/styles/theme-" +
-                        (this.checkBoxTheme.isSelected() ? "dark" : "light") +".css").toExternalForm());
+        if(this.mapConfigOperationExecutor.checkForChanges()) {
+            Alert alert = new Alert(AlertType.CONFIRMATION, "", ButtonType.YES, ButtonType.NO);
+            alert.setTitle("Dialog window");
+            alert.setHeaderText("You have changes in progress.");
+            alert.setContentText("Creating a new map will overwrite the current state of the map.\n" +
+                    "Continue anyway?");
+            alert.getDialogPane().getStylesheets().add(
+                    ControllerEditor.class.getResource("/it/unibo/map_editor_bcr/styles/theme-" +
+                            (this.checkBoxTheme.isSelected() ? "dark" : "light") +".css").toExternalForm());
 
-        alert.showAndWait();
-        if (alert.getResult() == ButtonType.YES) {
-            /*this.map = new Map(this.map.getRowsSize(), this.map.getColumnsSize());
-            //this.map.setBorders(CellType.BORDER);
-            this.rows = map.getRowsSize();
-            this.columns = map.getColumnsSize();
-            this.initMapConfig();*/
-
-            // TO-DO: load pane
+            alert.showAndWait();
+            if (alert.getResult() != ButtonType.YES) {
+                return;
+            }
         }
+
+        // reset MapConfig
+        this.mapConfig = new MapConfig(this.dimX, this.dimY);
+
+        // reload paneMapConfig
+        this.initMapConfig();
     }
 
     @FXML
     public void loadMap(ActionEvent event) {
-        // TO-DO: check if there are changes
-        /*this.map = MapLoader.loadMap("mapRoomEmpty.txt");
-        this.rows = map.getRowsSize();
-        this.columns = map.getColumnsSize();*/
+        // check if there are changes
+        if(this.mapConfigOperationExecutor.checkForChanges()) {
+            Alert alert = new Alert(AlertType.CONFIRMATION, "", ButtonType.YES, ButtonType.NO);
+            alert.setTitle("Dialog window");
+            alert.setHeaderText("You have changes in progress.");
+            alert.setContentText("Loading the map from file will overwrite the current state of the map.\n" +
+                    "Continue anyway?");
+            alert.getDialogPane().getStylesheets().add(
+                    ControllerEditor.class.getResource("/it/unibo/map_editor_bcr/styles/theme-" +
+                            (this.checkBoxTheme.isSelected() ? "dark" : "light") +".css").toExternalForm());
 
-        // TO-DO: load pane
-        this.initRoomMap();
+            alert.showAndWait();
+            if (alert.getResult() != ButtonType.YES) {
+                return;
+            }
+        }
+
+        String filename = "mapConfig";
+        this.mapConfig = MapLoader.loadMapConfig(filename);
+        if(this.mapConfig.getDimX() != this.dimX || this.mapConfig.getDimY() != this.dimY) {
+            System.out.println("The MapConfig '" + filename + "' must have the same size of MapRoom. " +
+                    "Expected: (" + dimX + ", " + dimY + "), " +
+                    "found: (" + this.mapConfig.getDimX() + ", " + this.mapConfig.getDimY() + ")");
+            this.mapConfig = new MapConfig(dimX, dimY);
+        }
+
+        // reload paneMapConfig
         this.initMapConfig();
-        this.adjustLayout();
     }
+
+    // TO-DO
     @FXML
     public void saveMap(ActionEvent event) {
         String filename = "mapRoomEmpty.txt";
@@ -493,7 +523,7 @@ public class ControllerEditor {
         alert.setHeaderText("The file '" + filename + "' already exists.");
         alert.setContentText("Do you want to overwrite it?");
         alert.getDialogPane().getStylesheets().add(
-                ControllerEditor.class.getResource("/it/unibo/sprint1_map_editor/styles/theme-" +
+                ControllerEditor.class.getResource("/it/unibo/map_editor_bcr/styles/theme-" +
                         (this.checkBoxTheme.isSelected() ? "dark" : "light") +".css").toExternalForm());
 
         alert.showAndWait();
@@ -510,7 +540,7 @@ public class ControllerEditor {
             // TO-DO: style?
             TextField tf = dialog.getEditor();
             tf.getStylesheets().add(
-                    ControllerEditor.class.getResource("/it/unibo/sprint1_map_editor/styles/theme-" +
+                    ControllerEditor.class.getResource("/it/unibo/map_editor_bcr/styles/theme-" +
                             (this.checkBoxTheme.isSelected() ? "dark" : "light") +".css").toExternalForm());
             // validate filename TO-DO
             Optional<String> result = dialog.showAndWait();
@@ -617,13 +647,16 @@ public class ControllerEditor {
         final int iDstY = (int) (dstY / ELEMENT_SIZE);
 
         Label oldL = this.getLabel(iDstX, iDstY);
-        oldL.setLayoutX(srcX);
+        /*oldL.setLayoutX(srcX);
         oldL.setLayoutY(srcY);
         oldL.setText("");
-        oldL.setStyle("-fx-background-color: " + CellType.NONE.getRGBAstring());
+        oldL.setStyle("-fx-background-color: " + CellType.NONE.getRGBAstring());*/
+        this.paneMapConfig.getChildren().remove(oldL);
 
         this.putLabel(iDstX, iDstY, l);
-        this.putLabel(iSrcX, iSrcY, buildMapConfigElement(CellType.NONE, srcX, srcY));
+        Label newL = buildMapConfigElement(CellType.NONE, srcX, srcY);
+        this.putLabel(iSrcX, iSrcY, newL);
+        this.paneMapConfig.getChildren().add(newL);
 
         //this.printLabelMap(); //test
 
@@ -688,30 +721,30 @@ public class ControllerEditor {
     @FXML
     public void undo(ActionEvent event) {
         if(this.mapConfigOperationExecutor.canUndo()) {
-            System.out.println("Undo last command");
-
             String action = this.mapConfigOperationExecutor.undoOperation();
             this.comboBoxAction.setItems(FXCollections.observableList(this.mapConfigOperationExecutor.getOperationsList()));
             this.comboBoxAction.setValue(action);
 
+            System.out.println(action);
+
             updateLabels();
 
-            System.out.println(this.mapConfig.toFancyString());
+            System.out.println(this.mapConfig.toFancyString()); // log
         }
         this.buttonUndo.setDisable(!this.mapConfigOperationExecutor.canUndo());
         this.buttonRedo.setDisable(!this.mapConfigOperationExecutor.canRedo());
         // deselect mode?
 
-        this.printLabelMap();
+        //this.printLabelMap(); // test
     }
     @FXML
     public void redo(ActionEvent event) {
         if(this.mapConfigOperationExecutor.canRedo()) {
-            System.out.println("Redo last undone command");
-
             String action = this.mapConfigOperationExecutor.redoOperation();
             this.comboBoxAction.setItems(FXCollections.observableList(this.mapConfigOperationExecutor.getOperationsList()));
             this.comboBoxAction.setValue(action);
+
+            System.out.println(action);
 
             updateLabels();
 
@@ -745,30 +778,35 @@ public class ControllerEditor {
                 i--;
             }
         }
-        sheets.add(ControllerEditor.class.getResource("/it/unibo/sprint1_map_editor/styles/theme-" + (cb.isSelected() ? "dark" : "light") + ".css").toExternalForm());
+        sheets.add(ControllerEditor.class.getResource("/it/unibo/map_editor_bcr/styles/theme-" + (cb.isSelected() ? "dark" : "light") + ".css").toExternalForm());
     }
 
     private void updateLabels() {
         for(int y = 0; y < this.dimY; y++) {
             for(int x = 0; x < this.dimX; x++) {
-                if(!this.mapConfig.get(x, y).code.equals(this.getLabel(x, y))) {
+                if(!this.mapConfig.get(x, y).equalsCode(this.getLabel(x, y).getText())) {
                     this.changeLabel(x, y, this.mapConfig.get(x, y));
                 }
             }
         }
-        printLabelMap();
+        //printLabelMap(); // test
     }
 
     private void changeLabel(int x, int y, CellType cell) {
-        Label l = this.getLabel(x, y);
+        /*Label l = this.getLabel(x, y);
         l.setText(cell.equals(CellType.NONE) ? "" : cell.code);
-        //l.setOpacity((cell.equals(CellType.EMPTY) || cell.equals(CellType.BORDER))? 0.2 : 1.0);
-        l.setStyle("-fx-background-color: " + cell.getRGBAstring());
+        l.setStyle("-fx-background-color: " + cell.getRGBAstring());*/
+
+        Label lToBeChanged = this.getLabel(x, y);
+        Label lChanged = buildMapConfigElement(cell, lToBeChanged.getLayoutX(), lToBeChanged.getLayoutY());
+        this.paneMapConfig.getChildren().remove(lToBeChanged);
+        this.putLabel(x, y, lChanged);
+        this.paneMapConfig.getChildren().add(lChanged);
     }
 
     private void printLabelMap() {
         for(int y = 0; y < this.dimY; y++) {
-            for(int x = 0; x < this.dimX; x++) {
+            for(int x = 0; x < this.dimX;x++) {
                 if(!this.getLabel(x, y).getText().isEmpty()) {
                     System.out.print(this.getLabel(x, y).getText());
                 } else {

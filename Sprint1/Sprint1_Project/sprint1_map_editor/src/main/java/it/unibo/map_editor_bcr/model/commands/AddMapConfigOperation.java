@@ -32,6 +32,6 @@ public class AddMapConfigOperation implements MapConfigOperation {
 
     @Override
     public String getDescription() {
-        return "Add element in ["+x+","+y+"] from " + this.cellBefore.code + " to " + this.cell.code;
+        return "Add element " + this.cell.code + " in ["+x+","+y+"]";
     }
 }

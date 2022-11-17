@@ -18,19 +18,12 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 		 
 				var Actions: String = "" 
 				var Progress = ""
-				
-				var WasteType: wasteservice.WasteType = wasteservice.WasteType.PLASTIC
+				planner.initAI()
+				planner.loadRoomMap("mapRoomEmpty")
 		return { //this:ActionBasciFsm
 				state("state_init") { //this:State
 					action { //it:State
-						
-									plannerBCR.initAI()
-									plannerBCR.loadRoomMap("mapRoomEmpty")
-									plannerBCR.showMap()
-									wasteservice.MapConfigUtils.loadMapConfig("mapConfigWasteService")
-									println("MapConfig:")
-									wasteservice.MapConfigUtils.showFancyMap()
-						println("[TransportTrolley] Started.")
+						println("[TransportTrolley] Started")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -40,150 +33,46 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("state_idle") { //this:State
 					action { //it:State
-						println("[TransportTrolley] Waiting for deposit requests...")
+						println("[TransportTrolley] Waiting for deposit actions...")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t18",targetState="state_handle_deposit_request",cond=whenRequest("deposit"))
+					 transition(edgeName="t13",targetState="state_handle_deposit_request",cond=whenRequest("deposit"))
 				}	 
 				state("state_handle_deposit_request") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						if( checkMsgContent( Term.createTerm("deposit(TYPE)"), Term.createTerm("deposit(TYPE)"), 
+						if( checkMsgContent( Term.createTerm("deposit(TYPE)"), Term.createTerm("deposit(_)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								 WasteType = wasteservice.WasteType.valueOf(payloadArg(0))  
-								println("[TransportTrolley] Deposit request received.")
-						}
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="state_move_to_indoor", cond=doswitch() )
-				}	 
-				state("state_move_to_indoor") { //this:State
-					action { //it:State
-						println("[TransportTrolley] Moving to INDOOR...")
-						
-									val curPos: Pair<Int, Int> = plannerBCR.get_curPos()
-									val goal: Pair<Int, Int> = wasteservice.MapConfigUtils.getNearestPositionToCellType(curPos, "INDOOR")
-									plannerBCR.setGoal(goal.first, goal.second)
-									plannerBCR.doPlan()
-									Actions = plannerBCR.getActionsString()
-						request("dopath", "dopath($Actions,transporttrolley)" ,"pathexecutor" )  
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t19",targetState="state_pickup",cond=whenReply("dopathdone"))
-					transition(edgeName="t110",targetState="state_error",cond=whenReply("dopathfail"))
-				}	 
-				state("state_pickup") { //this:State
-					action { //it:State
-						println("[TransportTrolley] Picking up the load of $WasteType...")
-						delay(1000) 
-						println("[TransportTrolley] Pickup completed.")
-						answer("deposit", "pickupcompleted", "pickupcompleted(_)"   )  
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="state_move_to_box", cond=doswitch() )
-				}	 
-				state("state_move_to_box") { //this:State
-					action { //it:State
-						println("[TransportTrolley] Moving to ${WasteType.name}_BOX...")
-						
-									val curPos: Pair<Int, Int> = plannerBCR.get_curPos()
-									val goal: Pair<Int, Int> = wasteservice.MapConfigUtils.getNearestPositionToCellType(curPos, WasteType.name)
-									plannerBCR.setGoal(goal.first, goal.second)
-									plannerBCR.doPlan()
-									Actions = plannerBCR.getActionsString()
-						request("dopath", "dopath($Actions,transporttrolley)" ,"pathexecutor" )  
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t111",targetState="state_dump",cond=whenReply("dopathdone"))
-					transition(edgeName="t112",targetState="state_error",cond=whenReply("dopathfail"))
-				}	 
-				state("state_move_to_glassbox") { //this:State
-					action { //it:State
-						println("[TransportTrolley] Moving to GLASS_BOX...")
-						
-									plannerBCR.setGoal(6, 0)
-									plannerBCR.doPlan()
-									Actions = plannerBCR.getActionsString()
-						request("dopath", "dopath($Actions,transporttrolley)" ,"pathexecutor" )  
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t113",targetState="state_dump",cond=whenReply("dopathdone"))
-					transition(edgeName="t114",targetState="state_error",cond=whenReply("dopathfail"))
-				}	 
-				state("state_move_to_plasticbox") { //this:State
-					action { //it:State
-						println("[TransportTrolley] Moving to PLASTIC_BOX...")
-						
-									plannerBCR.setGoal(6, 4)
-									plannerBCR.doPlan()
-									Actions = plannerBCR.getActionsString()
-						request("dopath", "dopath($Actions,transporttrolley)" ,"pathexecutor" )  
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t115",targetState="state_dump",cond=whenReply("dopathdone"))
-					transition(edgeName="t116",targetState="state_error",cond=whenReply("dopathfail"))
-				}	 
-				state("state_dump") { //this:State
-					action { //it:State
-						println("[TransportTrolley] Dumping the load...")
-						delay(1000) 
-						println("[TransportTrolley] Dump completed.")
-						forward("depositcompleted", "depositcompleted(_)" ,"wasteservice" ) 
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="state_move_to_home", cond=doswitch() )
-				}	 
-				state("state_move_to_home") { //this:State
-					action { //it:State
-						println("[TransportTrolley] Moving to HOME...")
-						
-									val curPos: Pair<Int, Int> = plannerBCR.get_curPos()
-									val goal: Pair<Int, Int> = wasteservice.MapConfigUtils.getNearestPositionToCellType(curPos, "HOME")
-									plannerBCR.setGoal(goal.first, goal.second)
-									plannerBCR.doPlan()
-									Actions = plannerBCR.getActionsString()
-						request("dopath", "dopath($Actions,transporttrolley)" ,"pathexecutor" )  
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t117",targetState="state_idle",cond=whenReply("dopathdone"))
-					transition(edgeName="t118",targetState="state_error",cond=whenReply("dopathfail"))
-				}	 
-				state("state_error") { //this:State
-					action { //it:State
-						if( checkMsgContent( Term.createTerm("dopathfail(ARG)"), Term.createTerm("dopathfail(PATH_STILL_TO_DO)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
+								println("[TransportTrolley] Received deposit request...")
 								
-												var PathStillToDo = payloadArg(0)
-								println("[TransportTrolley] An Error occurred while trying to move along a path.")
-								println("[TransportTrolley] Path still to do: $PathStillToDo")
+												planner.setGoal(4, 3)
+												planner.doPlan()
+												Actions = planner.getActionsString()
+								request("dopath", "dopath($Actions,transporttrolley)" ,"pathexecutor" )  
+								answer("deposit", "depositcompleted", "depositcompleted(_)"   )  
 						}
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t14",targetState="state_path_done",cond=whenReply("dopathdone"))
+					transition(edgeName="t15",targetState="state_path_fail",cond=whenReply("dopathfail"))
+				}	 
+				state("state_path_done") { //this:State
+					action { //it:State
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="state_idle", cond=doswitch() )
+				}	 
+				state("state_path_fail") { //this:State
+					action { //it:State
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

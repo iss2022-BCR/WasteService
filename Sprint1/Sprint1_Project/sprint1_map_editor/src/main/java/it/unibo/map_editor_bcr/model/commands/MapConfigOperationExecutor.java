@@ -68,4 +68,12 @@ public class MapConfigOperationExecutor {
         }
         return result;
     }
+
+    /**
+     * Return true if there are changes, false otherwise
+     * @return
+     */
+    public boolean checkForChanges() {
+        return this.currentIndex != -1;
+    }
 }
