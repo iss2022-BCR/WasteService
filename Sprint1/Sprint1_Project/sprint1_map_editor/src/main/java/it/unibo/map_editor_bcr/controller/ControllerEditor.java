@@ -23,6 +23,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
@@ -86,6 +87,7 @@ public class ControllerEditor {
     private MapConfigOperationExecutor mapConfigOperationExecutor;
 
     private Pane paneRoomMap;
+    private Pane paneCoordinates;
     private Pane paneMapConfig;
 
     private Label[][] labelConfig;
@@ -121,9 +123,12 @@ public class ControllerEditor {
         //FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("BIN files")
 
         this.initRoomMap();
+        this.initCoordinates(Color.BLACK);
         this.initMapConfig();
         this.initMapConfigOperationExecutor();
         this.initAddElementList();
+
+        this.paneCoordinates.setVisible(false);
 
         Platform.runLater(() -> {
             this.adjustLayout();
@@ -147,6 +152,8 @@ public class ControllerEditor {
         this.hboxCommands.setLayoutX((MapEditor.WINDOW_WIDTH - this.hboxCommands.getWidth()) / 2);
         this.paneRoomMap.setLayoutX((MapEditor.WINDOW_WIDTH - ELEMENT_SIZE * dimX) / 2);
         this.paneRoomMap.setLayoutY((MapEditor.WINDOW_HEIGHT - ELEMENT_SIZE * dimY) / 4);
+        this.paneCoordinates.setLayoutX((MapEditor.WINDOW_WIDTH - ELEMENT_SIZE * dimX) / 2);
+        this.paneCoordinates.setLayoutY((MapEditor.WINDOW_HEIGHT - ELEMENT_SIZE * dimY) / 4);
         this.paneMapConfig.setLayoutX(((MapEditor.WINDOW_WIDTH - ELEMENT_SIZE * dimX) / 2));
         this.paneMapConfig.setLayoutY(((MapEditor.WINDOW_HEIGHT - ELEMENT_SIZE * dimY) / 4));
 
@@ -201,6 +208,44 @@ public class ControllerEditor {
 
         return l;
     }
+
+    private void initCoordinates(Color c) {
+        double offset = ELEMENT_SIZE / 8;
+
+        this.anchorPaneRoot.getChildren().remove(this.paneCoordinates);
+
+        this.paneCoordinates = new Pane();
+        this.paneCoordinates.setStyle("-fx-border-color: rgb(" + c.getRed()*100.0 + "%, " + c.getGreen()*100.0 + "%, " + c.getBlue()*100.0 +"%);" +
+                "-fx-border-width: 2 0 0 2;" +
+                "-fx-border-insets: -" + offset);
+        this.paneCoordinates.setVisible(false);
+        this.paneCoordinates.setPrefSize(ELEMENT_SIZE * dimX, ELEMENT_SIZE * dimY);
+
+        for(int y = 0; y < this.dimY; y++) {
+            this.paneCoordinates.getChildren().add(buildCoordinateElement(y, c, -ELEMENT_SIZE - offset, ELEMENT_SIZE * y));
+        }
+        for (int x = 1; x < this.dimX+1; x++) {
+            this.paneCoordinates.getChildren().add(buildCoordinateElement(x-1, c, ELEMENT_SIZE * (x-1), -ELEMENT_SIZE - offset));
+        }
+
+        this.anchorPaneRoot.getChildren().add(this.paneCoordinates);
+
+        this.paneCoordinates.setLayoutX((MapEditor.WINDOW_WIDTH - ELEMENT_SIZE * dimX) / 2);
+        this.paneCoordinates.setLayoutY((MapEditor.WINDOW_HEIGHT - ELEMENT_SIZE * dimY) / 4);
+        this.paneCoordinates.setVisible(true);
+    }
+    private Label buildCoordinateElement(int value,  Color c, double x, double y) {
+        Label l = new Label("" + value);
+        l.setLayoutX(x);
+        l.setLayoutY(y);
+        l.setAlignment(Pos.CENTER);
+        l.setStyle("-fx-text-fill: rgb(" + c.getRed()*100.0 + "%, " + c.getGreen()*100.0 + "%, " + c.getBlue()*100.0 +"%)");
+        l.setFont(Font.font("System", FontWeight.BOLD, 30.0));
+        l.setPrefSize(ELEMENT_SIZE, ELEMENT_SIZE);
+
+        return l;
+    }
+
     private void initMapConfig() {
         this.anchorPaneRoot.getChildren().remove(this.paneMapConfig);
 
@@ -232,7 +277,7 @@ public class ControllerEditor {
         l.setLayoutY(y);
         l.setAlignment(Pos.CENTER);
         l.setFont(Font.font("System", FontWeight.BOLD, 30.0));
-        l.setPrefSize(50.0, 50.0);
+        l.setPrefSize(ELEMENT_SIZE, ELEMENT_SIZE);
         l.setStyle("-fx-background-color: " + ct.getRGBAstring());
         final DropShadow dropShadow = new DropShadow();
         final Glow glow = new Glow();
@@ -366,7 +411,7 @@ public class ControllerEditor {
         Label l = new Label(ct.code);
         l.setAlignment(Pos.CENTER);
         l.setFont(Font.font("System", FontWeight.BOLD, 30.0));
-        l.setPrefSize(50.0, 50.0);
+        l.setPrefSize(ELEMENT_SIZE, ELEMENT_SIZE);
         l.setStyle("-fx-background-color: " + ct.getRGBAstring());
 
         final DropShadow dropShadow = new DropShadow();
@@ -829,6 +874,6 @@ public class ControllerEditor {
     }
     @FXML
     public void toggleShowCoordinates(ActionEvent event) {
-
+        this.paneCoordinates.setVisible(this.checkBoxCoordinates.isSelected());
     }
 }
