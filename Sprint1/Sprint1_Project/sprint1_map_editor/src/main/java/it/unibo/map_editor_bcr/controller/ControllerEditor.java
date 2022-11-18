@@ -27,11 +27,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.controlsfx.control.spreadsheet.Grid;
 import unibo.planner22.model.RoomMap;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.UnaryOperator;
 
 /**
  * TO-DO: invertire rows/cols
@@ -73,10 +75,13 @@ public class ControllerEditor {
     @FXML private VBox vboxEditTab;
     @FXML private ListView<Label> listViewCells;
 
+    @FXML private CheckBox checkBoxRoomMap;
+    @FXML private CheckBox checkBoxMapConfig;
+    @FXML private CheckBox checkBoxCoordinates;
+
     private RoomMapParser roomMapParser;
     private MapConfig mapConfig;
     private int dimX, dimY;
-
 
     private MapConfigOperationExecutor mapConfigOperationExecutor;
 
@@ -109,8 +114,6 @@ public class ControllerEditor {
         System.out.println("Load Map from '" + filename + "': " + this.rows + " x " + this.columns);
         System.out.println(map.toFancyString()); // Test
          */
-
-        mapConfigOperationExecutor = new MapConfigOperationExecutor();
     }
 
     public void initialize() {
@@ -119,13 +122,8 @@ public class ControllerEditor {
 
         this.initRoomMap();
         this.initMapConfig();
-
+        this.initMapConfigOperationExecutor();
         this.initAddElementList();
-
-        this.comboBoxAction.getItems();
-
-        this.buttonUndo.setDisable(true);
-        this.buttonRedo.setDisable(true);
 
         Platform.runLater(() -> {
             this.adjustLayout();
@@ -139,10 +137,6 @@ public class ControllerEditor {
                 this.adjustLayout();
             });
         });
-
-        // TO-DO: fix move and swap (exec/undo/redo)
-        //this.buttonMove.setDisable(true);
-        //this.buttonSwap.setDisable(true);
     }
 
     /**
@@ -153,10 +147,19 @@ public class ControllerEditor {
         this.hboxCommands.setLayoutX((MapEditor.WINDOW_WIDTH - this.hboxCommands.getWidth()) / 2);
         this.paneRoomMap.setLayoutX((MapEditor.WINDOW_WIDTH - ELEMENT_SIZE * dimX) / 2);
         this.paneRoomMap.setLayoutY((MapEditor.WINDOW_HEIGHT - ELEMENT_SIZE * dimY) / 4);
-        this.paneMapConfig.setLayoutX(((MapEditor.WINDOW_WIDTH - ELEMENT_SIZE * dimX) / 2) + 1.0);
-        this.paneMapConfig.setLayoutY(((MapEditor.WINDOW_HEIGHT - ELEMENT_SIZE * dimY) / 4) + 1.0);
+        this.paneMapConfig.setLayoutX(((MapEditor.WINDOW_WIDTH - ELEMENT_SIZE * dimX) / 2));
+        this.paneMapConfig.setLayoutY(((MapEditor.WINDOW_HEIGHT - ELEMENT_SIZE * dimY) / 4));
 
         // adjust listview
+    }
+
+    private void initMapConfigOperationExecutor() {
+        this.mapConfigOperationExecutor = new MapConfigOperationExecutor();
+
+        this.comboBoxAction.setValue("");
+        this.comboBoxAction.getItems().clear();
+        this.buttonUndo.setDisable(true);
+        this.buttonRedo.setDisable(true);
     }
 
     /**
@@ -167,16 +170,16 @@ public class ControllerEditor {
 
         this.paneRoomMap = new Pane();
         this.paneRoomMap.setVisible(false);
-        this.paneRoomMap.setPrefSize(ELEMENT_SIZE * dimX + 2, ELEMENT_SIZE * dimY + 2);
+        this.paneRoomMap.setPrefSize(ELEMENT_SIZE * dimX, ELEMENT_SIZE * dimY);
         this.paneRoomMap.setSnapToPixel(false);
-        this.paneRoomMap.setStyle("-fx-border-color: black");
+        this.paneRoomMap.setStyle("-fx-border-color: black; -fx-border-insets: -1");
         this.paneRoomMap.getChildren().clear();
 
         for(int y = 0; y < this.dimY; y++) {
             for (int x = 0; x < this.dimX; x++) {
                 it.unibo.map_editor_bcr.model.room_map.CellType ct = this.roomMapParser.getCellType(x, y);
                 this.paneRoomMap.getChildren().add(
-                        this.buildRoomMapElement(ct, (ELEMENT_SIZE * x) + 1.0, (ELEMENT_SIZE * y) + 1.0, 0.1));
+                        this.buildRoomMapElement(ct, ELEMENT_SIZE * x, ELEMENT_SIZE * y, 0.1));
             }
         }
         this.anchorPaneRoot.getChildren().add(this.paneRoomMap);
@@ -206,6 +209,7 @@ public class ControllerEditor {
         this.paneMapConfig.setVisible(false); // make it visible when it finished building
         this.paneMapConfig.setPrefSize(ELEMENT_SIZE * dimX, ELEMENT_SIZE * dimY);
         this.paneMapConfig.setSnapToPixel(false);
+        this.paneMapConfig.setStyle("-fx-border-color: black; -fx-border-insets: -1");
         this.paneMapConfig.getChildren().clear();
 
         for(int y = 0; y < dimY; y++) {
@@ -284,8 +288,8 @@ public class ControllerEditor {
                         centerY < 0.0 || centerY > ELEMENT_SIZE * this.dimY) {
                     l.setCursor(Cursor.DISAPPEAR);
                     // reset to initial
-                    l.setLayoutX(x);
-                    l.setLayoutY(y);
+                    l.setLayoutX(move.srcX);
+                    l.setLayoutY(move.srcY);
                 } else {
                     // snap to cell
                     // get cursor position, not element!!!
@@ -477,6 +481,7 @@ public class ControllerEditor {
 
         // reload paneMapConfig
         this.initMapConfig();
+        this.initMapConfigOperationExecutor();
     }
 
     @FXML
@@ -509,18 +514,20 @@ public class ControllerEditor {
 
         // reload paneMapConfig
         this.initMapConfig();
+        this.initMapConfigOperationExecutor();
     }
 
     // TO-DO
     @FXML
     public void saveMap(ActionEvent event) {
-        String filename = "mapRoomEmpty.txt";
+        String filename = "mapConfigWasteService";
+        String suffix = ".bin";
 
         // TO-DO: check if there already is a file and ask if we want to overwrite it
         ButtonType bt = new ButtonType("Change name");
         Alert alert = new Alert(AlertType.CONFIRMATION, "", ButtonType.YES, ButtonType.NO, bt);
         alert.setTitle("Dialog Window");
-        alert.setHeaderText("The file '" + filename + "' already exists.");
+        alert.setHeaderText("The file '" + filename + ".bin' already exists.");
         alert.setContentText("Do you want to overwrite it?");
         alert.getDialogPane().getStylesheets().add(
                 ControllerEditor.class.getResource("/it/unibo/map_editor_bcr/styles/theme-" +
@@ -528,26 +535,27 @@ public class ControllerEditor {
 
         alert.showAndWait();
         if (alert.getResult() == ButtonType.YES) {
-            // TO-DO: fix
-            //MapLoader.saveMap("mapRoomEmpty.txt", this.mapConfig);
+            MapLoader.saveMapConfig(this.mapConfig, filename);
             System.out.println("Map saved to file '" + filename + "'");
         }
         else if (alert.getResult() == bt) {
-            TextInputDialog dialog = new TextInputDialog(filename);
+            TextInputDialog dialog = new TextInputDialog();
             dialog.setTitle("Text Input Dialog");
             dialog.setHeaderText("Enter the name of the file to save the map into.");
-            dialog.setContentText("File name: ");
-            // TO-DO: style?
+            dialog.setContentText("File name (.bin): ");
+
             TextField tf = dialog.getEditor();
             tf.getStylesheets().add(
                     ControllerEditor.class.getResource("/it/unibo/map_editor_bcr/styles/theme-" +
                             (this.checkBoxTheme.isSelected() ? "dark" : "light") +".css").toExternalForm());
-            // validate filename TO-DO
+            // TO-DO: validate filename
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent()) {
-                // TO-DO: fix
-                //MapLoader.saveMap(result.get(), this.map);
-                System.out.println("Map saved to file '" + result.get() + "'");
+                filename = result.get();
+                if (filename.endsWith(".bin"))
+                    filename.replace(".bin", "");
+                MapLoader.saveMapConfig(this.mapConfig, result.get());
+                System.out.println("MapConfig saved to file '" + result.get() + "'");
             }
         }
     }
@@ -766,8 +774,6 @@ public class ControllerEditor {
 
     @FXML
     public void toggleDarkTheme(ActionEvent event) {
-        CheckBox cb = (CheckBox) event.getSource();
-
         Scene scene = this.buttonNew.getScene();
         ObservableList<String> sheets = scene.getStylesheets();
 
@@ -778,7 +784,8 @@ public class ControllerEditor {
                 i--;
             }
         }
-        sheets.add(ControllerEditor.class.getResource("/it/unibo/map_editor_bcr/styles/theme-" + (cb.isSelected() ? "dark" : "light") + ".css").toExternalForm());
+        sheets.add(ControllerEditor.class.getResource("/it/unibo/map_editor_bcr/styles/theme-" +
+                (checkBoxTheme.isSelected() ? "dark" : "light") + ".css").toExternalForm());
     }
 
     private void updateLabels() {
@@ -789,14 +796,9 @@ public class ControllerEditor {
                 }
             }
         }
-        //printLabelMap(); // test
     }
 
     private void changeLabel(int x, int y, CellType cell) {
-        /*Label l = this.getLabel(x, y);
-        l.setText(cell.equals(CellType.NONE) ? "" : cell.code);
-        l.setStyle("-fx-background-color: " + cell.getRGBAstring());*/
-
         Label lToBeChanged = this.getLabel(x, y);
         Label lChanged = buildMapConfigElement(cell, lToBeChanged.getLayoutX(), lToBeChanged.getLayoutY());
         this.paneMapConfig.getChildren().remove(lToBeChanged);
@@ -815,5 +817,18 @@ public class ControllerEditor {
             }
             System.out.print("\n");
         }
+    }
+
+    @FXML
+    public void toggleShowRoomMap(ActionEvent event) {
+        this.paneRoomMap.setVisible(this.checkBoxRoomMap.isSelected());
+    }
+    @FXML
+    public void toggleShowMapConfig(ActionEvent event) {
+        this.paneMapConfig.setVisible(this.checkBoxMapConfig.isSelected());
+    }
+    @FXML
+    public void toggleShowCoordinates(ActionEvent event) {
+
     }
 }

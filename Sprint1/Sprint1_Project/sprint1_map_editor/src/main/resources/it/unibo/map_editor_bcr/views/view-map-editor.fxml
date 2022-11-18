@@ -121,8 +121,8 @@
       </VBox>
       <CheckBox fx:id="checkBoxTheme" layoutX="21.0" layoutY="22.0" mnemonicParsing="false" onAction="#toggleDarkTheme" text="Dark Theme" />
       <ComboBox fx:id="comboBoxAction" layoutX="140.0" layoutY="304.0" prefHeight="35.0" prefWidth="320.0" promptText="Action:" visibleRowCount="5" AnchorPane.bottomAnchor="60.0" />
-      <CheckBox layoutY="50.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="125.0" text="Show Room Map" />
-      <CheckBox layoutY="68.0" mnemonicParsing="false" text="Show Room Config" />
-      <CheckBox layoutY="86.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="126.0" text="Show Coordinates" />
+      <CheckBox fx:id="checkBoxRoomMap" layoutY="50.0" mnemonicParsing="false" onAction="#toggleShowRoomMap" prefHeight="18.0" prefWidth="125.0" selected="true" text="Show Room Map" />
+      <CheckBox fx:id="checkBoxMapConfig" layoutY="68.0" mnemonicParsing="false" onAction="#toggleShowMapConfig" selected="true" text="Show Map Config" />
+      <CheckBox fx:id="checkBoxCoordinates" layoutY="86.0" mnemonicParsing="false" onAction="#toggleShowCoordinates" prefHeight="18.0" prefWidth="126.0" text="Show Coordinates" />
    </children>
 </AnchorPane>
