@@ -81,7 +81,7 @@
                         <Separator maxWidth="10.0" minWidth="0.0" orientation="VERTICAL" prefWidth="10.0" visible="false" />
                         <ToggleButton id="remove" fx:id="buttonRemove" mnemonicParsing="false" onAction="#selectRemove" prefHeight="40.0" prefWidth="40.0" toggleGroup="$toggleGroupMode">
                            <tooltip>
-                              <Tooltip text="Select Add mode">
+                              <Tooltip text="Select Remove mode">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

@@ -301,6 +301,13 @@ public class ControllerEditor {
         l.setFont(Font.font("System", FontWeight.BOLD, 30.0));
         l.setPrefSize(ELEMENT_SIZE, ELEMENT_SIZE);
         l.setStyle("-fx-background-color: " + ct.getRGBAstring());
+
+        if(!ct.equals(CellType.NONE)) {
+            Tooltip t = new Tooltip(ct.name());
+            t.setFont(Font.font("System", FontWeight.BOLD, 14.0));
+            l.setTooltip(t);
+        }
+
         final DropShadow dropShadow = new DropShadow();
         final Glow glow = new Glow();
 
@@ -435,6 +442,10 @@ public class ControllerEditor {
         l.setFont(Font.font("System", FontWeight.BOLD, 30.0));
         l.setPrefSize(ELEMENT_SIZE, ELEMENT_SIZE);
         l.setStyle("-fx-background-color: " + ct.getRGBAstring());
+
+        Tooltip t = new Tooltip("Add " + ct.name() + " cell");
+        t.setFont(Font.font("System", FontWeight.NORMAL, 14.0));
+        l.setTooltip(t);
 
         final DropShadow dropShadow = new DropShadow();
         final Glow glow = new Glow();
