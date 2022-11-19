@@ -54,10 +54,6 @@ public class ControllerEditor {
     @FXML private AnchorPane anchorPaneBase;
     @FXML private ComboBox<String> comboBoxAction;
 
-    //@FXML private TilePane tilePaneMap;
-
-    @FXML private CheckBox checkBoxTheme;
-
     @FXML private VBox vboxDisplayControls;
     @FXML private VBox vboxCommandControls;
     @FXML private Button buttonNew;
@@ -84,6 +80,9 @@ public class ControllerEditor {
     @FXML private CheckBox checkBoxRoomMap;
     @FXML private CheckBox checkBoxMapConfig;
     @FXML private CheckBox checkBoxCoordinates;
+
+    @FXML private CheckBox checkBoxTheme;
+    @FXML private ColorPicker colorPickerCoordinates;
 
     private RoomMapParser roomMapParser;
     private MapConfig mapConfig;
@@ -835,6 +834,11 @@ public class ControllerEditor {
         System.out.println("Opened settings");
         this.anchorPaneBase.setEffect(new GaussianBlur(10.0));
         this.vboxSettings.setVisible(true);
+    }
+
+    @FXML
+    public void setCoordinatesColor(ActionEvent event) {
+        initCoordinates(this.colorPickerCoordinates.getValue());
     }
 
     @FXML

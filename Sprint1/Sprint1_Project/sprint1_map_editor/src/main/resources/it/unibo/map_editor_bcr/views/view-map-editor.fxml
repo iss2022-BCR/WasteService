@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
@@ -13,6 +14,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane fx:id="anchorPaneRoot" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
@@ -32,7 +34,7 @@
             <VBox id="controls" fx:id="vboxCommandControls" alignment="CENTER" layoutX="25.0" layoutY="300.0" prefHeight="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                <children>
                   <ComboBox fx:id="comboBoxAction" prefHeight="35.0" prefWidth="320.0" promptText="Action:" visibleRowCount="5" />
-                  <HBox alignment="CENTER" minHeight="40.0" minWidth="550.0" prefHeight="60.0" prefWidth="550.0">
+                  <HBox alignment="CENTER" maxWidth="550.0" minHeight="40.0" minWidth="410.0" prefHeight="60.0" prefWidth="0.0">
                      <children>
                         <Button id="new" fx:id="buttonNew" mnemonicParsing="false" onAction="#newMap" prefHeight="40.0" prefWidth="40.0">
                            <tooltip>
@@ -161,7 +163,7 @@
             </VBox>
          </children>
       </AnchorPane>
-      <VBox fx:id="vboxSettings" alignment="CENTER" layoutX="50.0" layoutY="50.0" prefHeight="300.0" prefWidth="500.0" visible="false" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
+      <VBox fx:id="vboxSettings" alignment="CENTER" layoutX="50.0" layoutY="50.0" prefHeight="300.0" prefWidth="500.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
          <children>
             <Label text="Settings">
                <font>
@@ -172,9 +174,9 @@
             <CheckBox fx:id="checkBoxTheme" mnemonicParsing="false" onAction="#toggleDarkTheme" text="Dark Theme" />
             <HBox prefHeight="30.0" prefWidth="500.0">
                <children>
-                  <Label prefHeight="18.0" prefWidth="165.0" text="Log Level" />
-                  <CheckBox mnemonicParsing="false" text="Standard output" />
-                  <CheckBox mnemonicParsing="false" prefHeight="18.0" prefWidth="67.0" text="File" />
+                  <Label prefHeight="18.0" prefWidth="165.0" text="Log Level:" />
+                  <CheckBox mnemonicParsing="false" prefHeight="18.0" prefWidth="120.0" text="Standard output" />
+                  <CheckBox mnemonicParsing="false" prefHeight="18.0" prefWidth="54.0" text="File" />
                   <TextField promptText="filename" />
                </children>
             </HBox>
@@ -184,17 +186,27 @@
                   <TextField promptText="filename" />
                </children>
             </HBox>
+            <HBox prefHeight="30.0" prefWidth="500.0">
+               <children>
+                  <Label prefHeight="18.0" prefWidth="165.0" text="Default save filename:" />
+                  <TextField promptText="filename" />
+               </children>
+            </HBox>
+            <HBox prefHeight="40.0" prefWidth="500.0">
+               <children>
+                  <Label prefHeight="18.0" prefWidth="170.0" text="Colore coordinate:" />
+                  <ColorPicker fx:id="colorPickerCoordinates" onAction="#setCoordinatesColor">
+                     <value>
+                        <Color />
+                     </value>
+                  </ColorPicker>
+               </children>
+            </HBox>
             <HBox alignment="CENTER" prefHeight="41.0" prefWidth="500.0" spacing="15.0">
                <children>
                   <Button mnemonicParsing="false" text="Save" />
                   <Button mnemonicParsing="false" onAction="#cancelSettings" text="Cancel" />
                   <Button mnemonicParsing="false" text="Reset" />
-               </children>
-            </HBox>
-            <HBox prefHeight="30.0" prefWidth="500.0">
-               <children>
-                  <Label prefHeight="18.0" prefWidth="165.0" text="Default save filename:" />
-                  <TextField promptText="filename" />
                </children>
             </HBox>
          </children>
