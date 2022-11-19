@@ -4,6 +4,10 @@
     -fx-background-position: 50%;
 }
 
+#controls {
+    -fx-background-color: #F4F4F4;
+}
+
 #new {
 	-fx-background-image: url('../icons/icon-new-dark.png');
 }

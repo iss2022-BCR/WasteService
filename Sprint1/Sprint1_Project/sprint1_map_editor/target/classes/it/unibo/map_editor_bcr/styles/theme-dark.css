@@ -31,6 +31,10 @@
     -fx-background-position: 50%;
 }
 
+#controls {
+    -fx-background-color: #58626A;
+}
+
 #new {
 	-fx-background-image: url('../icons/icon-new-light.png');
 }

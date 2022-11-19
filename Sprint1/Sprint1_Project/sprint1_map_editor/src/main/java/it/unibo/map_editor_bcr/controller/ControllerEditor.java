@@ -1,11 +1,12 @@
 package it.unibo.map_editor_bcr.controller;
 
-import it.unibo.map_editor_bcr.MapEditor;
 import it.unibo.map_editor_bcr.model.MapLoader;
 import it.unibo.map_editor_bcr.model.commands.*;
 import it.unibo.map_editor_bcr.model.map_config.CellType;
 import it.unibo.map_editor_bcr.model.map_config.MapConfig;
 import it.unibo.map_editor_bcr.model.room_map.RoomMapParser;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,9 +19,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.effect.Glow;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -28,13 +29,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.controlsfx.control.spreadsheet.Grid;
+import javafx.util.Duration;
 import unibo.planner22.model.RoomMap;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.UnaryOperator;
 
 /**
  * TO-DO: invertire rows/cols
@@ -50,13 +50,16 @@ public class ControllerEditor {
 
     // FXML components
     @FXML private AnchorPane anchorPaneRoot;
+
+    @FXML private AnchorPane anchorPaneBase;
     @FXML private ComboBox<String> comboBoxAction;
 
     //@FXML private TilePane tilePaneMap;
 
     @FXML private CheckBox checkBoxTheme;
 
-    @FXML private HBox hboxCommands;
+    @FXML private VBox vboxDisplayControls;
+    @FXML private VBox vboxCommandControls;
     @FXML private Button buttonNew;
     @FXML private Button buttonLoad;
     @FXML private Button buttonSave;
@@ -75,6 +78,8 @@ public class ControllerEditor {
     @FXML private Button buttonOpenCloseEditTab;
     @FXML private VBox vboxEditTab;
     @FXML private ListView<Label> listViewCells;
+
+    @FXML private VBox vboxSettings;
 
     @FXML private CheckBox checkBoxRoomMap;
     @FXML private CheckBox checkBoxMapConfig;
@@ -128,18 +133,36 @@ public class ControllerEditor {
         this.initMapConfigOperationExecutor();
         this.initAddElementList();
 
+        this.anchorPaneBase.getChildren().remove(this.vboxDisplayControls);
+        this.anchorPaneBase.getChildren().add(this.vboxDisplayControls);
+        this.anchorPaneBase.getChildren().remove(this.vboxCommandControls);
+        this.anchorPaneBase.getChildren().add(this.vboxCommandControls);
+
+
+        // Set visibility
         this.paneCoordinates.setVisible(false);
+        this.vboxSettings.setVisible(false);
 
         Platform.runLater(() -> {
             this.adjustLayout();
 
-            Stage stage = (Stage) this.hboxCommands.getScene().getWindow();
+            Stage stage = (Stage) this.vboxCommandControls.getScene().getWindow();
             stage.widthProperty().addListener((obs, oldVal, newVal) -> {
                 this.adjustLayout();
             });
-
             stage.heightProperty().addListener((obs, oldVal, newVal) -> {
                 this.adjustLayout();
+            });
+            stage.maximizedProperty().addListener((obs, oldVal, newVal) -> {
+                Timeline tl = new Timeline(new KeyFrame(Duration.millis(1), ae -> {
+                    this.adjustLayout();
+                }));
+                tl.setCycleCount(1);
+                tl.play();
+
+                /* // Disable Maximize (make the button do nothing)
+                if (newVal)
+                    stage.setMaximized(false);*/
             });
         });
     }
@@ -149,13 +172,13 @@ public class ControllerEditor {
      * To be called when the window gets resized.
      */
     private void adjustLayout() {
-        this.hboxCommands.setLayoutX((MapEditor.WINDOW_WIDTH - this.hboxCommands.getWidth()) / 2);
-        this.paneRoomMap.setLayoutX((MapEditor.WINDOW_WIDTH - ELEMENT_SIZE * dimX) / 2);
-        this.paneRoomMap.setLayoutY((MapEditor.WINDOW_HEIGHT - ELEMENT_SIZE * dimY) / 4);
-        this.paneCoordinates.setLayoutX((MapEditor.WINDOW_WIDTH - ELEMENT_SIZE * dimX) / 2);
-        this.paneCoordinates.setLayoutY((MapEditor.WINDOW_HEIGHT - ELEMENT_SIZE * dimY) / 4);
-        this.paneMapConfig.setLayoutX(((MapEditor.WINDOW_WIDTH - ELEMENT_SIZE * dimX) / 2));
-        this.paneMapConfig.setLayoutY(((MapEditor.WINDOW_HEIGHT - ELEMENT_SIZE * dimY) / 4));
+        this.vboxCommandControls.setLayoutX((this.anchorPaneBase.getWidth() - this.vboxCommandControls.getWidth()) / 2);
+        this.paneRoomMap.setLayoutX((this.anchorPaneBase.getWidth() - ELEMENT_SIZE * dimX) / 2);
+        this.paneRoomMap.setLayoutY((this.anchorPaneBase.getHeight() - ELEMENT_SIZE * dimY) / 4);
+        this.paneCoordinates.setLayoutX((this.anchorPaneBase.getWidth() - ELEMENT_SIZE * dimX) / 2);
+        this.paneCoordinates.setLayoutY((this.anchorPaneBase.getHeight() - ELEMENT_SIZE * dimY) / 4);
+        this.paneMapConfig.setLayoutX(((this.anchorPaneBase.getWidth() - ELEMENT_SIZE * dimX) / 2));
+        this.paneMapConfig.setLayoutY(((this.anchorPaneBase.getHeight() - ELEMENT_SIZE * dimY) / 4));
 
         // adjust listview
     }
@@ -173,7 +196,7 @@ public class ControllerEditor {
      * Initialize the base map: RoomMap (the map representation we got from the mapper).
      */
     private void initRoomMap() {
-        this.anchorPaneRoot.getChildren().remove(this.paneRoomMap);
+        this.anchorPaneBase.getChildren().remove(this.paneRoomMap);
 
         this.paneRoomMap = new Pane();
         this.paneRoomMap.setVisible(false);
@@ -189,10 +212,10 @@ public class ControllerEditor {
                         this.buildRoomMapElement(ct, ELEMENT_SIZE * x, ELEMENT_SIZE * y, 0.1));
             }
         }
-        this.anchorPaneRoot.getChildren().add(this.paneRoomMap);
+        this.anchorPaneBase.getChildren().add(this.paneRoomMap);
 
-        this.paneRoomMap.setLayoutX((MapEditor.WINDOW_WIDTH - ELEMENT_SIZE * dimX) / 2);
-        this.paneRoomMap.setLayoutY((MapEditor.WINDOW_HEIGHT - ELEMENT_SIZE * dimY) / 4);
+        this.paneRoomMap.setLayoutX((this.anchorPaneBase.getWidth() - ELEMENT_SIZE * dimX) / 2);
+        this.paneRoomMap.setLayoutY((this.anchorPaneBase.getHeight() - ELEMENT_SIZE * dimY) / 4);
         this.paneRoomMap.setVisible(true);
     }
 
@@ -212,7 +235,7 @@ public class ControllerEditor {
     private void initCoordinates(Color c) {
         double offset = ELEMENT_SIZE / 8;
 
-        this.anchorPaneRoot.getChildren().remove(this.paneCoordinates);
+        this.anchorPaneBase.getChildren().remove(this.paneCoordinates);
 
         this.paneCoordinates = new Pane();
         this.paneCoordinates.setStyle("-fx-border-color: rgb(" + c.getRed()*100.0 + "%, " + c.getGreen()*100.0 + "%, " + c.getBlue()*100.0 +"%);" +
@@ -228,10 +251,10 @@ public class ControllerEditor {
             this.paneCoordinates.getChildren().add(buildCoordinateElement(x-1, c, ELEMENT_SIZE * (x-1), -ELEMENT_SIZE - offset));
         }
 
-        this.anchorPaneRoot.getChildren().add(this.paneCoordinates);
+        this.anchorPaneBase.getChildren().add(this.paneCoordinates);
 
-        this.paneCoordinates.setLayoutX((MapEditor.WINDOW_WIDTH - ELEMENT_SIZE * dimX) / 2);
-        this.paneCoordinates.setLayoutY((MapEditor.WINDOW_HEIGHT - ELEMENT_SIZE * dimY) / 4);
+        this.paneCoordinates.setLayoutX((this.anchorPaneBase.getWidth() - ELEMENT_SIZE * dimX) / 2);
+        this.paneCoordinates.setLayoutY((this.anchorPaneBase.getHeight() - ELEMENT_SIZE * dimY) / 4);
         this.paneCoordinates.setVisible(true);
     }
     private Label buildCoordinateElement(int value,  Color c, double x, double y) {
@@ -247,7 +270,7 @@ public class ControllerEditor {
     }
 
     private void initMapConfig() {
-        this.anchorPaneRoot.getChildren().remove(this.paneMapConfig);
+        this.anchorPaneBase.getChildren().remove(this.paneMapConfig);
 
         this.labelConfig = new Label[dimY][dimX];
         this.paneMapConfig = new Pane();
@@ -264,10 +287,10 @@ public class ControllerEditor {
                 this.putLabel(x, y, l);
             }
         }
-        this.anchorPaneRoot.getChildren().add(this.paneMapConfig);
+        this.anchorPaneBase.getChildren().add(this.paneMapConfig);
 
-        this.paneMapConfig.setLayoutX(((MapEditor.WINDOW_WIDTH - ELEMENT_SIZE * dimX) / 2) + 1.0);
-        this.paneMapConfig.setLayoutY(((MapEditor.WINDOW_HEIGHT - ELEMENT_SIZE * dimY) / 4) + 1.0);
+        this.paneMapConfig.setLayoutX(((this.anchorPaneBase.getWidth() - ELEMENT_SIZE * dimX) / 2) + 1.0);
+        this.paneMapConfig.setLayoutY(((this.anchorPaneBase.getHeight() - ELEMENT_SIZE * dimY) / 4) + 1.0);
         this.paneMapConfig.setVisible(true);
     }
 
@@ -810,6 +833,15 @@ public class ControllerEditor {
     @FXML
     public void displaySettings(ActionEvent event) {
         System.out.println("Opened settings");
+        this.anchorPaneBase.setEffect(new GaussianBlur(10.0));
+        this.vboxSettings.setVisible(true);
+    }
+
+    @FXML
+    public void cancelSettings(ActionEvent event) {
+        System.out.println("Discarded settings changes");
+        this.anchorPaneBase.setEffect(null);
+        this.vboxSettings.setVisible(false);
     }
 
     @FXML

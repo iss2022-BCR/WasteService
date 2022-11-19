@@ -24,7 +24,9 @@ public class MapEditor extends Application {
         scene.getStylesheets().add(MapEditor.class.getResource("/it/unibo/map_editor_bcr/styles/theme-light.css").toExternalForm());
         stage.setTitle("Map Editor");
         //stage.setResizable(false);
+
         stage.setScene(scene);
+
         stage.show();
     }
 
