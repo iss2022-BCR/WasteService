@@ -46,14 +46,14 @@ Reply   stepfail	: stepfail(DURATION, CAUSE)
 Event	alarm		: alarm(X) 
 
 // CONTEXES ===================================================================
-Context ctx_smartdevice 	ip [host="localhost" port=11799]
+//Context ctx_smartdevice 	ip [host="localhost" port=11799]
 Context ctx_wasteservice	ip [host="localhost" port=11800]
-Context ctx_basicrobot		ip [host="localhost" port=8020]
+Context ctx_robot		ip [host="localhost" port=8020]
 
 // ACTORS =====================================================================
 //ExternalQActor basicrobot context ctx_basicrobot
 
-QActor smartdevice_simulator context ctx_smartdevice {
+/*QActor smartdevice_simulator context ctx_smartdevice {
 	[#
 		var Types: String = ""
 		var TypesList = arrayListOf<wasteservice.WasteType>()
@@ -106,7 +106,7 @@ QActor smartdevice_simulator context ctx_smartdevice {
 		println("[SmartDevice Simulator] Received LoadRejected")
 	}
 	Goto state_storerequest
-}
+}*/
 
 // Actor that provides the types of waste that can be stored
 // in the waste service area, when a Smart Device connects
@@ -308,7 +308,7 @@ QActor transporttrolley context ctx_wasteservice {
 	
 	State state_pickup {
 		println("[TransportTrolley] Picking up the load of $WasteType...")
-		delay 1000
+		delay 3000
 		println("[TransportTrolley] Pickup completed.")
 		
 		replyTo deposit with pickupcompleted: pickupcompleted(_)
@@ -330,7 +330,7 @@ QActor transporttrolley context ctx_wasteservice {
 	Transition t1 whenReply dopathdone -> state_dump
 				  whenReply dopathfail -> state_error
 	
-	State state_move_to_glassbox {
+	/*State state_move_to_glassbox {
 		println("[TransportTrolley] Moving to GLASS_BOX...")
 		[#
 			plannerBCR.setGoal(6, 0)
@@ -352,11 +352,11 @@ QActor transporttrolley context ctx_wasteservice {
 		request pathexecutor -m dopath : dopath($Actions, transporttrolley)
 	}
 	Transition t1 whenReply dopathdone -> state_dump
-				  whenReply dopathfail -> state_error
+				  whenReply dopathfail -> state_error*/
 	
 	State state_dump {
 		println("[TransportTrolley] Dumping the load...")
-		delay 1000
+		delay 3000
 		println("[TransportTrolley] Dump completed.")
 		
 		forward wasteservice -m depositcompleted : depositcompleted(_)
@@ -463,7 +463,7 @@ QActor pathexecutor context ctx_wasteservice {
 	Transition t0 whenEvent alarm -> handleAlarm
 }
 
-QActor basicrobot context ctx_basicrobot {
+QActor basicrobot context ctx_robot {
 [#
   var StepTime      = 0L
   var StartTime     = 0L     
