@@ -7,7 +7,6 @@ public class AddMapConfigOperation implements MapConfigOperation {
     private MapConfig mapConfig;
     private int x, y;
     private CellType cell;
-
     private CellType cellBefore;
 
     public AddMapConfigOperation(MapConfig mapConfig, int x, int y, CellType cell) {
