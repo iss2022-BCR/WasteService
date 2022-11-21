@@ -62,7 +62,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="state_pickup", cond=doswitch() )
+					 transition(edgeName="t19",targetState="state_pickup",cond=whenDispatch("depositcompleted"))
 				}	 
 				state("state_pickup") { //this:State
 					action { //it:State

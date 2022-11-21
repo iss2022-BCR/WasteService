@@ -21,21 +21,29 @@ Reply pickupcompleted	: pickupcompleted(_)
 Dispatch depositcompleted	:	depositcompleted(_)
 Dispatch depositfailed		:	depositfailed(REASON)
 
+// TransportTrolley -> PathExecutor
+Request	dopath		: dopath( PATH, OWNER )
+
+// PathExecutor -> TransportTrolley
+Reply	dopathdone	: dopathdone( ARG )
+Reply	dopathfail	: dopathfail( ARG )
+
 // TransportTrolley -> BasicRobot
-Dispatch cmd	: cmd(MOVE)
+/*Dispatch cmd	: cmd(MOVE)
 Request step	: step(TIME)
 
 // BasicRobot -> TransportTrolley
 Reply stepdone	: stepdone(V)
-Reply stepfail	: stepfail(V)
+Reply stepfail	: stepfail(V)*/
 
 // CONTEXES ===================================================================
 Context ctx_smartdevice 	ip [host="localhost" port=11799]
 Context ctx_wasteservice	ip [host="localhost" port=11800]
-Context ctx_basicrobot		ip [host="localhost" port=8020]
+Context ctx_robot			ip [host="localhost" port=8020]
 
 // ACTORS =====================================================================
-ExternalQActor basicrobot context ctx_basicrobot
+ExternalQActor basicrobot context ctx_robot
+ExternalQActor pathexecutor context ctx_robot
 
 QActor smartdevice_simulator context ctx_smartdevice {
 	[#
@@ -175,7 +183,7 @@ QActor wasteservice context ctx_wasteservice {
 				{
 					[# WaitingPickup = false #]
 					println("[WasteService] Load rejected: there is not enough space in the container to store the load.")
-					replyTo storerequest with loadrejected: loadrejected(_)
+					//replyTo storerequest with loadrejected: loadrejected(_)
 				}
 			}
 			else
@@ -267,6 +275,8 @@ QActor transporttrolley context ctx_wasteservice {
 	
 	State state_move_to_indoor {
 		println("[TransportTrolley] Moving to INDOOR...")
+		
+		//request pathexecutor -m dopath: dopath( $RequestedWasteType )
 		//forward basicrobot -m cmd : cmd(w)
 		delay 1200
 		/*forward basicrobot -m cmd : cmd(s)
@@ -274,7 +284,8 @@ QActor transporttrolley context ctx_wasteservice {
 		request basicrobot -m step : step(500)
 		delay 600*/
 	}
-	Goto state_pickup
+	//Goto state_pickup
+	Transition t1	whenMsg depositcompleted	-> state_pickup
 	
 	State state_pickup {
 		println("[TransportTrolley] Picking up the load of $WasteType...")

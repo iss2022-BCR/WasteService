@@ -74,7 +74,6 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 								else
 								 { WaitingPickup = false  
 								 println("[WasteService] Load rejected: there is not enough space in the container to store the load.")
-								 answer("storerequest", "loadrejected", "loadrejected(_)"   )  
 								 }
 								}
 								else
