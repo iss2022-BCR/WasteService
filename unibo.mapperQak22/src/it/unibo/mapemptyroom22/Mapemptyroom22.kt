@@ -14,29 +14,42 @@ class Mapemptyroom22 ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( n
 		return "s0"
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
+		val interruptedStateTransitions = mutableListOf<Transition>()
 		 var StepTime = 345
 			   var NumStep   = 0 
-			   val MapName   = "mapEmpty2019"
+			   val MapName   = "mapEmpty"
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
 						println("mapperbuilder starts")
 						unibo.kotlin.planner22Util.initAI(  )
 						unibo.kotlin.planner22Util.showMap(  )
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 					 transition( edgeName="goto",targetState="doAheadMove", cond=doswitch() )
 				}	 
 				state("doAheadMove") { //this:State
 					action { //it:State
 						request("step", "step($StepTime)" ,"basicrobot" )  
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 					 transition(edgeName="t00",targetState="continue",cond=whenReply("stepdone"))
 					transition(edgeName="t01",targetState="turn",cond=whenReply("stepfail"))
 				}	 
 				state("continue") { //this:State
 					action { //it:State
 						 unibo.kotlin.planner22Util.updateMap(  "w", "" )  
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 					 transition( edgeName="goto",targetState="doAheadMove", cond=doswitch() )
 				}	 
 				state("turn") { //this:State
@@ -45,7 +58,11 @@ class Mapemptyroom22 ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( n
 						forward("cmd", "cmd(l)" ,"basicrobot" ) 
 						  unibo.kotlin.planner22Util.updateMap(  "l", "" ) 
 									unibo.kotlin.planner22Util.showMap()		 
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 					 transition( edgeName="goto",targetState="doAheadMove", cond=doswitchGuarded({ NumStep < 4  
 					}) )
 					transition( edgeName="goto",targetState="endwork", cond=doswitchGuarded({! ( NumStep < 4  
@@ -57,7 +74,11 @@ class Mapemptyroom22 ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( n
 						 			unibo.kotlin.planner22Util.saveRoomMap("$MapName");
 						println("mapperbuilder BYE")
 						terminate(1)
+						//genTimer( actor, state )
 					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
 				}	 
 			}
 		}

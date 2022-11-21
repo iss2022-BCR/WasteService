@@ -15,7 +15,7 @@ Context ctxmapemptyroom22  ip [host="localhost" port=8032]
 
 ExternalQActor basicrobot context ctxbasicrobot  
 
-/*  
+/* 
  * ------------------------------------------------------------------
  *  cleanerwalker 
  * ------------------------------------------------------------------
@@ -23,7 +23,7 @@ ExternalQActor basicrobot context ctxbasicrobot
 QActor mapemptyroom22 context ctxmapemptyroom22{    
 	[# var StepTime = 345
 	   var NumStep   = 0 
-	   val MapName   = "mapEmpty2019"
+	   val MapName   = "mapEmpty"
 	#]
 	State s0 initial{  	
 		println("mapperbuilder starts") 
