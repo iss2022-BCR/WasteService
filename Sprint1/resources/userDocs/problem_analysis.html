@@ -31,7 +31,6 @@
                 <div class="sidenavSubSection">
                     <a href="#Smart-Device-Waste-Service">Smart Device &harr;<br/>Waste Service</a>
                     <a href="#Waste-Service-Transport-Trolley">Waste Service &harr;<br/>Transport Trolley</a>
-                    <a href="#Transport-Trolley-DDR-Robot">Transport Trolley &harr;<br/>DDR Robot</a>
                 </div>
                 <a href="#Logical-Architecture">Logical Architecture</a>
                 <a href="#Test-Plans">Test Plans</a>
@@ -100,6 +99,9 @@
             
 
             <h3 id="Smart-Device">Smart Device</h3>
+            The software of the Smart Device will be provided by the customer. However, since we want to test a distributed system
+            with all of its nodes, we're going to implement an application that will run on a smartphone (Android) and will simulate
+            store requests to  the WasteService.
             <!--<problem>Smart Device Technology</problem>
             <b>Problem</b>: implementation of an application to test the interaction between the truck driver and the waste service.<br/>
             <solution>
@@ -130,28 +132,23 @@
             
             
             <h3 id="Waste-Service">Waste Service</h3>
-            The customer requirements don't specify priority rules regarding the truck requrests,
-            therefore, they'll be served in order of arrival.
-
-            We decide to send a <code>load_rejected</code> even if the <code>store_request</code>
-            contains a invalid data:
-            <ul>
-                <li>Not properly formatted according to the JSON object.</li>
-                <li>Negative or too big WasteLoad.</li>
-                <li>WasteType not present in the Service Area.</li>
-            </ul>   
+            One of the first problem is the service area representation, which affects the interaction with the robot and how it
+            moves inside the room.
 
             <problem>Service Area Representation</problem>
-            <b>Problem</b>: we need a proper <i>representation</i> of the service area to optimally move and monitor the transport trolley.
+            <b>Problem</b>: How do we represent the Service Area?
             <br/>
             <solution>
+                <b>Consideration</b>:
+                According to the requirements notes, the robot doesn't have to move optimally but shouldn't even wander too much around the room. 
+                <br/>
                 <b>Solution</b>: 
                 <ul>
                     <li>
                         Waste Service side: use a descriptive model to indicate the main relevant position (<red>HOME</red>, <cyan>INDOOR</cyan>, <green>GLASSBOX</green>, <yellow>PLASTICBOX</yellow>).
                     </li>
                     <li>
-                        Transport Trolley side: Use a <ksi>2x2 matrix</ksi>, where each element represents a different position, starting from the top-left corner.
+                        Transport Trolley side: Use a <ksi>MxN matrix</ksi>, where each element represents a different position, starting from the top-left corner.
                     </li>
                 </ul>
                 <b>Reasons</b>:
@@ -169,9 +166,8 @@
                         the top-left corner to the bottom-right one.
                     </li>
                     <li>
-                        <highlight2>We could use the software provided by the customer,
-                        such as the mapper to obtain a representation of the room,
-                        and the path executor to make the robot move along a path.</highlight2>
+                        We could use the software provided by the customer, such as the <ksi>Mapper22</ksi> (<a href="../../../unibo.mapperQak22/">unibo.mapperQak22</a>)
+                        to obtain a representation of the room.
                     </li>
                 </ul>
             </solution>
@@ -191,21 +187,60 @@
             <div class="remark">
                 The relevant positions are:
                 <ul>
-                    <li>[0,0] = <red>HOME</red></li>
-                    <li>from [0,M] to [4,M] = <cyan>INDOOR</cyan></li>
-                    <li>from [N,0] to [N,4] = <green>GLASSBOX</green></li>
-                    <li>from [N,M-4] to [N,M] = <yellow>PLASTICBOX</yellow></li>
+                    <li><red>HOME</red>: top-left corner;</li>
+                    <li><cyan>INDOOR</cyan>: horizontal list of cells in the bottom-left corner;</li>
+                    <li><green>GLASSBOX</green>: horizontal list of cells in the top-right corner;</li>
+                    <li><yellow>PLASTICBOX</yellow>: horizontal list of cells in the bottom-right corner;</li>
                 </ul>
             </div>
 
-            Come otteniamo la rappresentazione della mappa? Possiamo utilizzare unibo.mapper (link al progetto),
-            che fornisce un modello QAK eseguibile, in particolare:
+            <h5 id="Use-The-Mapper">Use the Mapper</h5>
+            To obtain the map without obstacles through the mapper we have to:
+            <ol>
+                <li>
+                    run the WEnv with the basic robot;
+                    <pre>
+                        docker-compose -f ./unibo.basicrobot22/basicrobot22.yaml up
+                    </pre>
+                </li>
+                <li>
+                    run the mapper actor:
+                    <pre>
+                        ./unibo.mapperQak22/gradlew run
+                    </pre>
+                </li>
+            </ol>
+            The mapper will send commands to the basic robot and by interpreting the replies, it will
+            progressively generate the <ksi>room map representation</ksi>. The outputs are a <a href="../../../unibo.mapperQak22/mapEmpty2019.bin">binary file</a>
+            containing a Java class of type unibo.planner22.model.RoomMap, and a <a href="../../../unibo.mapperQak22/mapEmpty2019.txt">text file</a> containing a visual representation
+            of the room:
+
+            <pre>
+                |r, 1, 1, 1, 1, 1, 1, 
+                |1, 0, 0, 0, 0, 0, 1, 
+                |1, 0, 0, 0, 0, 0, 1, 
+                |1, 0, 0, 0, 0, 0, 1, 
+                |1, 1, 1, 1, 1, 1, 1,                 
+            </pre>
+
+            <h5 id="Configure-Map-Locations">Configure Map Locations</h5>
+            To associate a meaning to a specific point, we can use a <ksi>map configuration file</ksi>. Since we want to
+            abstract the appearence level from the actual implementation, we must hide the fact that the
+            room is represented as a matrix, and provide the customer with something (e.g. a software) that he
+            can use to easily set those locations.<br/>
+            For example, a configuration file for the layout stated in the requirements could be represented as
+            the following:
+            <pre>
+                |<red>H</red>, 1, 1, 1, <green>G</green>, <green>G</green>, <green>G</green>, 
+                |1, 0, 0, 0, 0, 0, 1, 
+                |1, 0, 0, 0, 0, 0, 1, 
+                |1, 0, 0, 0, 0, 0, 1, 
+                |<cyan>I</cyan>, <cyan>I</cyan>, <cyan>I</cyan>, 1, <yellow>P</yellow>, <yellow>P</yellow>, <yellow>P</yellow>,                 
+            </pre>
+            Where <red>H</red> is <red>HOME</red>, <cyan>I</cyan> is <cyan>INDOOR</cyan>, <green>G</green> is <green>GLASS</green>, <yellow>P</yellow> is <yellow>PLASTIC</yellow>.
             <br/>
-            mapperqak22.qak
-            <br/>
-            Eseguire unibo.mapperQak22\src\it\unibo\ctxmapemptyroom22\MainCtxmapperqak22.kt
-            <br/>
-            Che salva la mappa in <a href="">mapRoomEmpty.txt</a>
+            Since the map configuration file is based on the room map, that solution would be <b>scalable</b> towards
+            different room sizes.
 
             <h3 id="Transport-Trolley-and-DDR-Robot">Transport Trolley and DDR Robot</h3>
             <problem>Robot Concepts</problem>
@@ -232,7 +267,7 @@
 
                 <br/>
                 <b>Solution</b>: we can use the BasicRobot QAK actor, provided by the customer together with unibo.basicRobot22 project,
-                to have both a <ksi>virtual environment</ksi> to simulate the DDR Robot (WEnv), and a <ksi>virtual interface</ksi> to communicate with it (VirtualRobot).
+                to have both a <ksi>virtual environment</ksi> to simulate the DDR Robot (WEnv/VirtualRobot), and a <ksi>virtual interface</ksi> to communicate with it (BasicRobot).
                 <br/><br/>
                 <center>
                     <img width="60%" alt="WEnv" title="WEnv (Scene)" src="../imgs/WEnv.png"/>
@@ -249,15 +284,52 @@
                     </li>
                 </ul>
             </solution>
-            <b>Alternatives</b>:
-
 
             <problem>Robot Movement</problem>
-            
-            We might use the software provided by the customer: Applicazioni22
-            The path executor wants ..., <highlight3>How to find the path to execute?</highlight3>
-            <br/>
+            <b>Problem</b>: How do we move the robot? How do we make it reach a specific location inside the Service Area?
+            <solution>
+                <b>Solution</b>:
+                <ul>
+                    <li>
+                        <ksi>Planner22</ksi> (<a href="https://github.com/anatali/issLab2022/tree/main/unibo.planner22">unibo.planner22</a>).
+                    </li>
+                    <li>
+                        <ksi>PathExecutor</ksi> (<a href="https://github.com/anatali/issLab2022/tree/main/unibo.pathexecutor">unibo.pathexecutor</a>).
+                    </li>
+                </ul>
 
+                <b>Reasons</b>:
+                <ul>
+                    <li>With the PathExecutor we can make the robot perform a sequence of commands.</li>
+                    <li>
+                        The planner, by using a search algorithm, allows the TransportTrolley to find the best path
+                        (sequence of commands) to reach a destination starting from a specific location, using (x,y) coordinates.
+                    </li>
+                    <li>
+                        To implement our wanted solution where the "real" implementation of the Service Area (MxN matrix)
+                    </li>
+                    <li>
+                        The planner uses the map previously obtained with the Mapper.
+                    </li>
+                    <li>
+                        We can <i>extend the planner</i> to make it find a path by giving it <ksi>the name of the location</ksi>,
+                        instead of the coordinates.
+                    </li>
+                </ul>
+            </solution>
+            <alternative>
+                <b>Alternatives</b>:
+                <ul>
+                    <li>
+                        <b>Hard code the path for each destination</b>: that solution is limited and not scatable towards new WasteTypes and not flexible:
+                        it will stop work if the room shape changes.
+                    </li>
+                    <!--<li>
+                        <highlight3><b>Use boundary walker</b>: slightly a better solution than the previous why...</highlight3>
+                    </li>-->
+                </ul>
+            </alternative>
+            
             We assume that the deposit action cannot fail and the trolley cannot be stopped, for the moment.
             However, since we know in the next sprint we'll implement the stop/resume mechanics, we decide to model the interaction in an asynchronous way.
             
@@ -271,7 +343,9 @@
                 <br/>
                 <b>Reasons</b>: it's the message format of the QAK (meta-)modeleing language
             </solution>
-            <b>Alternatives</b>: JSON object format. However, we would still need to parse that 
+            <alternative>
+                <b>Alternatives</b>: JSON object format. However, we would still need to parse that to communicate with QAK actors.
+            </alternative>
 
             <h3 id="Messages">Core-Business Messages List</h3>
             <table class="dictionary">
@@ -294,7 +368,9 @@
             </table>
 
             <h3 id="Smart-Device-Waste-Service">Smart Device &harr; Waste Service</h3>
-            
+            The customer requirements don't specify priority rules regarding the truck requrests,
+            therefore, we assume that they'll be served in order of arrival.
+
             <problem>Waste Types</problem>
             <b>Problem</b>: how does the smart device know which types of waste can be dumped to the waste service?
             <br/>
@@ -437,21 +513,37 @@
                 <li>Allow the Smart Device to cancel a queued request.</li>
             </ul>
             
-            
-            <problem></problem>
-            <b>Problem</b>: 
-            <solution>
-                <b>Solution</b>:
-                <br/>
-                <b>Reasons</b>:
-            </solution>
-            <b>Alternatives</b>:
-            
             <h3 id="Waste-Service-Transport-Trolley">Waste Service &harr; Transport Trolley</h3>
-            
-            <h3 id="Transport-Trolley-DDR-Robot">Transport Trolley &harr; DDR Robot</h3>
-            
+            Since we want to hide the coordinate system from the WasteService side, we need to find a way
+            to tell the planner how to get the location information from the cell type.
+            <problem>Get the Location From a Cell Type in the Map Configuration file</problem>
+            <b>Problem</b>: How do we know the coordinates location corresponding to a cell type?
+            What if there are multiple cell of the same type (e.g. 3 cell for GLASSBOX)?
+            <solution>
+                <b>Solution</b>: extend the plannerUtil22 code to include methods that can parse the map configuration file
+                to find the coordinates of specific locations.
+                <br/>
+                <b>Example</b>: go from <red>H</red> (HOME) to a <yellow>P</yellow> (PLASTICBOX), the nearest P would be the first on the left.
+                <pre>
+                    |<red>H</red>, 1, 1, 1, <green>G</green>, <green>G</green>, <green>G</green>, 
+                    |1, 0, 0, 0, 0, 0, 1, 
+                    |1, 0, 0, 0, 0, 0, 1, 
+                    |1, 0, 0, 0, 0, 0, 1, 
+                    |<cyan>I</cyan>, <cyan>I</cyan>, <cyan>I</cyan>, 1, <yellow>P</yellow>,<b>&gt;</b><yellow>P</yellow><b>&lt;</b> <yellow>P</yellow>,
+                </pre>
+                And one of the best paths would be:
+                <pre>
+                    |<red>H</red>, 1, 1, 1, <green>G</green>, <green>G</green>, <green>G</green>, 
+                    |<b>&darr;</b>, 0, 0, 0, 0, 0, 1, 
+                    |<b>&darr;</b>, 0, 0, 0, 0, 0, 1, 
+                    |<b>&darr;</b>, 0, 0, 0, 0, 0, 1, 
+                    |<b>&#8627;</b>, <b>&rarr;</b>, <b>&rarr;</b>, <b>&rarr;</b>,<b>&gt;</b><yellow>P</yellow><b>&lt;</b> <yellow>P</yellow>, <yellow>P</yellow>,
+                </pre>
+
+            </solution>
+
             <h2 id="Logical-Architecture">Logical Architecture</h2>
+            The <a href="../../Sprint1_ProblemAnalysis/">Sprint1_ProblemAnalysis project</a> aims to highlight the <ksi>business logic</ksi> of the software we'll produce at the end of the sprint1.
             <img width="100%" src="../../Sprint1_ProblemAnalysis/waste_servicearch.png"/>
             QAK model: <a href="../../Sprint1_ProblemAnalysis/src/waste_service.qak">waste_service.qak</a>
             
@@ -554,7 +646,7 @@
                             <li>TransportTrolley</li>
                         </ul>
                     </td>
-                    <td>We check if the TransportTrolley transits through all the states necessary for the execution of the GLASS deposit action..</td>
+                    <td>We check if the TransportTrolley transits through all the states necessary for the execution of the GLASS deposit action.</td>
                     <td rowspan="5">
                         QAK: <a href="../../Sprint1_ProblemAnalysis/src/test_transport_trolley.qak">test_transport_trolley.qak</a>
                         Test: <a href="../../Sprint1_ProblemAnalysis/test/it/unibo/wasteservice/TestTransportTrolley.kt">TestTransportTrolley.kt</a>
@@ -574,8 +666,21 @@
                 </tr>
             </table>
             <highlight1>How to run the tests</highlight1>
+
+            <highlight2>Aggiungere: lista di chi ha fatto cosa; tabella messaggi. Spiegare alternative alla decisione della scelta del percorso (usare boundary walker, oppure messaggi più semplici)</highlight2>
         </div>
 
     </body>
 
 </html>
+
+<!--
+<problem></problem>
+<b>Problem</b>: 
+<solution>
+    <b>Solution</b>:
+    <br/>
+    <b>Reasons</b>:
+</solution>
+<b>Alternatives</b>:
+-->

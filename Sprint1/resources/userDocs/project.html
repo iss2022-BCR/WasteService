@@ -24,6 +24,8 @@
             <div class="sidenavSection">
                 <a href="#Smart-Device-Simulator">Smart Device<br/>Simulator</a>
                 <a href="#Echo-Waste-Server">Echo Waste Server</a>
+                <a href="#Map-Editor">Map Editor</a>
+                <a href="#Waste-Service">Waste Service</a>
             </div>
             <a href="test_plans.html">Test Plans</a>
             <a href="conclusions.html">Conclusions</a>
@@ -73,7 +75,7 @@
                 </pre>
             </div>
 
-            <h2 id="SmartDevice-Simulator">SmartDevice Simulator</h2>
+            <h2 id="SmartDevice-Simulator">Sprint 1.1: SmartDevice Simulator</h2>
             <ksi>SmartDevice Simulator</ksi> is a mobile/desktop compatible application,
             which will be used just for testing purposes, to simulate the interaction between the TruckDriver and the WasteService:
             It will allow to send store requests, and display the response.
@@ -84,7 +86,7 @@
             <h4>Views</h4>
             <img width="300px" src="../imgs/project/SmartDeviceSimulator_Home_v1.png"/><img width="300px" src="../imgs/project/SmartDeviceSimulator_Request_v2.png"/>
 
-            <h2 id="Echo-Waste-Server">Echo Waste Server</h2>
+            <h2 id="Echo-Waste-Server">Sprint 1.1: Echo Waste Server</h2>
             <ksi>Echo Waste Server</ksi> is a mobile/desktop application that simulates a dummy WasteService and acts like an echo server:
             it accepts TCP connections and reply to <code>store_requests</code> with <code>load_accepted</code> / <code>load_rejected</code>,
             updating the capacity of containers and logging messages.
@@ -92,6 +94,50 @@
             Its purpose is to <i>test the SmartDevice directly and completely on smartphone</i>, without having to connect it to another device.
             <img width="300px" src="../imgs/project/EchoWasteServer_v1.png"/>
 
+            <h2 id="Map-Editor">Sprint 1.2: Map Editor</h2>
+            <ksi>MapEditorBCR</ksi> (<a href="../../Sprint1_Project/sprint1_map_editor/">it.unibo.map_editor_bcr</a>) is a graphical desktop application that allows the user to
+            configure the room, by the assignment of a <b>type</b>/<b>label</b> to each cell of the map.
+            
+            <h4>Demo</h4>
+            <img width="49%" src="../imgs/project/MapEditor1.png"><img width="49%" src="../imgs/project/MapEditor2.png">
+            <br/><br/>
+            The MapConfiguration consists of a Java object
+            (<a href="../../Sprint1_Project/sprint1_map_editor/src/main/java/it/unibo/map_editor_bcr/model/map_config/MapConfig.java">MapConfig</a>) which is built starting
+            from a RoomMap (defined in <a href="https://github.com/anatali/issLab2022/blob/main/unibo.planner22">unibo.planner22</a>): they have the same dimensions.
+            That configuration can be saved as a binary file to be loaded and used by the WasteService planner afterwards, to generate a path towards those locations.
+            
+            <pre>
+                |H, -, -, -, G, G, G, 
+                |-, -, -, -, -, -, -, 
+                |-, -, -, -, -, -, -, 
+                |-, -, -, -, -, -, -, 
+                |I, I, I, -, P, P, P, 
+            </pre>
+
+            Easy to use GUI: drag and drop;
+
+            different modes to edit the MapConfiguration: add, remove, move, swap.
+
+            Possibilities to save with a different name;
+
+            History of actions performed by the user.
+
+            Possibility to undo/redo actions, implemented making use of the <a href="https://en.wikipedia.org/wiki/Command_pattern">command pattern</a>.
+            
+            Settings;
+
+            Coordinates.
+
+            <h4>Class Diagrams</h4>
+            Map configuration class:
+            <img width="100%" src="../diagrams/project/map_config.svg">
+
+            Map operation commands:
+            <img width="100%" src="../diagrams/project/commands.svg">
+            
+
+            <h2 id="Waste-Service">Sprint 1.3: Waste Service</h2>
+            
 
             <h2 id="Deployment">Deployment</h2>
             Termine della fase di progettazione
