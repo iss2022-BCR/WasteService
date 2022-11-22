@@ -39,7 +39,6 @@ class _ViewRequestState extends State<ViewRequest> {
   bool _waitingReply = false;
   String _waitingDots = "Waiting.";
   Timer? _timer;
-  int _timeoutCounter = Constants.timeoutSeconds;
 
   // Message list
   final List<String> _messages = [];
@@ -75,7 +74,7 @@ class _ViewRequestState extends State<ViewRequest> {
 
   Future<void> _sendTypesRequest() async {
     setState(() {
-      _waitingReply = false;
+      _waitingReply = true;
       _reply = "";
     });
     TypesRequest req = TypesRequest();
@@ -83,11 +82,13 @@ class _ViewRequestState extends State<ViewRequest> {
     String msg = req.toQAKString("smartdevice", "typesprovider");
     _logMessage("Types Request: $msg");
     widget.connection.sendMessage(msg);
+
+    _startTimer();
   }
 
   Future<void> _sendStoreRequest({timeout = Duration}) async {
     setState(() {
-      _waitingReply = false;
+      _waitingReply = true;
       _reply = "";
     });
     StoreRequest req = StoreRequest(
@@ -97,9 +98,9 @@ class _ViewRequestState extends State<ViewRequest> {
     _logMessage("Store Request: $msg");
     widget.connection.sendMessage(msg);
 
-    /*if (timeout != null) {
+    if (timeout != null) {
       _startTimer();
-    }*/
+    }
   }
 
   List<String> _parseTypes(String types, String sep) {
@@ -111,12 +112,16 @@ class _ViewRequestState extends State<ViewRequest> {
     ApplMessage msg = ApplMessage.fromString(serverReply);
 
     setState(() {
+      // TypesRequest Reply
       if (serverReply.contains('typesreply')) {
+        _waitingReply = false;
         _wasteTypes = _parseTypes(msg.getContentWithoutId(), '_');
         _wasteTypes.sort();
         _currentWasteType = _wasteTypes[0];
-      } else if (msg.msgId.toLowerCase().contains("load")) {
-        //_stopTimer();
+      } else
+      // StoreRequest Reply
+      if (msg.msgId.toLowerCase().contains("load")) {
+        _stopTimer();
         _reply = msg.msgId.toLowerCase().contains('accepted')
             ? "Accepted"
             : "Rejected";
@@ -126,7 +131,7 @@ class _ViewRequestState extends State<ViewRequest> {
   }
 
   void _errorHandler(error) {
-    //_stopTimer();
+    _stopTimer();
     widget.notifyParent(
         "Disconnected", "You have been disconnected by the server.");
     //widget.notifyParent("Disconnected", error.toString());
@@ -138,7 +143,7 @@ class _ViewRequestState extends State<ViewRequest> {
   }
 
   void _doneHandler() {
-    //_stopTimer();
+    _stopTimer();
     widget.notifyParent("Disconnected", "Connection closed by the server.");
 
     widget.connection.destroy();
@@ -150,24 +155,23 @@ class _ViewRequestState extends State<ViewRequest> {
   void _startTimer() {
     setState(() {
       _waitingDots = "Waiting.";
-      _timeoutCounter = Constants.timeoutSeconds;
+      //_timeoutCounter = Constants.timeoutSeconds;
       _waitingReply = true;
     });
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
-        if (_waitingReply && _timeoutCounter > 0) {
+        if (_waitingReply) {
           setState(() {
             if (_waitingDots == "Waiting...") {
               _waitingDots = "Waiting.";
             } else {
               _waitingDots += ".";
             }
-            _timeoutCounter--;
           });
         } else {
-          //_stopTimer();
+          _stopTimer();
           setState(() {
-            _reply = "Timeout expired.";
+            _reply = "";
           });
         }
       });
@@ -212,7 +216,7 @@ class _ViewRequestState extends State<ViewRequest> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        //_stopTimer();
+        _stopTimer();
         widget.notifyParent(
             "Disconnected", "You disconnecred from the server.");
         widget.connection.close();
@@ -412,7 +416,7 @@ class _ViewRequestState extends State<ViewRequest> {
                         }
                       });
 
-                      _sendStoreRequest(timeout: 10);
+                      _sendStoreRequest();
                     }
                   },
             style: ElevatedButton.styleFrom(
