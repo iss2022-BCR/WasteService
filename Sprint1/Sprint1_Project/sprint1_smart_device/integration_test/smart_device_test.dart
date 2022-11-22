@@ -84,7 +84,7 @@ void main() {
               "[Mock_WasteServer] status:\n${mockServer.getFullStatusString()}");
         } else {
           ApplMessage msg = ApplMessage.fromString(
-              "msg(loadaccepted, reply, wasteservice, smartdevice, loadrejected), 3)");
+              "msg(loadrejected, reply, wasteservice, smartdevice, loadrejected), 3)");
           print("[Mock_WasteServer] Replied with: LoadRejected");
           sock.write(msg.toString());
         }
