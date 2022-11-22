@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'package:sprint1_smart_device/main.dart' as app;
+import 'package:sprint1_smart_device/model/appl_message.dart';
 import 'package:sprint1_smart_device/model/waste_service/store_request.dart';
 import 'package:sprint1_smart_device/model/waste_service/waste_type.dart';
 
@@ -14,17 +15,17 @@ const String HOME_VIEW_TITLE = "Smart Device Simulator";
 const String REQUEST_VIEW_TITLE = "Store Request";
 
 const String WASTE_SERVICE_IP = "127.0.0.1";
-const int WASTE_SERVICE_PORT = 11800;
+const int WASTE_SERVICE_PORT = 11780;
 
+const String SR_TYPE = "PLASTIC";
 const double SR_WEIGHT = 10.0;
-const WasteType SR_TYPE = WasteType.PLASTIC;
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   String wasteServiceIP = WASTE_SERVICE_IP;
   int wasteServicePort = WASTE_SERVICE_PORT;
+  String storeRequestType = SR_TYPE;
   double storeRequestWeight = SR_WEIGHT;
-  WasteType storeRequestType = SR_TYPE;
 
   setUpAll(() {
     wasteServiceIP =
@@ -37,8 +38,7 @@ void main() {
         double.tryParse(const String.fromEnvironment('WASTE_WEIGHT')) ??
             SR_WEIGHT;
     try {
-      storeRequestType =
-          WasteType.values.byName(const String.fromEnvironment('WASTE_TYPE'));
+      storeRequestType = const String.fromEnvironment('WASTE_TYPE');
     } catch (e) {
       storeRequestType = SR_TYPE;
     }
@@ -47,24 +47,47 @@ void main() {
   print("[SmartDevice Test] Starting test with the following parameters:");
   print("\tIP = $wasteServiceIP");
   print("\tPort = $wasteServicePort");
-  print("\tPortStoreRequest_Weight = $storeRequestWeight");
   print("\tStoreRequest_Type = $storeRequestType");
+  print("\tPortStoreRequest_Weight = $storeRequestWeight");
 
   // Default: run mock server on localhost
   if (wasteServiceIP == WASTE_SERVICE_IP) {
     MockWasteServer mockServer = MockWasteServer();
     mockServer.startServer(wasteServicePort, (data, sock, iSock) {
-      StoreRequest receivedSR =
-          StoreRequest.fromQAKString(String.fromCharCodes(data));
+      ApplMessage req = ApplMessage.fromString(String.fromCharCodes(data));
 
-      print(mockServer.getCurrentStorage());
-      if (mockServer.canStore(receivedSR.wasteType, receivedSR.wasteWeight)) {
-        print("[Mock_WasteServer] Load accepted.");
-        mockServer.deposit(receivedSR.wasteWeight, receivedSR.wasteType);
-        sock.write("LoadAccepted");
-      } else {
-        print("[Mock_WasteServer] Load rejected.");
-        sock.write("LoadRejected");
+      // TypesRequest
+      if (req.msgId.toLowerCase() == ("typesrequest")) {
+        print("[Mock_WasteServer] Received TypesRequest.");
+
+        print(
+            "[Mock_WasteServer] Replied with waste types list: ${mockServer.getTypesListString("_")}");
+        ApplMessage msg = ApplMessage.fromString(
+            "msg(typesreply, reply, typesprovider, smartdevice, typesreply(${mockServer.getTypesListString("_")}), ${req.msgNum + 1})");
+        sock.write(msg.toString());
+      } else
+      // StoreRequest
+      if (req.msgId.toLowerCase() == ("storerequest")) {
+        print("[Mock_WasteServer] Received StoreRequest: ${req.toString()}");
+        StoreRequest sr = StoreRequest.fromQAKString(req.toString());
+
+        if (mockServer.canPreStore(sr.wasteType, sr.wasteWeight)) {
+          ApplMessage msg = ApplMessage.fromString(
+              "msg(loadaccepted, reply, wasteservice, smartdevice, loadaccepted), 3)");
+
+          mockServer.addToPreStorage(sr.wasteType, sr.wasteWeight);
+          print("[Mock_WasteServer] Replied with: LoadAccepted");
+          sock.write(msg.toString());
+          mockServer.addToStorage(sr.wasteType, sr.wasteWeight);
+
+          print(
+              "[Mock_WasteServer] status:\n${mockServer.getFullStatusString()}");
+        } else {
+          ApplMessage msg = ApplMessage.fromString(
+              "msg(loadaccepted, reply, wasteservice, smartdevice, loadrejected), 3)");
+          print("[Mock_WasteServer] Replied with: LoadRejected");
+          sock.write(msg.toString());
+        }
       }
     }, onConnect: (sock, iSock) {
       print(
@@ -127,11 +150,11 @@ void main() {
 
     // Tap the 'Connect' button
     await tester.tap(find.byKey(const ValueKey('connect')));
-    await tester.pumpAndSettle();
+    await tester.pumpAndSettle(const Duration(seconds: 1));
 
     // Verify that the connection was successful
     expect(find.text('Store Request'), findsOneWidget);
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 5));
 
     // Store Request ===========================================================
     expect(find.text('Store Request'), findsOneWidget);
@@ -148,14 +171,14 @@ void main() {
     // Select SR_TYPE in the Waste Type field
     await tester.tap(find.byKey(const ValueKey('parameterWasteType')));
     await tester.pumpAndSettle();
-    await tester.tap(find.text(storeRequestType.name).last);
+    await tester.tap(find.text(storeRequestType).last);
     await tester.pumpAndSettle();
     // Type SR_WEIGHT in the Waste Weight field
     await tester.enterText(find.byKey(const ValueKey('parameterWasteWeight')),
         storeRequestWeight.toString());
     // Verify the Store Request parameters
     expect(find.text(storeRequestWeight.toString()), findsOneWidget);
-    expect(find.text(storeRequestType.name), findsOneWidget);
+    expect(find.text(storeRequestType), findsOneWidget);
     await Future.delayed(const Duration(seconds: 1));
 
     // Tap the 'Send Store Request' button

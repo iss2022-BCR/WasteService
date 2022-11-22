@@ -120,7 +120,7 @@ class _ViewRequestState extends State<ViewRequest> {
         _currentWasteType = _wasteTypes[0];
       } else
       // StoreRequest Reply
-      if (msg.msgId.toLowerCase().contains("load")) {
+      if (serverReply.contains("load")) {
         _stopTimer();
         _reply = msg.msgId.toLowerCase().contains('accepted')
             ? "Accepted"

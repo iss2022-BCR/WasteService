@@ -1,3 +1,8 @@
+import 'package:sprint1_smart_device/model/waste_service/types_request.dart';
+
+import 'waste_service/store_request.dart';
+import 'waste_service/waste_type.dart';
+
 class ApplMessage {
   late String msgId;
   late ApplMessageType msgType;
@@ -43,16 +48,28 @@ class ApplMessage {
     parsed.removeAt(0);
 
     msgNum = int.tryParse(parsed.last.replaceAll(')', '').trim()) ?? 0;
+    parsed.removeLast();
 
-    int iFirst = message.indexOf(msgId);
-    int iLast = message.indexOf(')') + 1;
-    msgContent = message.substring(iFirst, iLast);
+    msgContent = "";
+    for (String s in parsed) {
+      msgContent += s;
+      if (s != parsed.last) {
+        msgContent += ",";
+      }
+    }
+    msgContent = msgContent.trim();
   }
 
   String getContentWithoutId() {
-    int iFirst = msgContent.indexOf(msgId) + msgId.length + 1;
-    int iLast = msgContent.indexOf(')');
-    return msgContent.substring(iFirst, iLast);
+    if (msgContent.contains("$msgId(") && msgContent.contains(")")) {
+      int iFirst = msgContent.indexOf(msgId) + msgId.length + 1;
+      int iLast = msgContent.indexOf(')');
+
+      if (iFirst <= iLast) {
+        return msgContent.substring(iFirst, iLast);
+      }
+    }
+    return msgContent;
   }
 
   @override
@@ -78,7 +95,7 @@ class ApplMessage {
         type = "msg";
     }
     res =
-        "msg($msgId, $type, $msgSender, $msgReceiver, $msgId($msgContent), $msgNum)\n";
+        "msg($msgId, $type, $msgSender, $msgReceiver, $msgContent, $msgNum)\n";
 
     return res;
   }
@@ -100,4 +117,13 @@ void main() {
   print(msg.toString());
 
   print(msg.getContentWithoutId());
+
+  TypesRequest tr = TypesRequest();
+  print(tr.toQAKString("smartdevice", "typesprovider"));
+  ApplMessage.fromString(tr.toQAKString("smartdevice", "typesprovider"));
+
+  StoreRequest sr = StoreRequest(WasteType.PLASTIC.name, 10.0);
+  print(sr.toQAKString("smartdevice", "wasteservice", 3));
+  print(ApplMessage.fromString(sr.toQAKString("smartdevice", "wasteservice", 3))
+      .toString());
 }

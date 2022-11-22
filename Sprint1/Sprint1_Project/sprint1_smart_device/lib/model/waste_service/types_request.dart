@@ -5,7 +5,7 @@ class TypesRequest {
 
   String toQAKString(String senderName, String toActorName) {
     ApplMessage msg = ApplMessage("typesrequest", ApplMessageType.request,
-        senderName, toActorName, "_", 1);
+        senderName, toActorName, "typesrequest", 1);
     return msg.toString();
   }
 }

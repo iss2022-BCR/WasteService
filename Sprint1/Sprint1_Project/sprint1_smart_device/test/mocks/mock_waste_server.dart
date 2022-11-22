@@ -155,6 +155,10 @@ class MockWasteServer {
     }
   }
 
+  List<String> parseTypesListMessage(String list, String separator) {
+    return list.split("_");
+  }
+
   String getTypesListString(String separator) {
     String res = "";
 

@@ -57,8 +57,13 @@ class StoreRequest {
   }
 
   String toQAKString(String senderName, String toActorName, int seqNum) {
-    ApplMessage msg = ApplMessage("storerequest", ApplMessageType.request,
-        senderName, toActorName, "$wasteType, $wasteWeight", seqNum);
+    ApplMessage msg = ApplMessage(
+        "storerequest",
+        ApplMessageType.request,
+        senderName,
+        toActorName,
+        "storerequest($wasteType, $wasteWeight)",
+        seqNum);
     return msg.toString();
   }
 

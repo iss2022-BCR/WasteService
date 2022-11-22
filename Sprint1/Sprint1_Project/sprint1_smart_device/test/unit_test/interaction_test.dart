@@ -22,6 +22,7 @@ void main() {
     // start server
     print("[Mock_WasteServer] Starting...");
     MockWasteServer mockServer = MockWasteServer();
+    print("[Mock_WasteServer] status:\n${mockServer.getFullStatusString()}");
     mockServer.startServer(port, (data, sock, iSock) {
       ApplMessage req = ApplMessage.fromString(String.fromCharCodes(data));
 
@@ -29,22 +30,33 @@ void main() {
       if (req.msgId.toLowerCase() == ("typesrequest")) {
         print("[Mock_WasteServer] Received TypesRequest.");
 
-        print("[Mock_WasteServer] Replied with waste types list: ");
+        print(
+            "[Mock_WasteServer] Replied with waste types list: ${mockServer.getTypesListString("_")}");
         ApplMessage msg = ApplMessage.fromString(
             "msg(typesreply, reply, typesprovider, smartdevice, typesreply(${mockServer.getTypesListString("_")}), ${req.msgNum + 1})");
         sock.write(msg.toString());
       } else
       // StoreRequest
       if (req.msgId.toLowerCase() == ("storerequest")) {
+        print("[Mock_WasteServer] Received StoreRequest: ${req.toString()}");
         StoreRequest sr = StoreRequest.fromQAKString(req.toString());
+
         if (mockServer.canPreStore(sr.wasteType, sr.wasteWeight)) {
+          ApplMessage msg = ApplMessage.fromString(
+              "msg(loadaccepted, reply, wasteservice, smartdevice, loadaccepted), 3)");
+
           mockServer.addToPreStorage(sr.wasteType, sr.wasteWeight);
-          print("[Mock_WasteServer] Load accepted.");
-          sock.write("LoadAccepted");
+          print("[Mock_WasteServer] Replied with: LoadAccepted");
+          sock.write(msg.toString());
           mockServer.addToStorage(sr.wasteType, sr.wasteWeight);
+
+          print(
+              "[Mock_WasteServer] status:\n${mockServer.getFullStatusString()}");
         } else {
-          print("[Mock_WasteServer] Load rejected.");
-          sock.write("LoadRejected");
+          ApplMessage msg = ApplMessage.fromString(
+              "msg(loadaccepted, reply, wasteservice, smartdevice, loadrejected), 3)");
+          print("[Mock_WasteServer] Replied with: LoadRejected");
+          sock.write(msg.toString());
         }
       }
 
@@ -119,6 +131,8 @@ void main() {
       print(
           "[Mock_SmartDevice] Sent Store Request ${sr.toQAKString("smartdevice", "wasteservice", 3)}");
       await Future.delayed(const Duration(seconds: 1));
+
+      print(reply);
 
       expect(reply.toLowerCase().contains("loadaccepted"), true);
     });
