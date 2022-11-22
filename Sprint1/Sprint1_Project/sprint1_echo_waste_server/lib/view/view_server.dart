@@ -6,9 +6,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:sprint1_echo_waste_server/model/appl_message.dart';
+import 'package:sprint1_echo_waste_server/model/waste_service/waste_service.dart';
 
-import '../model/store_request.dart';
-import '../model/waste_type.dart';
+import '../model/waste_service/store_request.dart';
+import '../model/waste_service/waste_type.dart';
 
 const String dateTimeFormat = "yyyy/MM/dd HH:mm:ss";
 
@@ -29,10 +31,8 @@ class _ViewServerState extends State<ViewServer> {
 
   final List<String> _messages = [];
 
-  double _max_plastic = 50.0;
-  double _max_glass = 80.0;
-  double _plastic = 0.0;
-  double _glass = 0.0;
+  final WasteService _wasteService =
+      WasteService(["PLASTIC", "GLASS"], capacity: 100.0);
 
   Future<void> _startServer(String address, int port) async {
     _serverSocket = await ServerSocket.bind(address, port).then((server) {
@@ -77,9 +77,83 @@ class _ViewServerState extends State<ViewServer> {
 
   void _handleMessage(Uint8List data, Socket socket, int iSock) {
     String result = String.fromCharCodes(data);
-    _logMessage("StoreRequest from #$iSock: $result");
+    _logMessage("Message from #$iSock: $result");
 
-    StoreRequest receivedSR =
+    if (result.contains("typesrequest")) {
+      ApplMessage msg = ApplMessage.fromString(
+          "msg(typesreply, reply, typesprovider, smartdevice, typesreply(${_wasteService.getTypesListString("_")}), ${2})");
+      _logMessage("Replied to #$iSock with: ${msg.toString()}");
+      socket.write(msg.toString());
+    } else {
+      StoreRequest receivedSR =
+          StoreRequest.fromQAKString(String.fromCharCodes(data));
+
+      if (_wasteService.canPreStore(
+          receivedSR.wasteType, receivedSR.wasteWeight)) {
+        setState(() {
+          _wasteService.addToPreStorage(
+              receivedSR.wasteType, receivedSR.wasteWeight);
+          // pickup
+          ApplMessage msg = ApplMessage.fromString(
+              "msg(loadaccepted, reply, wasteservice, smartdevice, loadaccepted), 3)");
+          _logMessage("Sent LoadAccepted to #$iSock: ${msg.toString()}");
+          socket.write(msg.toString());
+
+          // deposit
+          _wasteService.addToStorage(
+              receivedSR.wasteType, receivedSR.wasteWeight);
+        });
+      } else {
+        ApplMessage msg = ApplMessage.fromString(
+            "msg(loadrejected, reply, wasteservice, smartdevice, loadrejected), 3)");
+        _logMessage("Sent LoadRejected to #$iSock: ${msg.toString()}");
+        socket.write(msg.toString());
+      }
+
+      /*final String wasteType = receivedSR.wasteType;
+      final double wasteWeight = receivedSR.wasteWeight;
+
+      ApplMessage msg = ApplMessage.fromString(
+          "msg(loadaccepted, reply, wasteservice, smartdevice, loadaccepted, ${4})");
+
+      if (wasteWeight == -1.0) {
+        _logMessage("#$iSock INVALID MESSAGE");
+        return;
+      }
+
+      switch (wasteType) {
+        case "PLASTIC":
+          if (_plastic + wasteWeight <= _max_plastic) {
+            setState(() {
+              _plastic += wasteWeight;
+            });
+            _logMessage("Sent LoadAccepted to #$iSock");
+            socket.write("LoadAccepted");
+          } else {
+            _logMessage("Sent LoadRejected to #$iSock");
+            socket.write("LoadRejected");
+          }
+          break;
+        case "GLASS":
+          if (_glass + wasteWeight <= _max_glass) {
+            setState(() {
+              _glass += wasteWeight;
+            });
+            _logMessage("Sent LoadAccepted to #$iSock");
+            socket.write("LoadAccepted");
+          } else {
+            _logMessage("Sent LoadRejected to #$iSock");
+            socket.write("LoadRejected");
+          }
+          break;
+        default:
+          _logMessage("#$iSock INVALID MESSAGE (wasteType)");
+          break;
+      }
+      socket.write(msg.toString());*/
+    }
+
+    /*StoreRequest receivedSR =
         StoreRequest.fromQAKString(String.fromCharCodes(data));
 
     //print(jsonObj['wasteWeight']); // test
@@ -121,7 +195,7 @@ class _ViewServerState extends State<ViewServer> {
       default:
         _logMessage("#$iSock INVALID MESSAGE (wasteType)");
         break;
-    }
+    }*/
   }
 
   /*bool canStore(WasteType type, double weight) {
@@ -142,11 +216,6 @@ class _ViewServerState extends State<ViewServer> {
   @override
   void initState() {
     super.initState();
-
-    setState(() {
-      _plastic = 0.0;
-      _glass = 0.0;
-    });
   }
 
   @override
@@ -187,22 +256,26 @@ class _ViewServerState extends State<ViewServer> {
               Row(
                 children: [
                   Text(
-                    "Plastic: $_plastic / $_max_plastic KG",
+                    "${_wasteService.getStatusString("PLASTIC")}",
                     style: TextStyle(
                         fontSize: 20.0,
                         fontFeatures: const [FontFeature.tabularFigures()],
-                        color: _plastic == _max_plastic ? Colors.red : null),
+                        color: _wasteService.canPreStore("PLASTIC", 1.0)
+                            ? null
+                            : Colors.red),
                   )
                 ],
               ),
               Row(
                 children: [
                   Text(
-                    "Glass: $_glass / $_max_glass KG",
+                    "${_wasteService.getStatusString("GLASS")}",
                     style: TextStyle(
                         fontSize: 20.0,
                         fontFeatures: const [FontFeature.tabularFigures()],
-                        color: _glass == _max_glass ? Colors.red : null),
+                        color: _wasteService.canPreStore("GLASS", 1.0)
+                            ? null
+                            : Colors.red),
                   )
                 ],
               ),
@@ -260,7 +333,7 @@ class _ViewServerState extends State<ViewServer> {
                     child: IconButton(
                       onPressed: () {
                         setState(() {
-                          _plastic = 0.0;
+                          _wasteService.resetStorage("PLASTIC");
                         });
                       },
                       iconSize: 40.0,
@@ -279,7 +352,12 @@ class _ViewServerState extends State<ViewServer> {
                         child: IconButton(
                           onPressed: () {
                             setState(() {
-                              _max_plastic = min(100000.0, _max_plastic + 10.0);
+                              _wasteService.setCapacity(
+                                  "PLASTIC",
+                                  min(
+                                      100000.0,
+                                      _wasteService.getCapacity("PLASTIC") +
+                                          10.0));
                             });
                           },
                           iconSize: 20.0,
@@ -297,8 +375,12 @@ class _ViewServerState extends State<ViewServer> {
                         child: IconButton(
                           onPressed: () {
                             setState(() {
-                              _max_plastic =
-                                  max(20.0, max(_plastic, _max_plastic - 10.0));
+                              _wasteService.setCapacity(
+                                  "PLASTIC",
+                                  max(
+                                      20.0,
+                                      _wasteService.getCapacity("PLASTIC") -
+                                          10.0));
                             });
                           },
                           iconSize: 20.0,
@@ -322,7 +404,7 @@ class _ViewServerState extends State<ViewServer> {
                     child: IconButton(
                       onPressed: () {
                         setState(() {
-                          _glass = 0.0;
+                          _wasteService.resetStorage("GLASS");
                         });
                       },
                       iconSize: 40.0,
@@ -341,7 +423,12 @@ class _ViewServerState extends State<ViewServer> {
                         child: IconButton(
                           onPressed: () {
                             setState(() {
-                              _max_glass = min(100000.0, _max_glass + 10.0);
+                              _wasteService.setCapacity(
+                                  "GLASS",
+                                  min(
+                                      100000.0,
+                                      _wasteService.getCapacity("GLASS") +
+                                          10.0));
                             });
                           },
                           iconSize: 20.0,
@@ -359,8 +446,12 @@ class _ViewServerState extends State<ViewServer> {
                         child: IconButton(
                           onPressed: () {
                             setState(() {
-                              _max_glass =
-                                  max(20.0, max(_glass, _max_glass - 10.0));
+                              _wasteService.setCapacity(
+                                  "GLASS",
+                                  max(
+                                      20.0,
+                                      _wasteService.getCapacity("GLASS") -
+                                          10.0));
                             });
                           },
                           iconSize: 20.0,
