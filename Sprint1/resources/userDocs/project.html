@@ -22,10 +22,16 @@
             <a href="problem_analysis.html">Problem Analysis</a>
             <a class="selected" href="project.html">Project</a>
             <div class="sidenavSection">
-                <a href="#Smart-Device-Simulator">Smart Device<br/>Simulator</a>
+                <a href="#Logical-Architecture">Logical Architecture</a>
+                <a href="#SmartDevice-Simulator">Smart Device<br/>Simulator</a>
                 <a href="#Echo-Waste-Server">Echo Waste Server</a>
                 <a href="#Map-Editor">Map Editor</a>
                 <a href="#Waste-Service">Waste Service</a>
+                <div class="sidenavSubSection">
+                    <a href="#Waste-Service-Logical-Architecture">Waste Service<br/>Logical Architecture</a>
+                    <a href="#Planner-BCR">PlannerBCR</a>
+                    <a href="#Waste-Service-Actors">Actors</a>
+                </div>
             </div>
             <a href="test_plans.html">Test Plans</a>
             <a href="conclusions.html">Conclusions</a>
@@ -46,41 +52,25 @@
                 <li><a href="#Waste-Service">Sprint 1.3</a> Waste Service</li>
             </ol>
 
-            <h4>Setup Remote Communications</h4>
-            <div class="remark">
-                <b>Port Forwarding</b>
-                <ol>
-                    <li>
-                        Access to the router page: search <code>192.168.1.1</code> in a browser, and login with the credentials:
-                        <img width="100%" src="../imgs/test_plan/port_forwarding/access.png"/>
-                    </li>
-                    <li>
-                        Make sure you have selected the <code>expert user mode</code>:
-                        <img width="100%" src="../imgs/test_plan/port_forwarding/expert_user_mode.png"/>
-                    </li>
-                    <li>Select the <code>Internet</code> section and then <code>Port mapping</code>.</li>
-                    <li>
-                        Specify the information needed:
-                        <ul>
-                            <li>Service: <code>TCP</code>.</li>
-                            <li>(Optional) Device: <code>your_device_name</code>.</li>
-                            <li>LAN IP address: the IP address of the device where the service runs.</li>
-                            <li>Port/Interval.</li>
-                            <li><highlight1>Public port</highlight1>: the port you want to be use (connections to that will be forwarded to the LAN port).</li>
-                            <li>LAN port: the port the service is using.</li>
-                        </ul>
-                        Example:
-                        <img width="100%" src="../imgs/test_plan/port_forwarding/port_association.png"/>
-                    </li>
-                    <li>
-                        Check the <highlight2><code>router public IP</code></highlight2>:
-                        <img width="100%" src="../imgs/test_plan/port_forwarding/router_public_ip_address.png"/>
-                    </li>
-                </ol>
-                To connect to the WasteService from a remote device, you'll then need to use:
-                <pre><b><highlight2>router_public_ip</highlight2>:<highlight1>public_port</highlight1></b>
-                </pre>
-            </div>
+            <h2 id="Logical-Architecture">Logical Architecture</h2>
+            The main change in the logical architecture from the Problem Analysis is the context
+            specialization: during the project phase we modeled the system by using:
+            <ul>
+                <li>
+                    one <ksi>context for the waste service business logic</ksi> (accepting and processing
+                    of the requests and updating of the storage status);
+                </li>
+                <li>
+                    one <ksi>context for the execution of the real deposit operations</ksi> (performed by the
+                    transport trolley) which is transparent to the user (truck diver).
+                </li>
+            </ul>
+            The smart device is actually an <i>alien</i>, since it's not a real QAK actor, but we included it
+            in the model for demonstrative purposes, because it helps to have a general idea of how the system works,
+            and it also served as a test support.
+                
+            <img width="100%" src="../../Sprint1_Project/sprint1_waste_service/project_logical_architecture_core-business.png"/>
+            QAK model: <a href="../../Sprint1_Project/sprint1_waste_service/src/project_logical_architecture.qak">project_logical_architecture.qak</a>
 
             <h2 id="SmartDevice-Simulator">Sprint 1.1: SmartDevice Simulator</h2>
             <ksi>SmartDevice Simulator</ksi> (<a href="../../Sprint1_Project/sprint1_smart_device/">sprint1_smart_device</a>) is a mobile/desktop compatible application,
@@ -197,17 +187,145 @@
             
             
             spiegare basic robot (docker images), pathexecutor, planner
-
-            <h2 id="Logical-Architecture">Logical Architecture</h2>
-            <highlight2>QAK model: spiegare com'è cambiata l'architettura rispetto all'analisi del prob</highlight2>
-            <img width="100%" src="../../Sprint1_Project/sprint1_waste_service/project_logical_architecture_waste_service.png"/>
+            <highlight2>QAK model: spiegare gli attori</highlight2>
             
+            <h3 id="Waste-Service-Logical-Architecture">Waste Service Logical Architecture</h3>
+            <img width="100%" src="../../Sprint1_Project/sprint1_waste_service/project_logical_architecture_waste_service.png"/>
+            QAK model: <a href="../../Sprint1_Project/sprint1_waste_service/src/waste_service.qak">waste_service.qak</a>
+            
+            <h3 id="Planner-BCR">PlannerBCR</h3>
+            PlannerBCR is an <i>extension</i> of the Planner22Util Kotlin object, provided by our software house.
+            We added the <b>support for the map configuration</b>, by exposing some new static methods:
+            <ul>
+                <li>
+                    <ks><code>loadMapConfig(String)</code></ks> - loads a Java object of type <code>it.unibo.map_editor_bcr.model.map_config.MapConfig</code>.
+                    That's the object containing the meaning of each room map cell.
+                </li>
+                <li>
+                    <ks><code>showMapConfig()</code></ks> - prints the map configuration as a legacy string (same format of the RoomMap).
+                    <pre>
+                        |H, -, -, -, G, G, G, 
+                        |-, -, -, -, -, -, -, 
+                        |-, -, -, -, -, -, -, 
+                        |-, -, -, -, -, -, -, 
+                        |I, I, I, -, P, P, P, 
+                    </pre>
+                </li>
+                <li>
+                    <ks><code>showFancyMapConfig()</code></ks> - prints the map configuration as a slightly prettier string.
+                    <pre style="white-space: pre;">
++---------------------+
+| H  -  -  -  G  G  G |
+| -  -  -  -  -  -  - |
+| -  -  -  -  -  -  - |
+| -  -  -  -  -  -  - |
+| I  I  I  -  P  P  P |
++---------------------+</pre>
+                </li>
+                <li>
+                    <ks><code>getNearestPositionToCellType(Pair&lt;Int, Int&gt;, String): Pair&lt;Int, Int&gt;</code></ks> - 
+                    return the coordinate (<code>Pair&lt;Int, Int&gt;</code>) of the nearest <code>CellType</code> starting from a given coordinate.
+                    The <code>CellType</code> is the label associated with a cell (e.g. "HOME", "GLASS", etc.).
+                </li>
+            </ul>
+            In order to use PlannerBCR, we need to add the <ksi>map_editor_bcr</ksi> JAR dependency in the <code>build.gradle</code> file:
+            <pre>
+                implementation files('../unibolibs/map_editor_bcr.jar')
+            </pre>
+            
+            <h3 id="Waste-Service-Actors">Actors</h3>
+            <table class="dictionary">
+                <tr>
+                    <th>Actor</th>
+                    <th>Context</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>TypesProvider</td>
+                    <td>Ctx_WasteService</td>
+                    <td>
+                        Receive <ks><code>typesRequest</code></ks> and replies with the WasteTypes
+                        that can be stored in the WasteService.
+                    </td>
+                </tr>
+                <tr>
+                    <td>WasteService</td>
+                    <td>Ctx_WasteService</td>
+                    <td>
+                        Receive <ks><code>storeRequest</code></ks> and check if the load can be stored.
+                        If the request is invalid, or there is not enough space, send a <ks><code>loadRejected</code></ks>
+                        reply immediately; otherwise ask the TransportTrolley to perform a deposit action,
+                        and replies with <ks><code>loadAccepted</code></ks> when the load had been picked up from Indoor.
+                    </td>
+                </tr>
+                <tr>
+                    <td>TransportTrolley</td>
+                    <td>Ctx_TransportTrolley</td>
+                    <td>
+                        Receive the deposit requests from the WasteService and performs them:
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>PathExecutor</td>
+                    <td>Ctx_TransportTrolley</td>
+                    <td>
+                        QAK actor provided by our software house, which receives requests containing a path
+                        (i.e. a sequence of actions) and the name of the actor that sent the request, and
+                        interact with the BasicRobot to perform the actions.
+                    </td>
+                </tr>
+                <tr>
+                    <td>BasicRobot</td>
+                    <td>Ctx_Robot</td>
+                    <td>
+                        QAK actor provided by our software house, which receives messages (requests for aril commands
+                        and dispatches for steps) and interact with the robot implementation (real or virtual) to execute them.
+                    </td>
+                </tr>
+            </table>
 
             <h2 id="Deployment">Deployment</h2>
             Where to download the software.
 
             <h2 id="WasteService-Demo">WasteService Demo</h2>
             <highlight2>script per avviare la demo, con parametri, spiegare il setup e cosa fa la demo.</highlight2>
+            <h4>Setup Remote Communications</h4>
+            <div class="remark">
+                <b>Port Forwarding</b>
+                <ol>
+                    <li>
+                        Access to the router page: search <code>192.168.1.1</code> in a browser, and login with the credentials:
+                        <img width="100%" src="../imgs/test_plan/port_forwarding/access.png"/>
+                    </li>
+                    <li>
+                        Make sure you have selected the <code>expert user mode</code>:
+                        <img width="100%" src="../imgs/test_plan/port_forwarding/expert_user_mode.png"/>
+                    </li>
+                    <li>Select the <code>Internet</code> section and then <code>Port mapping</code>.</li>
+                    <li>
+                        Specify the information needed:
+                        <ul>
+                            <li>Service: <code>TCP</code>.</li>
+                            <li>(Optional) Device: <code>your_device_name</code>.</li>
+                            <li>LAN IP address: the IP address of the device where the service runs.</li>
+                            <li>Port/Interval.</li>
+                            <li><highlight1>Public port</highlight1>: the port you want to be use (connections to that will be forwarded to the LAN port).</li>
+                            <li>LAN port: the port the service is using.</li>
+                        </ul>
+                        Example:
+                        <img width="100%" src="../imgs/test_plan/port_forwarding/port_association.png"/>
+                    </li>
+                    <li>
+                        Check the <highlight2><code>router public IP</code></highlight2>:
+                        <img width="100%" src="../imgs/test_plan/port_forwarding/router_public_ip_address.png"/>
+                    </li>
+                </ol>
+                To connect to the WasteService from a remote device, you'll then need to use:
+                <pre><b><highlight2>router_public_ip</highlight2>:<highlight1>public_port</highlight1></b>
+                </pre>
+            </div>
+        
         </div>
 
     </body>

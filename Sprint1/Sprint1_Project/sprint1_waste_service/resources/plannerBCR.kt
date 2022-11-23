@@ -4,15 +4,12 @@ import aima.core.search.framework.problem.GoalTest
 import aima.core.search.framework.problem.Problem
 import aima.core.search.framework.qsearch.GraphSearch
 import aima.core.search.uninformed.BreadthFirstSearch
-import java.io.PrintWriter
-import java.io.FileWriter
-import java.io.ObjectOutputStream
-import java.io.FileOutputStream
 import java.io.ObjectInputStream
 import java.io.FileInputStream
 import unibo.planner22.model.*
 import it.unibo.map_editor_bcr.model.map_config.CellType
 import it.unibo.map_editor_bcr.model.room_map.RoomMapParser
+import wasteservice.MapConfigSupport
 
 
 object plannerBCR {
@@ -36,6 +33,9 @@ object plannerBCR {
 
     private var search: BreadthFirstSearch? = null
     private var timeStart: Long = 0
+
+	// PlannerBCR
+	private var mapConfigSupport = MapConfigSupport()
 	
 /* 
  * ------------------------------------------------
@@ -425,5 +425,39 @@ object plannerBCR {
 		println("CanMoveLeft (0,1): ${RoomMap.getRoomMap().canMoveLeft(0, 1)}")
 		println("CanMoveLeft (1,1): ${RoomMap.getRoomMap().canMoveLeft(1, 1)}")
 		println("isDirty: ${RoomMap.getRoomMap().isDirty(0,0)}")
+	}
+
+/*
+* ------------------------------------------------
+* PLANNER BCR METHODS
+* ------------------------------------------------
+*/
+	@JvmStatic
+	fun loadMapConfig(filename: String) {
+		mapConfigSupport.loadMapConfig(filename)
+	}
+
+	@JvmStatic
+	fun showMapConfig() {
+		mapConfigSupport.showMap()
+	}
+
+	@JvmStatic
+	fun showFancyMapConfig() {
+		mapConfigSupport.showFancyMap()
+	}
+
+	@JvmStatic
+	fun getMapConfigCoordinates(): List<Pair<Int, Int>> {
+		return mapConfigSupport.getMapConfigCoordinates()
+	}
+
+	@JvmStatic
+	fun getNearestPositionToCellType(startCoords: Pair<Int, Int>, cellType: String): Pair<Int, Int> {
+		return mapConfigSupport.getNearestPositionToCellType(startCoords, cellType)
+	}
+	@JvmStatic
+	fun getRandomPositionFromCellType(cellType: String): Pair<Int, Int> {
+		return mapConfigSupport.getRandomPositionFromCellType(CellType.valueOf(cellType))
 	}
 }

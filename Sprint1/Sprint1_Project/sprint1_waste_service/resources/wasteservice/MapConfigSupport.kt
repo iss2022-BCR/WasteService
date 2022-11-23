@@ -3,9 +3,8 @@ package wasteservice
 import it.unibo.map_editor_bcr.model.MapLoader
 import it.unibo.map_editor_bcr.model.map_config.CellType
 import it.unibo.map_editor_bcr.model.map_config.MapConfig
-import kotlin.random.Random
 
-object MapConfigUtils {
+class MapConfigSupport {
     private var mapConfig: MapConfig? = null
 
     /**
@@ -26,7 +25,6 @@ object MapConfigUtils {
     /**
      * Returns the CellType corresponding to wasteType
      */
-    @JvmStatic
     fun parseCellTypeFromWasteType(wasteType: WasteType): CellType {
         return CellType.valueOf(wasteType.name)
     }
@@ -34,7 +32,6 @@ object MapConfigUtils {
     /**
      * Return the element of the MapConfig located in coord: Pair<X, Y>
      */
-    @JvmStatic
     fun getCell(coord: Pair<Int, Int>): CellType {
         return mapConfig?.get(coord.first, coord.second)?: CellType.NONE
     }
@@ -42,7 +39,6 @@ object MapConfigUtils {
     /**
      * Return a list containing all the coordinates for the MapConfig elements
      */
-    @JvmStatic
     fun getMapConfigCoordinates(): List<Pair<Int, Int>>{
         if(mapConfig == null) {
             throw Exception("MapConfig not initialized")
@@ -62,7 +58,6 @@ object MapConfigUtils {
     /**
      * Return a list containing all the coordinates for the given CellType.
      */
-    @JvmStatic
     fun getCoordsListFromCellType(cellType: CellType): List<Pair<Int, Int>> {
         var res: MutableList<Pair<Int, Int>> = mutableListOf()
 
@@ -78,7 +73,6 @@ object MapConfigUtils {
     /**
      * Return the coordinate (Pair<X, Y>) of the nearest cellType from a given coordinate
      */
-    @JvmStatic
     fun getNearestPositionToCellType(startX: Int, startY: Int, cellType: CellType): Pair<Int, Int> {
         val list = getCoordsListFromCellType(cellType)
         if(list.isEmpty())
@@ -100,15 +94,12 @@ object MapConfigUtils {
         }
         return result
     }
-    @JvmStatic
     fun getNearestPositionToCellType(startX: Int, startY: Int, cellType: String): Pair<Int, Int> {
         return getNearestPositionToCellType(startX, startY, CellType.valueOf(cellType))
     }
-    @JvmStatic
     fun getNearestPositionToCellType(startCoords: Pair<Int, Int>, cellType: CellType): Pair<Int, Int> {
         return getNearestPositionToCellType(startCoords.first, startCoords.second, cellType)
     }
-    @JvmStatic
     fun getNearestPositionToCellType(startCoords: Pair<Int, Int>, cellType: String): Pair<Int, Int> {
         return getNearestPositionToCellType(startCoords.first, startCoords.second, CellType.valueOf(cellType))
     }
@@ -116,7 +107,6 @@ object MapConfigUtils {
     /**
      * Return a random coordinate (Pair<X, Y>) of the cellTypes to a specific coordinate
      */
-    @JvmStatic
     fun getRandomPositionFromCellType(cellType: CellType): Pair<Int, Int> {
         val list = getCoordsListFromCellType(cellType)
         if(list.isEmpty())
@@ -124,7 +114,6 @@ object MapConfigUtils {
 
         return list.random()
     }
-    @JvmStatic
     fun getRandomPositionFromCellType(cellType: String): Pair<Int, Int> {
         return getRandomPositionFromCellType(CellType.valueOf(cellType))
     }
