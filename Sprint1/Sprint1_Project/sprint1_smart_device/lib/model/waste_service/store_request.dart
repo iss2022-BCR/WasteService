@@ -1,22 +1,20 @@
 import 'dart:convert';
 
+import 'package:sprint1_smart_device/model/appl_message.dart';
+
 import 'waste_type.dart';
 
 const double minWasteWeight = 1.0;
 const double maxWasteWeight = 100000.0;
 
 class StoreRequest {
-  late WasteType wasteType;
+  late String wasteType;
   late double wasteWeight;
 
   StoreRequest(this.wasteType, this.wasteWeight);
 
   StoreRequest.fromString(String type, String weight) {
-    try {
-      wasteType = WasteType.values.byName(type);
-    } catch (e) {
-      throw Exception("Illegal argument: ${e.toString()}");
-    }
+    wasteType = type;
     wasteWeight = double.parse(weight);
     if (wasteWeight < minWasteWeight || wasteWeight > maxWasteWeight) {
       throw Exception(
@@ -24,21 +22,13 @@ class StoreRequest {
     }
   }
 
-  StoreRequest.fromStringExceptionSafe(String type, String weight) {
-    try {
-      wasteType = WasteType.values.byName(type);
-    } catch (e) {
-      wasteType = WasteType.values.first;
-    }
-    wasteWeight = double.tryParse(weight) ?? 1.0;
-    if (wasteWeight < minWasteWeight || wasteWeight > maxWasteWeight) {
-      wasteWeight = 1.0;
-    }
-  }
+  StoreRequest.fromJson(Map<String, dynamic> json)
+      : wasteType = json['wasteType'],
+        wasteWeight = json['wasteWeight'];
 
   StoreRequest.fromJsonString(String json) {
     final jsonObj = jsonDecode(json);
-    wasteType = WasteType.values.byName(jsonObj['wasteType']);
+    wasteType = jsonObj['wasteType'];
     wasteWeight = jsonObj['wasteWeight'];
   }
 
@@ -53,13 +43,9 @@ class StoreRequest {
         .substring(0, string.split(',')[1].indexOf(')'))
         .trim();
 
-    wasteType = WasteType.values.byName(type);
+    wasteType = type;
     wasteWeight = double.parse(weight);
   }
-
-  StoreRequest.fromJson(Map<String, dynamic> json)
-      : wasteType = WasteType.values.byName(json['wasteType']),
-        wasteWeight = json['wasteWeight'];
 
   static Map<String, dynamic> toJson(StoreRequest storeRequest) => {
         'wasteType': storeRequest.wasteType,
@@ -67,11 +53,18 @@ class StoreRequest {
       };
 
   String toJsonString() {
-    return '{"wasteType": "${wasteType.name}", "wasteWeight": $wasteWeight}';
+    return '{"wasteType": "$wasteType", "wasteWeight": $wasteWeight}';
   }
 
-  String toQAKString(String actorName) {
-    return 'msg(storerequest, request, test_smartdevice, $actorName, storerequest(${wasteType.name}, $wasteWeight), 1)\n';
+  String toQAKString(String senderName, String toActorName, int seqNum) {
+    ApplMessage msg = ApplMessage(
+        "storerequest",
+        ApplMessageType.request,
+        senderName,
+        toActorName,
+        "storerequest($wasteType, $wasteWeight)",
+        seqNum);
+    return msg.toString();
   }
 
   bool equals(StoreRequest storeRequest) {

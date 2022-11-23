@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="unibo.planner22-1.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../unibolibs/unibo.planner22-1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../unibolibs/unibo.planner22-1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../unibolibs/unibo.planner22-1.0.jar!/" />
+    </SOURCES>
+  </library>
+</component>

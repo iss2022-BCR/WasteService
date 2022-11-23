@@ -15,10 +15,12 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
+		
+				var WasteType: wasteservice.WasteType = wasteservice.WasteType.PLASTIC
 		return { //this:ActionBasciFsm
 				state("state_init") { //this:State
 					action { //it:State
-						println("[TransportTrolley] Started")
+						println("[TransportTrolley] Started.")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -28,12 +30,100 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("state_idle") { //this:State
 					action { //it:State
-						println("[WasteService] Waiting for move requests...")
+						println("[TransportTrolley] Waiting for deposit requests...")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition(edgeName="t18",targetState="state_handle_deposit_request",cond=whenRequest("deposit"))
+				}	 
+				state("state_handle_deposit_request") { //this:State
+					action { //it:State
+						println("$name in ${currentState.stateName} | $currentMsg")
+						if( checkMsgContent( Term.createTerm("deposit(TYPE)"), Term.createTerm("deposit(TYPE)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 WasteType = wasteservice.WasteType.valueOf(payloadArg(0))  
+								println("[TransportTrolley] Deposit request received.")
+						}
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="state_move_to_indoor", cond=doswitch() )
+				}	 
+				state("state_move_to_indoor") { //this:State
+					action { //it:State
+						println("[TransportTrolley] Moving to INDOOR...")
+						delay(1200) 
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t19",targetState="state_pickup",cond=whenDispatch("depositcompleted"))
+				}	 
+				state("state_pickup") { //this:State
+					action { //it:State
+						println("[TransportTrolley] Picking up the load of $WasteType...")
+						delay(1000) 
+						println("[TransportTrolley] Pickup completed.")
+						answer("deposit", "pickupcompleted", "pickupcompleted(_)"   )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="state_move_to_glassbox", cond=doswitchGuarded({ WasteType == wasteservice.WasteType.GLASS  
+					}) )
+					transition( edgeName="goto",targetState="state_move_to_plasticbox", cond=doswitchGuarded({! ( WasteType == wasteservice.WasteType.GLASS  
+					) }) )
+				}	 
+				state("state_move_to_glassbox") { //this:State
+					action { //it:State
+						println("[TransportTrolley] Moving to GLASS_BOX...")
+						delay(1000) 
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="state_dump", cond=doswitch() )
+				}	 
+				state("state_move_to_plasticbox") { //this:State
+					action { //it:State
+						println("[TransportTrolley] Moving to PLASTIC_BOX...")
+						delay(1000) 
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="state_dump", cond=doswitch() )
+				}	 
+				state("state_dump") { //this:State
+					action { //it:State
+						println("[TransportTrolley] Dumping the load...")
+						delay(1000) 
+						forward("depositcompleted", "depositcompleted(_)" ,"wasteservice" ) 
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="state_move_to_home", cond=doswitch() )
+				}	 
+				state("state_move_to_home") { //this:State
+					action { //it:State
+						println("[TransportTrolley] Moving to HOME...")
+						delay(1000) 
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="state_idle", cond=doswitch() )
 				}	 
 			}
 		}

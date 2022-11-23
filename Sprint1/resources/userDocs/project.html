@@ -20,12 +20,14 @@
             <a href="final_theme.html">Final Theme</a>
             <a href="requirement_analysis.html">Requirement<br/>Analysis</a>
             <a href="problem_analysis.html">Problem Analysis</a>
-            <a href="test_plans.html">Test Plans</a>
             <a class="selected" href="project.html">Project</a>
             <div class="sidenavSection">
                 <a href="#Smart-Device-Simulator">Smart Device<br/>Simulator</a>
                 <a href="#Echo-Waste-Server">Echo Waste Server</a>
+                <a href="#Map-Editor">Map Editor</a>
+                <a href="#Waste-Service">Waste Service</a>
             </div>
+            <a href="test_plans.html">Test Plans</a>
             <a href="conclusions.html">Conclusions</a>
             <a href="team.html">Team</a>
             <p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
@@ -36,6 +38,13 @@
 
         <div id="main">
             <h1 align="center">Project</h1>
+            The project contains all the software our team developed for the core-business of the project.
+            We divided our work in <b>3 sub-sprint</b>, one for each block of software we implemented:
+            <ol>
+                <li><a href="#SmartDevice-Simulator">Sprint 1.1</a> SmartDevice Simulator & Echo Waste Server</li>
+                <li><a href="#Map-Editor">Sprint 1.2</a> Map Editor</li>
+                <li><a href="#Waste-Service">Sprint 1.3</a> Waste Service</li>
+            </ol>
 
             <h4>Setup Remote Communications</h4>
             <div class="remark">
@@ -73,28 +82,132 @@
                 </pre>
             </div>
 
-            <h2 id="SmartDevice-Simulator">SmartDevice Simulator</h2>
-            <ksi>SmartDevice Simulator</ksi> is a mobile/desktop compatible application,
-            which will be used just for testing purposes, to simulate the interaction between the TruckDriver and the WasteService:
-            It will allow to send store requests, and display the response.
+            <h2 id="SmartDevice-Simulator">Sprint 1.1: SmartDevice Simulator</h2>
+            <ksi>SmartDevice Simulator</ksi> (<a href="../../Sprint1_Project/sprint1_smart_device/">sprint1_smart_device</a>) is a mobile/desktop compatible application,
+            which will be used to simulate the arrival of the TruckDriver to the service area,
+            and simulate its interaction with the WasteService:
+            it allows to send <i>store requests</i>, and display the response.
+            <br/>
+            <br/>
+            It has been made using Flutter, which is a Google framework to build applications which can be
+            built for different architectures.
             
-            <h4>Class Diagram</h4>
-            <img width="100%" src="../diagrams/sprint1_class_diagram_smart_device_simulator_v0.png"/>
+            <center><a href="https://flutter.dev/"><img width="90%" alt="Flutter: Build apps for any screen." title="Flutter: Build apps for any screen." src="../imgs/Flutter2.png"/></a>
+                <br/>
+                <b><i>Flutter: Build apps for any screen</i>.</b>
+            </center>
+            <br/>
+            It presents 2 view:
+            <ul>
+                <li>
+                    <ks>ViewHome</ks>: shows 2 input fields to enter the IP address and port of the server
+                    (the WasteService) and a button to try to connect. If the connection succeeds, the application
+                    will show the <i>ViewRequest</i>.
+                </li>
+                <li>
+                    <ks>ViewRequest</ks>: as soon as that view is built, it sends a TypesRequest to the WasteService,
+                    to know which waste types can be deposited in the service area. Once those types are obtained,
+                    a drop down menu will be displayed, to allow the user to choose the Waste Type. There is also another
+                    input field for the Waste Weight. Once the user press the "Send Store Request" button, a StoreRequest
+                    is sent to the WasteService, and the application displays a waiting message and greys the button, to
+                    prevent the user from spamming requests. When the reply is retrieved, the view shows a message, informing
+                    the user if the load has been accepted and picked up or not.
+                </li>
+            </ul>
+            All the input fields are supplied together with a <b><i>validation mechanism</i></b>, which prevents the user from sending
+            invalid messages.
 
             <h4>Views</h4>
             <img width="300px" src="../imgs/project/SmartDeviceSimulator_Home_v1.png"/><img width="300px" src="../imgs/project/SmartDeviceSimulator_Request_v2.png"/>
 
-            <h2 id="Echo-Waste-Server">Echo Waste Server</h2>
-            <ksi>Echo Waste Server</ksi> is a mobile/desktop application that simulates a dummy WasteService and acts like an echo server:
+            <h4>Class Diagram</h4>
+            <img width="100%" src="../diagrams/sprint1_class_diagram_smart_device_simulator_v0.png"/>
+            
+            <h2 id="Echo-Waste-Server">Sprint 1.1: Echo Waste Server</h2>
+            <ksi>Echo Waste Server</ksi> (<a href="../../Sprint1_Project/sprint1_echo_waste_server/">sprint1_echo_waste_server</a>)
+            is a mobile/desktop application that simulates a dummy WasteService and acts like an echo server:
             it accepts TCP connections and reply to <code>store_requests</code> with <code>load_accepted</code> / <code>load_rejected</code>,
             updating the capacity of containers and logging messages.
             <br/><br/>
-            Its purpose is to <i>test the SmartDevice directly and completely on smartphone</i>, without having to connect it to another device.
-            <img width="300px" src="../imgs/project/EchoWasteServer_v1.png"/>
+            It doesn't contribute to the WasteService project in any way, and its main purpose was to <i>test the SmartDevice directly and
+            completely on smartphone</i>, without having to connect it to another device.
+            But since we had already developed it, we decided to include it in the project section. 
+            <h4>Demo</h4>
+            <img width="100%" src="../imgs/project/EchoWasteServer_v2.png"/>
 
+            <h2 id="Map-Editor">Sprint 1.2: Map Editor</h2>
+            <ksi>MapEditorBCR</ksi> (<a href="../../Sprint1_Project/sprint1_map_editor/">sprint1_map_editor</a>) is a graphical desktop application that allows the user to
+            configure the room, by the assignment of a <b>type</b>/<b>label</b> to each cell of the map.
+            
+            <h4>Demo</h4>
+            <img width="49%" src="../imgs/project/MapEditor1.png"><img width="49%" src="../imgs/project/MapEditor2.png">
+            <br/><br/>
+            The MapConfiguration consists of a Java object
+            (<a href="../../Sprint1_Project/sprint1_map_editor/src/main/java/it/unibo/map_editor_bcr/model/map_config/MapConfig.java">MapConfig</a>) which is built starting
+            from a RoomMap (defined in <a href="https://github.com/anatali/issLab2022/blob/main/unibo.planner22">unibo.planner22</a>): they have the same dimensions.
+            That configuration can be saved as a binary file to be loaded and used by the WasteService planner afterwards, to generate a path towards those locations.
+            
+            <pre>
+                |H, -, -, -, G, G, G, 
+                |-, -, -, -, -, -, -, 
+                |-, -, -, -, -, -, -, 
+                |-, -, -, -, -, -, -, 
+                |I, I, I, -, P, P, P, 
+            </pre>
+
+            The <b>main aspects</b> of the Map Editor are:
+            <ul>
+                <li>
+                    It's <ksi>easy to use</ksi>: while writing the coordinate one by one is wasteful
+                    and error prone, dragging the already labeled cell in the exact position of the map
+                    is a way simpler and less painful way to configure the room.
+                    Moreover, this helps the user to realize how the cell are actually arranged inside the room
+                    since it displays the graphical representation of the map layout.
+                </li>
+                <li>
+                    Improves <ksi>transparency</ksi> by hiding what the user doesn't necessarily need to see
+                    (the coordinate system).
+                </li>
+                <li>
+                    It's a <ksi>flexible</ksi> way of configuring the Service Area, since the cell types can be
+                    easily extended with new types (the application already provides some extra types not requested
+                    by the customer, as an example, such as "ORGANIC", "METAL", etc.).
+                </li>
+                <li>
+                    It's shipped with some <ksi>pretty feature</ksi>, such as: different edit modes (add, remove, move and swap);
+                    possibility to hide/show the base room map, the map configuration, and even the coordinate systems;
+                    possibility to display the history of actions performed by the user; possibility to undo/redo actions,
+                    implemented through the <a href="https://en.wikipedia.org/wiki/Command_pattern">Command Pattern</a>.
+                </li>
+            </ul>
+
+            <h4>Class Diagrams</h4>
+            Map configuration class:
+            <img width="100%" src="../diagrams/project/map_config.svg">
+
+            Map operation commands:
+            <img width="100%" src="../diagrams/project/commands.svg">
+            
+
+            <h2 id="Waste-Service">Sprint 1.3: Waste Service</h2>
+            <ksi>Waste Service</ksi> (<a href="../../Sprint1_Project/sprint1_waste_service/">sprint1_waste_service</a>)
+            
+
+            To simulate the behaviour of the DDR robot, we can use the Virtual Environment (WEnv) provided by our software house,
+            
+            
+            spiegare basic robot (docker images), pathexecutor, planner
+
+            <h2 id="Logical-Architecture">Logical Architecture</h2>
+            <highlight2>QAK model: spiegare com'è cambiata l'architettura rispetto all'analisi del prob</highlight2>
+            <img width="100%" src="../../Sprint1_Project/sprint1_waste_service/project_logical_architecture_waste_service.png"/>
+            
 
             <h2 id="Deployment">Deployment</h2>
-            Termine della fase di progettazione
+            Where to download the software.
+
+            <h2 id="WasteService-Demo">WasteService Demo</h2>
+            <highlight2>script per avviare la demo, con parametri, spiegare il setup e cosa fa la demo.</highlight2>
         </div>
 
     </body>

@@ -1,0 +1,60 @@
+/*
+ *  
+ */
+System -msglog mapperqak22 
+
+Dispatch cmd       : cmd(MOVE)  
+Request step       : step( TIME )	
+Reply   stepdone   : stepdone(V)  
+Reply   stepfail   : stepfail(DURATION, CAUSE)
+Event alarm        : alarm(X)
+
+
+Context ctxbasicrobot   ip [host="127.0.0.1" port=8020]   
+Context ctxmapperqak22  ip [host="localhost" port=8032]
+
+ExternalQActor basicrobot context ctxbasicrobot  
+
+/*  
+ * ------------------------------------------------------------------
+ *  cleanerwalker 
+ * ------------------------------------------------------------------
+*/     
+QActor mapperqak22 context ctxmapperqak22{    
+	[# var NumStep   = 0 #]
+	State s0 initial{  	
+		println("mapperbuilder starts") 
+		[# unibo.kotlin.planner22Util.initAI() #]
+	}		
+	Goto doAheadMove
+	
+	State doAheadMove {
+		delay 300
+		request basicrobot -m step : step(350)
+	}
+	Transition t0 whenReply stepdone -> continue
+	              whenReply stepfail -> turn
+	
+	State continue{
+		[# unibo.kotlin.planner22Util.updateMap(  "w", "" ) #]
+	}  
+	Goto doAheadMove
+	            
+	State turn {
+		[# NumStep = NumStep + 1 #]
+		forward basicrobot -m cmd : cmd(l)
+		[#  unibo.kotlin.planner22Util.updateMap(  "l", "" ) 
+			unibo.kotlin.planner22Util.showMap()		 
+		#]
+	}
+    Goto doAheadMove if [# NumStep < 4 #]  else endwork
+    
+    State endwork{ 
+ 		[# 	unibo.kotlin.planner22Util.showMap();
+ 			unibo.kotlin.planner22Util.saveRoomMap("mapRoomEmpty");
+		#]
+		println("mapperbuilder BYE") 
+ 		terminate 1
+	}  
+	              
+}

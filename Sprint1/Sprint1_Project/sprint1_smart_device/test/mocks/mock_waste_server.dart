@@ -2,37 +2,52 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:sprint1_smart_device/model/appl_message.dart';
 import 'package:sprint1_smart_device/model/networking/client_connection.dart';
 import 'package:sprint1_smart_device/model/networking/tcp_client_connection.dart';
 import 'package:sprint1_smart_device/model/waste_service/store_request.dart';
+import 'package:sprint1_smart_device/model/waste_service/types_request.dart';
 import 'package:sprint1_smart_device/model/waste_service/waste_type.dart';
 
 const String dateTimeFormat = "yyyy/MM/dd HH:mm:ss";
 
 const double defaultMax = 100.0;
+const int defaultPickupDelay = 3;
+const int defaultDepositDelay = 5;
 
 class MockWasteServer {
-  Map<WasteType, double> _storage = {};
-  Map<WasteType, double> _maxStorages = {};
+  Map<String, double> _preStorage = {};
+  Map<String, double> _storage = {};
+  Map<String, double> _storageCapacity = {};
+
+  int _pickupDelay = 0;
+  int _depositDelay = 0;
 
   bool _enableLog = false;
 
   late ServerSocket _serverSocket;
   int _connectedSocket = 0;
 
-  MockWasteServer({bool? enableLog}) {
+  MockWasteServer({int? pickupDelay, int? depositDelay, bool? enableLog}) {
     for (WasteType type in WasteType.values) {
-      _storage[type] = 0.0;
-      _maxStorages[type] = defaultMax;
+      _preStorage[type.name] = 0.0;
+      _storage[type.name] = 0.0;
+      _storageCapacity[type.name] = defaultMax;
     }
+
+    _pickupDelay = pickupDelay ?? defaultPickupDelay;
+    _depositDelay = depositDelay ?? defaultDepositDelay;
     _enableLog = enableLog ?? false;
   }
-  MockWasteServer.withCapacities(Map<WasteType, double> maxStorages,
-      {bool? enableLog}) {
+  MockWasteServer.withCapacities(Map<String, double> storageCapacity,
+      {int? pickupDelay, int? depositDelay, bool? enableLog}) {
     for (WasteType type in WasteType.values) {
-      _storage[type] = 0.0;
-      _maxStorages[type] = maxStorages[type] ?? defaultMax;
+      _storage[type.name] = 0.0;
+      _storageCapacity[type.name] = storageCapacity[type.name] ?? defaultMax;
     }
+
+    _pickupDelay = pickupDelay ?? defaultPickupDelay;
+    _depositDelay = depositDelay ?? defaultDepositDelay;
     _enableLog = enableLog ?? false;
   }
 
@@ -108,75 +123,100 @@ class MockWasteServer {
     });
   }
 
-  void handleMessage(Uint8List data, Socket socket, int iSock, bool enableLog) {
+  void handleMessage(
+      Uint8List data, Socket socket, int iSock, bool enableLog) async {
     String result = String.fromCharCodes(data);
 
-    StoreRequest sr = StoreRequest.fromJsonString(result);
-    if (canStore(sr.wasteType, sr.wasteWeight)) {
-      deposit(sr.wasteWeight, sr.wasteType);
-      _logMessage("Sent LoadAccepted to #$iSock");
-      socket.write("LoadAccepted");
+    if (result.contains("typesrequest")) {
+      ApplMessage req = ApplMessage.fromString(result);
+      // reply with types
+      _logMessage("Sent TypesList to #$iSock: ${_storage.keys}");
+      ApplMessage msg = ApplMessage.fromString(
+          "msg(typesreply, reply, typesprovider, smartdevice, typesreply(${getTypesListString("_")}), ${req.msgNum + 1})");
+      socket.write(msg.toString());
     } else {
-      _logMessage("Sent LoadRejected to #$iSock");
-      socket.write("LoadRejected");
+      StoreRequest sr = StoreRequest.fromQAKString(result);
+
+      // pre store
+      if (canPreStore(sr.wasteType, sr.wasteWeight)) {
+        // pickup
+        await Future.delayed(Duration(seconds: _pickupDelay));
+        _logMessage("Pickup completed.");
+        _logMessage("Sent LoadAccepted to #$iSock");
+        socket.write("LoadAccepted");
+
+        // deposit
+        await Future.delayed(Duration(seconds: _depositDelay));
+        _logMessage("Deposit Completed.");
+      } else {
+        _logMessage("Sent LoadRejected to #$iSock");
+        socket.write("LoadRejected");
+      }
     }
-
-    /*final jsonObj = jsonDecode(result);
-    //print(jsonObj['wasteWeight']); // test
-    //print(jsonObj['wasteType']); // test
-
-    final wasteWeight =
-        double.tryParse(jsonObj['wasteWeight'].toString()) ?? -1.0;
-    final wasteType = jsonObj['wasteType'].toString().toUpperCase();
-
-    if (wasteWeight == -1.0) {
-      return;
-    }
-
-    switch (wasteType) {
-      case "PLASTIC":
-        if (_plastic + wasteWeight <= _max_plastic) {
-          _plastic += wasteWeight;
-          _logMessage("Sent LoadAccepted to #$iSock");
-          socket.write("loadaccepted");
-        } else {
-          _logMessage("Sent LoadRejected to #$iSock");
-          socket.write("loadrejected");
-        }
-        break;
-      case "GLASS":
-        if (_glass + wasteWeight <= _max_glass) {
-          _glass += wasteWeight;
-          _logMessage("Sent LoadAccepted to #$iSock");
-          socket.write("loadaccepted");
-        } else {
-          _logMessage("Sent LoadRejected to #$iSock");
-          socket.write("loadrejected");
-        }
-        break;
-      default:
-        break;
-    }*/
   }
 
-  bool canStore(WasteType type, double weight) {
+  List<String> parseTypesListMessage(String list, String separator) {
+    return list.split("_");
+  }
+
+  String getTypesListString(String separator) {
+    String res = "";
+
+    for (String s in _storage.keys) {
+      res += s;
+      if (s != _storage.keys.last) {
+        res += separator;
+      }
+    }
+
+    return res;
+  }
+
+  bool canPreStore(String type, double weight) {
+    if (!_preStorage.containsKey(type)) {
+      return false;
+    }
+    return _preStorage[type]! + weight <= _storageCapacity[type]!;
+  }
+
+  bool canStore(String type, double weight) {
     if (!_storage.containsKey(type)) {
       return false;
     }
-    return _storage[type]! + weight <= _maxStorages[type]!;
+    return _storage[type]! + weight <= _storageCapacity[type]!;
   }
 
-  void deposit(double weight, WasteType type) {
+  // pre deposit
+  void addToPreStorage(String type, double weight) {
+    if (canPreStore(type, weight)) {
+      _preStorage[type] = _preStorage[type]! + weight;
+    }
+  }
+
+  // deposit
+  void addToStorage(String type, double weight) {
     if (canStore(type, weight)) {
       _storage[type] = _storage[type]! + weight;
     }
   }
 
-  String getCurrentStorage() {
+  String getStatusString(String type) {
     String res = "";
 
-    for (WasteType type in _storage.keys) {
-      res += "${type.name}: ${_storage[type]}/${_maxStorages[type]} KG\n";
+    if (_storage.containsKey(type)) {
+      res =
+          "$type: ${_preStorage[type]}/${_storage[type]}/${_storageCapacity[type]} KG\n";
+    }
+
+    return res;
+  }
+
+  String getFullStatusString() {
+    String res = "";
+
+    for (String type in _preStorage.keys) {
+      res +=
+          "$type: ${_preStorage[type]}/${_storage[type]}/${_storageCapacity[type]} KG\n";
     }
 
     return res;
@@ -186,21 +226,37 @@ class MockWasteServer {
 void main() async {
   MockWasteServer mockServer = MockWasteServer();
 
-  print(mockServer.getCurrentStorage());
+  print(mockServer.getFullStatusString());
 
-  mockServer.startServer(4001, (data, sock, iSock) {
-    StoreRequest receivedSR =
-        StoreRequest.fromJsonString(String.fromCharCodes(data));
+  mockServer.startServer(11800, (data, sock, iSock) async {
+    String result = String.fromCharCodes(data);
+    print("[Mock_WasteServer] Received: $result");
 
-    if (mockServer.canStore(receivedSR.wasteType, receivedSR.wasteWeight)) {
-      print("[Mock_WasteServer] Load accepted.");
-      mockServer.deposit(receivedSR.wasteWeight, receivedSR.wasteType);
-      sock.write("LoadAccepted");
+    if (result.contains("typesrequest")) {
+      ApplMessage req = ApplMessage.fromString(result);
+      // reply with types
+      print("[Mock_WasteServer] Sent TypesList to #$iSock");
+      ApplMessage msg = ApplMessage.fromString(
+          "msg(typesreply, reply, typesprovider, smartdevice, typesreply(${mockServer.getTypesListString("_")}), ${req.msgNum + 1})");
+      sock.write(msg.toString());
     } else {
-      print("[Mock_WasteServer] Load rejected.");
-      sock.write("LoadRejected");
+      StoreRequest sr = StoreRequest.fromQAKString(result);
+
+      if (mockServer.canPreStore(sr.wasteType, sr.wasteWeight)) {
+        // pre store & pickup
+        mockServer.addToPreStorage(sr.wasteType, sr.wasteWeight);
+        await Future.delayed(const Duration(seconds: defaultDepositDelay));
+        print("[Mock_WasteServer] Load accepted.");
+        mockServer.addToStorage(sr.wasteType, sr.wasteWeight);
+        sock.write("LoadAccepted");
+
+        // deposit
+      } else {
+        print("[Mock_WasteServer] Load rejected.");
+        sock.write("LoadRejected");
+      }
+      print(mockServer.getFullStatusString());
     }
-    print(mockServer.getCurrentStorage());
   }, onConnect: (sock, iSock) {
     print(
         "[Mock_WasteServer] Accepted connection #$iSock from client ${sock.remoteAddress.address}:${sock.port}.");
@@ -212,11 +268,15 @@ void main() async {
   });
 
   ClientConnection conn = TcpClientConnection();
-  await conn.connect("127.0.0.1", 4001);
+  await conn.connect("127.0.0.1", 11800);
   conn.listen((data) {
-    print(String.fromCharCodes(data));
+    print("  [Mock_SmartDevice] Received: ${String.fromCharCodes(data)}");
   });
-  conn.sendMessage(StoreRequest(WasteType.PLASTIC, 10.0).toJsonString());
-  await Future.delayed(const Duration(seconds: 1));
-  conn.sendMessage(StoreRequest(WasteType.GLASS, 1000.0).toJsonString());
+  conn.sendMessage(TypesRequest().toQAKString("smartdevice", "typesprovider"));
+  await Future.delayed(const Duration(seconds: defaultPickupDelay + 1));
+  conn.sendMessage(StoreRequest("PLASTIC", 10.0)
+      .toQAKString("smartdevice", "wasteservice", 3));
+  await Future.delayed(const Duration(seconds: defaultPickupDelay + 1));
+  conn.sendMessage(StoreRequest("GLASS", 1000.0)
+      .toQAKString("smartdevice", "wasteservice", 5));
 }

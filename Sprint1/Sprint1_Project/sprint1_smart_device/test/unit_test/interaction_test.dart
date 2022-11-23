@@ -1,13 +1,15 @@
+import 'package:sprint1_smart_device/model/appl_message.dart';
 import 'package:sprint1_smart_device/model/networking/client_connection.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sprint1_smart_device/model/networking/tcp_client_connection.dart';
 import 'package:sprint1_smart_device/model/waste_service/store_request.dart';
+import 'package:sprint1_smart_device/model/waste_service/types_request.dart';
 import 'package:sprint1_smart_device/model/waste_service/waste_type.dart';
 
 import '../mocks/mock_waste_server.dart';
 
 const String ip = "127.0.0.1";
-const int port = 11800;
+const int port = 11780; // test port
 
 void main() {
   bool serverConnect = false,
@@ -20,18 +22,42 @@ void main() {
     // start server
     print("[Mock_WasteServer] Starting...");
     MockWasteServer mockServer = MockWasteServer();
+    print("[Mock_WasteServer] status:\n${mockServer.getFullStatusString()}");
     mockServer.startServer(port, (data, sock, iSock) {
-      StoreRequest receivedSR =
-          StoreRequest.fromJsonString(String.fromCharCodes(data));
+      ApplMessage req = ApplMessage.fromString(String.fromCharCodes(data));
 
-      print(mockServer.getCurrentStorage());
-      if (mockServer.canStore(receivedSR.wasteType, receivedSR.wasteWeight)) {
-        print("[Mock_WasteServer] Load accepted.");
-        mockServer.deposit(receivedSR.wasteWeight, receivedSR.wasteType);
-        sock.write("LoadAccepted");
-      } else {
-        print("[Mock_WasteServer] Load rejected.");
-        sock.write("LoadRejected");
+      // TypesRequest
+      if (req.msgId.toLowerCase() == ("typesrequest")) {
+        print("[Mock_WasteServer] Received TypesRequest.");
+
+        print(
+            "[Mock_WasteServer] Replied with waste types list: ${mockServer.getTypesListString("_")}");
+        ApplMessage msg = ApplMessage.fromString(
+            "msg(typesreply, reply, typesprovider, smartdevice, typesreply(${mockServer.getTypesListString("_")}), ${req.msgNum + 1})");
+        sock.write(msg.toString());
+      } else
+      // StoreRequest
+      if (req.msgId.toLowerCase() == ("storerequest")) {
+        print("[Mock_WasteServer] Received StoreRequest: ${req.toString()}");
+        StoreRequest sr = StoreRequest.fromQAKString(req.toString());
+
+        if (mockServer.canPreStore(sr.wasteType, sr.wasteWeight)) {
+          ApplMessage msg = ApplMessage.fromString(
+              "msg(loadaccepted, reply, wasteservice, smartdevice, loadaccepted), 3)");
+
+          mockServer.addToPreStorage(sr.wasteType, sr.wasteWeight);
+          print("[Mock_WasteServer] Replied with: LoadAccepted");
+          sock.write(msg.toString());
+          mockServer.addToStorage(sr.wasteType, sr.wasteWeight);
+
+          print(
+              "[Mock_WasteServer] status:\n${mockServer.getFullStatusString()}");
+        } else {
+          ApplMessage msg = ApplMessage.fromString(
+              "msg(loadrejected, reply, wasteservice, smartdevice, loadrejected), 3)");
+          print("[Mock_WasteServer] Replied with: LoadRejected");
+          sock.write(msg.toString());
+        }
       }
     }, onConnect: (sock, iSock) {
       print(
@@ -69,24 +95,42 @@ void main() {
       });
     });
 
-    test('Store Request Succeeds', () async {
-      StoreRequest sr = StoreRequest(WasteType.PLASTIC, 10.0);
+    test('Types Request Succeeds', () async {
+      TypesRequest tr = TypesRequest();
 
-      connection.sendMessage(sr.toJsonString());
-      print("[Mock_SmartDevice] Sent Store Request ${sr.toJsonString()}");
+      connection.sendMessage(tr.toQAKString("smartdevice", "typesprovider"));
+      print(
+          "[Mock_SmartDevice] Sent TypesRequest ${tr.toQAKString("smartdevice", "typesprovider")}");
       await Future.delayed(const Duration(seconds: 1));
 
-      expect(reply.toLowerCase() == "loadaccepted", true);
+      expect(reply.contains("typesreply"), true);
+      for (WasteType ws in WasteType.values) {
+        expect(reply.contains(ws.name), true);
+      }
+    });
+
+    test('Store Request Succeeds', () async {
+      StoreRequest sr = StoreRequest(WasteType.PLASTIC.name, 10.0);
+
+      connection.sendMessage(sr.toQAKString("smartdevice", "wasteservice", 3));
+      print(
+          "[Mock_SmartDevice] Sent Store Request ${sr.toQAKString("smartdevice", "wasteservice", 3)}");
+      await Future.delayed(const Duration(seconds: 1));
+
+      print(reply);
+
+      expect(reply.toLowerCase().contains("loadaccepted"), true);
     });
 
     test('Store Request Fails', () async {
-      StoreRequest sr = StoreRequest(WasteType.GLASS, 1000.0);
+      StoreRequest sr = StoreRequest(WasteType.GLASS.name, 1000.0);
 
-      connection.sendMessage(sr.toJsonString());
-      print("[Mock_SmartDevice] Sent Store Request ${sr.toJsonString()}");
+      connection.sendMessage(sr.toQAKString("smartdevice", "wasteservice", 5));
+      print(
+          "[Mock_SmartDevice] Sent Store Request ${sr.toQAKString("smartdevice", "wasteservice", 5)}");
       await Future.delayed(const Duration(seconds: 1));
 
-      expect(reply.toLowerCase() == "loadrejected", true);
+      expect(reply.toLowerCase().contains("loadrejected"), true);
     });
 
     test('Disconnect', () async {

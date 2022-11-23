@@ -1,0 +1,24 @@
+https://stackoverflow.com/questions/10682107/correct-way-to-move-a-node-by-dragging-in-javafx-2
+https://gist.github.com/jewelsea/2724651
+
+
+
+BUILD JAR:
+create an artifact
++ add command line arguments
+
+oppure aggiungere i dll nel JAR (seguire https://www.youtube.com/watch?v=F8ahBtXkQzU)
+
+BUILD JAR LIBRARY CONTAINING ONLY THE CLASSES OF THE PROJECT:
+View > Tool Windows > Maven > Lifecycle > package
+
+Get the jar from target/<jar_name>.jar
+
+Include in gradle like that: implementation files('../unibolibs/sprint1_map_editor_test.jar')
+(see https://stackoverflow.com/questions/20700053/how-to-add-local-jar-file-dependency-to-build-gradle-file)
+
+
+
+build JAR including JavaFX 17 bin/ files;
+add the JAR entry in the build.gradle file: implementation files('../unibolibs/sprint1_map_editor.jar')
+set Java version to 17 in Project Structure

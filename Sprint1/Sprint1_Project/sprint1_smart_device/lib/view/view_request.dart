@@ -6,9 +6,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:sprint1_smart_device/model/appl_message.dart';
 import 'package:sprint1_smart_device/model/networking/client_connection.dart';
+import 'package:sprint1_smart_device/model/waste_service/types_request.dart';
 import '../model/waste_service/store_request.dart';
-import '../model/waste_service/waste_type.dart';
 
 import '../model/constants.dart' as Constants;
 
@@ -30,13 +31,14 @@ class _ViewRequestState extends State<ViewRequest> {
 
   bool _debug = false;
 
-  WasteType _currentWasteType = WasteType.PLASTIC;
+  List<String> _wasteTypes = [];
+
+  String _currentWasteType = "";
   String _reply = "";
 
   bool _waitingReply = false;
   String _waitingDots = "Waiting.";
   Timer? _timer;
-  int _timeoutCounter = Constants.timeoutSeconds;
 
   // Message list
   final List<String> _messages = [];
@@ -70,16 +72,30 @@ class _ViewRequestState extends State<ViewRequest> {
     return result;
   }
 
+  Future<void> _sendTypesRequest() async {
+    setState(() {
+      _waitingReply = true;
+      _reply = "";
+    });
+    TypesRequest req = TypesRequest();
+
+    String msg = req.toQAKString("smartdevice", "typesprovider");
+    _logMessage("Types Request: $msg");
+    widget.connection.sendMessage(msg);
+
+    _startTimer();
+  }
+
   Future<void> _sendStoreRequest({timeout = Duration}) async {
     setState(() {
-      _waitingReply = false;
+      _waitingReply = true;
       _reply = "";
     });
     StoreRequest req = StoreRequest(
         _currentWasteType, double.parse(_textControllerWeight.text));
 
-    String msg = req.toQAKString("test_wasteservice");
-    _logMessage("Store request: $msg");
+    String msg = req.toQAKString("smartdevice", "wasteservice", 3);
+    _logMessage("Store Request: $msg");
     widget.connection.sendMessage(msg);
 
     if (timeout != null) {
@@ -87,13 +103,29 @@ class _ViewRequestState extends State<ViewRequest> {
     }
   }
 
+  List<String> _parseTypes(String types, String sep) {
+    return types.split(sep);
+  }
+
   void _messageHandler(Uint8List data) {
     final serverReply = String.fromCharCodes(data);
-    _stopTimer();
+    ApplMessage msg = ApplMessage.fromString(serverReply);
+
     setState(() {
-      _reply = serverReply.toLowerCase().contains('loadaccepted')
-          ? "Accepted"
-          : "Rejected";
+      // TypesRequest Reply
+      if (serverReply.contains('typesreply')) {
+        _waitingReply = false;
+        _wasteTypes = _parseTypes(msg.getContentWithoutId(), '_');
+        _wasteTypes.sort();
+        _currentWasteType = _wasteTypes[0];
+      } else
+      // StoreRequest Reply
+      if (serverReply.contains("load")) {
+        _stopTimer();
+        _reply = msg.msgId.toLowerCase().contains('accepted')
+            ? "Accepted"
+            : "Rejected";
+      }
     });
     _logMessage(serverReply);
   }
@@ -123,24 +155,23 @@ class _ViewRequestState extends State<ViewRequest> {
   void _startTimer() {
     setState(() {
       _waitingDots = "Waiting.";
-      _timeoutCounter = Constants.timeoutSeconds;
+      //_timeoutCounter = Constants.timeoutSeconds;
       _waitingReply = true;
     });
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
-        if (_waitingReply && _timeoutCounter > 0) {
+        if (_waitingReply) {
           setState(() {
             if (_waitingDots == "Waiting...") {
               _waitingDots = "Waiting.";
             } else {
               _waitingDots += ".";
             }
-            _timeoutCounter--;
           });
         } else {
           _stopTimer();
           setState(() {
-            _reply = "Timeout expired.";
+            _reply = "";
           });
         }
       });
@@ -163,6 +194,11 @@ class _ViewRequestState extends State<ViewRequest> {
     Intl.defaultLocale = myLocale.toString();
     _logMessage(
         "Connected to ${widget.connection.address.address}:${widget.connection.remotePort}");
+
+    // Send TypesRequest
+    _sendTypesRequest();
+    // Loading...
+    // Can send StoreRequest
 
     super.didChangeDependencies();
   }
@@ -195,7 +231,7 @@ class _ViewRequestState extends State<ViewRequest> {
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios),
               onPressed: () {
-                _stopTimer();
+                //_stopTimer();
                 widget.notifyParent(
                     "Disconnected", "You disconnecred from the server.");
                 widget.connection.close();
@@ -208,7 +244,7 @@ class _ViewRequestState extends State<ViewRequest> {
             actions: [
               Column(
                 children: [
-                  const Text('Log'),
+                  const Text('Debug'),
                   Switch(
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       inactiveTrackColor: const Color.fromARGB(255, 130, 0, 0),
@@ -220,6 +256,12 @@ class _ViewRequestState extends State<ViewRequest> {
                         setState(() {
                           _debug = !_debug;
                         });
+                        if (_debug) {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            _scrollController.jumpTo(
+                                _scrollController.position.maxScrollExtent);
+                          });
+                        }
                       }),
                 ],
               )
@@ -234,52 +276,61 @@ class _ViewRequestState extends State<ViewRequest> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Spacer(flex: 1),
-                  const Text(
-                    'Request Parameters',
-                    style: TextStyle(fontSize: 26.0),
-                  ),
-                  DropdownButtonFormField<WasteType>(
-                    key: const ValueKey('parameterWasteType'),
-                    value: _currentWasteType,
-                    items: WasteType.values
-                        .map<DropdownMenuItem<WasteType>>((WasteType value) {
-                      return DropdownMenuItem(
-                          value: value, child: Text(value.name));
-                    }).toList(),
-                    onChanged: (WasteType? newValue) {
-                      setState(() {
-                        _currentWasteType = newValue!;
-                      });
-                    },
-                    decoration: const InputDecoration(
-                      border: UnderlineInputBorder(),
-                      labelText: 'Waste Type',
-                    ),
-                  ),
-                  TextFormField(
-                    key: const ValueKey('parameterWasteWeight'),
-                    validator: (value) {
-                      if (value == null || !_checkWeight(value)) {
-                        return 'Invalid weight';
-                      }
-                      return null;
-                    },
-                    controller: _textControllerWeight,
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.allow(
-                        RegExp(
-                            r'[0-9]+[,.]{0,1}[0-9]*'), // this regex allows only decimal numbers
-                      )
-                    ],
-                    decoration: const InputDecoration(
-                      suffixText: 'KG',
-                      hintText: 'Weight',
-                      border: UnderlineInputBorder(),
-                      labelText: 'Waste Weight',
-                    ),
-                  ),
+                  _wasteTypes.isEmpty
+                      ? const Center(child: CircularProgressIndicator())
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              'Request Parameters',
+                              style: TextStyle(fontSize: 26.0),
+                            ),
+                            DropdownButtonFormField<String>(
+                              key: const ValueKey('parameterWasteType'),
+                              value: _currentWasteType,
+                              items: _wasteTypes.map<DropdownMenuItem<String>>(
+                                  (String value) {
+                                return DropdownMenuItem(
+                                    value: value, child: Text(value));
+                              }).toList(),
+                              onChanged: (newValue) {
+                                setState(() {
+                                  _currentWasteType = newValue!;
+                                });
+                              },
+                              decoration: const InputDecoration(
+                                border: UnderlineInputBorder(),
+                                labelText: 'Waste Type',
+                              ),
+                            ),
+                            TextFormField(
+                              key: const ValueKey('parameterWasteWeight'),
+                              validator: (value) {
+                                if (value == null || !_checkWeight(value)) {
+                                  return 'Invalid weight';
+                                }
+                                return null;
+                              },
+                              controller: _textControllerWeight,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      decimal: true),
+                              inputFormatters: <TextInputFormatter>[
+                                FilteringTextInputFormatter.allow(
+                                  RegExp(
+                                      r'[0-9]+[,.]{0,1}[0-9]*'), // this regex allows only decimal numbers
+                                )
+                              ],
+                              decoration: const InputDecoration(
+                                suffixText: 'KG',
+                                hintText: 'Weight',
+                                border: UnderlineInputBorder(),
+                                labelText: 'Waste Weight',
+                              ),
+                            ),
+                          ],
+                        ),
                   const SizedBox(height: 20.0),
                   Text(
                     _debug ? 'Log' : 'Reply',
@@ -365,7 +416,7 @@ class _ViewRequestState extends State<ViewRequest> {
                         }
                       });
 
-                      _sendStoreRequest(timeout: 10);
+                      _sendStoreRequest();
                     }
                   },
             style: ElevatedButton.styleFrom(

@@ -25,18 +25,18 @@
                 <div class="sidenavSubSection">
                     <a href="#Smart-Device">Smart Device</a>
                     <a href="#Waste-Service">Waste Service</a>
-                    <a href="#Transport-Trolley">Transport Trolley</a>
+                    <a href="#Transport-Trolley-and-DDR-Robot">Transport Trolley<br/>and DDR Robot</a>
                 </div>
                 <a href="#Interactions">Interactions</a>
                 <div class="sidenavSubSection">
                     <a href="#Smart-Device-Waste-Service">Smart Device &harr;<br/>Waste Service</a>
                     <a href="#Waste-Service-Transport-Trolley">Waste Service &harr;<br/>Transport Trolley</a>
-                    <a href="#Transport-Trolley-DDR-Robot">Transport Trolley &harr;<br/>DDR Robot</a>
                 </div>
                 <a href="#Logical-Architecture">Logical Architecture</a>
+                <a href="#Test-Plans">Test Plans</a>
             </div>
-            <a href="test_plans.html">Test Plans</a>
             <a href="project.html">Project</a>
+            <a href="test_plans.html">Test Plans</a>
             <a href="conclusions.html">Conclusions</a>
             <a href="team.html">Team</a>
             <p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
@@ -47,36 +47,24 @@
 
         <div id="main">
             <h1 align="center">Problem Analysis</h1>
-            
-            <highlight3>
-                moveTo:
-                - scrivere perché scegliamo request: per ora va bene request, ma quando dovremo fare la stop/resume, sarà necessario poter interrompere una action, quindi forse servirà un dispatcho. <br/>
-                - definire meglio "location" (posizione, come casella - coordinate) e spiegare perché questa scelta.
-                <br/>
-                <br/>
-                
-                Utile(?): glassbox [1,2,3,4] per indicare quale casella del glassbox (dare spiegazione smanettona sul perché si accumula la spazzatura in un punto ehehe)
-                
-                Spiegare perché origine del piano cartesiano sta in alto a sinistra
-            </highlight3>
-
-            <br/><br/>
-
-            <highlight2>
-                Come formalizzare i messaggi
-
-                formato: JSON, perché? -> semplice, leggero, compatto, facile da leggere, ci sono numerosi parser (tra cui Gson, di Google)
-                + layer di sicurezza? Eventuale Sprint4 tratterà questo argomento.
-            </highlight2>
-            <br/><br/>
 
             <h2 id="Core-Business-Software">Core-Business Software</h2>
-            <highlight1>Paradigma ad attori</highlight1>
-            Perché scegliamo il paradigma ad attori?
-            motivazioni + QAK
+
+            <problem>Why do we use the actor model?</problem>
+            We use the <a href="https://en.wikipedia.org/wiki/Actor_model">actor model</a> because it fits
+            perfectly the task we have to perform (according to the customer requirements) and the type of
+            software we need to implement:
+            a distributed (heterogeneous) system, with the possibility of having multiple software
+            computational entities that run and interact concurrently on the same nodes.
+            <br/>
+            Moreover, our software house provides several libraries and useful materials (already studied and well-tested)
+            based on actors.
 
             <h3 id="Smart-Device">Smart Device</h3>
-            <problem>Smart Device Technology</problem>
+            The software of the Smart Device will be provided by the customer. However, since we want to test a distributed system
+            with all of its nodes, we're going to implement an application that will run on a smartphone (Android) and will simulate
+            store requests to  the WasteService.
+            <!--<problem>Smart Device Technology</problem>
             <b>Problem</b>: implementation of an application to test the interaction between the truck driver and the waste service.<br/>
             <solution>
                 <b>Solution</b>: <ksi>Flutter application</ksi>.<br/>
@@ -102,32 +90,27 @@
                 <a href="https://flutter.dev/"><img width="90%" alt="Flutter: Build apps for any screen." title="Flutter: Build apps for any screen." src="../imgs/Flutter2.png"/></a>
                 <br/>
                 <b><i>Flutter: Build apps for any screen</i>.</b>
-            </center>
+            </center>-->
             
             
             <h3 id="Waste-Service">Waste Service</h3>
-            The customer requirements don't specify priority rules regarding the truck requrests,
-            therefore, they'll be served in order of arrival.
-
-            We decide to send a <code>load_rejected</code> even if the <code>store_request</code>
-            contains a invalid data:
-            <ul>
-                <li>Not properly formatted according to the JSON object.</li>
-                <li>Negative or too big WasteLoad.</li>
-                <li>WasteType not present in the Service Area.</li>
-            </ul>   
+            One of the first problem is the service area representation, which affects the interaction with the robot and how it
+            moves inside the room.
 
             <problem>Service Area Representation</problem>
-            <b>Problem</b>: we need a proper <i>representation</i> of the service area to optimally move and monitor the transport trolley.
+            <b>Problem</b>: How do we represent the Service Area?
             <br/>
             <solution>
+                <b>Consideration</b>:
+                According to the requirements notes, the robot doesn't have to move optimally but shouldn't even wander too much around the room. 
+                <br/>
                 <b>Solution</b>: 
                 <ul>
                     <li>
                         Waste Service side: use a descriptive model to indicate the main relevant position (<red>HOME</red>, <cyan>INDOOR</cyan>, <green>GLASSBOX</green>, <yellow>PLASTICBOX</yellow>).
                     </li>
                     <li>
-                        Transport Trolley side: Use a <ksi>2x2 matrix</ksi>, where each element represents a different position, starting from the top-left corner.
+                        Transport Trolley side: Use a <ksi>MxN matrix</ksi>, where each element represents a different position, starting from the top-left corner.
                     </li>
                 </ul>
                 <b>Reasons</b>:
@@ -145,9 +128,8 @@
                         the top-left corner to the bottom-right one.
                     </li>
                     <li>
-                        <highlight2>We could use the software provided by the customer,
-                        such as the mapper to obtain a representation of the room,
-                        and the path executor to make the robot move along a path.</highlight2>
+                        We could use the software provided by the customer, such as the <ksi>Mapper22</ksi> (<a href="../../../unibo.mapperQak22/">unibo.mapperQak22</a>)
+                        to obtain a representation of the room.
                     </li>
                 </ul>
             </solution>
@@ -167,38 +149,260 @@
             <div class="remark">
                 The relevant positions are:
                 <ul>
-                    <li>[0,0] = <red>HOME</red></li>
-                    <li>from [0,M] to [4,M] = <cyan>INDOOR</cyan></li>
-                    <li>from [N,0] to [N,4] = <green>GLASSBOX</green></li>
-                    <li>from [N,M-4] to [N,M] = <yellow>PLASTICBOX</yellow></li>
+                    <li><red>HOME</red>: top-left corner;</li>
+                    <li><cyan>INDOOR</cyan>: horizontal list of cells in the bottom-left corner;</li>
+                    <li><green>GLASSBOX</green>: horizontal list of cells in the top-right corner;</li>
+                    <li><yellow>PLASTICBOX</yellow>: horizontal list of cells in the bottom-right corner;</li>
                 </ul>
             </div>
 
-            <h3 id="Transport-Trolley">Transport Trolley</h3>
+            <h5 id="Use-The-Mapper">Use the Mapper</h5>
+            To obtain the map without obstacles through the mapper we have to:
+            <ol>
+                <li>
+                    run the WEnv with the basic robot;
+                    <pre>
+                        docker-compose -f ./unibo.basicrobot22/basicrobot22.yaml up
+                    </pre>
+                </li>
+                <li>
+                    run the mapper actor:
+                    <pre>
+                        ./unibo.mapperQak22/gradlew run
+                    </pre>
+                </li>
+            </ol>
+            The mapper will send commands to the basic robot and by interpreting the replies, it will
+            progressively generate the <ksi>room map representation</ksi>. The outputs are a <a href="../../../unibo.mapperQak22/mapEmpty2019.bin">binary file</a>
+            containing a Java class of type unibo.planner22.model.RoomMap, and a <a href="../../../unibo.mapperQak22/mapEmpty2019.txt">text file</a> containing a visual representation
+            of the room:
+
+            <pre>
+                |r, 1, 1, 1, 1, 1, 1, 
+                |1, 0, 0, 0, 0, 0, 1, 
+                |1, 0, 0, 0, 0, 0, 1, 
+                |1, 0, 0, 0, 0, 0, 1, 
+                |1, 1, 1, 1, 1, 1, 1,                 
+            </pre>
+
+            <h5 id="Configure-Map-Locations">Configure Map Locations</h5>
+            To associate a meaning to a specific point, we can use a <ksi>map configuration file</ksi>. Since we want to
+            abstract the appearence level from the actual implementation, we must hide the fact that the
+            room is represented as a matrix, and provide the customer with something (e.g. a software) that he
+            can use to easily set those locations.<br/>
+            For example, a configuration file for the layout stated in the requirements could be represented as
+            the following:
+            <pre>
+                |<red>H</red>, 1, 1, 1, <green>G</green>, <green>G</green>, <green>G</green>, 
+                |1, 0, 0, 0, 0, 0, 1, 
+                |1, 0, 0, 0, 0, 0, 1, 
+                |1, 0, 0, 0, 0, 0, 1, 
+                |<cyan>I</cyan>, <cyan>I</cyan>, <cyan>I</cyan>, 1, <yellow>P</yellow>, <yellow>P</yellow>, <yellow>P</yellow>,                 
+            </pre>
+            Where <red>H</red> is <red>HOME</red>, <cyan>I</cyan> is <cyan>INDOOR</cyan>, <green>G</green> is <green>GLASS</green>, <yellow>P</yellow> is <yellow>PLASTIC</yellow>.
+            <br/>
+            Since the map configuration file is based on the room map, that solution would be <b>scalable</b> towards
+            different room sizes.
+
+            <h3 id="Transport-Trolley-and-DDR-Robot">Transport Trolley and DDR Robot</h3>
+            <problem>Robot Concepts</problem>
+            <b>Problem</b>: what is the Transport Trolley and what is the DDR Robot?
+            <solution>
+                <b>Considerations</b>: The DDR Robot is the final endpoint of the core-business chain,
+                the entity that performs the deposit actions and dumps the waste into the containers.
+                Therefore we can think of it as the actual "robot", which might be real or virtual (e.g. for
+                simulation purposes).
+                <br/>
+                On the other hand, the Transport Trolley is a more abstract concept, which encloses the logic
+                and controls the DDR Robot.
+
+                <table class="dictionary">
+                    <tr>
+                        <td style="color: black">Transport Trolley</td>
+                        <td>high-level control unit.</td>
+                    </tr>
+                    <tr>
+                        <td style="color: black">DDR Robot</td>
+                        <td>low-level technology agent.</td>
+                    </tr>
+                </table>
+
+                <br/>
+                <b>Solution</b>: we can use the BasicRobot QAK actor, provided by the customer together with unibo.basicRobot22 project,
+                to have both a <ksi>virtual environment</ksi> to simulate the DDR Robot (WEnv/VirtualRobot), and a <ksi>virtual interface</ksi> to communicate with it (BasicRobot).
+                <br/><br/>
+                <center>
+                    <img width="60%" alt="WEnv" title="WEnv (Scene)" src="../imgs/WEnv.png"/>
+                    <br/>
+                    <b>WEnv (Scene)</b>
+                </center>
+                <br/>
+                <b>Reasons</b>:
+                <ul>
+                    <li>we reuse code that's already implemented</li>
+                    <li>
+                        basicRobot is built following the actors paradigm (and QAK meta-modeling lang),
+                        so it's easy to integrate it with the rest of the project
+                    </li>
+                </ul>
+            </solution>
 
             <problem>Robot Movement</problem>
-            We might use the software provided by the customer: Applicazioni22
-            The path executor wants ..., <highlight3>How to find the path to execute?</highlight3>
-            <br/>
+            <b>Problem</b>: How do we move the robot? How do we make it reach a specific location inside the Service Area?
+            <solution>
+                <b>Solution</b>:
+                <ul>
+                    <li>
+                        <ksi>Planner22</ksi> (<a href="https://github.com/anatali/issLab2022/tree/main/unibo.planner22">unibo.planner22</a>).
+                    </li>
+                    <li>
+                        <ksi>PathExecutor</ksi> (<a href="https://github.com/anatali/issLab2022/tree/main/unibo.pathexecutor">unibo.pathexecutor</a>).
+                    </li>
+                </ul>
 
-            We assume that the deposit action cannot fail and the trolley cannot be stopped, for the moment.
-            However, since we know in the next sprint we'll implement the stop/resume mechanics, we decide to model the interaction in an asynchronous way.
+                <b>Reasons</b>:
+                <ul>
+                    <li>With the PathExecutor we can make the robot perform a sequence of commands.</li>
+                    <li>
+                        The planner, by using a search algorithm, allows the TransportTrolley to find the best path
+                        (sequence of commands) to reach a destination starting from a specific location, using (x,y) coordinates.
+                    </li>
+                    <li>
+                        To implement our wanted solution where the "real" implementation of the Service Area (MxN matrix)
+                    </li>
+                    <li>
+                        The planner uses the map previously obtained with the Mapper.
+                    </li>
+                    <li>
+                        We can <i>extend the planner</i> to make it find a path by giving it <ksi>the name of the location</ksi>,
+                        instead of the coordinates.
+                    </li>
+                </ul>
+            </solution>
+            <alternative>
+                <b>Alternatives</b>:
+                <ul>
+                    <li>
+                        <b>Hard code the path for each destination</b>: that solution is limited and not scatable towards new WasteTypes and not flexible:
+                        it will stop work if the room shape changes.
+                    </li>
+                    <!--<li>
+                        <highlight3><b>Use boundary walker</b>: slightly a better solution than the previous why...</highlight3>
+                    </li>-->
+                </ul>
+            </alternative>
             
-            <h3 id="DDR-Robot">DDR Robot</h3>
-            WEnv -> Virtual Enviromnent fornito dal committente, spieghiamo perché usiamo questo
+            <div class="remark">
+                NB: for the moment, to make things simpler, we assume that <i>the deposit action cannot fail and the trolley cannot be stopped</i>.
+                We also assume that after each deposit, the robot will always return to home, even if a new store request is received while doing so.
+
+                The reason to that, beyond the simplicity one, is that the next sprint is going to involve the stop/resume feature, which will probably
+                force us to change the transport trolley behaviour and its interaction with the DDR robot. Therefore, since the features are similiar and
+                one could involve the other, we are going to analyze that problem in <b>Sprint 2</b>.
+            </div>
 
             <h2 id="Interactions">Interactions</h2>
             <problem>Messages format</problem>
-            <b>Problem</b>: 
+            <b>Problem</b>: What format to use for messages
             <solution>
-                <b>Solution</b>: QAK message format
+                <b>Solution</b>: Prolog terms syntax
                 <br/>
-                <b>Reasons</b>:
+                <b>Reasons</b>: it's the message format of the QAK (meta-)modeleing language
             </solution>
-            <b>Alternatives</b>: JSON object format
+            <alternative>
+                <b>Alternatives</b>: JSON object format. However, we would still need to parse that to communicate with QAK actors.
+            </alternative>
+
+            <h3 id="Messages">Core-Business Messages List</h3>
+            <table class="dictionary">
+                <tr>
+                    <th>Message</th>
+                    <th>Type</th>
+                    <th>Sender</th>
+                    <th>Receiver</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>typesRequest</td>
+                    <td>Request</td>
+                    <td>SmartDevice</td>
+                    <td>TypesProvider</td>
+                    <td>
+                        Ask the WasteService the <ks><code>list of the WasteType</code></ks> that can be dumped.
+                    </td>
+                </tr>
+                <tr>
+                    <td>typesReply</td>
+                    <td>Reply</td>
+                    <td>TypesProvider</td>
+                    <td>SmartDevice</td>
+                    <td>
+                        Contains the list of WasteTypes, separated by a character (<code>'_'</code>).
+                    </td>
+                </tr>
+                <tr>
+                    <td>storeRequest</td>
+                    <td>Request</td>
+                    <td>SmartDevice</td>
+                    <td>WasteService</td>
+                    <td>
+                        Ask if <ks><code>truckLoad</code></ks> kg of <ks><code>wasteType</code></ks> can be dumped to the waste service.
+                    </td>
+                </tr>
+                <tr>
+                    <td>loadAccepted</td>
+                    <td>Reply</td>
+                    <td>WasteService</td>
+                    <td>SmartDevice</td>
+                    <td>
+                        Inform the SmartDevice that the waste load was <ksi>accepted</ksi> and its <ks><code>pickup had been completed</code></ks>.
+                    </td>
+                </tr>
+                <tr>
+                    <td>deposit</td>
+                    <td>Request</td>
+                    <td>WasteService</td>
+                    <td>TransportTrolley</td>
+                    <td>
+                        Ask the trolley to <ks><code>deposit a certain type of waste</code></ks><sup><a href="#notesMessages">1</a></sup>.
+                    </td>
+                </tr>
+                <tr>
+                    <td>pickupCompleted</td>
+                    <td>Reply</td>
+                    <td>TransportTrolley</td>
+                    <td>WasteService</td>
+                    <td>
+                        Inform the WasteService that the <ks><code>waste load had been picked up</code></ks> from Indoor.
+                    </td>
+                </tr>
+                <tr>
+                    <td>depositCompleted</td>
+                    <td>Dispatch</td>
+                    <td>TransportTrolley</td>
+                    <td>WasteService</td>
+                    <td>
+                        Inform the WasteService that the <ks><code>waste load had been dumped in the corresponding container</code></ks>.
+                    </td>
+                </tr>
+            </table>
+
+            <h4 id="notesMessages">Notes</h4>
+            <div>
+                <ol>
+                    <li>
+                        The trolley doesn't care about
+                        the quantity, but just the type, since it's task is to move the load from a location
+                        to another.
+                    </li>
+                </ol>
+            </div>
+            
 
             <h3 id="Smart-Device-Waste-Service">Smart Device &harr; Waste Service</h3>
-            
+            The customer requirements don't specify priority rules regarding the truck requrests,
+            therefore, we assume that they'll be served in order of arrival.
+
             <problem>Waste Types</problem>
             <b>Problem</b>: how does the smart device know which types of waste can be dumped to the waste service?
             <br/>
@@ -285,7 +489,7 @@
                 </li>
                 <li>
                     If we're able to know if the load can be deposited as soon as we receive the request,
-                    we could reply instantly, and therefore meet the requirement that the truck driver must
+                    we could reply instantly, and therefore meet the <em>requirement</em> that the truck driver must
                     be sent away <i>as soon as possible</i>.
                 </li>
             </ul>
@@ -319,6 +523,10 @@
                         Using <i>2 separate storage counters</i> allows us to send a reply to the
                         Smart Device as soon as possible, since we know if the waste can be stored at any time.
                     </li>
+                    <li>
+                        (Related to Sprint3 - Monitoring) we can update the GUI with a more time-accurated value
+                        of how much space is left in each container.
+                    </li>
                 </ul>
             </solution>
             <alternative>
@@ -337,25 +545,172 @@
                 <li>Allow the Smart Device to cancel a queued request.</li>
             </ul>
             
-            
-            <problem></problem>
-            <b>Problem</b>: 
-            <solution>
-                <b>Solution</b>:
-                <br/>
-                <b>Reasons</b>:
-            </solution>
-            <b>Alternatives</b>:
-            
             <h3 id="Waste-Service-Transport-Trolley">Waste Service &harr; Transport Trolley</h3>
-            
-            <h3 id="Transport-Trolley-DDR-Robot">Transport Trolley &harr; DDR Robot</h3>
-            
+            Since we want to hide the coordinate system from the WasteService side, we need to find a way
+            to tell the planner how to get the location information from the cell type.
+            <problem>Get the Location From a Cell Type in the Map Configuration file</problem>
+            <b>Problem</b>: How do we know the coordinates location corresponding to a cell type?
+            What if there are multiple cell of the same type (e.g. 3 cell for GLASSBOX)?
+            <solution>
+                <b>Solution</b>: extend the plannerUtil22 code to include methods that can parse the map configuration file
+                to find the coordinates of specific locations.
+                <br/>
+                <b>Example</b>: go from <red>H</red> (HOME) to a <yellow>P</yellow> (PLASTICBOX), the nearest P would be the first on the left.
+                <pre>
+                    |<red>H</red>, 1, 1, 1, <green>G</green>, <green>G</green>, <green>G</green>, 
+                    |1, 0, 0, 0, 0, 0, 1, 
+                    |1, 0, 0, 0, 0, 0, 1, 
+                    |1, 0, 0, 0, 0, 0, 1, 
+                    |<cyan>I</cyan>, <cyan>I</cyan>, <cyan>I</cyan>, 1, <yellow>P</yellow>,<b>&gt;</b><yellow>P</yellow><b>&lt;</b> <yellow>P</yellow>,
+                </pre>
+                And one of the best paths would be:
+                <pre>
+                    |<red>H</red>, 1, 1, 1, <green>G</green>, <green>G</green>, <green>G</green>, 
+                    |<b>&darr;</b>, 0, 0, 0, 0, 0, 1, 
+                    |<b>&darr;</b>, 0, 0, 0, 0, 0, 1, 
+                    |<b>&darr;</b>, 0, 0, 0, 0, 0, 1, 
+                    |<b>&#8627;</b>, <b>&rarr;</b>, <b>&rarr;</b>, <b>&rarr;</b>,<b>&gt;</b><yellow>P</yellow><b>&lt;</b> <yellow>P</yellow>, <yellow>P</yellow>,
+                </pre>
+
+            </solution>
+
             <h2 id="Logical-Architecture">Logical Architecture</h2>
-            QAK del core-business generale
+            The <a href="../../Sprint1_ProblemAnalysis/">Sprint1_ProblemAnalysis project</a> aims to highlight the <ksi>business logic</ksi> of the software we'll produce at the end of the sprint1.
+            <img width="100%" src="../../Sprint1_ProblemAnalysis/problem_analysis_logical_architecture_waste_service.png"/>
+            QAK model: <a href="../../Sprint1_ProblemAnalysis/src/waste_service.qak">waste_service.qak</a>
             
+            <h2 id="Test-Plans">Test Plans</h2>
+            <table class="dictionary">
+                <tr>
+                    <th>Test</th>
+                    <th>Involved Actors</th>
+                    <th>Description</th>
+                    <th>Files</th>
+                </tr>
+                <tr>
+                    <td>Receive the correct WasteTypes List</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                            <li>TypesProvider</li>
+                        </ul>
+                    </td>
+                    <td>We check if the TypesProvider actor replies correctly to the SmartDevice, with the list of WasteTypes available.</td>
+                    <td>
+                        QAK: <a href="../../Sprint1_ProblemAnalysis/src/test_types_provider.qak">test_types_provider.qak</a>
+                        Test: <a href="../../Sprint1_ProblemAnalysis/test/it/unibo/wasteservice/TestTypesProvider.kt">TestTypesProvider.kt</a>
+                    </td>
+                    <!-- NB: to test the TypesProvider we can just use a TCP connection and analyze the reply content,
+                        we don't need COAP, since it's a simple task to verify -->
+                </tr>
+                <tr>
+                    <td>StoreRequest Handling: loadaccepted</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                            <li>WasteService</li>
+                            <li>TransportTrolley</li>
+                        </ul>
+                    </td>
+                    <td>
+                        We send a StoreRequest for a load that can be stored for sure, and we check if the SmartDevice receives a
+                        loadaccepted message from the WasteService, after the pickup action is completed.
+                    </td>
+                    <td rowspan="5">
+                        QAK: <a href="../../Sprint1_ProblemAnalysis/src/test_waste_service.qak">test_waste_service.qak</a>
+                        Test: <a href="../../Sprint1_ProblemAnalysis/test/it/unibo/wasteservice/TestWasteService.kt">TestWasteService.kt</a>
+                        <highlight1>Report</highlight1>
+                    </td>
+                </tr>
+                <tr>
+                    <td>StoreRequest Handling: storage update</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                            <li>WasteService</li>
+                        </ul>
+                    </td>
+                    <td>We check if the WasteService correctly updates the storage counter by sending 2 StoreRequest sequentially:
+                        <ol>
+                            <li>The first contains the maximum load a certain container can store.</li>
+                            <li>The second contains any value (we don't care, since the storage must be already full).</li>
+                        </ol>
+                        Then we check if we received a loadaccepted for the first and a loadrejected for the second.
+                    </td>
+                </tr>
+                <tr>
+                    <td>StoreRequest Handling: loadrejected (invalid WasteType)</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                            <li>WasteService</li>
+                        </ul>
+                    </td>
+                    <td>We check if the StoreRequest gets rejected when the WasteType is invalid (e.g. "ORGANIC").</td>
+                </tr>
+                <tr>
+                    <td>StoreRequest Handling: loadrejected (invalid WasteWeight)</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                            <li>WasteService</li>
+                        </ul>
+                    </td>
+                    <td>We check if the StoreRequest gets rejected when the WasteWeight is invalid (e.g. negative value).</td>
+                </tr>
+                <tr>
+                    <td>StoreRequest Handling: loadrejected (not enough space)</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                            <li>WasteService</li>
+                        </ul>
+                    </td>
+                    <td>We check if the StoreRequest gets rejected when the container of the given WasteType is full.</td>
+                </tr>
+                <tr>
+                    <td>Deposit Handling:
+                        GLASS
+                    </td>
+                    <td>
+                        <ul>
+                            <li>WasteService</li>
+                            <li>TransportTrolley</li>
+                        </ul>
+                    </td>
+                    <td>We check if the TransportTrolley transits through all the states necessary for the execution of the GLASS deposit action.</td>
+                    <td rowspan="5">
+                        QAK: <a href="../../Sprint1_ProblemAnalysis/src/test_transport_trolley.qak">test_transport_trolley.qak</a>
+                        Test: <a href="../../Sprint1_ProblemAnalysis/test/it/unibo/wasteservice/TestTransportTrolley.kt">TestTransportTrolley.kt</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Deposit Handling:
+                        PLASTIC
+                    </td>
+                    <td>
+                        <ul>
+                            <li>WasteService</li>
+                            <li>TransportTrolley</li>
+                        </ul>
+                    </td>
+                    <td>We check if the TransportTrolley transits through all the states necessary for the execution of the PLASTIC deposit action.</td>
+                </tr>
+            </table>
+            <highlight1>How to run the tests</highlight1>
         </div>
 
     </body>
 
 </html>
+
+<!--
+<problem></problem>
+<b>Problem</b>: 
+<solution>
+    <b>Solution</b>:
+    <br/>
+    <b>Reasons</b>:
+</solution>
+<b>Alternatives</b>:
+-->

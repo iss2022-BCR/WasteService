@@ -1,0 +1,90 @@
+// PROBLEM ANALYSIS - TEST PLAN
+System test_transport_trolley
+
+// TEST ABSTRACT ==============================================================
+// Test: deposit GLASS
+// Test: deposit PLASTIC
+
+// MESSAGES AND EVENTS ========================================================
+// WasteService -> TransportTrolley
+Request deposit		:	deposit(TYPE)
+
+// TransportTrolley -> WasteService
+Reply pickupcompleted	: pickupcompleted(_)
+Dispatch depositcompleted	:	depositcompleted(_)
+Dispatch depositfailed		:	depositfailed(REASON)
+
+// CONTEXES ===================================================================
+Context ctx_transporttrolley_test 	ip [host="localhost" port=11703]
+
+QActor transporttrolley_tt_test context ctx_transporttrolley_test {
+	[#
+		var WasteType: wasteservice.WasteType = wasteservice.WasteType.PLASTIC
+	#]
+	State state_init initial {
+		println("[TransportTrolley] Started.")
+	}
+	Goto state_idle
+	
+	State state_idle {
+		println("[TransportTrolley] Waiting for deposit requests...")
+	}
+	Transition t1	whenRequest deposit		-> state_handle_deposit_request
+	
+	State state_handle_deposit_request {
+		updateResource [# "transporttrolley_tt_test(handle_deposit_request)" #]
+		printCurrentMessage
+		onMsg(deposit: deposit(TYPE)) {
+			[# WasteType = wasteservice.WasteType.valueOf(payloadArg(0)) #]
+			println("[TransportTrolley] Received deposit request for $WasteType.")	
+		}
+	}
+	Goto state_move_to_indoor
+	
+	State state_move_to_indoor {
+		updateResource [# "transporttrolley_tt_test(move_to_indoor)" #]
+		println("[TransportTrolley] Moving to INDOOR...")
+		delay 1000
+	}
+	Goto state_pickup
+	
+	State state_pickup {
+		updateResource [# "transporttrolley_tt_test(pickup)" #]
+		println("[TransportTrolley] Picking up the load of $WasteType...")
+		delay 500
+		println("[TransportTrolley] Pickup completed.")
+		replyTo deposit with pickupcompleted: pickupcompleted(_)
+		delay 500
+	}
+	Goto state_move_to_glassbox if [# WasteType == wasteservice.WasteType.GLASS #] else state_move_to_plasticbox
+	
+	State state_move_to_glassbox {
+		updateResource [# "transporttrolley_tt_test(move_to_glassbox)" #]
+		println("[TransportTrolley] Moving to GLASS_BOX...")
+		delay 2000
+	}
+	Goto state_dump
+	
+	State state_move_to_plasticbox {
+		updateResource [# "transporttrolley_tt_test(move_to_plasticbox)" #]
+		println("[TransportTrolley] Moving to PLASTIC_BOX...")
+		delay 1000
+	}
+	Goto state_dump
+	
+	State state_dump {
+		updateResource [# "transporttrolley_tt_test(dump)" #]
+		println("[TransportTrolley] Dumping the load...")
+		delay 500
+		println("[TransportTrolley] Deposit completed.")
+		delay 500
+	}
+	Goto state_move_to_home
+	
+	State state_move_to_home {
+		updateResource [# "transporttrolley_tt_test(move_to_home)" #]
+		println("[TransportTrolley] Moving to HOME...")
+		delay 500
+	}
+	Goto state_idle
+}

@@ -1,0 +1,85 @@
+.root {
+    -fx-base: #3f474f;
+    -fx-accent: #e7eff7 ;
+    -fx-default-button: #7f878f ;
+    -fx-focus-color: #efefef;
+    -fx-faint-focus-color: #efefef22;
+    -fx-focused-text-base-color : ladder(
+            -fx-selection-bar,
+            -fx-light-text-color 45%,
+            -fx-dark-text-color 46%,
+            -fx-dark-text-color 59%,
+            -fx-mid-text-color 60%
+        );
+    -fx-focused-mark-color : -fx-focused-text-base-color ;
+
+}
+
+.text-input:focused {
+    -fx-highlight-text-fill: ladder(
+        -fx-highlight-fill,
+        -fx-light-text-color 45%,
+        -fx-dark-text-color  46%,
+        -fx-dark-text-color  59%,
+        -fx-mid-text-color   60%
+    );
+}
+
+.button, .toggle-button {
+	-fx-background-size: 25px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: 50%;
+}
+
+#controls {
+    -fx-background-color: #58626A;
+}
+
+#new {
+	-fx-background-image: url('../icons/icon-new-light.png');
+}
+#load {
+	-fx-background-image: url('../icons/icon-load-light.png');
+}
+#save {
+	-fx-background-image: url('../icons/icon-save-light.png');
+}
+
+#add {
+	-fx-background-image: url('../icons/icon-add-light.png');
+}
+#remove {
+	-fx-background-image: url('../icons/icon-remove-light.png');
+}
+#edit {
+    -fx-background-image: url('../icons/icon-edit-light.png');
+}
+#move {
+    -fx-background-image: url('../icons/icon-move-light.png');
+}
+#swap {
+    -fx-background-image: url('../icons/icon-swap-light.png');
+}
+#confirm {
+    -fx-background-image: url('../icons/icon-confirm-light.png');
+}
+
+#undo {
+	-fx-background-image: url('../icons/icon-undo-light.png');
+}
+#redo {
+	-fx-background-image: url('../icons/icon-redo-light.png');
+}
+
+#settings {
+	-fx-background-image: url('../icons/icon-settings-light.png');
+}
+
+#open {
+    -fx-background-image: url('../icons/icon-open-light.png');
+    -fx-background-size: 15px;
+}
+#close {
+    -fx-background-image: url('../icons/icon-close-light.png');
+    -fx-background-size: 15px;
+}

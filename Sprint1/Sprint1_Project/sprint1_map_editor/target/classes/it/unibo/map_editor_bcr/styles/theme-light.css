@@ -1,0 +1,58 @@
+.button, .toggle-button {
+	-fx-background-size: 30px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: 50%;
+}
+
+#controls {
+    -fx-background-color: #F4F4F4;
+}
+
+#new {
+	-fx-background-image: url('../icons/icon-new-dark.png');
+}
+#load {
+	-fx-background-image: url('../icons/icon-load-dark.png');
+}
+#save {
+	-fx-background-image: url('../icons/icon-save-dark.png');
+}
+
+#add {
+	-fx-background-image: url('../icons/icon-add-dark.png');
+}
+#remove {
+	-fx-background-image: url('../icons/icon-remove-dark.png');
+}
+#edit {
+    -fx-background-image: url('../icons/icon-edit-dark.png');
+}
+#move {
+    -fx-background-image: url('../icons/icon-move-dark.png');
+}
+#swap {
+    -fx-background-image: url('../icons/icon-swap-dark.png');
+}
+#confirm {
+    -fx-background-image: url('../icons/icon-confirm-dark.png');
+}
+
+#undo {
+	-fx-background-image: url('../icons/icon-undo-dark.png');
+}
+#redo {
+	-fx-background-image: url('../icons/icon-redo-dark.png');
+}
+
+#settings {
+	-fx-background-image: url('../icons/icon-settings-dark.png');
+}
+
+#open {
+    -fx-background-image: url('../icons/icon-open-dark.png');
+    -fx-background-size: 15px;
+}
+#close {
+    -fx-background-image: url('../icons/icon-close-dark.png');
+    -fx-background-size: 15px;
+}
