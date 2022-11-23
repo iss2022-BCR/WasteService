@@ -25,6 +25,9 @@
             <a class="selected" href="conclusions.html">Conclusions</a>
             <div class="sidenavSection">
                 <a href="#Summary">Summary</a>
+                <div class="sidenavSubSection">
+                    <a href="#Task-Partitioning">Task Partitioning</a>
+                </div>
                 <a href="#Sprint-Review">Sprint Review</a>
                 <a href="#Sprint-Retrospective">Sprint Retrospective</a>
                 <a href="#Work-Plan">Work Plan</a>
@@ -56,17 +59,193 @@
                 </ol>
             </div>
 
+            <h3 id="Task-Partitioning">Task Partitioning</h3>
+            <table class="dictionary">
+                <tr>
+                    <th>Task</th>
+                    <th>Description</th><!-- Summary -->
+                    <th>Assignment</th>
+                </tr>
+                <tr>
+                    <td>HTML document</td>
+                    <td>
+                        Styling and formatting of the HTML document.
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Michele Righi</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Project documents</td>
+                    <td>
+                        HTML content and resources (models, diagrams, images, ...).
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Raffaele Battipaglia</li>
+                            <li>Karina Chichifoi</li>
+                            <li>Michele Righi</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Problem Analysis</td>
+                    <td>
+                        Identification of the main topics to be analysed,
+                        with the relative possible problems to be solved;
+                        <br/>
+                        brainstorming on solutions, with the related motivations,
+                        and alternatives.
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Raffaele Battipaglia</li>
+                            <li>Karina Chichifoi</li>
+                            <li>Michele Righi</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Problem Analysis: QAK model</td>
+                    <td>
+                        Creation of a QAK model of the core-business, with just the
+                        main states and a draft of their behaviour and interactions.
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Raffaele Battipaglia</li>
+                            <li>Karina Chichifoi</li>
+                            <li>Michele Righi</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Problem Analysis: Test Plan</td>
+                    <td>
+                        Brainstorming about the functionalities and interactions to
+                        test and making of test classes to verify the correctness of
+                        the behaviour of the system, according to the first logical architecture,
+                        given by the QAK model.
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Raffaele Battipaglia</li>
+                            <li>Karina Chichifoi</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Project: SmartDevice</td>
+                    <td>
+                        Creation of the first element of the core-business chain:
+                        the (mobile) application used by the truck driver to interact with
+                        the Waste Service and deposit the truck load.
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Michele Righi</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Project: EchoWasteServer</td>
+                    <td>
+                        Creation of an application to ease the testing of
+                        the SmartDevice, especially on mobile devices.
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Michele Righi</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Project: MapEditor</td>
+                    <td>
+                        Utility application to ease the creation and edit of
+                        a configuration file for the room of the service area.
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Michele Righi</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Project: WasteService</td>
+                    <td>
+                        Development of the heart of the core-business: the WasteService software.
+                        It includes the creation of the QAK model, starting from the one of the
+                        Problem Analysis, the implementation of the plannerBCR Kotlin object to make
+                        use of the MapConfig file.
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Raffaele Battipaglia</li>
+                            <li>Karina Chichifoi</li>
+                            <li>Michele Righi</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Test Plans</td>
+                    <td>Test Plans related to projects, which include SmartDevice tests and WasteService tests.</td>
+                    <td>
+                        <ul>
+                            <li>Raffaele Battipaglia</li>
+                            <li>Karina Chichifoi</li>
+                            <li>Michele Righi</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Automated Demo</td>
+                    <td>
+                        Test of single executable units and creation of a script program
+                        that automates the execution of the entire core-business.
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Raffaele Battipaglia</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Deployment</td>
+                    <td>Packaging and deployment of the softwares and test on different architectures (Linux & MacOS).</td>
+                    <td>
+                        <ul>
+                            <li>Karina Chichifoi</li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+
+            <h3 id="Demo">Demo</h3>
+
             <h2 id="Sprint-Review">Sprint Review</h2>
             
             <h2 id="Sprint-Retrospective">Sprint Retrospective</h2>
-            Aggiornare Flutter
-            <br/>
-            Aggiornare QAK
+            Upgrade QAK libraries to last version.
 
             <h2 id="Work-Plan">Work Plan</h2>
+            The next sprint is <a href="../../../Sprint2/index.html">Sprint2</a>, which involves the requirement <b>4</b>.
 
+            <h3 id="Sprint2"><b>Sprint2</b> - RaspberryPi</h3>
+            The Sprint2 will involve the use of the RaspberryPi:
+            <ul>
+                <li>Implement the <i>warning device</i> (Led component).</li>
+                <li>Implement the <i>alarm device</i> (Sonar component).</li>
+                <li>Implement the stop/resume feature for the transport trolley.</li>
+                <li>
+                    Make the robot stop and move to Indoor if a new store request is received while it's
+                    returning to Home.
+                </li>
+            </ul>
+            <h3 id="Sprint3"><b>Sprint3</b> - Monitoring</h3>
 
-            <!--Tenere presente che per la realizzazione dei prodotti, potranno essere utilizzate o specializzate le applicazioni realizzate dalla nostra software house, nel corso dell'anno corrente: Applicazioni22.-->
         </div>
 
         <!--<footer>

@@ -59,21 +59,6 @@ void main() {
           sock.write(msg.toString());
         }
       }
-
-      /*
-      // Old code
-      StoreRequest receivedSR =
-          StoreRequest.fromQAKString(String.fromCharCodes(data));
-
-      print(mockServer.getFullStatusString());
-      if (mockServer.canStore(receivedSR.wasteType, receivedSR.wasteWeight)) {
-        print("[Mock_WasteServer] Load accepted.");
-        mockServer.deposit(receivedSR.wasteWeight, receivedSR.wasteType);
-        sock.write("LoadAccepted");
-      } else {
-        print("[Mock_WasteServer] Load rejected.");
-        sock.write("LoadRejected");
-      }*/
     }, onConnect: (sock, iSock) {
       print(
           "[Mock_WasteServer] Accepted connection #$iSock from client ${sock.remoteAddress.address}:${sock.port}.");

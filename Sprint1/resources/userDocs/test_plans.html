@@ -79,6 +79,18 @@
                     <td></td>
                 </tr>
                 <tr>
+                    <td>TypesRequest</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                            <li>TypesProvider</li>
+                        </ul>
+                    </td>
+                    <td>The SmartDevice sends a TypesRequest to the TypesProvider to know which types of waste can be dumped in the WasteService.</td>
+                    <td>The TypesProvider sends a message containing the waste types list, and the SmartDevice receives it.</td>
+                    <td></td>
+                </tr>
+                <tr>
                     <td>StoreRequest +<br/>LoadAccepted</td>
                     <td>
                         <ul>
@@ -127,6 +139,8 @@
             
             <h3 id="Widget-Test">Widget Test</h3>
             The goal of a widget test is to verify that the widget’s UI looks and interacts as expected.
+            That's also the reason why the only entity involved is the SmartDevice, because we're using
+            mock interfaces to test it.
             <table class="dictionary">
                 <tr>
                     <th>Test</th>
@@ -186,6 +200,23 @@
                     <td></td>
                 </tr>
                 <tr>
+                    <td>ViewRequest: Types List</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                        </ul>
+                    </td>
+                    <td>
+                        the application waits for a reply from the WasteService, containing the available waste types,
+                        so that the user can choose from a list containing only those the WasteService can store.
+                    </td>
+                    <td>
+                        Show a waiting message until the types are received, and after that
+                        display the waste types input field.
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
                     <td>ViewRequest: Validation</td>
                     <td>
                         <ul>
@@ -208,7 +239,7 @@
                     <td></td>
                 </tr>
                 <tr>
-                    <td><highlight2>ViewRequest: Waiting for a reply</highlight2></td>
+                    <td>ViewRequest: Waiting for a reply</td>
                     <td>
                         <ul>
                             <li>SmartDevice</li>
@@ -299,14 +330,9 @@
             Reference: <a href="https://docs.flutter.dev/testing#integration-tests">Flutter Integration Testing</a>
             
 
-            <h2 id="Interactions" style="clear: both">Interactions</h2>
-
-            <h3 id="Smart-Device-Waste-Service">SmartDevice &harr; WasteService</h3>
-            <h4>Store Request Success</h4>
-
-            <h3 id="Waste-Service-Transport-Trolley">WasteService &harr; TransportTrolley</h3>
-
-            <h3 id="Transport-Trolley-DDR-Robot">TransportTrolley &harr; DDR Robot</h3>
+            <h2 id="Waste-Service">Waste Service</h2>
+            <h3>PlannerBCR + MapConfig</h3>
+            <highlight2>to-do</highlight2>
         </div>
 
     </body>

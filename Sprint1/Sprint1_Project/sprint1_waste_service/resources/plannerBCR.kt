@@ -283,33 +283,6 @@ object plannerBCR {
 		mapDims = getMapDims()//Pair(dimMapx,dimMapy)
 	}
 
-	@JvmStatic
-	fun loadRoomConfig(fname: String) {
-		try{
-			val inps = ObjectInputStream(FileInputStream("${fname}.bin"))
-			val map  = inps.readObject() as RoomMap;
-			println("$name loadRoomMap = $fname DONE")
-			RoomMap.setRoomMap( map )
-		} catch(e:Exception){
-			println("$name loadRoomMap = $fname FAILURE ${e.message}")
-		}
-		mapDims = getMapDims()//Pair(dimMapx,dimMapy)
-	}
-	
- 
-	@JvmStatic fun saveRoomMap(  fname : String)   {		
-        println("$name saveMap in $fname")
-		val pw = PrintWriter( FileWriter(fname+".txt") )
-		pw.print( RoomMap.getRoomMap().toString() )
-		pw.close()
-		
-		val os = ObjectOutputStream( FileOutputStream(fname+".bin") )
-		os.writeObject(RoomMap.getRoomMap())
-		os.flush()
-		os.close()
-		mapDims = getMapDims()
-    }
-
 /*
 * ------------------------------------------------
 * UPDATING THE ROOM MAP
@@ -453,29 +426,4 @@ object plannerBCR {
 		println("CanMoveLeft (1,1): ${RoomMap.getRoomMap().canMoveLeft(1, 1)}")
 		println("isDirty: ${RoomMap.getRoomMap().isDirty(0,0)}")
 	}
-
-	/*
-	@JvmStatic
-	fun getCoordinatesForCellType(ct: CellType): List<Pair<Int, Int>> {
-		var res = mutableListOf<Pair<Int, Int>>()
-		val positions: List<List<Int>>? = SystemConfig.positions.get(location.lowercase()) as List<List<Int>>?
-
-		if (positions != null) {
-			for(entry in positions) {
-				res.add(Coordinate(entry.get(0), entry.get(1)))
-			}
-		}
-
-		return res
-	}
-
-	@JvmStatic
-	fun getClosestPosition(initX: Int, initY: Int, ct: CellType): Pair<Int, Int> {
-		var x: Int
-		var y: Int
-
-
-
-		return Pair(x, y)
-	}*/
 }

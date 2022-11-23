@@ -46,7 +46,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t15",targetState="state_handle_deposit_request",cond=whenRequest("deposit"))
+					 transition(edgeName="t18",targetState="state_handle_deposit_request",cond=whenRequest("deposit"))
 				}	 
 				state("state_handle_deposit_request") { //this:State
 					action { //it:State
@@ -78,8 +78,8 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t16",targetState="state_pickup",cond=whenReply("dopathdone"))
-					transition(edgeName="t17",targetState="state_error",cond=whenReply("dopathfail"))
+					 transition(edgeName="t19",targetState="state_pickup",cond=whenReply("dopathdone"))
+					transition(edgeName="t110",targetState="state_error",cond=whenReply("dopathfail"))
 				}	 
 				state("state_pickup") { //this:State
 					action { //it:State
@@ -109,8 +109,8 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t18",targetState="state_dump",cond=whenReply("dopathdone"))
-					transition(edgeName="t19",targetState="state_error",cond=whenReply("dopathfail"))
+					 transition(edgeName="t111",targetState="state_dump",cond=whenReply("dopathdone"))
+					transition(edgeName="t112",targetState="state_error",cond=whenReply("dopathfail"))
 				}	 
 				state("state_dump") { //this:State
 					action { //it:State
@@ -140,8 +140,8 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t110",targetState="state_idle",cond=whenReply("dopathdone"))
-					transition(edgeName="t111",targetState="state_error",cond=whenReply("dopathfail"))
+					 transition(edgeName="t113",targetState="state_idle",cond=whenReply("dopathdone"))
+					transition(edgeName="t114",targetState="state_error",cond=whenReply("dopathfail"))
 				}	 
 				state("state_error") { //this:State
 					action { //it:State
