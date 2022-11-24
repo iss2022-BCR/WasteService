@@ -4,6 +4,7 @@ build.gradle
 GENERATED ONLY ONCE
 ================================================================================
 */
+
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
@@ -116,6 +117,29 @@ jar {
     println("building jar")
     from sourceSets.main.allSource
     manifest {
-        attributes 'Main-Class': "$mainClassName"
+        attributes 'Main-Class': 'it.unibo.ctx_wasteservice.MainCtx_wasteserviceKt'
     }
+}
+
+tasks.withType(Test) {
+    testLogging {
+        exceptionFormat "full"
+        events "started", "skipped", "passed", "failed"
+        showStandardStreams true
+    }
+}
+
+task(runCtx_WasteService, dependsOn: 'classes', type: JavaExec) {
+    mainClass = 'it.unibo.ctx_wasteservice.MainCtx_wasteserviceKt'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task(runCtx_TransportTrolley, dependsOn: 'classes', type: JavaExec) {
+    mainClass = 'it.unibo.ctx_transporttrolley.MainCtx_transporttrolleyKt'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task(runCtx_Robot, dependsOn: 'classes', type: JavaExec) {
+    mainClass = 'it.unibo.ctx_robot.MainCtx_robotKt'
+    classpath = sourceSets.main.runtimeClasspath
 }

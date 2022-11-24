@@ -1,5 +1,5 @@
 // PROJECT
-System waste_service
+System logical_architecture_waste_service
 
 // MESSAGES AND EVENTS ========================================================
 // SmartDevice (truck) -> TypesProvider
@@ -14,7 +14,7 @@ Reply loadaccepted	:	loadaccepted(_)
 Reply loadrejected	:	loadrejected(_)
 
 // WasteService -> TransportTrolley
-Request deposit		:	deposit(TYPE, LOAD)
+Request deposit		:	deposit(TYPE)
 // TransportTrolley -> WasteService
 Reply pickupcompleted	: pickupcompleted(_)
 // TransportTrolley -> WasteService
@@ -46,12 +46,68 @@ Reply   stepfail	: stepfail(DURATION, CAUSE)
 Event	alarm		: alarm(X) 
 
 // CONTEXES ===================================================================
+Context ctx_smartdevice 		ip [host="localhost" port=11799]
 Context ctx_wasteservice		ip [host="localhost" port=11800]
 Context ctx_transporttrolley	ip [host="localhost" port=11801]
 Context ctx_robot				ip [host="localhost" port=8020]
 
 // ACTORS =====================================================================
-//ExternalQActor basicrobot context ctx_robot
+ExternalQActor basicrobot context ctx_robot
+
+QActor smartdevice_simulator context ctx_smartdevice {
+	[#
+		var Types: String = ""
+		var TypesList = arrayListOf<wasteservice.WasteType>()
+		
+		var WasteType: wasteservice.WasteType = wasteservice.WasteType.PLASTIC
+		var WasteWeight: Double = 10.0
+	#]
+	State state_init initial {
+		println("[SmartDevice Simulator] Started")
+		discardMsg Off
+	}
+	Goto state_typesrequest
+	
+	State state_typesrequest {
+		delay 1000
+		request typesprovider -m typesrequest : typesrequest(_)
+		println("[SmartDevice Simulator] Sent typesrequest()")
+	}
+	Transition t1 whenReply	typesreply -> state_handle_types
+	
+	State state_handle_types {
+		printCurrentMessage
+		onMsg(typesreply : typesreply(TYPES)) {
+			[#
+				Types = payloadArg(0).toString()
+				TypesList = wasteservice.Utils.getWasteTypesList(Types, "_")
+			#]
+		}
+		println("[SmartDevice Simulator] Types list: $TypesList")
+	}
+	Goto state_storerequest
+	
+	State state_storerequest {
+		[#
+			WasteType = wasteservice.WasteType.values()[kotlin.random.Random.nextInt(0, TypesList.size)]
+		#]
+		delay 1000
+		request wasteservice -m storerequest : storerequest($WasteType, $WasteWeight)
+		println("[SmartDevice Simulator] Sent storerequest($WasteType, $WasteWeight)")
+	}
+	Transition t2	whenReply	loadaccepted -> state_handle_loadaccepted
+					whenReply	loadrejected -> state_handle_loadrejected
+	
+	State state_handle_loadaccepted {
+		println("[SmartDevice Simulator] Received LoadAccepted")
+	}
+	Goto state_storerequest
+	
+	State state_handle_loadrejected {
+		println("[SmartDevice Simulator] Received LoadRejected")
+	}
+	Goto state_storerequest
+}
 
 // Actor that provides the types of waste that can be stored
 // in the waste service area, when a Smart Device connects
@@ -129,7 +185,8 @@ QActor wasteservice context ctx_wasteservice {
 						WaitingPickup = true
 					#]
 					println("[WasteService] There is enough space.")
-					request transporttrolley -m deposit : deposit( $RequestedWasteType, $RequestedWasteWeight )
+					request transporttrolley -m deposit : deposit( $RequestedWasteType )
+					//request transporttrolley -m deposit : deposit( $RequestedWasteType )
 				}
 				else
 				{
@@ -208,16 +265,15 @@ QActor transporttrolley context ctx_transporttrolley {
 		var Progress = ""
 		
 		var WasteType: wasteservice.WasteType = wasteservice.WasteType.PLASTIC
-		var WasteLoad: Double = 0.0
 	#]
 	State state_init initial {
 		[#
 			plannerBCR.initAI()
 			plannerBCR.loadRoomMap("mapRoomEmpty")
 			plannerBCR.showMap()
-			plannerBCR.loadMapConfig("mapConfigWasteService")
+			wasteservice.MapConfigUtils.loadMapConfig("mapConfigWasteService")
 			println("MapConfig:")
-			plannerBCR.showFancyMapConfig()
+			wasteservice.MapConfigUtils.showFancyMap()
 		#]
 		println("[TransportTrolley] Started.")
 	}
@@ -230,11 +286,8 @@ QActor transporttrolley context ctx_transporttrolley {
 	
 	State state_handle_deposit_request {
 		printCurrentMessage
-		onMsg(deposit: deposit(TYPE, LOAD)) {
-			[#
-				WasteType = wasteservice.WasteType.valueOf(payloadArg(0))
-				WasteLoad = payloadArg(1).toDouble()
-			#]
+		onMsg(deposit: deposit(TYPE)) {
+			[# WasteType = wasteservice.WasteType.valueOf(payloadArg(0)) #]
 			println("[TransportTrolley] Deposit request received.")
 		}
 	}
@@ -244,7 +297,7 @@ QActor transporttrolley context ctx_transporttrolley {
 		println("[TransportTrolley] Moving to INDOOR...")
 		[#
 			val curPos: Pair<Int, Int> = plannerBCR.get_curPos()
-			val goal: Pair<Int, Int> = plannerBCR.getNearestPositionToCellType(curPos, "INDOOR")
+			val goal: Pair<Int, Int> = wasteservice.MapConfigUtils.getNearestPositionToCellType(curPos, "INDOOR")
 			plannerBCR.setGoal(goal.first, goal.second)
 			plannerBCR.doPlan()
 			Actions = plannerBCR.getActionsString()
@@ -256,7 +309,7 @@ QActor transporttrolley context ctx_transporttrolley {
 	
 	State state_pickup {
 		println("[TransportTrolley] Picking up the load of $WasteType...")
-		[# wasteservice.Utils.simulateAction(WasteLoad) #]
+		delay 3000
 		println("[TransportTrolley] Pickup completed.")
 		
 		replyTo deposit with pickupcompleted: pickupcompleted(_)
@@ -268,7 +321,7 @@ QActor transporttrolley context ctx_transporttrolley {
 		println("[TransportTrolley] Moving to ${WasteType.name}_BOX...")
 		[#
 			val curPos: Pair<Int, Int> = plannerBCR.get_curPos()
-			val goal: Pair<Int, Int> = plannerBCR.getNearestPositionToCellType(curPos, WasteType.name)
+			val goal: Pair<Int, Int> = wasteservice.MapConfigUtils.getNearestPositionToCellType(curPos, WasteType.name)
 			plannerBCR.setGoal(goal.first, goal.second)
 			plannerBCR.doPlan()
 			Actions = plannerBCR.getActionsString()
@@ -280,7 +333,7 @@ QActor transporttrolley context ctx_transporttrolley {
 	
 	State state_dump {
 		println("[TransportTrolley] Dumping the load...")
-		[# wasteservice.Utils.simulateAction(WasteLoad) #]
+		delay 3000
 		println("[TransportTrolley] Dump completed.")
 		
 		forward wasteservice -m depositcompleted : depositcompleted(_)
@@ -291,14 +344,12 @@ QActor transporttrolley context ctx_transporttrolley {
 		println("[TransportTrolley] Moving to HOME...")
 		[#
 			val curPos: Pair<Int, Int> = plannerBCR.get_curPos()
-			val goal: Pair<Int, Int> = plannerBCR.getNearestPositionToCellType(curPos, "HOME")
+			val goal: Pair<Int, Int> = wasteservice.MapConfigUtils.getNearestPositionToCellType(curPos, "HOME")
 			plannerBCR.setGoal(goal.first, goal.second)
 			plannerBCR.doPlan()
 			Actions = plannerBCR.getActionsString()
 		#]
 		request pathexecutor -m dopath : dopath($Actions, transporttrolley)
-		
-		// TO-DO (Sprint2): Return to HOME in case a new request arrives
 	}
 	Transition t1 whenReply dopathdone -> state_idle
 				  whenReply dopathfail -> state_error
@@ -389,7 +440,7 @@ QActor pathexecutor context ctx_transporttrolley {
 	Transition t0 whenEvent alarm -> handleAlarm
 }
 
-QActor basicrobot context ctx_robot {
+/*QActor basicrobot context ctx_robot {
 [#
   var StepTime      = 0L
   var StartTime     = 0L     
@@ -504,4 +555,4 @@ QActor basicrobot context ctx_robot {
 		updateResource [# "basicrobot(end)" #]	 		
  		terminate 1
 	}
-}
+}*/

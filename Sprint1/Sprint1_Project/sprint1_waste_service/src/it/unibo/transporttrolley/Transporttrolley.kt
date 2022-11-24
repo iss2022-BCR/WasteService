@@ -20,6 +20,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				var Progress = ""
 				
 				var WasteType: wasteservice.WasteType = wasteservice.WasteType.PLASTIC
+				var WasteLoad: Double = 0.0
 		return { //this:ActionBasciFsm
 				state("state_init") { //this:State
 					action { //it:State
@@ -27,9 +28,9 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 									plannerBCR.initAI()
 									plannerBCR.loadRoomMap("mapRoomEmpty")
 									plannerBCR.showMap()
-									wasteservice.MapConfigUtils.loadMapConfig("mapConfigWasteService")
+									plannerBCR.loadMapConfig("mapConfigWasteService")
 									println("MapConfig:")
-									wasteservice.MapConfigUtils.showFancyMap()
+									plannerBCR.showFancyMapConfig()
 						println("[TransportTrolley] Started.")
 						//genTimer( actor, state )
 					}
@@ -46,14 +47,16 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t18",targetState="state_handle_deposit_request",cond=whenRequest("deposit"))
+					 transition(edgeName="t15",targetState="state_handle_deposit_request",cond=whenRequest("deposit"))
 				}	 
 				state("state_handle_deposit_request") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						if( checkMsgContent( Term.createTerm("deposit(TYPE)"), Term.createTerm("deposit(TYPE)"), 
+						if( checkMsgContent( Term.createTerm("deposit(TYPE,LOAD)"), Term.createTerm("deposit(TYPE,LOAD)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								 WasteType = wasteservice.WasteType.valueOf(payloadArg(0))  
+								
+												WasteType = wasteservice.WasteType.valueOf(payloadArg(0))
+												WasteLoad = payloadArg(1).toDouble()
 								println("[TransportTrolley] Deposit request received.")
 						}
 						//genTimer( actor, state )
@@ -68,7 +71,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 						println("[TransportTrolley] Moving to INDOOR...")
 						
 									val curPos: Pair<Int, Int> = plannerBCR.get_curPos()
-									val goal: Pair<Int, Int> = wasteservice.MapConfigUtils.getNearestPositionToCellType(curPos, "INDOOR")
+									val goal: Pair<Int, Int> = plannerBCR.getNearestPositionToCellType(curPos, "INDOOR")
 									plannerBCR.setGoal(goal.first, goal.second)
 									plannerBCR.doPlan()
 									Actions = plannerBCR.getActionsString()
@@ -78,13 +81,13 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t19",targetState="state_pickup",cond=whenReply("dopathdone"))
-					transition(edgeName="t110",targetState="state_error",cond=whenReply("dopathfail"))
+					 transition(edgeName="t16",targetState="state_pickup",cond=whenReply("dopathdone"))
+					transition(edgeName="t17",targetState="state_error",cond=whenReply("dopathfail"))
 				}	 
 				state("state_pickup") { //this:State
 					action { //it:State
 						println("[TransportTrolley] Picking up the load of $WasteType...")
-						delay(3000) 
+						 wasteservice.Utils.simulateAction(WasteLoad)  
 						println("[TransportTrolley] Pickup completed.")
 						answer("deposit", "pickupcompleted", "pickupcompleted(_)"   )  
 						//genTimer( actor, state )
@@ -99,7 +102,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 						println("[TransportTrolley] Moving to ${WasteType.name}_BOX...")
 						
 									val curPos: Pair<Int, Int> = plannerBCR.get_curPos()
-									val goal: Pair<Int, Int> = wasteservice.MapConfigUtils.getNearestPositionToCellType(curPos, WasteType.name)
+									val goal: Pair<Int, Int> = plannerBCR.getNearestPositionToCellType(curPos, WasteType.name)
 									plannerBCR.setGoal(goal.first, goal.second)
 									plannerBCR.doPlan()
 									Actions = plannerBCR.getActionsString()
@@ -109,13 +112,13 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t111",targetState="state_dump",cond=whenReply("dopathdone"))
-					transition(edgeName="t112",targetState="state_error",cond=whenReply("dopathfail"))
+					 transition(edgeName="t18",targetState="state_dump",cond=whenReply("dopathdone"))
+					transition(edgeName="t19",targetState="state_error",cond=whenReply("dopathfail"))
 				}	 
 				state("state_dump") { //this:State
 					action { //it:State
 						println("[TransportTrolley] Dumping the load...")
-						delay(3000) 
+						 wasteservice.Utils.simulateAction(WasteLoad)  
 						println("[TransportTrolley] Dump completed.")
 						forward("depositcompleted", "depositcompleted(_)" ,"wasteservice" ) 
 						//genTimer( actor, state )
@@ -130,7 +133,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 						println("[TransportTrolley] Moving to HOME...")
 						
 									val curPos: Pair<Int, Int> = plannerBCR.get_curPos()
-									val goal: Pair<Int, Int> = wasteservice.MapConfigUtils.getNearestPositionToCellType(curPos, "HOME")
+									val goal: Pair<Int, Int> = plannerBCR.getNearestPositionToCellType(curPos, "HOME")
 									plannerBCR.setGoal(goal.first, goal.second)
 									plannerBCR.doPlan()
 									Actions = plannerBCR.getActionsString()
@@ -140,8 +143,8 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t113",targetState="state_idle",cond=whenReply("dopathdone"))
-					transition(edgeName="t114",targetState="state_error",cond=whenReply("dopathfail"))
+					 transition(edgeName="t110",targetState="state_idle",cond=whenReply("dopathdone"))
+					transition(edgeName="t111",targetState="state_error",cond=whenReply("dopathfail"))
 				}	 
 				state("state_error") { //this:State
 					action { //it:State

@@ -391,9 +391,10 @@
             <div>
                 <ol>
                     <li>
-                        The trolley doesn't care about
-                        the quantity, but just the type, since it's task is to move the load from a location
-                        to another.
+                        The Transport Trolley doesn't care about the quantity, but just the type,
+                        since it's task is to move the load from a location to another.
+                        However, we could use the quantity to simulate a pickup and deposit delay which
+                        is proportional to the load.
                     </li>
                 </ol>
             </div>
@@ -619,7 +620,6 @@
                     <td rowspan="5">
                         QAK: <a href="../../Sprint1_ProblemAnalysis/src/test_waste_service.qak">test_waste_service.qak</a>
                         Test: <a href="../../Sprint1_ProblemAnalysis/test/it/unibo/wasteservice/TestWasteService.kt">TestWasteService.kt</a>
-                        <highlight1>Report</highlight1>
                     </td>
                 </tr>
                 <tr>
@@ -697,7 +697,10 @@
                     <td>We check if the TransportTrolley transits through all the states necessary for the execution of the PLASTIC deposit action.</td>
                 </tr>
             </table>
-            <highlight1>How to run the tests</highlight1>
+            <!-- 
+                - How to run the tests
+                - Test Reports(?)
+            -->
         </div>
 
     </body>

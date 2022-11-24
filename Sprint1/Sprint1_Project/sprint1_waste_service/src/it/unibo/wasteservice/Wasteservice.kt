@@ -46,7 +46,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t14",targetState="state_handle_storerequest",cond=whenRequest("storerequest"))
+					 transition(edgeName="t11",targetState="state_handle_storerequest",cond=whenRequest("storerequest"))
 				}	 
 				state("state_handle_storerequest") { //this:State
 					action { //it:State
@@ -69,7 +69,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 													
 														WaitingPickup = true
 								println("[WasteService] There is enough space.")
-								request("deposit", "deposit($RequestedWasteType)" ,"transporttrolley" )  
+								request("deposit", "deposit($RequestedWasteType,$RequestedWasteWeight)" ,"transporttrolley" )  
 								}
 								else
 								 { WaitingPickup = false  
@@ -103,7 +103,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t15",targetState="state_pickup_completed",cond=whenReply("pickupcompleted"))
+					 transition(edgeName="t12",targetState="state_pickup_completed",cond=whenReply("pickupcompleted"))
 				}	 
 				state("state_pickup_completed") { //this:State
 					action { //it:State
@@ -127,8 +127,8 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t16",targetState="state_deposit_completed",cond=whenDispatch("depositcompleted"))
-					transition(edgeName="t17",targetState="state_deposit_failed",cond=whenDispatch("depositfailed"))
+					 transition(edgeName="t13",targetState="state_deposit_completed",cond=whenDispatch("depositcompleted"))
+					transition(edgeName="t14",targetState="state_deposit_failed",cond=whenDispatch("depositfailed"))
 				}	 
 				state("state_deposit_completed") { //this:State
 					action { //it:State

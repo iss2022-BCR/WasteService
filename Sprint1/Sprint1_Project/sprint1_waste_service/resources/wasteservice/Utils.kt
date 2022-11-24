@@ -45,4 +45,8 @@ object Utils {
         }
         return res;
     }
+
+    fun simulateAction(load: Double) {
+        Thread.sleep(load.toLong() * 100)
+    }
 }

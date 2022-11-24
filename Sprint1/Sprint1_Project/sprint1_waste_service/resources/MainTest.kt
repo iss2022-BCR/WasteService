@@ -20,15 +20,15 @@ fun main() = runBlocking {
 
     println(actions)*/
 
-    wasteservice.MapConfigUtils.loadMapConfig("mapConfigWasteService")
-    wasteservice.MapConfigUtils.showFancyMap()
-    println(wasteservice.MapConfigUtils.getMapConfigCoordinates())
+    plannerBCR.loadMapConfig("mapConfigWasteService")
+    plannerBCR.showFancyMapConfig()
+    println(plannerBCR.getMapConfigCoordinates())
 
-    println(wasteservice.MapConfigUtils.getNearestPositionToCellType(0,0, "INDOOR"))
+    println(plannerBCR.getNearestPositionToCellType(Pair<Int, Int>(0,0), "INDOOR"))
 
-    println(wasteservice.MapConfigUtils.getNearestPositionToCellType(0, 0, CellType.GLASS))
-    println(wasteservice.MapConfigUtils.getNearestPositionToCellType(0, 0, CellType.PLASTIC))
-    println(wasteservice.MapConfigUtils.getNearestPositionToCellType(0, 0, CellType.INDOOR))
-    println(wasteservice.MapConfigUtils.getNearestPositionToCellType(0, 0, CellType.HOME))
+    println(plannerBCR.getNearestPositionToCellType(Pair<Int, Int>(0,0), "GLASS"))
+    println(plannerBCR.getNearestPositionToCellType(Pair<Int, Int>(0,0), "PLASTIC"))
+    println(plannerBCR.getNearestPositionToCellType(Pair<Int, Int>(0,0), "INDOOR"))
+    println(plannerBCR.getNearestPositionToCellType(Pair<Int, Int>(0,0), "HOME"))
 }
 
