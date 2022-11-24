@@ -20,6 +20,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				var Progress = ""
 				
 				var WasteType: wasteservice.WasteType = wasteservice.WasteType.PLASTIC
+				var WasteLoad: Double = 0.0
 		return { //this:ActionBasciFsm
 				state("state_init") { //this:State
 					action { //it:State
@@ -51,9 +52,11 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				state("state_handle_deposit_request") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						if( checkMsgContent( Term.createTerm("deposit(TYPE)"), Term.createTerm("deposit(TYPE)"), 
+						if( checkMsgContent( Term.createTerm("deposit(TYPE,LOAD)"), Term.createTerm("deposit(TYPE,LOAD)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								 WasteType = wasteservice.WasteType.valueOf(payloadArg(0))  
+								
+												WasteType = wasteservice.WasteType.valueOf(payloadArg(0))
+												WasteLoad = payloadArg(1).toDouble()
 								println("[TransportTrolley] Deposit request received.")
 						}
 						//genTimer( actor, state )
@@ -84,7 +87,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				state("state_pickup") { //this:State
 					action { //it:State
 						println("[TransportTrolley] Picking up the load of $WasteType...")
-						delay(3000) 
+						 wasteservice.Utils.simulateAction(WasteLoad)  
 						println("[TransportTrolley] Pickup completed.")
 						answer("deposit", "pickupcompleted", "pickupcompleted(_)"   )  
 						//genTimer( actor, state )
@@ -115,7 +118,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				state("state_dump") { //this:State
 					action { //it:State
 						println("[TransportTrolley] Dumping the load...")
-						delay(3000) 
+						 wasteservice.Utils.simulateAction(WasteLoad)  
 						println("[TransportTrolley] Dump completed.")
 						forward("depositcompleted", "depositcompleted(_)" ,"wasteservice" ) 
 						//genTimer( actor, state )

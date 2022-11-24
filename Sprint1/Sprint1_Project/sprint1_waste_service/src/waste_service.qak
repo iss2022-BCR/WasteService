@@ -14,7 +14,7 @@ Reply loadaccepted	:	loadaccepted(_)
 Reply loadrejected	:	loadrejected(_)
 
 // WasteService -> TransportTrolley
-Request deposit		:	deposit(TYPE)
+Request deposit		:	deposit(TYPE, LOAD)
 // TransportTrolley -> WasteService
 Reply pickupcompleted	: pickupcompleted(_)
 // TransportTrolley -> WasteService
@@ -129,8 +129,7 @@ QActor wasteservice context ctx_wasteservice {
 						WaitingPickup = true
 					#]
 					println("[WasteService] There is enough space.")
-					request transporttrolley -m deposit : deposit( $RequestedWasteType )
-					//request transporttrolley -m deposit : deposit( $RequestedWasteType )
+					request transporttrolley -m deposit : deposit( $RequestedWasteType, $RequestedWasteWeight )
 				}
 				else
 				{
@@ -209,6 +208,7 @@ QActor transporttrolley context ctx_transporttrolley {
 		var Progress = ""
 		
 		var WasteType: wasteservice.WasteType = wasteservice.WasteType.PLASTIC
+		var WasteLoad: Double = 0.0
 	#]
 	State state_init initial {
 		[#
@@ -230,8 +230,11 @@ QActor transporttrolley context ctx_transporttrolley {
 	
 	State state_handle_deposit_request {
 		printCurrentMessage
-		onMsg(deposit: deposit(TYPE)) {
-			[# WasteType = wasteservice.WasteType.valueOf(payloadArg(0)) #]
+		onMsg(deposit: deposit(TYPE, LOAD)) {
+			[#
+				WasteType = wasteservice.WasteType.valueOf(payloadArg(0))
+				WasteLoad = payloadArg(1).toDouble()
+			#]
 			println("[TransportTrolley] Deposit request received.")
 		}
 	}
@@ -253,7 +256,7 @@ QActor transporttrolley context ctx_transporttrolley {
 	
 	State state_pickup {
 		println("[TransportTrolley] Picking up the load of $WasteType...")
-		delay 3000
+		[# wasteservice.Utils.simulateAction(WasteLoad) #]
 		println("[TransportTrolley] Pickup completed.")
 		
 		replyTo deposit with pickupcompleted: pickupcompleted(_)
@@ -277,7 +280,7 @@ QActor transporttrolley context ctx_transporttrolley {
 	
 	State state_dump {
 		println("[TransportTrolley] Dumping the load...")
-		delay 3000
+		[# wasteservice.Utils.simulateAction(WasteLoad) #]
 		println("[TransportTrolley] Dump completed.")
 		
 		forward wasteservice -m depositcompleted : depositcompleted(_)

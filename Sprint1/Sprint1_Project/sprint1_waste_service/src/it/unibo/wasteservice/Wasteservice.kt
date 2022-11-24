@@ -69,7 +69,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 													
 														WaitingPickup = true
 								println("[WasteService] There is enough space.")
-								request("deposit", "deposit($RequestedWasteType)" ,"transporttrolley" )  
+								request("deposit", "deposit($RequestedWasteType,$RequestedWasteWeight)" ,"transporttrolley" )  
 								}
 								else
 								 { WaitingPickup = false  
