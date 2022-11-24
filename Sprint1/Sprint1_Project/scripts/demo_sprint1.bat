@@ -1,0 +1,4 @@
+run_AndroidEmulator.bat
+run_VirtualRobot.bat
+run_WasteService.bat
+run_SmartDevice.bat
