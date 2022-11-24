@@ -121,6 +121,14 @@ jar {
     }
 }
 
+tasks.withType(Test) {
+    testLogging {
+        exceptionFormat "full"
+        events "started", "skipped", "passed", "failed"
+        showStandardStreams true
+    }
+}
+
 task(runCtx_WasteService, dependsOn: 'classes', type: JavaExec) {
     mainClass = 'it.unibo.ctx_wasteservice.MainCtx_wasteserviceKt'
     classpath = sourceSets.main.runtimeClasspath

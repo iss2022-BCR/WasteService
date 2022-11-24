@@ -31,8 +31,7 @@
                 </div>
                 <a href="#Waste-Service">Waste Service</a>
                 <div class="sidenavSubSection">
-                    <a href="#MapConfig">MapConfig</a>
-                    <a href="#PlannerBCR">PlannerBCR</a>
+                    <a href="#MapConfig">PlannerBCR:<br/>MapConfig</a>
                 </div>
             </div>
             <a href="conclusions.html">Conclusions</a>
@@ -336,9 +335,46 @@
             
 
             <h2 id="Waste-Service">Waste Service</h2>
-            <h3 id="MapConfig">MapConfig</h3>
-            <h3 id="PlannerBCR">PlannerBCR</h3>
-            <highlight2>to-do</highlight2>
+            The most of the business logic of the waste service had already been tested during the Problem Analysis.
+            Therefore, we wrote some test for the only new features we introduces.
+            <h3 id="MapConfig">PlannerBCR: MapConfig</h3>
+            <table class="dictionary">
+                <tr>
+                    <th>Test</th>
+                    <th>Description</th>
+                    <th>Files</th>
+                </tr>
+                <tr>
+                    <td>Correctly load the MapConfig from file</td>
+                    <td>We check if the MapConfig loaded contains specific types of cell.</td>
+                    <td rowspan="5">
+                        Test: <a href="../../Sprint1_Project/sprint1_waste_service/test/it/unibo/wasteservice/TestMapConfig.kt">TestMapConfig.kt</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Get the nearest HOME coordinate.</td>
+                    <td>We check if nearest cell of type HOME is at the coordinates we expected.</td>
+                </tr>
+                <tr>
+                    <td>Get the nearest INDOOR coordinate.</td>
+                    <td>We check if nearest cell of type INDOOR is at the coordinates we expected.</td>
+                </tr>
+                <tr>
+                    <td>Get the nearest GLASS coordinate.</td>
+                    <td>We check if nearest cell of type GLASS is at the coordinates we expected.</td>
+                </tr>
+                <tr>
+                    <td>Get the nearest PLASTIC coordinate.</td>
+                    <td>We check if nearest cell of type PLASTIC is at the coordinates we expected.</td>
+                </tr>
+            </table>
+            <br/>
+            Run the test class with gradle:
+            <pre>
+                ./gradlew test
+            </pre>
+            <!--<h2 id="Map-Editor-BCR">Map Editor BCR</h2>
+            -->
         </div>
 
     </body>

@@ -14,12 +14,12 @@ class MapConfigSupport {
         mapConfig = MapLoader.loadMapConfig(filename)
     }
 
-    fun showMap() {
-        println(mapConfig?.toString())
+    fun mapToString(): String {
+        return mapConfig?.toString()?: ""
     }
 
-    fun showFancyMap() {
-        println(mapConfig?.toFancyString())
+    fun mapToFancyString(): String {
+        return mapConfig?.toFancyString()?: ""
     }
 
     /**

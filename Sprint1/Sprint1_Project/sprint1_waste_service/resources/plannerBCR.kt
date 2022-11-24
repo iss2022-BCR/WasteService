@@ -439,12 +439,16 @@ object plannerBCR {
 
 	@JvmStatic
 	fun showMapConfig() {
-		mapConfigSupport.showMap()
+		println(mapConfigSupport.mapToString())
 	}
 
 	@JvmStatic
 	fun showFancyMapConfig() {
-		mapConfigSupport.showFancyMap()
+		println(mapConfigSupport.mapToFancyString())
+	}
+
+	fun getCell(coord: Pair<Int, Int>): CellType {
+		return mapConfigSupport.getCell(coord)
 	}
 
 	@JvmStatic
