@@ -27,10 +27,9 @@ class ApplMessage {
 
   // msg(msgId, msgType, msgSender, msgReceiver, msgId(msgContent), msgNum)
   ApplMessage.fromString(String message) {
-    message = message.replaceAll('msg(', '');
     List<String> parsed = message.split(',');
 
-    msgId = parsed[0].trim();
+    msgId = parsed[0].split('(')[1].trim();
     message = message.replaceFirst(msgId, '');
     parsed.removeAt(0);
 
