@@ -1,0 +1,4 @@
+Run the following command to copy the sceneConfig.js file to the docker image.
+NB: the container must be running.
+
+docker cp .\sceneConfig.js "$(docker ps -a | grep 'virtual' | cut -d' ' -f1):/home/node/WEnv/WebGLScene"
