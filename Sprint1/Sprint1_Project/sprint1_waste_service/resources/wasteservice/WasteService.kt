@@ -1,5 +1,7 @@
 package wasteservice
 
+import unibo.comm22.utils.ColorsOut
+import java.awt.Color
 import java.util.*
 
 class WasteService {
@@ -77,5 +79,15 @@ class WasteService {
         }
 
         return res
+    }
+
+    fun printFancyStatusString() {
+        for(wt in storage.keys) {
+            var color = ColorsOut.GREEN
+            if(!canPreStore(wt, 1.0)) {
+                color = ColorsOut.RED
+            }
+            ColorsOut.outappl("${wt.name}: ${preStorage[wt]}/${storage[wt]}/${storageCapacity[wt]}", color)
+        }
     }
 }

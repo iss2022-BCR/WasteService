@@ -10,7 +10,6 @@ import 'package:sprint1_echo_waste_server/model/appl_message.dart';
 import 'package:sprint1_echo_waste_server/model/waste_service/waste_service.dart';
 
 import '../model/waste_service/store_request.dart';
-import '../model/waste_service/waste_type.dart';
 
 const String dateTimeFormat = "yyyy/MM/dd HH:mm:ss";
 

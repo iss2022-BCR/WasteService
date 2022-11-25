@@ -92,6 +92,21 @@ const config = {
             name: "wallRight",
             centerPosition: { x: 0.98, y: 0.5},
             size: { x: 0.02, y: 0.98}
+        },
+		{
+            name: "indoor",
+            centerPosition: { x: 0.23, y: 0.0},
+            size: { x: 0.4, y: 0.02}
+        },
+		{
+            name: "glassBox",
+            centerPosition: { x: 0.77, y: 1.0},
+            size: { x: 0.4, y: 0.02}
+        },
+		{
+            name: "plasticBox",
+            centerPosition: { x: 1.0, y: 0.26},
+            size: { x: 0.02, y: 0.5}
         }
     ]
 }

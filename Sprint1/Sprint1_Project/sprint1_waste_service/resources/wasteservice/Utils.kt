@@ -1,6 +1,7 @@
 package wasteservice
 
 import alice.tuprologx.pj.model.Bool
+import unibo.comm22.utils.ColorsOut
 
 
 object Utils {
@@ -48,5 +49,12 @@ object Utils {
 
     fun simulateAction(load: Double) {
         Thread.sleep(load.toLong() * 100)
+    }
+
+    fun printCorrect(msg: String) {
+        ColorsOut.outappl(msg, ColorsOut.GREEN)
+    }
+    fun printFail(msg: String) {
+        ColorsOut.outappl(msg, ColorsOut.RED)
     }
 }
