@@ -22,33 +22,13 @@ per visualizzare i documenti di progetto.
 </div>
 
 
-
-### Descrizione
-- c'è un pot di ingresso dove arrivano dei camion (indoor)
-- il trolley (robot) sta normalmente alla home, quando arriva un camion manda un messaggio dicendo il numero di kg di spazzatura da scaricare
-- controlla se nei due contenitori VETRO e PLASTICA c'è ancora spazio:
-  - se non ci sta manda via il camion, a un altro servizio (non ci guarda);
-  - altrimenti gestisce la richiesta e inizia a scarica.
-- quando ha finito di scaricare:
-  - se è arrivato un altro camion inizia subito a scaricarlo;
-  - altrimenti torna alla home.
-
-Ci serve raspberry con LED come sistema di allarme/monitoring:
-- LED spento: quando il trolley è in HOME;
-- LED acceso lampeggiante: quando il sistema si muove;
-- LED acceso fisso: quando il sistema è stopped.
-
-Il robot è stopped quando si mette una mano davanti al radar.
-
-Meccanismo di STOP/RESUME: c'è un manager che supervisiona tutto con una GUI. La GUI mostra lo stato corrente del transport trolley e possibilmente la sua posizione nella stanza. NB: potrebbe anche essere vaga, tipo il robot si sta muovendo oppure no, è in HOME, ecc.
-
-### Linee Guida
-Fornire una comunicazione nel momento in cui iniziamo a lavorare al problema, spiegando che iniziamo da analisi requisiti e analisi del problema.
-Integriamo col prof quando siamo arrivati alla fine di questa fase, perché andiamo avanti a step.
-Sfruttare il ricevimento del giovedì per farlo (ore 16-18), gli mandiamo una mail, oppure prenotarsi per ricevimento ad hoc.
-
 ### Roadmap
-- [ ] Ripassare gli HTML sulla teoria (TemaFinale2022, Conclusioni, Costruire Software, QActor, ...)
+- [x] **Sprint0** - System Base Requirement Analysis
+  - Sprint Review: 08/09/22 16:30
+- [x] **Sprint1** - WasteService Core-Business
+  - Sprint Review: 25/11/22 10:30
+- [ ] **Sprint2** - Raspberry Pi
+- [ ] **Sprint3** - Monitoring
 
 
 [java-shield]: https://img.shields.io/badge/Java-ED8B00?logo=java&logoColor=white
