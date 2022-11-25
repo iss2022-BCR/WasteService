@@ -84,7 +84,6 @@ QActor wasteservice context ctx_wasteservice {
 		var RequestedWasteWeight: Double = 1.0
 		
 		val WasteService = wasteservice.WasteService()
-		var StorageStats: String = WasteService.getFullStatusString()
 		
 		var WaitingPickup: Boolean = false
 		var WaitingDeposit: Boolean = false
@@ -92,7 +91,7 @@ QActor wasteservice context ctx_wasteservice {
 	State state_init initial {
 		println("[WasteService] Started.")
 		println("[WasteService] Current storage:")
-		println("$StorageStats")
+		[# WasteService.printFancyStatusString() #]
 		discardMsg Off
 	}
 	Goto state_idle
@@ -124,7 +123,6 @@ QActor wasteservice context ctx_wasteservice {
 					// Update the pre-storage counter
 					[#
 						WasteService.addToPreStorage(RequestedWasteType, RequestedWasteWeight)
-						StorageStats = WasteService.getFullStatusString()
 					
 						WaitingPickup = true
 					#]
@@ -134,19 +132,21 @@ QActor wasteservice context ctx_wasteservice {
 				else
 				{
 					[# WaitingPickup = false #]
-					println("[WasteService] Load rejected: there is not enough space in the container to store the load.")
+					
+					[# wasteservice.Utils.printFail("[WasteService] Load rejected: there is not enough space in the container to store the load.") #]
 					replyTo storerequest with loadrejected: loadrejected(_)
 				}
 			}
 			else
 			{
 				[# WaitingPickup = false #]
-				println("[WasteService] Load rejected: one or more parameters are invalid.")
+				
+				[# wasteservice.Utils.printFail("[WasteService] Load rejected: one or more parameters are invalid.") #]
 				replyTo storerequest with loadrejected: loadrejected(_)
 			}
 			
 			println("[WasteService] Current storage:")
-			println("$StorageStats")
+			[# WasteService.printFancyStatusString() #]
 		}
 	}
 	Goto state_idle if [# WaitingPickup == false #] else state_waiting_pickup
@@ -161,7 +161,8 @@ QActor wasteservice context ctx_wasteservice {
 			WaitingPickup = false
 			WaitingDeposit = true
 		#]
-		println("[WasteService] Pickup completed, sent Load accepted.")
+		
+		[# wasteservice.Utils.printCorrect("[WasteService] Pickup completed, sent Load Accepted.") #]
 		replyTo storerequest with loadaccepted: loadaccepted(_)
 	}
 	Goto state_waiting_deposit
@@ -176,12 +177,11 @@ QActor wasteservice context ctx_wasteservice {
 		// Update the actual storage counter
 		[#
 			WasteService.addToStorage(RequestedWasteType, RequestedWasteWeight)
-			StorageStats = WasteService.getFullStatusString()
 			
 			WaitingDeposit = false
 		#]
 		println("[WasteService] Deposit completed. Current storage:")
-		println("$StorageStats")
+		[# WasteService.printFancyStatusString() #]
 	}
 	Goto state_idle
 	
@@ -197,7 +197,7 @@ QActor wasteservice context ctx_wasteservice {
 			println("[WasteService] Deposit failed: $Error.")
 		}
 		println("[WasteService] Current storage:")
-		println("$StorageStats")
+		[# WasteService.printFancyStatusString() #]
 	}
 	Goto state_idle
 }
@@ -281,6 +281,7 @@ QActor transporttrolley context ctx_transporttrolley {
 	State state_dump {
 		println("[TransportTrolley] Dumping the load...")
 		[# wasteservice.Utils.simulateAction(WasteLoad) #]
+		
 		println("[TransportTrolley] Dump completed.")
 		
 		forward wasteservice -m depositcompleted : depositcompleted(_)

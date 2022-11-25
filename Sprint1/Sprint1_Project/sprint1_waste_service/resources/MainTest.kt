@@ -6,21 +6,13 @@ import wasteservice.WasteType
 import wasteservice.Utils.getWasteTypesList
 
 fun main() = runBlocking {
-    /*plannerBCR.initAI();
-    plannerBCR.loadRoomMap("mapRoomEmpty")
+    /*val ws = WasteService()
 
-    plannerBCR.showFancyMap()
+    ws.printFancyStatusString()
+    ws.addToPreStorage(WasteType.PLASTIC, 100.0)
+    ws.printFancyStatusString()*/
 
-    plannerBCR.setGoal(4,3)
-    plannerBCR.doPlan()
-
-    var actions = plannerBCR.getActionsString()
-
-    plannerBCR.test()
-
-    println(actions)*/
-
-    plannerBCR.loadMapConfig("mapConfigWasteService")
+    plannerBCR.loadMapConfig("mapConfigWasteService2")
     plannerBCR.showFancyMapConfig()
     println(plannerBCR.getMapConfigCoordinates())
 

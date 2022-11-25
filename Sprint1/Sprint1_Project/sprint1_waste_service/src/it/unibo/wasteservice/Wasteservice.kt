@@ -20,7 +20,6 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 				var RequestedWasteWeight: Double = 1.0
 				
 				val WasteService = wasteservice.WasteService()
-				var StorageStats: String = WasteService.getFullStatusString()
 				
 				var WaitingPickup: Boolean = false
 				var WaitingDeposit: Boolean = false
@@ -29,7 +28,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 					action { //it:State
 						println("[WasteService] Started.")
 						println("[WasteService] Current storage:")
-						println("$StorageStats")
+						 WasteService.printFancyStatusString()  
 						discardMessages = false
 						//genTimer( actor, state )
 					}
@@ -65,7 +64,6 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 								if(  WasteService.canPreStore(RequestedWasteType, RequestedWasteWeight)  
 								 ){
 														WasteService.addToPreStorage(RequestedWasteType, RequestedWasteWeight)
-														StorageStats = WasteService.getFullStatusString()
 													
 														WaitingPickup = true
 								println("[WasteService] There is enough space.")
@@ -73,17 +71,17 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 								}
 								else
 								 { WaitingPickup = false  
-								 println("[WasteService] Load rejected: there is not enough space in the container to store the load.")
+								  wasteservice.Utils.printFail("[WasteService] Load rejected: there is not enough space in the container to store the load.")  
 								 answer("storerequest", "loadrejected", "loadrejected(_)"   )  
 								 }
 								}
 								else
 								 { WaitingPickup = false  
-								 println("[WasteService] Load rejected: one or more parameters are invalid.")
+								  wasteservice.Utils.printFail("[WasteService] Load rejected: one or more parameters are invalid.")  
 								 answer("storerequest", "loadrejected", "loadrejected(_)"   )  
 								 }
 								println("[WasteService] Current storage:")
-								println("$StorageStats")
+								 WasteService.printFancyStatusString()  
 						}
 						//genTimer( actor, state )
 					}
@@ -110,7 +108,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						
 									WaitingPickup = false
 									WaitingDeposit = true
-						println("[WasteService] Pickup completed, sent Load accepted.")
+						 wasteservice.Utils.printCorrect("[WasteService] Pickup completed, sent Load Accepted.")  
 						answer("storerequest", "loadaccepted", "loadaccepted(_)"   )  
 						//genTimer( actor, state )
 					}
@@ -134,11 +132,10 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 					action { //it:State
 						
 									WasteService.addToStorage(RequestedWasteType, RequestedWasteWeight)
-									StorageStats = WasteService.getFullStatusString()
 									
 									WaitingDeposit = false
 						println("[WasteService] Deposit completed. Current storage:")
-						println("$StorageStats")
+						 WasteService.printFancyStatusString()  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -158,7 +155,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 								println("[WasteService] Deposit failed: $Error.")
 						}
 						println("[WasteService] Current storage:")
-						println("$StorageStats")
+						 WasteService.printFancyStatusString()  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
