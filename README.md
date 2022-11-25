@@ -1,6 +1,7 @@
 <div align="center">
 
 [![MIT License][license-shield]][license-url]
+[![Size][size-shield]][size-url]
 [![Downloads][downloads-shield]][downloads-url]
 [![Stars][stars-shield]][stars-url]\
 [![Java][java-shield]][java-url]
@@ -39,5 +40,7 @@ per visualizzare i documenti di progetto.
 [downloads-url]: https://github.com/iss2022-BCR/WasteService/releases/latest
 [license-shield]: https://img.shields.io/github/license/iss2022-BCR/WasteService
 [license-url]: https://github.com/iss2022-BCR/WasteService/blob/main/LICENSE
+[size-url]: https://github.com/iss2022-BCR/WasteService
+[size-shield]: 	https://img.shields.io/github/repo-size/iss2022-BCR/WasteService
 [stars-shield]: https://custom-icon-badges.herokuapp.com/github/stars/iss2022-BCR/WasteService?logo=star&logoColor=yellow
 [stars-url]: https://github.com/iss2022-BCR/WasteService/stargazers
