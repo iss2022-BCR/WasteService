@@ -243,14 +243,15 @@
                 </li>
                 <li>
                     <ks><code>showFancyMapConfig()</code></ks> - prints the map configuration as a slightly prettier string.
-                    <pre style="white-space: pre;">
+<pre style="white-space: pre;">
 +---------------------+
 | H  -  -  -  G  G  G |
 | -  -  -  -  -  -  - |
 | -  -  -  -  -  -  P |
 | -  -  -  -  -  -  P |
 | I  I  I  -  -  -  P |
-+---------------------+</pre>
++---------------------+
+</pre>
                 </li>
                 <li>
                     <ks><code>getNearestPositionToCellType(Pair&lt;Int, Int&gt;, String): Pair&lt;Int, Int&gt;</code></ks> - 
@@ -333,7 +334,7 @@
             As a result of the project phase, we produced a series of applications, which
             can be downloaded from the repository on GitHub:
             <ul>
-                <li>SmartDevice Simulator: APK.</li>
+                <li>SmartDevice Simulator: APK or Desktop version.</li>
                 <li>Echo Waste Server: APK or Desktop versions.</li>
                 <li>Map Editor BCR: self-containing JAR (requires Java 11).</li>
                 <li>WasteService: IntelliJ project.</li>
@@ -400,9 +401,26 @@ task(runCtx_Robot, dependsOn: 'classes', type: JavaExec) {
                 <li>
                     <a href="../../Sprint1_Project/scripts/run_WasteService.bat">run_WasteService.bat</a> - starts 3 gradle demons, one for each context of
                     the WasteService.
+                    <br/><br/>
+                    <b>NB</b>: in order to run the WasteService project, the dependencies must be resolved by having a folder named <code>unibolibs</code>, with the needed libraries
+                    from our software house (can be downloaded from <a href="https://github.com/iss2022-BCR/WasteService/releases/download/sprint1_v1/unibolibs.zip">this link</a>),
+                    in the directory one level below the project directory:
+<b><pre style="white-space: pre;">
+WasteService/
+  |
+  +-- Sprint1/
+        |
+        +-- Sprint1_Project/
+              |
+              +-- sprint1_waste_service/
+              +-- unibolibs/        &lt;- libraries (JARs)        
+</pre></b>
                 </li>
                 <li>
-                    <a href="../../Sprint1_Project/scripts/run_SmartDevice.bat">run_SmartDevice.bat</a> - runs an integration demo test for the SmartDevice
+                    <a href="../../Sprint1_Project/scripts/run_SmartDevice.bat">run_SmartDevice.bat</a> - launch the Flutter application on the Android Emulator.
+                </li>
+                <li>
+                    <a href="../../Sprint1_Project/scripts/run_Demo_SmartDevice.bat">run_Demo_SmartDevice.bat</a> - runs the SmartDevice application integration demo test for the SmartDevice
                     that succeeds if it was able to connect to the WasteService, receive the types, and receive a reply to the store request.
                     It can take 4 or 0 arguments (the order matters):
                     <ol>

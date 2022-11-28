@@ -64,7 +64,8 @@
             The software of the Smart Device will be provided by the customer. However, since we want to test a distributed system
             with all of its nodes, we're going to implement an application that will run on a smartphone (Android) and will simulate
             store requests to  the WasteService.
-            <!--<problem>Smart Device Technology</problem>
+            
+            <problem id="Smart-Device-Technology">Smart Device Technology</problem>
             <b>Problem</b>: implementation of an application to test the interaction between the truck driver and the waste service.<br/>
             <solution>
                 <b>Solution</b>: <ksi>Flutter application</ksi>.<br/>
@@ -90,7 +91,18 @@
                 <a href="https://flutter.dev/"><img width="90%" alt="Flutter: Build apps for any screen." title="Flutter: Build apps for any screen." src="../imgs/Flutter2.png"/></a>
                 <br/>
                 <b><i>Flutter: Build apps for any screen</i>.</b>
-            </center>-->
+            </center>
+            <alternative>
+                <b>Alternatives</b>:
+                <ul>
+                    <li>Java/Kotlin Android application.</li>
+                    <li>
+                        Python application (or whatever other language)
+                         with a graphical library to draw the GUI.
+                    </li>
+                    <li>QAK actor.</li>
+                </ul>
+            </alternative>
             
             
             <h3 id="Waste-Service">Waste Service</h3>
@@ -266,9 +278,6 @@
                     <li>
                         The planner, by using a search algorithm, allows the TransportTrolley to find the best path
                         (sequence of commands) to reach a destination starting from a specific location, using (x,y) coordinates.
-                    </li>
-                    <li>
-                        To implement our wanted solution where the "real" implementation of the Service Area (MxN matrix)
                     </li>
                     <li>
                         The planner uses the map previously obtained with the Mapper.
