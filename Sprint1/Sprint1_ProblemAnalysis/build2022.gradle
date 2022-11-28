@@ -105,15 +105,7 @@ eclipse {
 
 application {
     // Define the main class for the application.
-    mainClass = 'it.unibo.ctx_transporttrolley_test.MainCtx_transporttrolley_testKt'
-}
-
-tasks.withType(Test) {
-    testLogging {
-        exceptionFormat "full"
-        events "started", "skipped", "passed", "failed"
-        showStandardStreams true
-    }
+    mainClass = 'it.unibo.ctx_robot.MainCtx_robotKt'
 }
 
  jar {
