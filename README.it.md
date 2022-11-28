@@ -17,8 +17,9 @@
   
   Sistema software distribuito per un ***servizio di smaltimento rifiuti differenziato***. Progetto per il corso di [Ingegneria dei Sistemi Software M](https://www.unibo.it/it/didattica/insegnamenti/insegnamento/2021/468003), dell'Università di Bologna.
   
-  [Clicca qui](https://htmlpreview.github.io/?https://raw.githubusercontent.com/iss2022-BCR/WasteService/main/Sprint0/index.html)
-per visualizzare i documenti di progetto.
+  [Project documents](https://htmlpreview.github.io/?https://raw.githubusercontent.com/iss2022-BCR/WasteService/main/Sprint0/index.html)
+  ·
+  [Italiano](./README.it.md)
   
 </div>
 
