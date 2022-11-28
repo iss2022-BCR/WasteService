@@ -15,11 +15,11 @@
   
   <h1>WasteService</h1>
   
-  Sistema software distribuito per un ***servizio di smaltimento rifiuti differenziato***. Progetto per il corso di [Ingegneria dei Sistemi Software M](https://www.unibo.it/it/didattica/insegnamenti/insegnamento/2021/468003), dell'Università di Bologna.
+  Distributed software system for a ***differentiated waste disposal service***. Project for the course of [Software Systems Engineering M](https://www.unibo.it/it/didattica/insegnamenti/insegnamento/2021/468003), at University of Bologna.
   
-  [Documenti di progetto](https://htmlpreview.github.io/?https://raw.githubusercontent.com/iss2022-BCR/WasteService/main/Sprint0/index.html)
+  [Project documents](https://htmlpreview.github.io/?https://raw.githubusercontent.com/iss2022-BCR/WasteService/main/Sprint0/index.html)
   ·
-  [English](./README.md)
+  [Italiano](./README.it.md)
   
 </div>
 
