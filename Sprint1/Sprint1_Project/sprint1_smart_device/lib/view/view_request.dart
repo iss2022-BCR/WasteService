@@ -109,7 +109,17 @@ class _ViewRequestState extends State<ViewRequest> {
 
   void _messageHandler(Uint8List data) {
     final serverReply = String.fromCharCodes(data);
-    ApplMessage msg = ApplMessage.fromString(serverReply);
+    _logMessage(serverReply);
+
+    ApplMessage msg;
+    try {
+      msg = ApplMessage.fromString(serverReply);
+    } catch (e) {
+      _waitingReply = false;
+      _reply = "Error (check logs)";
+      _logMessage(e.toString());
+      return;
+    }
 
     setState(() {
       // TypesRequest Reply
@@ -127,7 +137,6 @@ class _ViewRequestState extends State<ViewRequest> {
             : "Rejected";
       }
     });
-    _logMessage(serverReply);
   }
 
   void _errorHandler(error) {
@@ -384,7 +393,9 @@ class _ViewRequestState extends State<ViewRequest> {
                               borderRadius: BorderRadius.circular(8.0),
                               color: _reply.toLowerCase().contains("accepted")
                                   ? Colors.green
-                                  : _reply.toLowerCase().contains("rejected")
+                                  : _reply
+                                          .toLowerCase()
+                                          .contains(r'rejected|error')
                                       ? Colors.red
                                       : Colors.grey,
                             ),
