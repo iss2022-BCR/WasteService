@@ -15,9 +15,11 @@
   
   <h1>WasteService</h1>
   
-  Distributed software system for a ***differentiated waste disposal service***. Project for the course of [Software Systems Engineering M](https://www.unibo.it/it/didattica/insegnamenti/insegnamento/2021/468003), at University of Bologna.
+  Distributed software system for a ***differentiated waste disposal service***. The project had been developed for the course of [Software Systems Engineering M](https://www.unibo.it/en/teaching/course-unit-catalogue/course-unit/2021/468003), at University of Bologna, using the [SCRUM agile framework](https://www.scrum.org/resources/what-is-scrum).
   
   [Project documents](https://htmlpreview.github.io/?https://raw.githubusercontent.com/iss2022-BCR/WasteService/main/Sprint0/index.html)
+  ·
+  [SCRUM Guide (EN)]()
   ·
   [Italiano](./README.it.md)
   
