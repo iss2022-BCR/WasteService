@@ -38,6 +38,20 @@
 - [ ] **Sprint2** - Raspberry Pi
 - [ ] **Sprint3** - Monitoring
 
+### Membri del Team
+<table>
+  <!--<tr align="center"><td colspan="3"><b>Team BCR</b></td></tr>-->
+  <tr align="center">
+    <td><a href="https://github.com/Clappy98"><img width="50%" src="./commons/resources/imgs/team/avatar_Raffaele_Battipaglia.jpg"></a></td>
+    <td><a href="https://github.com/TryKatChup"><img width="50%" src="./commons/resources/imgs/team/avatar_Karina_Chichifoi.jpg"></a></td>
+    <td><a href="https://github.com/mikyll"><img width="50%" src="./commons/resources/imgs/team/avatar_Michele_Righi.png"></a></td>
+  </tr>
+  <tr align="center">
+    <td><b>Raffaele Battipaglia</b></td>
+    <td><b>Karina Chichifoi</b></td>
+    <td><b>Michele Righi</b></td>
+  </tr>
+</table>
 
 
 [java-shield]: https://img.shields.io/badge/Java-ED8B00?logo=java&logoColor=white
