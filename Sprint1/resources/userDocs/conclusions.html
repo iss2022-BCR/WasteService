@@ -27,8 +27,12 @@
                 <a href="#Summary">Summary</a>
                 <div class="sidenavSubSection">
                     <a href="#Task-Partitioning">Task Partitioning</a>
+                    <a href="#Demo-Example">Demo Example</a>
                 </div>
                 <a href="#Sprint-Review">Sprint Review</a>
+                <div class="sidenavSubSection">
+                    <a href="#Bugs">Bugs</a>
+                </div>
                 <a href="#Sprint-Retrospective">Sprint Retrospective</a>
                 <a href="#Work-Plan">Work Plan</a>
                 <div class="sidenavSection">
@@ -237,17 +241,160 @@
                 </tr>
             </table>
 
-            <h3 id="Demo">Demo Example</h3>
+            <h3 id="Demo-Example">Demo Example</h3>
+            <h4>Setup</h4>
+            <ol>
+                <li>Install docker.</li>
+                <li>Install gradle (>= 7.4).</li>
+                <li>(Optional) install Flutter to run the Smart Device on the Android Emulator.</li>
+                <li>Download <a href="https://github.com/iss2022-BCR/WasteService/releases/download/sprint1_v1/virtualRobotOnly4.0.yaml">VirtualRobot</a> docker image.</li>
+                <li>Download <a href="https://github.com/iss2022-BCR/WasteService/releases/download/sprint1_v1/sprint1_waste_service.zip">WasteService</a> zip and extract its content.</li>
+                <li>
+                    Download the SmartDevice:
+                    <a href="https://github.com/iss2022-BCR/WasteService/releases/download/sprint1_v1/sprint1_smart_device.apk">APK</a>,
+                    <a href="https://github.com/iss2022-BCR/WasteService/releases/download/sprint1_v1/sprint1_smart_device_Windows_x64.zip">Windows version</a>.
+                </li>
+            </ol>
+            <h4>Execution</h4>
+            <ol>
+                <li>
+                    Run the VirtualRobot (on Windows you first need to launch Docker Desktop):
+                    <pre>
+                        docker-compose -f .\virtualRobotOnly4.0.yaml up
+                    </pre>
+                    Open a browser (e.g. Chrome) and enter the following URL: "https://localhost:8090"
+                    <center><img width="100%" src="../imgs/demo/run_VirtualRobot.png"/></center>
+                    <br/>
+                </li>
+                <li>
+                    Run the WasteService by using the script <code>run_WasteService.bat</code> (extracted
+                    from sprint1_waste_service zip).
+                    <center><img width="100%" src="../imgs/demo/run_WasteService.png"/></center>
+                    <br/>
+                </li>
+                <li>
+                    Run the SmartDevice:
+                    <ul>
+                        <li>(Recommended) Using a real Android device: just install the APK on the device and run it.</li>
+                        <li>
+                            Using the emulator (to install emulators refer to <a href="https://developer.android.com/studio/run/managing-avds">Create and manage virtual devices</a>):
+                            <br/>
+                            <pre>
+                                :: launch the emulator
+                                flutter emulators --launch &lt;emulator_id&gt;
+                                
+                                :: run the application on the emulator
+                                :: (you need to be in the root directory of
+                                :: sprint1_smart_device project)
+                                flutter run
+                            </pre>
+                        </li>
+                        <li>Using the Windows executable: run <code>sprint1_smart_device.exe</code>.</li>
+                    </ul>
+                    <center>
+                        <img width="100%" src="../imgs/demo/run_SmartDevice.png"/>
+                        <br/>
+                        <b><i>SmartDevice running on Android Emulator</i>.</b>
+                    </center>
+                </li>
+            </ol>
 
             <h2 id="Sprint-Review">Sprint Review</h2>
-            
+            The interaction with the customer highlighted the following key points:
+            <ol>
+                <li>
+                    The QAK files contained in sprint1_waste_service project contain multiple actors
+                    and generate confusion.<highlight1>TO-DO</highlight1>
+                </li>
+                <li>
+                    When trying to download and run the code, some <darkred>dependencies
+                    were missing</darkred> on the GitHub repository, which were necessary
+                    to test the WasteService code.
+                </li>
+                <li>
+                    In the Test Plans section it's not much clear that the <darkred>testing of
+                    the business logic of the WasteService main components</darkred> had been already
+                    carried out during the Problem Analysis.
+                </li>
+                <li>
+                    The customer was curious about our <darkred>decision to adopt Flutter</darkred> to implement
+                    the SmartDevice and asked to give some more details on it.
+                </li>
+                <li>
+                    When showing the <darkred>demo</darkred> to the customer we noticed that the order in
+                    which run the scripts and which ones to run, from the setup to the actual execution of the WasteService,
+                    was not much clear.
+                </li>
+            </ol>
+
+            <h3 id="Bugs">Bugs</h3>
+            <ol start="5">
+                <li>
+                    We discovered that the <darkred>windows build for the SmartDevice</darkred> has a bug when receiving the
+                    store request replies: it receives a fragmented reply, therefore the ApplMessage doesn't get parsed correctly.
+                </li>
+                <li>
+                    The solution adopted in order to <darkred>send the loadrejected instantly</darkred> to the smart device,
+                    actually doesn't work as expected: since the deposit is a request, if the transport trolley
+                    is already busy performing another deposit action, the waste service actor cannot reply with
+                    loadrejected, until the transport trolley sends back a reply.
+                    <!-- A possible solution would be to convert the deposit message to a dispatch, and use a
+                    variable local to the waste service actor, to store the busy state of the trolley.
+                    + test plan with 2 requests (one with low weight -> load accepted, one with too much weight,
+                    to get a loadrejected reply instantly)
+                    -->
+                </li>
+            </ol>
+
             <h2 id="Sprint-Retrospective">Sprint Retrospective</h2>
+            In order to address the problems outlined with the Sprint Review, we provided the following corrections:
+            <ol class="fixes">
+                <li>
+                    <a href="">
+                        <highlight1>TO-DO</highlight1><darkgreen></darkgreen>.
+                    </a>
+                </li>
+                <li>
+                    <a href="https://github.com/iss2022-BCR/WasteService/releases/download/sprint1_v1/sprint1_waste_service.zip">
+                        We added the dependencies necessary to run the WasteService directly
+                        to the <darkgreen>sprint1_waste_service</darkgreen> zip.
+                    </a>
+                </li>
+                <li>
+                    <a href="test_plans.html">
+                        We inserted a <darkgreen>note at the beginning of the Test Plans section</darkgreen>,
+                        saying that they prosecute from the problem analysis test plans.
+                    </a>
+                </li>
+                <li>
+                    <a href="problem_analysis.html#Smart-Device-Technology">
+                        We added the <darkgreen>analysis of the related problem</darkgreen>, with motivations and
+                        alternatives.
+                    </a>
+                </li>
+                <li>
+                    <a href="#Demo-Example">
+                        We introduced a <darkgreen>demo example section</darkgreen>, explaining how the scripts should
+                        be executed.
+                    </a>
+                </li>
+            </ol>
             <!--
+            <h3 id="Extras">Extras</h3>
+            <ol>
+                <li>
+                    <a href=""><ksi>Fix #5_Sprint1</ksi></a>,
+                    add a new section "extras" under the sprints, which contains
+                    an index with all the commons documents.
+                </li>
+            </ol>
+            
             TO-DO:
             <ol>
                 <li>Upgrade QAK libraries to latest version.</li>
                 <li>Create script to update local docker image.</li>
                 <li>Deploy WasteService as a JAR.</li>
+                <li>Flutter SmartDevice build the Linux app.</li>
             </ol>
             -->
 
