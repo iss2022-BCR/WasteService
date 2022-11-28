@@ -19,7 +19,7 @@
   
   [Project documents](https://htmlpreview.github.io/?https://raw.githubusercontent.com/iss2022-BCR/WasteService/main/Sprint0/index.html)
   ·
-  [Italiano](./README.it.md)
+  [English](./README.md)
   
 </div>
 
