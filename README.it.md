@@ -15,9 +15,11 @@
   
   <h1>WasteService</h1>
   
-  Sistema software distribuito per un ***servizio di smaltimento rifiuti differenziato***. Progetto per il corso di [Ingegneria dei Sistemi Software M](https://www.unibo.it/it/didattica/insegnamenti/insegnamento/2021/468003), dell'Università di Bologna.
+  Sistema software distribuito per un ***servizio di smaltimento rifiuti differenziato***. Il progetto è stato sviluppato per il corso di [Ingegneria dei Sistemi Software M](https://www.unibo.it/it/didattica/insegnamenti/insegnamento/2021/468003) dell'Università di Bologna, sfruttando il [framework agile SCRUM](https://www.scrum.org/resources/what-is-scrum).
   
-  [Project documents](https://htmlpreview.github.io/?https://raw.githubusercontent.com/iss2022-BCR/WasteService/main/Sprint0/index.html)
+  [Documenti di Progetto](https://htmlpreview.github.io/?https://raw.githubusercontent.com/iss2022-BCR/WasteService/main/Sprint0/index.html)
+  ·
+  [Guida SCRUM (IT)](./commons/2020-Scrum-Guide-Italian.pdf)
   ·
   [English](./README.md)
   
