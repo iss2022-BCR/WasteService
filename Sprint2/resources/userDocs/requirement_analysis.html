@@ -1,0 +1,208 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>Sprint1</title>
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/templateISS.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/main.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/navbar.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/table.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/code.css">
+        <script type="text/javascript" src="../../../commons/resources/scripts/myScripts.js"></script>
+    </head>
+
+    <body onload="loadNav(); setupSort(); setupCode();">
+        <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
+        <div id="sidenav" class="sidenav">
+            <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
+            <a class="sprint" href="../../../Sprint0/index.html">Sprint0</a>
+            <a class="sprint" href="../../../Sprint1/index.html">Sprint1</a>
+            <a id="currentSprint" class="sprint" href="#">&#8211;&#8212; Sprint2 &#8212;&#8211;</a>
+            <a href="../../index.html">Index</a>
+            <a href="final_theme.html">Final Theme</a>
+            <a class="selected" href="requirement_analysis.html">Requirement<br/>Analysis</a>
+            <div class="sidenavSection">
+                <a href="#General-Overview">General Overview</a>
+                <div class="sidenavSubSection">
+                    <a href="#System-Abstract">System Abstract</a>
+                </div>
+                <a href="#Requirements-Formalization">Requirements<br/>Formalization</a>
+                <div class="sidenavSubSection">
+                    <a href="#Entities">Entities</a>
+                    <a href="#Data">Data</a>
+                    <a href="#Messages">Messages</a>
+                </div>
+                <a href="#System-Components">System<br/>Components</a>
+                <div class="sidenavSubSection">
+                    <a href="#Raspberry-Pi">Raspberry Pi</a>
+                    <a href="#Waste-Service">Waste Service</a>
+                    <a href="#DDR-Robot">DDR Robot</a>
+                </div>
+            </div>
+            <a href="problem_analysis.html">Problem Analysis</a>
+            <a href="project.html">Project</a>
+            <a href="test_plans.html">Test Plans</a>
+            <a href="conclusions.html">Conclusions</a>
+            <a href="team.html">Team</a>
+            <p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
+            <a class="sprint" href="../../../Sprint3/index.html">Sprint3</a>
+            <bottom-spacer/>
+        </div>
+
+        <div id="main">
+            <h1 align="center">Requirement Analysis</h1>
+            The purpose of the final product is to <b>manage a waste-disposal service</b>.
+
+            <h2 id="General-Overview">General Overview</h2>
+
+            <h3 id="System-Abstract">System Abstract</h3>
+            The Sprint2 analyzes the components related directly or indirectly to 
+            the raspberry. Therefore we are interested in the following computational nodes:
+            <ul>
+                <li><b>Raspberry Pi</b></li>
+                <li><b>WasteService</b></li>
+                <li><b>DDR robot</b></li>
+            </ul>
+            <h4 id="Computational-Nodes">Related Computational Nodes</h4>
+            <div class="image-container">
+                <img id="map" class="base-image" width="100%" src="../../resources/diagrams/sprint2_system_overview.png"/>
+                <img id="map-legend" class="overlay-image2" width="100%" src="../../resources/diagrams/legend.png"/>
+            </div>
+            <input type="checkbox" onclick="showOverlay(this, 'map-legend');" checked>Show the legend</input><br/>
+
+            
+            <h2 id="Requirements-Formalization">Requirements Formalization</h2>
+            <h3 id="Entities">Entities</h3>
+            <table class="dictionary">
+                <tr>
+                    <th>Entity</th>
+                    <th>Activity</th>
+                    <th>Type</th>
+                    <th>Description/Behaviour</th>
+                </tr>
+                <tr>
+                    <td>alarmDevice</td>
+                    <td>Proactive</td>
+                    <td>-</td>
+                    <td>
+                        Entity, which is part of a smart device, that sends a message to the
+                        wasteService when it detects the presence of an obstacle.
+                        We formalize the alarmDevice as an actor because it has its own autonomous
+                        flow of control, and sends messages to wasteService.
+                    </td>
+                </tr>
+                <tr>
+                    <td>warningDevice</td>
+                    <td>Reactive</td>
+                    <td>-</td>
+                    <td>
+                        Entity, which is part of a smart device, used to monitor the state of the trolley,
+                        We model it as an actor beacuse it processes messages one by one and
+                        updates the Led state accordingly.
+                    </td>
+                </tr>
+                <tr>
+                    <td>wasteService</td>
+                    <td>Proactive&nbsp& Reactive</td>
+                    <td>Actor</td>
+                    <td>
+                        Handles the store requests and manages the transport trolley with high-level abstraction actions.
+                        It contains an internal representation of the waste service area.
+                    </td>
+                </tr>
+                <tr>
+                    <td>transportTrolley</td>
+                    <td>Proactive&nbsp& Reactive</td>
+                    <td>Actor</td>
+                    <td>
+                        Handles the wasteService requests and sends lower-level commands to the basicRobot.
+                    </td>
+                </tr>
+                <tr>
+                    <td><emn>basicRobot</emn></td>
+                    <td>Reactive</td>
+                    <td>Actor</td>
+                    <td>Entity that receives commands from the transportTrolley and drives the DDR robot.</td>
+                </tr>
+            </table>
+
+            <h3 id="Data">Data</h3>
+            <table class="dictionary">
+                <tr>
+                    <th>Data</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>LedState</td>
+                    <td>Enumerative</td>
+                    <td>
+                        All the <b>possible states</b> of the Led.
+                        <pre>
+                            enum class LedState { OFF, ON, BLINKING }
+                        </pre>
+                    </td>
+                </tr>
+            </table>
+
+            <h3 id="Messages">Messages</h3>
+            <table class="dictionary">
+                <tr>
+                    <th>Message</th>
+                    <th>Type</th>
+                    <th>Sender</th>
+                    <th>Receiver</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>distance</td>
+                    <td>Dispatch</td>
+                    <td>Alarm Device</td>
+                    <td>WasteService</td>
+                    <td>
+                        Tell the distance of eventually detected obstacles.
+                    </td>
+                </tr>
+                <tr>
+                    <td>stop</td>
+                    <td>Dispatch</td>
+                    <td>WasteService</td>
+                    <td>Transport Trolley</td>
+                    <td>
+                        Stop the robot and prevent it from doing any activity.
+                    </td>
+                </tr>
+                <tr>
+                    <td>resume</td>
+                    <td>Dispatch</td>
+                    <td>WasteService</td>
+                    <td>Transport Trolley</td>
+                    <td>
+                        Resume the robot activity.
+                    </td>
+                </tr>
+                <tr>
+                    <td>updateLed</td>
+                    <td>Dispatch</td>
+                    <td>Transport Trolley</td>
+                    <td>Warning Device</td>
+                    <td>
+                        Update the Led state.
+                    </td>
+                </tr>
+            </table>
+
+            <h2 id="System-Components">System Components</h2>
+            <h3 id="Raspberry-Pi">Raspberry Pi</h3>
+            <h4 id="Led">Led</h3>
+            <h4 id="Sonar">Sonar</h3>
+            
+            <h3 id="Waste-Service">Waste Service</h3>
+            The WasteService receives messages about the distance detected through the sonar...
+
+            <h4 id="Transport-Trolley">Transport Trolley</h4>
+
+            <h3 id="DDR-Robot">DDR Robot</h3>
+        </div>
+    </body>
+</html>

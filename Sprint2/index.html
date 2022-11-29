@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Sprint1</title>
+        <title>Sprint2</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" type="text/css" href="../commons/resources/styles/templateISS.css">
         <link rel="stylesheet" type="text/css" href="../commons/resources/styles/main.css">
@@ -16,7 +16,8 @@
         <div id="sidenav" class="sidenav">
             <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
             <a class="sprint" href="../Sprint0/index.html">Sprint0</a>
-            <a id="currentSprint" class="sprint" href="#">&#8211;&#8212; Sprint1 &#8212;&#8211;</a>
+            <a class="sprint" href="../Sprint1/index.html">Sprint1</a>
+            <a id="currentSprint" class="sprint" href="#">&#8211;&#8212; Sprint2 &#8212;&#8211;</a>
             <a class="selected" href="#">Index</a>
             <div class="sidenavSection">
                 <a href="#Introduction">Introduction</a>
@@ -35,13 +36,12 @@
             <a href="resources/userDocs/conclusions.html">Conclusions</a>
             <a href="resources/userDocs/team.html">Team</a>
             <p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
-            <a class="sprint" href="../Sprint2/index.html">Sprint2</a>
             <a class="sprint" href="../Sprint3/index.html">Sprint3</a>
             <bottom-spacer/>
         </div>
         
         <div id="main">
-            <h1 align="center">Sprint 1</h1>
+            <h1 align="center">Sprint 2</h1>
             <h2 id="Introduction">Introduction</h2>
             Our <a href="resources/userDocs/team.html">team</a> must project and develop a software system
             to manage a waste-disposal service, as described in <a href="resources/userDocs/final_theme.html">Final Theme 2022</a>.
@@ -49,27 +49,26 @@
             <br/>
 
             <h3 id="Scrum-Goal">Scrum Goal</h3>
-            We must provide the customer an <ksi>executable demo</ksi>,
-            involving the core-business of the system (requirements
-            <a href="resources/userDocs/final_theme.html#requirement-1">1</a> & <a href="resources/userDocs/final_theme.html#requirement-2">2</a>).
-            The core-business is the chain of the main nodes of the system
-            (smart device, waste service, transport trolley, basic robot).
+            We must develop a warning/alarm device using a RaspberryPi, a Led and a Sonar, and implement a
+            stop/resume feature for the DDR Robot (requirement
+            <a href="resources/userDocs/final_theme.html#requirement-4">4</a>).
+            We also have to provide the customer an <ksi>executable demo</ksi> of the component being
+            integrated with the rest of the system.
 
             <h3 id="Work-Plan">Work Plan</h3>
             <ul>
                 <li>
                     Interactions:
                     <ul>
-                        <li>SmartDevice and WasteService</li>
+                        <li>SecurityDevice and WasteService</li>
                         <li>WasteService and TransportTrolley</li>
-                        <li>TransportTrolley and DDR Robot</li>
                     </ul>
                 </li>
-                <li>WasteService: request handling</li>
+                <li>WasteService: handling of stop/resume messages</li>
                 <li>Models & TestPlans for each interaction</li>
-                <li>Demonstrative Prototype of the whole core-business</li>
+                <li>Demonstrative Prototype of the whole new system</li>
             </ul>
-            NB: make use of the software provided by our software house.
+            NB: eventually make use of the software provided by our software house.
             
             <h2 id="Motto">Motto</h2>
             <div class="remark">
