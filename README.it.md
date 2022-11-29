@@ -32,8 +32,10 @@
 
 ### Roadmap
 - [x] **Sprint0** - System Base Requirement Analysis
+  - Ultima Release: [Sprint0 v2](https://github.com/iss2022-BCR/WasteService/releases/tag/sprint0_v2)
   - Sprint Review: 08/09/22 16:30
 - [x] **Sprint1** - WasteService Core-Business
+  - Ultima Release: [Sprint1 v1](https://github.com/iss2022-BCR/WasteService/releases/tag/sprint1_v1)
   - Sprint Review: 25/11/22 10:30
 - [ ] **Sprint2** - Raspberry Pi
 - [ ] **Sprint3** - Monitoring
