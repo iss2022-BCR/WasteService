@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>Sprint1</title>
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/templateISS.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/main.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/navbar.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/table.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/code.css">
+        <script type="text/javascript" src="../../../commons/resources/scripts/myScripts.js"></script>
+    </head>
+
+    <body onload="loadNav();">
+        <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
+        <div id="sidenav" class="sidenav">
+            <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
+            <a class="sprint" href="../../../Sprint0/index.html">Sprint0</a>
+            <a class="sprint" href="../../../Sprint1/index.html">Sprint1</a>
+            <a id="currentSprint" class="sprint" href="#">&#8211;&#8212; Sprint2 &#8212;&#8211;</a>
+            <a href="../../index.html">Index</a>
+            <a href="final_theme.html">Final Theme</a>
+            <a href="requirement_analysis.html">Requirement<br/>Analysis</a>
+            <a class="selected" href="problem_analysis.html">Problem Analysis</a>
+            <div class="sidenavSection">
+                <a href="#Raspberry-Pi-Software">Raspberry Pi<br/>Software</a>
+                <div class="sidenavSubSection">
+                </div>
+            </div>
+            <a href="project.html">Project</a>
+            <a href="test_plans.html">Test Plans</a>
+            <a href="conclusions.html">Conclusions</a>
+            <a href="team.html">Team</a>
+            <p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
+            <a class="sprint" href="../../../Sprint3/index.html">Sprint3</a>
+            <bottom-spacer/>
+        </div>
+
+        <div id="main">
+            <h1 align="center">Problem Analysis</h1>
+
+            <h2 id="Raspberry-Pi-Software">Raspberry Pi Software</h2>
+            <problem>Problem</problem>
+            <b>Problem</b>: 
+            <solution>
+                <b>Solution</b>:
+                <br/>
+                <b>Reasons</b>:
+            </solution>
+            <alternative>
+                <b>Alternatives</b>:    
+            </alternative>
+            <h2 id="Logical-Architecture">Logical Architecture</h2>
+            
+            <img width="100%" src=""/>
+            QAK model: <a href="">waste_service.qak</a>
+            
+            <h2 id="Test-Plans">Test Plans</h2>
+            <table class="dictionary">
+                <tr>
+                    <th>Test</th>
+                    <th>Involved Actors</th>
+                    <th>Description</th>
+                    <th>Files</th>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <ul>
+                            <li></li>
+                            <li></li>
+                        </ul>
+                    </td>
+                    <td></td>
+                    <td>
+                        QAK: <a href="">.qak</a>
+                        Test: <a href="">.kt</a>
+                    </td>
+                    <!-- NB: to test the TypesProvider we can just use a TCP connection and analyze the reply content,
+                        we don't need COAP, since it's a simple task to verify -->
+                </tr>
+            </table>
+            <!-- 
+                - How to run the tests
+                - Test Reports(?)
+            -->
+        </div>
+
+    </body>
+
+</html>
+
+<!--
+<problem></problem>
+<b>Problem</b>: 
+<solution>
+    <b>Solution</b>:
+    <br/>
+    <b>Reasons</b>:
+</solution>
+<b>Alternatives</b>:
+-->
