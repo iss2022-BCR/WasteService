@@ -17,6 +17,9 @@
 #save {
 	-fx-background-image: url('../icons/icon-save-dark.png');
 }
+#saveAs {
+    -fx-background-image: url('../icons/icon-save-as-dark.png');
+}
 
 #add {
 	-fx-background-image: url('../icons/icon-add-dark.png');
@@ -55,4 +58,9 @@
 #close {
     -fx-background-image: url('../icons/icon-close-dark.png');
     -fx-background-size: 15px;
+}
+
+#reload {
+	-fx-background-image: url('../icons/icon-load-dark.png');
+    -fx-background-size: 20px;
 }

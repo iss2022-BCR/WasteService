@@ -1,0 +1,12 @@
+{
+  "darkTheme": false,
+  "logLevel": {
+    "toStandardOutput": true,
+    "toFile": false,
+    "directory": ""
+  },
+  "roomMapFile": "",
+  "mapConfigFile": "mapConfig",
+  "confirmBeforeSaving": true,
+  "coordinateColor": "0x000000ff"
+}

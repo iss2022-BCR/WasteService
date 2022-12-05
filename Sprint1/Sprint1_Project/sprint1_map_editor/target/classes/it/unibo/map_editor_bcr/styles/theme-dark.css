@@ -44,6 +44,9 @@
 #save {
 	-fx-background-image: url('../icons/icon-save-light.png');
 }
+#saveAs {
+    -fx-background-image: url('../icons/icon-save-as-light.png');
+}
 
 #add {
 	-fx-background-image: url('../icons/icon-add-light.png');
@@ -82,4 +85,9 @@
 #close {
     -fx-background-image: url('../icons/icon-close-light.png');
     -fx-background-size: 15px;
+}
+
+#reload {
+	-fx-background-image: url('../icons/icon-load-light.png');
+    -fx-background-size: 20px;
 }
