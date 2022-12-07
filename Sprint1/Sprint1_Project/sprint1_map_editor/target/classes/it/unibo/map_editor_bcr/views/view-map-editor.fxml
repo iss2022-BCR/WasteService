@@ -217,10 +217,19 @@
                </font>
             </Label>
             <Separator prefHeight="20.0" prefWidth="500.0" />
-            <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="500.0">
+            <HBox alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="500.0">
                <children>
-                  <Label maxWidth="265.0" prefHeight="18.0" prefWidth="165.0" text="Dark Theme:" />
-                  <CheckBox fx:id="checkBoxDarkTheme" mnemonicParsing="false" onAction="#toggleDarkTheme" prefHeight="20.0" prefWidth="112.0" text="Enabled" />
+                  <Label maxWidth="233.0" prefHeight="18.0" prefWidth="165.0" text="RoomMap file:" />
+                  <TextField fx:id="textFieldRoomMapFile" prefHeight="26.0" prefWidth="250.0" promptText="file path" />
+                  <Separator orientation="VERTICAL" prefHeight="200.0" prefWidth="10.0" visible="false" />
+                  <Button mnemonicParsing="false" onAction="#browseRoomMap" prefHeight="26.0" prefWidth="65.0" text="Browse" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="500.0">
+               <children>
+                  <Label maxWidth="265.0" prefHeight="18.0" prefWidth="165.0" text="MapConfig file:" />
+                  <TextField fx:id="textFieldMapConfigFile" editable="false" prefHeight="26.0" prefWidth="325.0" promptText="file path" />
+                  <Separator orientation="VERTICAL" prefHeight="200.0" visible="false" />
                </children>
             </HBox>
             <HBox alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="500.0">
@@ -235,7 +244,7 @@
                               <HBox fx:id="hboxLogDirPath" prefHeight="30.0" prefWidth="210.0">
                                  <children>
                                     <TextField fx:id="textFieldLogDirPath" prefHeight="26.0" prefWidth="135.0" promptText="log directory path" />
-                                    <Separator orientation="VERTICAL" prefHeight="200.0" visible="false" />
+                                    <Separator orientation="VERTICAL" prefHeight="200.0" prefWidth="10.0" visible="false" />
                                     <Button mnemonicParsing="false" onAction="#browseLogDirectory" prefHeight="26.0" prefWidth="65.0" text="Browse" />
                                  </children>
                               </HBox>
@@ -245,32 +254,16 @@
                   </VBox>
                </children>
             </HBox>
-            <HBox alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="500.0">
+            <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="500.0">
                <children>
-                  <Label maxWidth="233.0" prefHeight="18.0" prefWidth="133.0" text="Default RoomMap file:" />
-                  <Button id="reload" mnemonicParsing="false" onAction="#loadDefaultRoomMapFile" prefHeight="26.0" prefWidth="26.0">
-                     <tooltip>
-                        <Tooltip text="Load RoomMap from the default file." />
-                     </tooltip>
-                  </Button>
-                  <Separator minWidth="0.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="5.0" visible="false" />
-                  <TextField fx:id="textFieldRoomMapFile" prefHeight="26.0" prefWidth="250.0" promptText="file path" />
-                  <Separator orientation="VERTICAL" prefHeight="200.0" prefWidth="5.0" visible="false" />
-                  <Button mnemonicParsing="false" onAction="#browseRoomMap" prefHeight="26.0" prefWidth="65.0" text="Browse" />
-               </children>
-            </HBox>
-            <HBox alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="500.0">
-               <children>
-                  <Label maxWidth="265.0" prefHeight="18.0" prefWidth="165.0" text="Default MapConfig file:" />
-                  <TextField fx:id="textFieldMapConfigFile" prefHeight="26.0" prefWidth="250.0" promptText="file path" />
-                  <Separator orientation="VERTICAL" prefHeight="200.0" visible="false" />
-                  <Button mnemonicParsing="false" onAction="#browseMapConfig" prefHeight="26.0" prefWidth="65.0" text="Browse" />
+                  <Label maxWidth="265.0" prefHeight="18.0" prefWidth="165.0" text="Dark Theme:" />
+                  <CheckBox fx:id="checkBoxDarkTheme" mnemonicParsing="false" onAction="#toggleDarkTheme" prefHeight="20.0" prefWidth="112.0" text="Enabled" />
                </children>
             </HBox>
             <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="500.0">
                <children>
-                  <Label maxWidth="265.0" prefHeight="18.0" prefWidth="165.0" text="Confirm MapConfig saving:" />
-                  <CheckBox fx:id="checkBoxConfirmSaving" mnemonicParsing="false" prefHeight="20.0" prefWidth="112.0" text="Enabled" />
+                  <Label maxWidth="265.0" prefHeight="18.0" prefWidth="165.0" text="Confirmations:" />
+                  <CheckBox fx:id="checkBoxConfirmations" mnemonicParsing="false" prefHeight="20.0" prefWidth="112.0" text="Enabled" />
                </children>
             </HBox>
             <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="500.0">
