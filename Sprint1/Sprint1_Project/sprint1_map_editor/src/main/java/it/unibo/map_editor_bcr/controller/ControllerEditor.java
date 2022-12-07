@@ -24,6 +24,9 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.effect.Glow;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -97,14 +100,14 @@ public class ControllerEditor {
 
     // Settings controls
     @FXML private VBox vboxSettings;
-    @FXML private CheckBox checkBoxDarkTheme;
+    @FXML private TextField textFieldRoomMapFile;
+    @FXML private TextField textFieldMapConfigFile;
     @FXML private CheckBox checkboxLogStdOut;
     @FXML private CheckBox checkboxLogFile;
     @FXML private HBox hboxLogDirPath;
     @FXML private TextField textFieldLogDirPath;
-    @FXML private TextField textFieldRoomMapFile;
-    @FXML private TextField textFieldMapConfigFile;
-    @FXML private CheckBox checkBoxConfirmSaving;
+    @FXML private CheckBox checkBoxConfirmations;
+    @FXML private CheckBox checkBoxDarkTheme;
     @FXML private ColorPicker colorPickerCoordinates;
 
 
@@ -114,9 +117,6 @@ public class ControllerEditor {
     private final FileChooser fileChooserRoomMap = new FileChooser();
     private final FileChooser fileChooserMapConfig = new FileChooser();
     private final DirectoryChooser directoryChooserLog = new DirectoryChooser();
-
-    private File roomMapFile; // currently opened RoomMap
-    private File mapConfigFile; // currently opened MapConfig
 
     private RoomMapParser roomMapParser;
     private MapConfig mapConfig;
@@ -134,8 +134,6 @@ public class ControllerEditor {
         // Load logger
         this.logger = Logger.getInstance();
         this.logger.setLogLevel(this.settings.getLogLevel());
-
-        // TO-DO
 
         // Setup FileChoosers
         this.fileChooserRoomMap.getExtensionFilters().setAll(
@@ -180,7 +178,12 @@ public class ControllerEditor {
         Platform.runLater(() -> {
             this.adjustLayout();
 
-            Stage stage = (Stage) this.vboxCommandControls.getScene().getWindow();
+            Scene scene = (Scene) this.vboxCommandControls.getScene();
+            // Set keyboard shortcuts
+            scene.getAccelerators().put(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN), () -> {this.undo(new ActionEvent());});
+            scene.getAccelerators().put(new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN), () -> {this.redo(new ActionEvent());});
+
+            Stage stage = (Stage) scene.getWindow();
             stage.widthProperty().addListener((obs, oldVal, newVal) -> {
                 this.adjustLayout();
             });
@@ -201,18 +204,54 @@ public class ControllerEditor {
         });
     }
 
+    private void clearRoomMap() {
+        this.roomMapParser = null;
+        this.dimX = 0;
+        this.dimY = 0;
+        this.anchorPaneBase.getChildren().remove(this.paneRoomMap);
+        this.paneRoomMap = null;
+
+        this.textFieldRoomMapFile.setText("");
+        this.settings.setRoomMapFile("");
+        this.settings.saveSettings(SETTINGS_FILENAME);
+
+        this.vboxRoomMapNotLoaded.setVisible(true);
+        this.vboxDisplayControls.setVisible(false);
+        this.hboxFileControls.setDisable(true);
+        this.hboxActionControls.setDisable(true);
+        this.hboxAction.setDisable(true);
+
+        this.clearMapConfig();
+    }
+    private void clearMapConfig() {
+        this.mapConfig = null;
+        this.anchorPaneBase.getChildren().remove(this.paneMapConfig);
+        this.paneMapConfig = null;
+        this.anchorPaneBase.getChildren().remove(this.paneCoordinates);
+        this.paneCoordinates = null;
+
+        this.textFieldMapConfigFile.setText("");
+        this.settings.setMapConfigFile("");
+        this.settings.saveSettings(SETTINGS_FILENAME);
+
+        this.vboxDisplayControls.setVisible(false);
+        this.hboxFileControls.setDisable(false);
+        this.buttonSave.setDisable(true);
+        this.buttonSaveAs.setDisable(true);
+        this.hboxActionControls.setDisable(true);
+        this.hboxAction.setDisable(true);
+    }
+
     private void loadRoomMap(String filename) {
         if(filename.isEmpty()) {
             this.labelLoadRoomMapError.setText("");
-            this.vboxRoomMapNotLoaded.setVisible(true);
-            this.vboxDisplayControls.setVisible(false);
-            this.hboxFileControls.setDisable(true);
-            this.hboxActionControls.setDisable(true);
-            this.hboxAction.setDisable(true);
+            this.clearRoomMap();
             return;
         }
 
         try {
+            this.clearMapConfig();
+
             RoomMap roomMap = MapLoader.loadRoomMap(filename);
 
             this.roomMapParser = new RoomMapParser(roomMap);
@@ -220,6 +259,12 @@ public class ControllerEditor {
             this.dimY = this.roomMapParser.getDimY();
 
             this.initRoomMap();
+
+            // update settings
+            this.textFieldRoomMapFile.setText(filename);
+            this.textFieldMapConfigFile.setText("");
+            this.settings.setRoomMapFile(filename);
+            this.settings.saveSettings(SETTINGS_FILENAME);
 
             this.vboxRoomMapNotLoaded.setVisible(false);
             this.vboxDisplayControls.setVisible(false);
@@ -235,15 +280,7 @@ public class ControllerEditor {
             logger.logMessage("RoomMap load failed. Error: " + e.getMessage());
 
             // if the loading from file failed -> reset settings value
-            this.settings.setRoomMapFile("");
-            this.settings.saveSettings(SETTINGS_FILENAME);
-            this.updateGUIfromSettings();
-
-            this.vboxRoomMapNotLoaded.setVisible(true);
-            this.vboxDisplayControls.setVisible(false);
-            this.hboxFileControls.setDisable(true);
-            this.hboxActionControls.setDisable(true);
-            this.hboxAction.setDisable(true);
+            this.clearRoomMap();
 
             if(e instanceof FileNotFoundException) {
                 this.labelLoadRoomMapError.setText("ERROR: file '" + filename + "' not found.");
@@ -284,6 +321,11 @@ public class ControllerEditor {
             this.initMapConfigOperationExecutor();
             this.initCoordinates(Color.valueOf(this.settings.getCoordinateColor()));
 
+            // update settings
+            this.textFieldMapConfigFile.setText(filename);
+            this.settings.setMapConfigFile(filename);
+            this.settings.saveSettings(SETTINGS_FILENAME);
+
             this.vboxDisplayControls.setVisible(true);
             this.hboxFileControls.setDisable(false);
             this.buttonSave.setDisable(false);
@@ -297,18 +339,24 @@ public class ControllerEditor {
             logger.logMessage("MapConfig load failed. Error: " + e.getMessage());
 
             // if the loading from file failed -> reset settings value
-            this.settings.setMapConfigFile("");
-            this.settings.saveSettings(SETTINGS_FILENAME);
-            this.updateGUIfromSettings();
-
-            this.vboxDisplayControls.setVisible(false);
-            this.hboxFileControls.setDisable(false);
-            this.buttonSave.setDisable(true);
-            this.buttonSaveAs.setDisable(true);
-            this.hboxActionControls.setDisable(true);
-            this.hboxAction.setDisable(true);
+            this.clearMapConfig();
 
             e.printStackTrace();
+        }
+    }
+
+    private void saveMapConfig(String filename) {
+        try {
+            MapLoader.saveMapConfig(this.mapConfig, filename);
+
+            logger.logMessage("MapConfig saved to file '" + filename + "'.");
+
+            // update settings file
+            this.textFieldMapConfigFile.setText(filename);
+            this.settings.setMapConfigFile(filename);
+            this.settings.saveSettings(SETTINGS_FILENAME);
+        } catch (Exception e) {
+            logger.logMessage("MapConfig save failed. Error: " + e.getMessage());
         }
     }
 
@@ -711,8 +759,8 @@ public class ControllerEditor {
 
     @FXML
     public void newMap(ActionEvent event) {
-        // check if there are changes
-        if(this.mapConfig != null) {
+        // check if there are changes and the map config is not null
+        if(this.mapConfig != null && this.settings.isConfirmations()) {
             Alert alert = new Alert(AlertType.CONFIRMATION, "", ButtonType.YES, ButtonType.NO);
             alert.setTitle("New Map Confirmation");
             alert.setHeaderText("Create a new Map Configuration?");
@@ -736,6 +784,11 @@ public class ControllerEditor {
         this.initMapConfigOperationExecutor();
         this.initCoordinates(Color.valueOf(this.settings.getCoordinateColor()));
 
+        // reset current MapConfig file
+        this.textFieldMapConfigFile.setText("");
+        this.settings.setMapConfigFile("");
+        this.settings.saveSettings(SETTINGS_FILENAME);
+
         this.adjustLayout();
 
         this.vboxDisplayControls.setVisible(true);
@@ -748,7 +801,8 @@ public class ControllerEditor {
     @FXML
     public void loadMap(ActionEvent event) {
         // check if there are changes
-        if(this.mapConfig != null && this.mapConfigOperationExecutor.checkForChanges()) {
+        if(!this.settings.getMapConfigFile().isEmpty() && this.mapConfig != null
+                && this.mapConfigOperationExecutor.checkForChanges() && this.settings.isConfirmations()) {
             Alert alert = new Alert(AlertType.CONFIRMATION, "", ButtonType.YES, ButtonType.NO);
             alert.setTitle("Loading Confirmation");
             alert.setHeaderText("You have changes in progress.");
@@ -801,10 +855,10 @@ public class ControllerEditor {
     // TO-DO
     @FXML
     public void saveMap(ActionEvent event) {
-        if(this.settings.isConfirmBeforeSaving()) {
+        if(this.settings.isConfirmations()) {
             Alert alert = new Alert(AlertType.CONFIRMATION, "", ButtonType.YES, ButtonType.NO);
             alert.setTitle("Saving Confirmation");
-            alert.setHeaderText("Saving Confirmation.");
+            alert.setHeaderText("Do you want to save the file?");
             alert.setContentText("Saving the map will overwrite the content of the file.\n" +
                     "Continue anyway?");
             alert.getDialogPane().getStylesheets().add(
@@ -816,8 +870,20 @@ public class ControllerEditor {
                 return;
             }
         }
-        MapLoader.saveMapConfig(this.mapConfig, this.settings.getMapConfigFile());
-        this.logger.logMessage("MapConfig saved to file '" + this.settings.getMapConfigFile() + "'");
+
+        String filename = this.settings.getMapConfigFile();
+        if(filename.isEmpty()) {
+            this.fileChooserMapConfig.setTitle("Save MapConfig binary file (it.unibo.map_editor_bcr.model.map_config.MapConfig)");
+
+            File file = this.fileChooserMapConfig.showSaveDialog(null);
+            if(file == null) {
+                return;
+            }
+
+            filename = file.getAbsolutePath();
+        }
+
+        this.saveMapConfig(filename);
     }
     @FXML
     public void saveMapAs(ActionEvent event) {
@@ -827,8 +893,31 @@ public class ControllerEditor {
         if(file == null) {
             return;
         }
-        MapLoader.saveMapConfig(this.mapConfig, file.getAbsolutePath());
-        this.logger.logMessage("MapConfig saved to file '" + file.getAbsolutePath() + "'");
+        // update MapConfig file
+        this.textFieldMapConfigFile.setText(file.getAbsolutePath());
+        this.settings.setMapConfigFile(file.getAbsolutePath());
+        this.settings.saveSettings(SETTINGS_FILENAME);
+
+        this.saveMapConfig(file.getAbsolutePath());
+    }
+    @FXML
+    public void printMapToFile(ActionEvent event) {
+        if(this.mapConfig != null) {
+            // TO-DO
+            String filename = this.settings.getMapConfigFile();
+            if (filename.isEmpty()) {
+                /*this.fileChooserMapConfig.setTitle("Save MapConfig as text representation (it.unibo.map_editor_bcr.model.map_config.MapConfig)");
+
+                File file = this.fileChooserMapConfig.showSaveDialog(null);
+                if(file == null) {
+                    return;
+                }*/
+
+                // filename = file.getAbsolutePath();
+            }
+            MapLoader.saveMapConfigRepresentation(this.mapConfig,
+                    filename.replace(".bin", ".txt"));
+        }
     }
 
     @FXML
@@ -1041,34 +1130,7 @@ public class ControllerEditor {
             this.textFieldLogDirPath.setText(file.getAbsolutePath());
         }
     }
-    @FXML
-    public void loadDefaultRoomMapFile(ActionEvent event) {
-        Alert alert = new Alert(AlertType.CONFIRMATION, "", ButtonType.YES, ButtonType.NO);
-        alert.setTitle("Loading Confirmation");
-        alert.setHeaderText("You have changes in progress.");
-        alert.setContentText("Loading the map will overwrite the current state of the map.\n" +
-                "Continue anyway?");
-        alert.getDialogPane().getStylesheets().add(
-                ControllerEditor.class.getResource("/it/unibo/map_editor_bcr/styles/theme-" +
-                        (this.checkBoxDarkTheme.isSelected() ? "dark" : "light") +".css").toExternalForm());
 
-        alert.showAndWait();
-        if (alert.getResult() != ButtonType.YES) {
-            return;
-        }
-
-        this.roomMapParser = null;
-        this.anchorPaneBase.getChildren().remove(this.paneRoomMap);
-        this.paneRoomMap = null;
-        this.loadRoomMap(this.textFieldRoomMapFile.getText());
-        this.mapConfig = null;
-        this.anchorPaneBase.getChildren().remove(this.paneMapConfig);
-        this.paneMapConfig = null;
-        this.anchorPaneBase.getChildren().remove(this.paneCoordinates);
-        this.paneCoordinates = null;
-
-        // TO-DO
-    }
     @FXML
     public void browseRoomMap(ActionEvent event) {
         this.fileChooserRoomMap.setTitle("Select the RoomMap file to be loaded by default");
@@ -1077,24 +1139,20 @@ public class ControllerEditor {
             this.textFieldRoomMapFile.setText(file.getAbsolutePath());
         }
     }
-    @FXML
-    public void browseMapConfig(ActionEvent event) {
-        this.fileChooserMapConfig.setTitle("Select the MapConfig file to be loaded by default");
-        File file = this.fileChooserMapConfig.showOpenDialog(null);
-        if(file != null) {
-            this.textFieldMapConfigFile.setText(file.getAbsolutePath());
-        }
-    }
 
     @FXML
     public void saveSettings(ActionEvent event) {
+        if (!this.textFieldRoomMapFile.getText().equals(this.settings.getRoomMapFile())) {
+            this.loadRoomMap(textFieldRoomMapFile.getText());
+        }
+
         // update settings
-        this.settings.setDarkTheme(this.checkBoxDarkTheme.isSelected());
-        this.settings.setLogLevel(this.checkboxLogStdOut.isSelected(),
-                this.checkboxLogFile.isSelected(), this.textFieldLogDirPath.getText());
         this.settings.setRoomMapFile(this.textFieldRoomMapFile.getText());
         this.settings.setMapConfigFile(this.textFieldMapConfigFile.getText());
-        this.settings.setConfirmBeforeSaving(this.checkBoxConfirmSaving.isSelected());
+        this.settings.setLogLevel(this.checkboxLogStdOut.isSelected(),
+                this.checkboxLogFile.isSelected(), this.textFieldLogDirPath.getText());
+        this.settings.setConfirmations(this.checkBoxConfirmations.isSelected());
+        this.settings.setDarkTheme(this.checkBoxDarkTheme.isSelected());
         this.settings.setCoordinateColor(this.colorPickerCoordinates.getValue().toString());
 
         // update GUI
@@ -1133,7 +1191,7 @@ public class ControllerEditor {
         this.textFieldLogDirPath.setText(Constants.DEFAULT_LOG_LEVEL_DIRECTORY);
         this.textFieldRoomMapFile.setText(Constants.DEFAULT_ROOM_MAP_FILE);
         this.textFieldMapConfigFile.setText(Constants.DEFAULT_MAP_CONFIG_FILE);
-        this.checkBoxConfirmSaving.setSelected(Constants.DEFAULT_CONFIRM_BEFORE_SAVING);
+        this.checkBoxConfirmations.setSelected(Constants.DEFAULT_CONFIRM_BEFORE_SAVING);
         this.colorPickerCoordinates.setValue(Color.valueOf(Constants.DEFAULT_COORDINATE_COLOR));
 
         this.logger.logMessage("Settings reset to default.");
@@ -1191,14 +1249,14 @@ public class ControllerEditor {
     }
 
     private void updateGUIfromSettings() {
-        this.checkBoxDarkTheme.setSelected(this.settings.isDarkTheme());
+        this.textFieldRoomMapFile.setText(this.settings.getRoomMapFile());
+        this.textFieldMapConfigFile.setText(this.settings.getMapConfigFile());
         this.checkboxLogStdOut.setSelected(this.settings.getLogLevel().toStandardOutput);
         this.checkboxLogFile.setSelected(this.settings.getLogLevel().toFile);
         this.hboxLogDirPath.setDisable(!this.settings.getLogLevel().toFile);
         this.textFieldLogDirPath.setText(this.settings.getLogLevel().directory);
-        this.textFieldRoomMapFile.setText(this.settings.getRoomMapFile());
-        this.textFieldMapConfigFile.setText(this.settings.getMapConfigFile());
-        this.checkBoxConfirmSaving.setSelected(this.settings.isConfirmBeforeSaving());
+        this.checkBoxConfirmations.setSelected(this.settings.isConfirmations());
+        this.checkBoxDarkTheme.setSelected(this.settings.isDarkTheme());
         this.colorPickerCoordinates.setValue(Color.valueOf(this.settings.getCoordinateColor()));
     }
 

@@ -28,6 +28,7 @@ public class MapLoader {
         ObjectInputStream inps = new ObjectInputStream(new FileInputStream(filename));
         RoomMap map = (RoomMap) inps.readObject();
 
+        inps.close();
         //logger.logMessage("loadRoomMap = " + filename + " DONE"); // TO-DO
         //System.out.println("loadRoomMap = " + filename + " DONE");
         //System.out.println("loadRoomMap = " + filename + " FAILED: " + e.getMessage());
@@ -38,10 +39,10 @@ public class MapLoader {
     public static void saveRoomMap(RoomMap map, String filename) {
         // TO-DO: check .bin
 
-        try(ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(filename))) {
-            os.writeObject(map.getRoomMap());
+        try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(map.getRoomMap());
             System.out.println("saveMap in " + filename);
-            os.flush();
+            oos.flush();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -67,29 +68,29 @@ public class MapLoader {
             throw new FileFormatException("Invalid format for file " + filename + ". MapConfig file format must be '.bin'.");
         }
 
-        ObjectInputStream inps = new ObjectInputStream(new FileInputStream(filename));
-        MapConfig config = (MapConfig) inps.readObject();
-        //System.out.println("loadRoomConfig = " + filename + " DONE");
-        //System.out.println("loadRoomConfig = " + filename + " FAILED: " + e.getMessage());
+        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename));
+        MapConfig config = (MapConfig) ois.readObject();
+
+        ois.close();
 
         return config;
     }
 
-    public static boolean saveMapConfig(MapConfig mapConfig, String filename) {
-        // TO-DO: check .bin
-
-        try(ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(filename))) {
-            os.writeObject(mapConfig);
-            System.out.println("saveMap in " + filename);
-            os.flush();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return false;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
+    public static void saveMapConfig(MapConfig mapConfig, String filename) throws FileFormatException, FileNameException, IOException {
+        if(mapConfig == null) {
+            throw new IllegalArgumentException("MapConfig is null.");
         }
-        return true;
+        if(filename.isEmpty()) {
+            throw new FileNameException("File name '" + filename + "' is invalid.");
+        }
+        if(!filename.endsWith(".bin")) {
+            throw new FileFormatException("Invalid format for file " + filename + ". MapConfig file format must be '.bin'.");
+        }
+
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename));
+        oos.writeObject(mapConfig);
+
+        oos.close();
     }
 
     public static boolean saveMapConfigRepresentation(MapConfig mapConfig, String filename) {
@@ -150,7 +151,11 @@ public class MapLoader {
         mc.put(5,4, CellType.PLASTIC);
         mc.put(6,4, CellType.PLASTIC);
         System.out.println(mc.toString());
-        saveMapConfig(mc, "mapConfigWasteService.bin");
+        try {
+            saveMapConfig(mc, "mapConfigWasteService.bin");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         /*
         // Test: OK

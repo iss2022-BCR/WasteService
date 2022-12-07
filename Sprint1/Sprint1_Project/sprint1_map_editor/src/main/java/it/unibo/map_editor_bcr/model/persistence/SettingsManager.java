@@ -27,16 +27,16 @@ public class SettingsManager {
 		return instance;
 	}
 
-	public boolean isDarkTheme() {return settings.isDarkTheme();}
-	public void setDarkTheme(boolean darkTheme) {settings.setDarkTheme(darkTheme);}
-	public LogLevel getLogLevel() {return settings.getLogLevel();}
-	public void setLogLevel(boolean toStdOutput, boolean toFile, String directory) {settings.setLogLevel(toStdOutput, toFile, directory);}
 	public String getRoomMapFile() {return settings.getRoomMapFile();}
 	public void setRoomMapFile(String roomMapFile) {settings.setRoomMapFile(roomMapFile);}
 	public String getMapConfigFile() {return settings.getMapConfigFile();}
 	public void setMapConfigFile(String mapConfigFile) {settings.setMapConfigFile(mapConfigFile);}
-	public boolean isConfirmBeforeSaving() {return settings.isConfirmBeforeSaving();}
-	public void setConfirmBeforeSaving(boolean confirmBeforeSaving) {settings.setConfirmBeforeSaving(confirmBeforeSaving);}
+	public LogLevel getLogLevel() {return settings.getLogLevel();}
+	public void setLogLevel(boolean toStdOutput, boolean toFile, String directory) {settings.setLogLevel(toStdOutput, toFile, directory);}
+	public boolean isConfirmations() {return settings.isConfirmations();}
+	public void setConfirmations(boolean confirmations) {settings.setConfirmations(confirmations);}
+	public boolean isDarkTheme() {return settings.isDarkTheme();}
+	public void setDarkTheme(boolean darkTheme) {settings.setDarkTheme(darkTheme);}
 	public String getCoordinateColor() {return settings.getCoordinateColor();}
 	public void setCoordinateColor(String coordinateColor) {settings.setCoordinateColor(coordinateColor);}
 	
