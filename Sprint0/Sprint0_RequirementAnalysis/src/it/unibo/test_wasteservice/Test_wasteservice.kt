@@ -23,6 +23,13 @@ class Test_wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm
 		return { //this:ActionBasciFsm
 				state("state_init") { //this:State
 					action { //it:State
+						
+									var CurrentPlastic = 0.0f
+									var CurrentGlass = 0.0f
+						println("$name in ${currentState.stateName} | $currentMsg")
+						println("[WasteService] Reset:")
+						println("	Plastic: $CurrentPlastic")
+						println("	Glass: $CurrentGlass")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -32,19 +39,20 @@ class Test_wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm
 				}	 
 				state("state_idle") { //this:State
 					action { //it:State
-						println("[Test_WasteService] Waiting for messages...")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t10",targetState="state_handle_store",cond=whenRequest("storerequest"))
+					 transition(edgeName="t00",targetState="state_handle_store",cond=whenRequest("storerequest"))
 				}	 
 				state("state_handle_store") { //this:State
 					action { //it:State
+						println("	dioporco")
 						println("$name in ${currentState.stateName} | $currentMsg")
 						if( checkMsgContent( Term.createTerm("storerequest(TYPE,TRUCKLOAD)"), Term.createTerm("storerequest(TYPE,TRUCKLOAD)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
+								println("	dioporco2")
 								
 												Type = wasteservice.WasteType.valueOf(payloadArg(0))
 												TruckLoad = payloadArg(1).toFloat()
@@ -52,23 +60,15 @@ class Test_wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm
 													// enough space
 													(Type == wasteservice.WasteType.PLASTIC && CurrentPlastic + TruckLoad <= wasteservice.Constants.MAXPB) ||
 													(Type == wasteservice.WasteType.GLASS && CurrentGlass + TruckLoad <= wasteservice.Constants.MAXGB)
-								 ){
-													if (Type == wasteservice.WasteType.PLASTIC) {
-														CurrentPlastic += TruckLoad 
-													}
-													else {
-														CurrentGlass += TruckLoad
-													}
-								println("[Test_WasteService] Load accepted ($TruckLoad KG of $Type).")
+								 ){println("	OK")
 								answer("storerequest", "loadaccepted", "loadaccepted(_)"   )  
 								}
 								else
-								 {println("[Test_WasteService] Load rejected")
+								 {println("	NO")
 								 answer("storerequest", "loadrejected", "loadaccepted(_)"   )  
 								 }
-								println("[Test_WasteService] State:")
-								println("	Plastic: ${CurrentPlastic}/ ${wasteservice.Constants.MAXPB} KG, Glass: ${CurrentGlass} / ${wasteservice.Constants.MAXPB} KG")
 						}
+						delay(1000) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

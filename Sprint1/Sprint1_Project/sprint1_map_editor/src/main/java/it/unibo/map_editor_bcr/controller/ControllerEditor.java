@@ -235,7 +235,6 @@ public class ControllerEditor {
         this.settings.saveSettings(SETTINGS_FILENAME);
 
         this.vboxDisplayControls.setVisible(false);
-        this.hboxFileControls.setDisable(false);
         this.buttonSave.setDisable(true);
         this.buttonSaveAs.setDisable(true);
         this.hboxActionControls.setDisable(true);
