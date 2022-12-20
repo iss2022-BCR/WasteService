@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ColorPicker?>
@@ -17,11 +18,26 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anchorPaneRoot" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="anchorPaneRoot" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <AnchorPane fx:id="anchorPaneBase" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <VBox fx:id="vboxEditTab" prefHeight="400.0" prefWidth="100.0" visible="false" AnchorPane.bottomAnchor="100.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <VBox fx:id="vboxRoomMapNotLoaded" alignment="CENTER" layoutX="100.0" layoutY="90.0" prefHeight="220.0" prefWidth="400.0">
+               <children>
+                  <Button fx:id="buttonLoadRoomMap" mnemonicParsing="false" onAction="#openRoomMapFile" text="Load Room Map">
+                     <tooltip>
+                        <Tooltip text="Open a RoomMap file (binary for class unibo.planner22.model.RoomMap)" wrapText="true">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Tooltip>
+                     </tooltip>
+                  </Button>
+                  <Separator prefWidth="200.0" visible="false" />
+                  <Label fx:id="labelLoadRoomMapError" alignment="TOP_CENTER" contentDisplay="CENTER" minHeight="50.0" prefWidth="350.0" textAlignment="CENTER" textFill="RED" wrapText="true" />
+               </children>
+            </VBox>
+            <VBox fx:id="vboxAddTab" prefHeight="400.0" prefWidth="100.0" visible="false" AnchorPane.bottomAnchor="100.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <HBox alignment="CENTER" prefHeight="400.0" prefWidth="100.0">
                      <children>
@@ -33,103 +49,130 @@
             </VBox>
             <VBox id="controls" fx:id="vboxCommandControls" alignment="CENTER" layoutX="25.0" layoutY="300.0" prefHeight="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                <children>
-                  <ComboBox fx:id="comboBoxAction" prefHeight="35.0" prefWidth="320.0" promptText="Action:" visibleRowCount="5" />
-                  <HBox alignment="CENTER" maxWidth="550.0" minHeight="40.0" minWidth="410.0" prefHeight="60.0" prefWidth="0.0">
+                  <HBox fx:id="hboxAction" alignment="CENTER" prefHeight="40.0" prefWidth="600.0">
                      <children>
-                        <Button id="new" fx:id="buttonNew" mnemonicParsing="false" onAction="#newMap" prefHeight="40.0" prefWidth="40.0">
-                           <tooltip>
-                              <Tooltip text="Create New File">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Tooltip>
-                           </tooltip>
-                        </Button>
-                        <Separator maxWidth="10.0" minWidth="0.0" orientation="VERTICAL" prefWidth="10.0" visible="false" />
-                        <Button id="load" fx:id="buttonLoad" mnemonicParsing="false" onAction="#loadMap" prefHeight="40.0" prefWidth="40.0">
-                           <tooltip>
-                              <Tooltip text="Load Room Config File">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Tooltip>
-                           </tooltip>
-                        </Button>
-                        <Separator maxWidth="10.0" minWidth="0.0" orientation="VERTICAL" prefWidth="10.0" visible="false" />
-                        <Button id="save" fx:id="buttonSave" mnemonicParsing="false" onAction="#saveMap" prefHeight="40.0" prefWidth="40.0">
-                           <tooltip>
-                              <Tooltip text="Save File">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Tooltip>
-                           </tooltip>
-                        </Button>
-                        <Separator maxWidth="25.0" minWidth="5.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="25.0" visible="false" />
-                        <ToggleButton id="add" fx:id="buttonAdd" mnemonicParsing="false" onAction="#selectAdd" prefHeight="40.0" prefWidth="40.0">
-                           <toggleGroup>
-                              <ToggleGroup fx:id="toggleGroupMode" />
-                           </toggleGroup>
-                           <tooltip>
-                              <Tooltip text="Select Add mode">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Tooltip>
-                           </tooltip>
-                        </ToggleButton>
-                        <Separator maxWidth="10.0" minWidth="0.0" orientation="VERTICAL" prefWidth="10.0" visible="false" />
-                        <ToggleButton id="remove" fx:id="buttonRemove" mnemonicParsing="false" onAction="#selectRemove" prefHeight="40.0" prefWidth="40.0" toggleGroup="$toggleGroupMode">
-                           <tooltip>
-                              <Tooltip text="Select Remove mode">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Tooltip>
-                           </tooltip>
-                        </ToggleButton>
-                        <Separator maxWidth="10.0" minWidth="0.0" orientation="VERTICAL" prefWidth="10.0" visible="false" />
-                        <ToggleButton id="move" fx:id="buttonMove" mnemonicParsing="false" onAction="#selectMove" prefHeight="40.0" prefWidth="40.0" toggleGroup="$toggleGroupMode">
-                           <tooltip>
-                              <Tooltip text="Select Move mode">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Tooltip>
-                           </tooltip>
-                        </ToggleButton>
-                        <Separator maxWidth="10.0" minWidth="0.0" orientation="VERTICAL" prefWidth="10.0" visible="false" />
-                        <ToggleButton id="swap" fx:id="buttonSwap" mnemonicParsing="false" onAction="#selectSwap" prefHeight="40.0" prefWidth="40.0" toggleGroup="$toggleGroupMode">
-                           <tooltip>
-                              <Tooltip text="Select Swap mode">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Tooltip>
-                           </tooltip>
-                        </ToggleButton>
-                        <Separator maxWidth="25.0" minWidth="5.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="25.0" visible="false" />
-                        <Button id="undo" fx:id="buttonUndo" mnemonicParsing="false" onAction="#undo" prefHeight="40.0" prefWidth="40.0">
-                           <tooltip>
-                              <Tooltip text="Undo">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Tooltip>
-                           </tooltip>
-                        </Button>
-                        <Separator maxWidth="10.0" minWidth="0.0" orientation="VERTICAL" prefWidth="10.0" visible="false" />
-                        <Button id="redo" fx:id="buttonRedo" mnemonicParsing="false" onAction="#redo" prefHeight="40.0" prefWidth="40.0">
-                           <tooltip>
-                              <Tooltip text="Redo">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Tooltip>
-                           </tooltip>
-                        </Button>
-                        <Separator maxWidth="25.0" minWidth="5.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="25.0" visible="false" />
-                        <Button id="settings" fx:id="buttonSettings" mnemonicParsing="false" onAction="#displaySettings" prefHeight="40.0" prefWidth="40.0">
+                        <Label alignment="CENTER_RIGHT" prefHeight="20.0" prefWidth="60.0" text="Action:  " textAlignment="RIGHT">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="comboBoxHistory" prefHeight="35.0" prefWidth="320.0" visibleRowCount="5" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" maxWidth="600.0" minHeight="40.0" minWidth="410.0" prefHeight="60.0" prefWidth="600.0">
+                     <children>
+                        <HBox fx:id="hboxFileControls" alignment="CENTER" minWidth="160.0" prefHeight="60.0">
+                           <children>
+                              <Button id="new" fx:id="buttonNew" mnemonicParsing="false" onAction="#newMap" prefHeight="40.0" prefWidth="40.0">
+                                 <tooltip>
+                                    <Tooltip text="Create New Map Config">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Tooltip>
+                                 </tooltip>
+                              </Button>
+                              <Separator maxWidth="10.0" minWidth="0.0" orientation="VERTICAL" prefWidth="10.0" visible="false" />
+                              <Button id="load" fx:id="buttonLoad" mnemonicParsing="false" onAction="#loadMap" prefHeight="40.0" prefWidth="40.0">
+                                 <tooltip>
+                                    <Tooltip text="Load Map Config File">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Tooltip>
+                                 </tooltip>
+                              </Button>
+                              <Separator maxWidth="10.0" minWidth="0.0" orientation="VERTICAL" prefWidth="10.0" visible="false" />
+                              <Button id="save" fx:id="buttonSave" mnemonicParsing="false" onAction="#saveMap" prefHeight="40.0" prefWidth="40.0">
+                                 <tooltip>
+                                    <Tooltip text="Save Map Config File">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Tooltip>
+                                 </tooltip>
+                              </Button>
+                              <Separator maxWidth="10.0" minWidth="0.0" orientation="VERTICAL" prefWidth="10.0" visible="false" />
+                              <Button id="saveAs" fx:id="buttonSaveAs" mnemonicParsing="false" onAction="#saveMapAs" prefHeight="40.0" prefWidth="40.0">
+                                 <tooltip>
+                                    <Tooltip text="Save Map Config File As...">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Tooltip>
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <Separator maxWidth="25.0" minWidth="5.0" orientation="VERTICAL" prefWidth="25.0" visible="false" />
+                        <HBox fx:id="hboxActionControls" alignment="CENTER" minWidth="240.0" prefHeight="60.0">
+                           <children>
+                              <ToggleButton id="add" fx:id="buttonAdd" mnemonicParsing="false" onAction="#selectAdd" prefHeight="40.0" prefWidth="40.0">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="toggleGroupMode" />
+                                 </toggleGroup>
+                                 <tooltip>
+                                    <Tooltip text="Select Add mode">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Tooltip>
+                                 </tooltip>
+                              </ToggleButton>
+                              <Separator maxWidth="10.0" minWidth="0.0" orientation="VERTICAL" prefWidth="10.0" visible="false" />
+                              <ToggleButton id="remove" fx:id="buttonRemove" mnemonicParsing="false" onAction="#selectRemove" prefHeight="40.0" prefWidth="40.0" toggleGroup="$toggleGroupMode">
+                                 <tooltip>
+                                    <Tooltip text="Select Remove mode">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Tooltip>
+                                 </tooltip>
+                              </ToggleButton>
+                              <Separator maxWidth="10.0" minWidth="0.0" orientation="VERTICAL" prefWidth="10.0" visible="false" />
+                              <ToggleButton id="move" fx:id="buttonMove" mnemonicParsing="false" onAction="#selectMove" prefHeight="40.0" prefWidth="40.0" toggleGroup="$toggleGroupMode">
+                                 <tooltip>
+                                    <Tooltip text="Select Move mode">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Tooltip>
+                                 </tooltip>
+                              </ToggleButton>
+                              <Separator maxWidth="10.0" minWidth="0.0" orientation="VERTICAL" prefWidth="10.0" visible="false" />
+                              <ToggleButton id="swap" fx:id="buttonSwap" mnemonicParsing="false" onAction="#selectSwap" prefHeight="40.0" prefWidth="40.0" toggleGroup="$toggleGroupMode">
+                                 <tooltip>
+                                    <Tooltip text="Select Swap mode">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Tooltip>
+                                 </tooltip>
+                              </ToggleButton>
+                              <Separator maxWidth="25.0" minWidth="5.0" orientation="VERTICAL" prefWidth="25.0" visible="false" />
+                              <Button id="undo" fx:id="buttonUndo" mnemonicParsing="false" onAction="#undo" prefHeight="40.0" prefWidth="40.0">
+                                 <tooltip>
+                                    <Tooltip text="Undo">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Tooltip>
+                                 </tooltip>
+                              </Button>
+                              <Separator maxWidth="10.0" minWidth="0.0" orientation="VERTICAL" prefWidth="10.0" visible="false" />
+                              <Button id="redo" fx:id="buttonRedo" mnemonicParsing="false" onAction="#redo" prefHeight="40.0" prefWidth="40.0">
+                                 <tooltip>
+                                    <Tooltip text="Redo">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Tooltip>
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <Separator maxWidth="25.0" minWidth="5.0" orientation="VERTICAL" prefWidth="25.0" visible="false" />
+                        <Button id="settings" fx:id="buttonSettings" mnemonicParsing="false" onAction="#openSettings" prefHeight="40.0" prefWidth="40.0">
                            <tooltip>
                               <Tooltip text="Open Settings">
                                  <font>
@@ -160,10 +203,13 @@
                      </tooltip>
                   </CheckBox>
                </children>
+               <padding>
+                  <Insets left="5.0" />
+               </padding>
             </VBox>
          </children>
       </AnchorPane>
-      <VBox fx:id="vboxSettings" alignment="CENTER" layoutX="50.0" layoutY="50.0" prefHeight="300.0" prefWidth="500.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
+      <VBox fx:id="vboxSettings" alignment="CENTER" layoutX="50.0" layoutY="25.0" prefHeight="300.0" prefWidth="500.0" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="25.0">
          <children>
             <Label text="Settings">
                <font>
@@ -171,31 +217,59 @@
                </font>
             </Label>
             <Separator prefHeight="20.0" prefWidth="500.0" />
-            <CheckBox fx:id="checkBoxTheme" mnemonicParsing="false" onAction="#toggleDarkTheme" text="Dark Theme" />
-            <HBox prefHeight="30.0" prefWidth="500.0">
+            <HBox alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="500.0">
                <children>
-                  <Label prefHeight="18.0" prefWidth="165.0" text="Log Level:" />
-                  <CheckBox mnemonicParsing="false" prefHeight="18.0" prefWidth="120.0" text="Standard output" />
-                  <CheckBox mnemonicParsing="false" prefHeight="18.0" prefWidth="54.0" text="File" />
-                  <TextField promptText="filename" />
+                  <Label maxWidth="233.0" prefHeight="18.0" prefWidth="165.0" text="RoomMap file:" />
+                  <TextField fx:id="textFieldRoomMapFile" prefHeight="26.0" prefWidth="250.0" promptText="file path" />
+                  <Separator orientation="VERTICAL" prefHeight="200.0" prefWidth="10.0" visible="false" />
+                  <Button mnemonicParsing="false" onAction="#browseRoomMap" prefHeight="26.0" prefWidth="65.0" text="Browse" />
                </children>
             </HBox>
-            <HBox prefHeight="30.0" prefWidth="500.0">
+            <HBox alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="500.0">
                <children>
-                  <Label prefHeight="18.0" prefWidth="165.0" text="Default load filename:" />
-                  <TextField promptText="filename" />
+                  <Label maxWidth="265.0" prefHeight="18.0" prefWidth="165.0" text="MapConfig file:" />
+                  <TextField fx:id="textFieldMapConfigFile" editable="false" prefHeight="26.0" prefWidth="325.0" promptText="file path" />
+                  <Separator orientation="VERTICAL" prefHeight="200.0" visible="false" />
                </children>
             </HBox>
-            <HBox prefHeight="30.0" prefWidth="500.0">
+            <HBox alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="500.0">
                <children>
-                  <Label prefHeight="18.0" prefWidth="165.0" text="Default save filename:" />
-                  <TextField promptText="filename" />
+                  <Label maxWidth="265.0" prefHeight="18.0" prefWidth="165.0" text="Log Level:" />
+                  <VBox prefHeight="43.0" prefWidth="330.0">
+                     <children>
+                        <CheckBox fx:id="checkboxLogStdOut" mnemonicParsing="false" prefHeight="18.0" prefWidth="120.0" text="Standard output" />
+                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <CheckBox fx:id="checkboxLogFile" mnemonicParsing="false" onAction="#toggleLogFile" prefHeight="18.0" prefWidth="115.0" text="File" />
+                              <HBox fx:id="hboxLogDirPath" prefHeight="30.0" prefWidth="210.0">
+                                 <children>
+                                    <TextField fx:id="textFieldLogDirPath" prefHeight="26.0" prefWidth="135.0" promptText="log directory path" />
+                                    <Separator orientation="VERTICAL" prefHeight="200.0" prefWidth="10.0" visible="false" />
+                                    <Button mnemonicParsing="false" onAction="#browseLogDirectory" prefHeight="26.0" prefWidth="65.0" text="Browse" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
                </children>
             </HBox>
-            <HBox prefHeight="40.0" prefWidth="500.0">
+            <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="500.0">
                <children>
-                  <Label prefHeight="18.0" prefWidth="170.0" text="Colore coordinate:" />
-                  <ColorPicker fx:id="colorPickerCoordinates" onAction="#setCoordinatesColor">
+                  <Label maxWidth="265.0" prefHeight="18.0" prefWidth="165.0" text="Dark Theme:" />
+                  <CheckBox fx:id="checkBoxDarkTheme" mnemonicParsing="false" onAction="#toggleDarkTheme" prefHeight="20.0" prefWidth="112.0" text="Enabled" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="500.0">
+               <children>
+                  <Label maxWidth="265.0" prefHeight="18.0" prefWidth="165.0" text="Confirmations:" />
+                  <CheckBox fx:id="checkBoxConfirmations" mnemonicParsing="false" prefHeight="20.0" prefWidth="112.0" text="Enabled" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="500.0">
+               <children>
+                  <Label maxWidth="265.0" prefHeight="18.0" prefWidth="165.0" text="Colore coordinate:" />
+                  <ColorPicker fx:id="colorPickerCoordinates">
                      <value>
                         <Color />
                      </value>
@@ -204,9 +278,9 @@
             </HBox>
             <HBox alignment="CENTER" prefHeight="41.0" prefWidth="500.0" spacing="15.0">
                <children>
-                  <Button mnemonicParsing="false" text="Save" />
-                  <Button mnemonicParsing="false" onAction="#cancelSettings" text="Cancel" />
-                  <Button mnemonicParsing="false" text="Reset" />
+                  <Button mnemonicParsing="false" onAction="#saveSettings" prefHeight="26.0" prefWidth="60.0" text="Save" />
+                  <Button mnemonicParsing="false" onAction="#cancelSettings" prefHeight="26.0" prefWidth="60.0" text="Cancel" />
+                  <Button mnemonicParsing="false" onAction="#resetSettings" prefHeight="26.0" prefWidth="60.0" text="Reset" />
                </children>
             </HBox>
          </children>

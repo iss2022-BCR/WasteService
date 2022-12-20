@@ -1,5 +1,7 @@
 package it.unibo.map_editor_bcr.model;
 
+import it.unibo.map_editor_bcr.model.exceptions.FileFormatException;
+import it.unibo.map_editor_bcr.model.exceptions.FileNameException;
 import it.unibo.map_editor_bcr.model.map_config.CellType;
 import it.unibo.map_editor_bcr.model.map_config.MapConfig;
 import it.unibo.map_editor_bcr.model.room_map.RoomMapParser;
@@ -8,108 +10,101 @@ import unibo.planner22.model.RoomMap;
 import java.io.*;
 
 public class MapLoader {
+    private static Logger logger = Logger.getInstance();
+
     /**
      * Load RoomMap object from a file
      * @param filename
      * @return a RoadMap
      */
-    public static RoomMap loadRoomMap(String filename) {
-        RoomMap map = null;
-        try {
-            ObjectInputStream inps = new ObjectInputStream(new FileInputStream(filename + ".bin"));
-            map = (RoomMap) inps.readObject();
-            System.out.println("loadRoomMap = " + filename + " DONE");
-        } catch (Exception e) {
-            System.out.println("loadRoomMap = " + filename + " FAILED: " + e.getMessage());
+    public static RoomMap loadRoomMap(String filename) throws IOException, ClassNotFoundException, FileFormatException, FileNameException {
+        if(filename.isEmpty()) {
+            throw new FileNameException("File name '" + filename + "' is invalid.");
         }
+        if(!filename.endsWith(".bin")) {
+            throw new FileFormatException("Invalid format for file " + filename + ". RoomMap file format must be '.bin'.");
+        }
+
+        ObjectInputStream inps = new ObjectInputStream(new FileInputStream(filename));
+        RoomMap map = (RoomMap) inps.readObject();
+
+        inps.close();
+        //logger.logMessage("loadRoomMap = " + filename + " DONE"); // TO-DO
+        //System.out.println("loadRoomMap = " + filename + " DONE");
+        //System.out.println("loadRoomMap = " + filename + " FAILED: " + e.getMessage());
+
         return map;
     }
 
     public static void saveRoomMap(RoomMap map, String filename) {
-        try(PrintWriter pw = new PrintWriter(new FileWriter(filename + ".txt"))) {
-            pw.print(map.toString());
-            System.out.println("saveMap in " + filename + ".txt");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // TO-DO: check .bin
 
-        try(ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(filename + ".bin"))) {
-            os.writeObject(map.getRoomMap());
-            System.out.println("saveMap in " + filename + ".bin");
-            os.flush();
+        try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(map.getRoomMap());
+            System.out.println("saveMap in " + filename);
+            oos.flush();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+    public static void saveRoomMapRepresentation(RoomMap map, String filename) {
+        // TO-DO: check .txt
 
-    public static MapConfig loadMapConfig(String filename) {
-        MapConfig config = null;
-        try {
-            ObjectInputStream inps = new ObjectInputStream(new FileInputStream(filename + ".bin"));
-            config = (MapConfig) inps.readObject();
-            System.out.println("loadRoomConfig = " + filename + " DONE");
-        } catch (Exception e) {
-            System.out.println("loadRoomConfig = " + filename + " FAILED: " + e.getMessage());
+        try(PrintWriter pw = new PrintWriter(new FileWriter(filename))) {
+            pw.print(map.toString());
+            System.out.println("saveMap in " + filename);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
+
+    public static MapConfig loadMapConfig(String filename) throws IOException, ClassNotFoundException, FileFormatException, FileNameException {
+        if(filename.isEmpty()) {
+            throw new FileNameException("File name '" + filename + "' is invalid.");
+        }
+        if(!filename.endsWith(".bin")) {
+            throw new FileFormatException("Invalid format for file " + filename + ". MapConfig file format must be '.bin'.");
+        }
+
+        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename));
+        MapConfig config = (MapConfig) ois.readObject();
+
+        ois.close();
+
         return config;
     }
 
-    public static boolean saveMapConfig(MapConfig mapConfig, String filename) {
-        try(PrintWriter pw = new PrintWriter(new FileWriter(filename + ".txt"))) {
-            pw.print(mapConfig.toString());
-            System.out.println("saveMap in " + filename + ".txt");
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
+    public static void saveMapConfig(MapConfig mapConfig, String filename) throws FileFormatException, FileNameException, IOException {
+        if(mapConfig == null) {
+            throw new IllegalArgumentException("MapConfig is null.");
+        }
+        if(filename.isEmpty()) {
+            throw new FileNameException("File name '" + filename + "' is invalid.");
+        }
+        if(!filename.endsWith(".bin")) {
+            throw new FileFormatException("Invalid format for file " + filename + ". MapConfig file format must be '.bin'.");
         }
 
-        try(ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(filename + ".bin"))) {
-            os.writeObject(mapConfig);
-            System.out.println("saveMap in " + filename + ".bin");
-            os.flush();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return false;
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename));
+        oos.writeObject(mapConfig);
+
+        oos.close();
+    }
+
+    public static boolean saveMapConfigRepresentation(MapConfig mapConfig, String filename) {
+        // TO-DO: check .txt
+
+        try(PrintWriter pw = new PrintWriter(new FileWriter(filename))) {
+            pw.print(mapConfig.toString());
+            System.out.println("saveMap in " + filename);
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
         return true;
     }
-
-    /*public static boolean saveMap(String filename, Map map) {
-        map.fillBorderElements(CellType.BORDER);
-        map.fillInnerElements(CellType.EMPTY);
-        System.out.println(map.toFancyString());
-        try {
-            File fout = new File(filename);
-
-            if(fout.exists()) {
-                return false;
-            }
-            fout.createNewFile();
-
-            FileOutputStream fos = new FileOutputStream(fout);
-
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
-
-            for(String s : map.toString().split("\n")) {
-                bw.write(s);
-                bw.newLine();
-            }
-
-            bw.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return false;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }*/
 
     // Test
     public static void main(String[] args) {
@@ -118,7 +113,14 @@ public class MapLoader {
 
         System.out.println(m.toString());*/
 
-        RoomMap m = loadRoomMap("mapRoomEmpty");
+        String filename = "mapRoomEmpty.bin";
+        RoomMap m = null;
+        try {
+            m = loadRoomMap("mapRoomEmpty.bin");
+            System.out.println("loadRoomMap = " + filename + " DONE");
+        } catch (Exception e) {
+            System.out.println("loadRoomMap = " + filename + " FAILED: " + e.getMessage());
+        }
         System.out.println(m.toString());
         System.out.println(m.getDimX());
 
@@ -149,7 +151,11 @@ public class MapLoader {
         mc.put(5,4, CellType.PLASTIC);
         mc.put(6,4, CellType.PLASTIC);
         System.out.println(mc.toString());
-        saveMapConfig(mc, "mapConfigWasteService");
+        try {
+            saveMapConfig(mc, "mapConfigWasteService.bin");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         /*
         // Test: OK
