@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.sprint1_smart_device">
+    package="it.unibo.sprint1_smart_device">
    <application
         android:label="SmartDeviceSimulator Sprint1"
         android:name="${applicationName}"

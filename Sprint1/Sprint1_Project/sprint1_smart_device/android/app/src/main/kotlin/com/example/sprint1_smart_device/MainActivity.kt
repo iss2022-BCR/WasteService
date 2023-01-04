@@ -1,4 +1,4 @@
-package com.example.sprint1_smart_device
+package it.unibo.sprint1_smart_device
 
 import io.flutter.embedding.android.FlutterActivity
 
