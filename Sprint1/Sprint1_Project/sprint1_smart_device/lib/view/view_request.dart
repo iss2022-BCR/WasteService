@@ -9,14 +9,20 @@ import 'package:intl/intl.dart';
 import 'package:sprint1_smart_device/model/appl_message.dart';
 import 'package:sprint1_smart_device/model/networking/client_connection.dart';
 import 'package:sprint1_smart_device/model/waste_service/types_request.dart';
+import '../model/settings.dart';
 import '../model/waste_service/store_request.dart';
 
 import '../model/constants.dart' as Constants;
 
 class ViewRequest extends StatefulWidget {
-  ViewRequest({Key? key, required this.connection, required this.notifyParent})
+  ViewRequest(
+      {Key? key,
+      required this.settings,
+      required this.connection,
+      required this.notifyParent})
       : super(key: key);
 
+  final Settings settings;
   ClientConnection connection;
   final Function(String, String) notifyParent;
 
@@ -101,6 +107,30 @@ class _ViewRequestState extends State<ViewRequest> {
     if (timeout != null) {
       _startTimer();
     }
+  }
+
+  Future<void> _sendMessage() async {
+    setState(() {
+      _waitingReply = true;
+      _reply = "";
+    });
+
+    ApplMessage applMsg = ApplMessage(
+        widget.settings.messageID,
+        widget.settings.messageType,
+        widget.settings.messageSender,
+        widget.settings.messageReceiver,
+        "${widget.settings.messageID}($_currentWasteType, ${_textControllerWeight.text})",
+        3);
+    String msg = applMsg.toString();
+
+    _logMessage("Message: $msg");
+
+    widget.connection.sendMessage(msg);
+
+    /*if (timeout != null) {
+      _startTimer();
+    }*/
   }
 
   List<String> _parseTypes(String types, String sep) {
@@ -191,7 +221,11 @@ class _ViewRequestState extends State<ViewRequest> {
     if (_timer == null) {
       return;
     }
-    _timer!.isActive ? _timer!.cancel() : null;
+    if (_timer!.isActive) {
+      _timer!.cancel();
+    } else {
+      return;
+    }
     setState(() {
       _waitingReply = false;
     });
@@ -213,6 +247,13 @@ class _ViewRequestState extends State<ViewRequest> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+
+    _stopTimer();
+  }
+
+  @override
   void initState() {
     super.initState();
 
@@ -225,7 +266,6 @@ class _ViewRequestState extends State<ViewRequest> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        _stopTimer();
         widget.notifyParent(
             "Disconnected", "You disconnecred from the server.");
         widget.connection.close();
@@ -240,7 +280,6 @@ class _ViewRequestState extends State<ViewRequest> {
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios),
               onPressed: () {
-                //_stopTimer();
                 widget.notifyParent(
                     "Disconnected", "You disconnecred from the server.");
                 widget.connection.close();
@@ -393,9 +432,12 @@ class _ViewRequestState extends State<ViewRequest> {
                               borderRadius: BorderRadius.circular(8.0),
                               color: _reply.toLowerCase().contains("accepted")
                                   ? Colors.green
-                                  : _reply
-                                          .toLowerCase()
-                                          .contains(r'rejected|error')
+                                  : (_reply
+                                              .toLowerCase()
+                                              .contains("rejected") ||
+                                          _reply
+                                              .toLowerCase()
+                                              .contains("rejected"))
                                       ? Colors.red
                                       : Colors.grey,
                             ),
@@ -427,7 +469,7 @@ class _ViewRequestState extends State<ViewRequest> {
                         }
                       });
 
-                      _sendStoreRequest();
+                      _debug ? _sendMessage() : _sendStoreRequest();
                     }
                   },
             style: ElevatedButton.styleFrom(
