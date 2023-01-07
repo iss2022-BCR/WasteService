@@ -24,7 +24,10 @@ class _ViewSettingsState extends State<ViewSettings> {
   final TextEditingController _textReceiverController = TextEditingController();
 
   bool _typesRequestAtConnect = Settings.DEFAULT_SEND_TYPES_REQUEST;
+  String _messageID = Settings.DEFAULT_MESSAGE_ID;
   ApplMessageType _messageType = Settings.DEFAULT_MESSAGE_TYPE;
+  String _messageSender = Settings.DEFAULT_MESSAGE_SENDER;
+  String _messageReceiver = Settings.DEFAULT_MESSAGE_RECEIVER;
 
   bool _isDefault() {
     return _typesRequestAtConnect == Settings.DEFAULT_SEND_TYPES_REQUEST &&
@@ -37,10 +40,13 @@ class _ViewSettingsState extends State<ViewSettings> {
   void _restore() {
     setState(() {
       _typesRequestAtConnect = Settings.DEFAULT_SEND_TYPES_REQUEST;
-      _textMessageIDController.text = Settings.DEFAULT_MESSAGE_ID;
+      _messageID = Settings.DEFAULT_MESSAGE_ID;
+      _textMessageIDController.text = _messageID;
       _messageType = Settings.DEFAULT_MESSAGE_TYPE;
-      _textSenderController.text = Settings.DEFAULT_MESSAGE_SENDER;
-      _textReceiverController.text = Settings.DEFAULT_MESSAGE_RECEIVER;
+      _messageSender = Settings.DEFAULT_MESSAGE_SENDER;
+      _textSenderController.text = _messageSender;
+      _messageReceiver = Settings.DEFAULT_MESSAGE_RECEIVER;
+      _textReceiverController.text = _messageReceiver;
     });
   }
 
@@ -50,10 +56,13 @@ class _ViewSettingsState extends State<ViewSettings> {
 
     setState(() {
       _typesRequestAtConnect = widget.settings.sendTypesRequest;
-      _textMessageIDController.text = widget.settings.messageID;
+      _messageID = widget.settings.messageID;
+      _textMessageIDController.text = _messageID;
       _messageType = widget.settings.messageType;
-      _textSenderController.text = widget.settings.messageSender;
-      _textReceiverController.text = widget.settings.messageReceiver;
+      _messageSender = widget.settings.messageSender;
+      _textSenderController.text = _messageSender;
+      _messageReceiver = widget.settings.messageReceiver;
+      _textReceiverController.text = _messageReceiver;
     });
   }
 
@@ -126,23 +135,29 @@ class _ViewSettingsState extends State<ViewSettings> {
                     return null;
                   },
                   controller: _textMessageIDController,
+                  onChanged: (value) {
+                    setState(() {
+                      _messageID = value;
+                    });
+                  },
                   decoration: const InputDecoration(
                     hintText: 'storerequest',
                     border: UnderlineInputBorder(),
                     labelText: 'Message ID',
                   ),
                 ),
-                DropdownButtonFormField<String>(
-                  key: const ValueKey('parameterWasteType'),
-                  value: ApplMessageType.request.name,
+                DropdownButtonFormField<ApplMessageType>(
+                  key: const ValueKey('parameterMessageType'),
+                  value: _messageType,
                   items: ApplMessageType.values
-                      .map<DropdownMenuItem<String>>((ApplMessageType value) {
+                      .map<DropdownMenuItem<ApplMessageType>>(
+                          (ApplMessageType value) {
                     return DropdownMenuItem(
-                        value: value.name, child: Text(value.name));
+                        value: value, child: Text(value.name));
                   }).toList(),
                   onChanged: (newValue) {
                     setState(() {
-                      //_currentWasteType = newValue!;
+                      _messageType = newValue!;
                     });
                   },
                   decoration: const InputDecoration(
@@ -161,6 +176,9 @@ class _ViewSettingsState extends State<ViewSettings> {
                     return null;
                   },
                   controller: _textSenderController,
+                  onChanged: (value) {
+                    _messageSender = value;
+                  },
                   decoration: const InputDecoration(
                     hintText: 'smartdevice',
                     border: UnderlineInputBorder(),
@@ -178,6 +196,9 @@ class _ViewSettingsState extends State<ViewSettings> {
                     return null;
                   },
                   controller: _textReceiverController,
+                  onChanged: (value) {
+                    _messageReceiver = value;
+                  },
                   decoration: const InputDecoration(
                     hintText: 'wasteservice',
                     border: UnderlineInputBorder(),
@@ -237,8 +258,6 @@ class _ViewSettingsState extends State<ViewSettings> {
               const Spacer(flex: 4),
               ElevatedButton(
                 onPressed: () {
-                  //_themeProvider.toggleTheme(_darkTheme);
-
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
