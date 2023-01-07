@@ -31,10 +31,10 @@ class _ViewSettingsState extends State<ViewSettings> {
 
   bool _isDefault() {
     return _typesRequestAtConnect == Settings.DEFAULT_SEND_TYPES_REQUEST &&
-        _textMessageIDController.text == Settings.DEFAULT_MESSAGE_ID &&
+        _messageID == Settings.DEFAULT_MESSAGE_ID &&
         _messageType == Settings.DEFAULT_MESSAGE_TYPE &&
-        _textSenderController.text == Settings.DEFAULT_MESSAGE_SENDER &&
-        _textReceiverController.text == Settings.DEFAULT_MESSAGE_RECEIVER;
+        _messageSender == Settings.DEFAULT_MESSAGE_SENDER &&
+        _messageReceiver == Settings.DEFAULT_MESSAGE_RECEIVER;
   }
 
   void _restore() {
@@ -177,7 +177,9 @@ class _ViewSettingsState extends State<ViewSettings> {
                   },
                   controller: _textSenderController,
                   onChanged: (value) {
-                    _messageSender = value;
+                    setState(() {
+                      _messageSender = value;
+                    });
                   },
                   decoration: const InputDecoration(
                     hintText: 'smartdevice',
@@ -197,7 +199,9 @@ class _ViewSettingsState extends State<ViewSettings> {
                   },
                   controller: _textReceiverController,
                   onChanged: (value) {
-                    _messageReceiver = value;
+                    setState(() {
+                      _messageReceiver = value;
+                    });
                   },
                   decoration: const InputDecoration(
                     hintText: 'wasteservice',
