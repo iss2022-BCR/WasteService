@@ -34,6 +34,8 @@
                     <a href="#Planner-BCR">PlannerBCR</a>
                     <a href="#Waste-Service-QAK-Actors">QAK Actors</a>
                     <a href="#WEnv">Virtual Environment<br/>(WEnv)</a>
+                    <a href="#Run-WasteService-Contexts">Run WasteService<br/>Contexts</a>
+                    <a href="#Build-WasteService">Build WasteService</a>
                 </div>
                 <a href="#Deployment">Deployment</a>
                 <a href="#WasteService-Demo">WasteService Demo</a>
@@ -333,17 +335,8 @@
             <br/><br/>
             <a href="../../../commons/docker/dockerNotes.html">BCR Docker Notes</a>
             
-            <h2 id="Deployment">Deployment</h2>
-            As a result of the project phase, we produced a series of applications, which
-            can be downloaded from the repository on GitHub:
-            <ul>
-                <li>SmartDevice Simulator: APK or Desktop version.</li>
-                <li>Echo Waste Server: APK or Desktop versions.</li>
-                <li>Map Editor BCR: self-containing JAR (requires Java 11).</li>
-                <li>WasteService: IntelliJ project.</li>
-            </ul>
-            In order to being able to run the main of the contexts separately, we created 3 different
-            gradle tasks:
+            <h3 id="Run-WasteService-Contexts">Run WasteService Contexts</h3>
+            To ease the debugging of the WasteService project, we created 3 gradle task, one for each context:
 <pre style="white-space: pre;">
 task(runCtx_WasteService, dependsOn: 'classes', type: JavaExec) {
     mainClass = 'it.unibo.ctx_wasteservice.MainCtx_wasteserviceKt'
@@ -360,7 +353,9 @@ task(runCtx_Robot, dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 }
 </pre>
-            Those tasks allow us to run each context using a specific gradle demon, with the following commands:
+
+            Those tasks allow us to run each context using a specific, separate gradle demon,
+            with the following commands:
             <ul>
                 <li>
                     Run the <ks>Robot</ks> context:
@@ -382,10 +377,66 @@ task(runCtx_Robot, dependsOn: 'classes', type: JavaExec) {
                 </li>
             </ul>
 
+            <h3 id="Build-WasteService">Build WasteService</h3>
+            In order to produce a self-contained JAR for each context, we added the following entries
+            in the <a href="../../Sprint1_Project/sprint1_waste_service/build.gradle"><code>build.gradle</code></a> file:
+
+<pre style="white-space: pre;">
+application {
+    // Define the main class for the application: -P&lt;build_name&gt; (default: WasteService build)
+    mainClassName = 'it.unibo.ctx_wasteservice.MainCtx_wasteserviceKt'
+    if (project.hasProperty("build_TransportTrolley")) {
+        mainClassName = 'it.unibo.ctx_wasteservice.MainCtx_transporttrolleyKt'
+    } else if (project.hasProperty("build_Robot")) {
+        mainClassName = 'it.unibo.ctx_wasteservice.MainCtx_robotKt'
+    }
+}
+
+jar {
+    from sourceSets.main.allSource
+    println("building $mainClassName jar...")
+    manifest {
+        attributes 'Main-Class': "$mainClassName"
+    }
+    baseName = project.findProperty('mainClassName')
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from ((configurations.compileClasspath.findAll{ !it.path.endsWith(".pom") }).collect { it.isDirectory() ? it : zipTree(it) }) {
+        exclude 'META-INF/MANIFEST.MF'
+        exclude 'META-INF/*.SF'
+        exclude 'META-INF/*.DSA'
+        exclude 'META-INF/*.RSA'
+    }
+}
+</pre>
+            To build the jar for a specific context, one must pass the correct parameter
+            with the <code>-P</code> option:
+            <ul>
+                <li><b>(Default)</b> <ks><code>build_WasteService</code></ks>, to build the WasteService context;</li>
+                <li><ks><code>build_TransportTrolley</code></ks>, to build the TransportTrolley context;</li>
+                <li><ks><code>build_Robot</code></ks>, to build the Robot context.</li>
+            </ul>
+            The JAR gets then built and placed under <a href="../../Sprint1_Project/sprint1_waste_service/build/libs/">build/libs/</a>.
+
+            Example:
+            <pre>
+                ./gradlew jar -Pbuild_TransportTrolley
+            </pre>
+            Will produce the JAR named: <code>it.unibo.ctx_transporttrolley.MainCtx_transporttrolleyKt-1.3.jar</code>
+
+            <h2 id="Deployment">Deployment</h2>
+            As a result of the project phase, we produced a series of applications, which
+            can be downloaded from our <a href="https://github.com/iss2022-BCR/WasteService/releases/latest">GitHub repository</a>
+            <ul>
+                <li>SmartDevice Simulator: APK or Desktop version.</li>
+                <li>Echo Waste Server: APK or Desktop versions.</li>
+                <li>Map Editor BCR: self-containing JAR (requires Java >11).</li>
+                <li>WasteService: 3 self-containing JAR, one for each context (requires Java >8).</li>
+            </ul>
+
             <h2 id="WasteService-Demo">WasteService Demo</h2>
             In order to run demo components we need:
             <ul>
-                <li>Java 11 or more recent</li>
+                <li>Java 8 or more recent</li>
                 <li>Gradle 7.4.1 or more recent</li>
                 <li>Docker</li>
                 <li>Flutter</li>
@@ -398,16 +449,16 @@ task(runCtx_Robot, dependsOn: 'classes', type: JavaExec) {
                     chrome window to show the robot.
                 </li>
                 <li>
-                    <a href="../../Sprint1_Project/scripts/run_AndroidEmulator.bat">run_AndroidEmulator.bat</a> - starts a Google Pixel_3a_API_30_x86 emulator
-                    (Android).
-                </li>
-                <li>
-                    <a href="../../Sprint1_Project/scripts/run_WasteService.bat">run_WasteService.bat</a> - starts 3 gradle demons, one for each context of
-                    the WasteService.
-                    <br/><br/>
-                    <b>NB</b>: in order to run the WasteService project, the dependencies must be resolved by having a folder named <code>unibolibs</code>, with the needed libraries
-                    from our software house (can be downloaded from <a href="https://github.com/iss2022-BCR/WasteService/releases/download/sprint1_v1/unibolibs.zip">this link</a>),
-                    in the directory one level below the project directory:
+                    Run the Waste Service (2 options):
+                    <ul>
+                        <li>
+                            Run the service using gradle daemon (<b>IntelliJ project</b>):<br/>
+                            <a href="../../Sprint1_Project/scripts/run_WasteService.bat">run_WasteService.bat</a> - starts 3 gradle demons, one for each context of
+                            the WasteService.
+                            <br/><br/>
+                            <b>NB</b>: in order to run the WasteService project, the dependencies must be resolved by having a folder named <code>unibolibs</code>, with the needed libraries
+                            from our software house (can be downloaded from <a href="https://github.com/iss2022-BCR/WasteService/releases/download/sprint1_v1/unibolibs.zip">this link</a>),
+                            in the directory one level below the project directory:
 <b><pre style="white-space: pre;">
 WasteService/
   |
@@ -418,11 +469,33 @@ WasteService/
               +-- sprint1_waste_service/
               +-- unibolibs/        &lt;- libraries (JARs)        
 </pre></b>
+                        </li>
+                        <li>
+                            Or run the service using the <b>JARs</b>:<br/>
+                            Download the WasteService ZIP archive from our <a href="https://github.com/iss2022-BCR/WasteService/releases/latest">GitHub repository</a>,
+                            extract its content, and run the script <code>Run_All_Ctx.bat</code>.
+                        </li>
+                    </ul>
+                <li>Run the Smart Device (2 options):
+                    <ul>
+                        <li>
+                            Use the <b>Android Emulator</b>:<br/>
+                            <ol>
+                                <li>Execute <a href="../../Sprint1_Project/scripts/run_AndroidEmulator.bat">run_AndroidEmulator.bat</a>, which starts a Google Pixel_3a_API_30_x86 emulator
+                                    (Android);</li>
+                                <li>Launch <a href="../../Sprint1_Project/scripts/run_SmartDevice.bat">run_SmartDevice.bat</a>, which runs the Flutter application on the Android Emulator.</li>
+                            </ol>
+                        </li>
+                        <li>
+                            Use a <b>real device</b> (requires a smartphone with Android):</br>
+                            <ol>
+                                <li>Download the SmartDevice APK from our <a href="https://github.com/iss2022-BCR/WasteService/releases/latest">GitHub repository</a>;</li>
+                                <li>Install and run the application on your device.</li>
+                            </ol>
+                        </li>
+                    </ul>
                 </li>
-                <li>
-                    <a href="../../Sprint1_Project/scripts/run_SmartDevice.bat">run_SmartDevice.bat</a> - launch the Flutter application on the Android Emulator.
-                </li>
-                <li>
+                <!--<li>
                     <a href="../../Sprint1_Project/scripts/run_Demo_SmartDevice.bat">run_Demo_SmartDevice.bat</a> - runs the SmartDevice application integration demo test for the SmartDevice
                     that succeeds if it was able to connect to the WasteService, receive the types, and receive a reply to the store request.
                     It can take 4 or 0 arguments (the order matters):
@@ -432,7 +505,7 @@ WasteService/
                         <li><code>WasteType</code> - the type of waste we want to use during the test.</li>
                         <li><code>WasteWeight</code> - the amount of waste we want to dumo during the test.</li>
                     </ol>
-                </li>
+                </li>-->
             </ol>
 
             

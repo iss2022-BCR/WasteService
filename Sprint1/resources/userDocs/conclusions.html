@@ -244,15 +244,24 @@
             <h3 id="Demo-Example">Demo Example</h3>
             <h4>Setup</h4>
             <ol>
+                <li>Install Java (>8 or >11 if one wants to use the MapEditor);</li>
                 <li>Install docker.</li>
                 <li>Install gradle (>= 7.4).</li>
-                <li>(Optional) install Flutter to run the Smart Device on the Android Emulator.</li>
-                <li>Download <a href="https://github.com/iss2022-BCR/WasteService/releases/download/sprint1_v1/virtualRobotOnly4.0.yaml">VirtualRobot</a> docker image.</li>
-                <li>Download <a href="https://github.com/iss2022-BCR/WasteService/releases/download/sprint1_v1/sprint1_waste_service.zip">WasteService</a> zip and extract its content.</li>
                 <li>
-                    Download the SmartDevice:
-                    <a href="https://github.com/iss2022-BCR/WasteService/releases/download/sprint1_v1/sprint1_smart_device.apk">APK</a>,
-                    <a href="https://github.com/iss2022-BCR/WasteService/releases/download/sprint1_v1/sprint1_smart_device_Windows_x64.zip">Windows version</a>.
+                    (Optional, if one doesn't have an Android device)
+                    <ul>
+                        <li>Install an Android Emulator (<a href="https://developer.android.com/studio/run/emulator">guide</a>);</li>
+                        <li>Install Flutter (<a href="https://docs.flutter.dev/get-started/install">guide</a>) </li>
+                    </ul>
+                </li>
+                <li>
+                    From the latest release on our <a href="https://github.com/iss2022-BCR/WasteService/releases/latest">GitHub repository</a>, download:
+                    <ul>
+                        <li>VirtualRobot docker image (<code>virtualRobotOnly4.0.yaml</code>).</li>
+                        <li>WasteService ZIP archive (<code>waste_service.zip</code>).</li>
+                        <li>SmartDevice APK (<code>smart_device.apk</code>).</li>
+                    </ul>
+                    NB: file names can vary a bit (sprint number, version number). Use the <b>latest version available</b>.
                 </li>
             </ol>
             <h4>Execution</h4>
@@ -267,8 +276,8 @@
                     <br/>
                 </li>
                 <li>
-                    Run the WasteService by using the script <code>run_WasteService.bat</code> (extracted
-                    from sprint1_waste_service zip).
+                    Run the WasteService by launching the script <code>Run_All_Ctx.bat</code> (extracted
+                    from the ZIP archive).
                     <center><img width="100%" src="../imgs/demo/run_WasteService.png"/></center>
                     <br/>
                 </li>
