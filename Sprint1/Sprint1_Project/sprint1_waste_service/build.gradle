@@ -15,7 +15,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version "$kotlinVersion"
 }
 
-version '1.0'
+version '1.3'
 sourceCompatibility = 11
 
 repositories {
@@ -110,14 +110,27 @@ eclipse {
 
 application {
     // Define the main class for the application.
-    mainClass = 'it.unibo.ctx_wasteservice.MainCtx_wasteserviceKt'
+	mainClassName = 'it.unibo.ctx_wasteservice.MainCtx_wasteserviceKt'
+	if (project.hasProperty("build_TransportTrolley")) {
+		mainClassName = 'it.unibo.ctx_transporttrolley.MainCtx_transporttrolleyKt'
+	} else if (project.hasProperty("build_Robot")) {
+		mainClassName = 'it.unibo.ctx_robot.MainCtx_robotKt'
+	}
 }
 
 jar {
-    println("building jar")
     from sourceSets.main.allSource
+    println("building $mainClassName jar...")
     manifest {
-        attributes 'Main-Class': 'it.unibo.ctx_wasteservice.MainCtx_wasteserviceKt'
+        attributes 'Main-Class': "$mainClassName"
+    }
+    baseName = project.findProperty('mainClassName')
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from ((configurations.compileClasspath.findAll{ !it.path.endsWith(".pom") }).collect { it.isDirectory() ? it : zipTree(it) }) {
+    	exclude 'META-INF/MANIFEST.MF'
+	    exclude 'META-INF/*.SF'
+	    exclude 'META-INF/*.DSA'
+	    exclude 'META-INF/*.RSA'
     }
 }
 

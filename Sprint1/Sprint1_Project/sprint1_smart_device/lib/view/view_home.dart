@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sprint1_smart_device/model/networking/tcp_client_connection.dart';
 
+import '../model/appl_message.dart';
 import '../model/networking/client_connection.dart';
+import '../model/settings.dart';
+import '../widgets/side_menu_widget.dart';
 import 'view_request.dart';
 
 import '../model/constants.dart' as Constants;
@@ -17,6 +20,8 @@ class ViewHome extends StatefulWidget {
 }
 
 class _ViewHomeState extends State<ViewHome> {
+  final Settings _settings = Settings();
+
   final _formKeyConnection = GlobalKey<FormState>();
 
   final TextEditingController _textControllerAddress = TextEditingController();
@@ -54,17 +59,22 @@ class _ViewHomeState extends State<ViewHome> {
     _tcpClientConnection = TcpClientConnection();
     _tcpClientConnection
         .connect(ip, port, timeout: const Duration(seconds: 5))
-        .then((value) {
-      setState(() {
-        _isLoading = false;
-      });
-      Navigator.push(
+        .then(
+      (value) {
+        setState(() {
+          _isLoading = false;
+        });
+        Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => ViewRequest(
-                  connection: _tcpClientConnection,
-                  notifyParent: _showAlertDialog)));
-    }).onError((error, stackTrace) {
+            builder: (context) => ViewRequest(
+                settings: _settings,
+                connection: _tcpClientConnection,
+                notifyParent: _showAlertDialog),
+          ),
+        );
+      },
+    ).onError((error, stackTrace) {
       setState(() {
         _isLoading = false;
       });
@@ -81,9 +91,29 @@ class _ViewHomeState extends State<ViewHome> {
     });
   }
 
+  void _saveSettings(bool sendTypesReq, String msgID, ApplMessageType msgType,
+      String msgSender, String msgReceiver) {
+    setState(() {
+      _settings.sendTypesRequest = sendTypesReq;
+      _settings.messageID = msgID;
+      _settings.messageType = msgType;
+      _settings.messageSender = msgSender;
+      _settings.messageReceiver = msgReceiver;
+      _settings.saveSettings();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _settings.loadSettings();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: NavDrawer(settings: _settings, saveSettings: _saveSettings),
       appBar: AppBar(
         title: const Text(Constants.titleHome),
         centerTitle: true,
