@@ -45,10 +45,88 @@
             il problema principale è realizzare il meccanismo di stop/resume.
             E conseguentemente implementare il return a home (interrupt(?)).
 
+        <!--
             <h2 id="Defects-Solving">Defects Solving</h2>
+            
+            <problem><a href="../../../Sprint1/resources/userDocs/conclusions.html#Bugs">Bug #7</a>: LoarRejected Blocked</problem>
+            <b>Problem</b>: If a Smart Device sends a store request when the Waste Service is already
+            handling a deposit action, the request isn't consumed even if the load cannot be accepted
+            (differently from what we've considered in Sprint1 Problem Analysis).
+            <br/>
+            <b>Consideration</b>: this occurs because the implementation is based on a request/response model:
+                the message in the Waste Service queue cannot be consumed because the Waste Service itself is waiting 
+                for the Transport Trolley reply, while it's performing a deposit action. That suggests us that
+                the request/response model does not suit the interaction needed to meet the requirement that
+                "the truck driver must be sent off as soon as possible".
+            <solution>
+                <b>Solution</b>: use a <ksi>dispatch/dispatch interaction model</ksi> between the Waste Service and the Transport Trolley.
+                <br/>
+                <b>Reasons</b>: the dispatch/dispatch interaction allows the Waste Service <ksi>not to have to wait</ksi> for a
+                reply from the Transport Trolley, which means it can handle other requests in the meantime.
+            </solution>
+            
+            <h3>MapEditor</h3>
+        -->
+            <h2>Logical Architecture from Sprint1</h2>
+            <img width="100%" src="../../../Sprint1/Sprint1_Project/sprint1_waste_service/project_logical_architecture_waste_service.png"/>
+            QAK model: <a href="../../../Sprint1/Sprint1_Project/sprint1_waste_service/src/waste_service.qak">waste_service.qak</a>
 
             <h2 id="Raspberry-Pi-Software">Raspberry Pi Software</h2>
+            The raspberry pi software includes the alarm and warning devices (sonar and led).
+            They both are attached to the Raspberry Pi, which is situated on a
+            computational node different from the Waste Service one.
+            Therefore, we must analyze which software components are going to run on
+            one and which on the other.
+            <br/>
+            <br/>
+            Therefore, we are going to add a context called <ksi>ctx_raspberry</ksi>
+            where sonar and led actors will be executing.
             
+            <h3>Sonar</h3>
+            The sonar is an electronical component which detects the presence
+            of obstacles ahead at intervals of time.
+            
+            <problem>Sonar data sent</problem>
+            <b>Problem</b>: What data does the sonar send? Should it send a message for each detection?
+            <alternative>
+                <b>Alternatives</b>:
+                <ol>
+                    <li>
+                        Send a message <b>for each data input</b> detection. That solution
+                        is the most flexible and general purpose to implement: we send everything
+                        the sonar knows and let the Waste Service do the rest. However, that generates
+                        an increase in bandwidth consumption, especially in the case the sonar performs
+                        detections rapidly, and that could cause greater problems if
+                        the service grows in size (<i>flexible but not much scalable</i>).
+                    </li>
+                    <li>
+                        Send a message only <b>when the state changes</b>. That greatly reduces
+                        the number of exchanged messages, saving bandwidth, and directly addresses the requirement.
+                    </li>
+                </ol>
+            </alternative>
+            
+            <solution>
+                <b>Solution</b>: Send a message only <ksi>when the state changes</ksi>.
+                <br/>
+                <b>Reasons</b>: the core-business doesn't care about the distance at all.
+                In fact, from the Waste Service perspective,
+                the sonar functions as a simple switch ON/OFF, which indicates if the system
+                is in a state of alarm (distance &lt; DLIM) or not. Therefore, the only information
+                needed to completely address the customer requirement, is the change of the alarm
+                state.
+            </solution>
+            
+            
+            <problem>Sonar data receiver</problem>
+            <b>Problem</b>: Who (in Waste Service context) receives the sonar data?
+            
+            <problem>Alarm message type</problem>
+
+            <h3>Led</h3>
+
+            <problem>TT state change message type</problem>
+
             <problem>Problem</problem>
             <b>Problem</b>: 
             <solution>
@@ -60,16 +138,87 @@
                 <b>Alternatives</b>:    
             </alternative>
 
-            <problem>Interaction with the Sonar</problem>
-            <b>Problem</b>: How do the WasteService and the Sonar communicate? Which actors receives sonar data? 
-            <solution>
-                <b>Solution</b>:
-                <br/>
-                <b>Reasons</b>:
-            </solution>
-            <alternative>
-                <b>Alternatives</b>:    
-            </alternative>
+            <h3>Stop/Resume feature</h3>
+            <highlight1>Requisito Stop/Resume:
+            la soluzione più desiderabile sarebbe poter fermare il robot non appena si verifica l'alarm: l'alarm infatti, potrebbe essere dovuto ad un guasto o ad un'emergenza che potrebbe potenzialmente mettere in pericolo eventuali operatori o l'integrità del sistema. Tuttavia, il software del basic robot, dispone solo di due interfacce per la comunicazione con il VirtualRobot: command e step. Step prevede un'interazione sincrona, ed è possibile specificare la durata dell'azione; command asincrona, ma non è possibile specificare la durata. Per questo motivo, avendo diviso la stanza in celle di egual dimensione, è necessario che il robot si muova appunto di una cella alla volta, e ciò diventerebbe difficile con...
+            in quanto bisognerebbe prevedere un meccanismo per terminare il comando, una volta interrotto a metà, ecc.
+            In ogni caso sarebbe necessario modificare il codice del prof.
+
+            Per semplicità...</highlight1>
+            <problem>Movimento del Robot</problem>
+            il robot si muove a step? Sì, perché nello Sprint1 abbiamo ritenuto che rappresentare la stanza
+            come una mappa di caselle, fosse la soluzione migliore. Dunque, per rispettare questa rappresentazione,
+            e far muovere il robot all'interno della stanza, è necessario farlo muovere a step.
+            Gli step sono delle request/reply: il TT manda una request al basic robot, che esegue lo step e 
+            invia una reply col risultato (OK in caso di successo).
+            <br/>
+            Cosa succede quando arriva una stop? La stop non viene inviata dal TT, in quanto lui si lavora a
+            request/reply, quindi è già impegnato in un'interazione sincrona.
+            La stop viene inviata da un componente esterno, direttamente al basic robot, che la gestisce e
+            interrompe prematuramente, se ve ne è una in corso, l'azione di step.
+            <br/>
+            NB: quando il TT riceve una stop:
+            - se stava eseguendo una step -> riceverà una stepError e, analizzandone il contenuto,
+            capirà che il motivo è la stop, ed entrerà in stato di stop;
+            - se non stava eseguendo azioni -> riceverà un dispatch di stop, e andrà direttamente
+            nello stato stop.
+            <br/>
+            Quando in stato di stop, il TT non esegue azioni, ma aspetta solo messaggi di resume.
+            Quando riceve resume, se sono presenti
+            <br/>
+            Il robot interrompe l'azione che stava facendo, 
+
+            <br/>
+            ----
+            <br/>
+            <alternative>Possibile soluzione: controllare ad ogni step se è presente un messaggio di stop.</alternative>
+            Se il robot si muove a step e controlla ad ogni step se c'è una stop -> soluzione stupida
+            e semplice da implementare, ma considerando un ambiente reale, il problema che si genera è
+            che il robot potrebbe non fermarsi immediatamente quando riceve la stop, ma proseguire per
+            completare lo step. Questo potrebbe rappresentare un problema, nel caso ci fosse un'emergenza
+            dovuta ad un ostacolo.
+
+            <br/>
+            Modificare pathexecutor -> pathexecutorBCR? Aggiungere doStepOfPath oppure
+            doCmd
+
+            <h3>Return to home/Go to pickup</h3>
+
+            <h2 id="Raspberry-Pi-Components">Raspberry Pi Components</h2>
+            
+            <highlight1>Led behaviour</highlight1>
+            How fast make it blink? Do some test and discover the optimal time
+            <br/>
+            <highlight2>Sonar distance capture intervals</highlight2>
+            How many times per second the sonar must 
+
+            <h2 id="Interactions">Interactions</h2>
+
+            <h3 id="Messages">Raspberry Pi Messages</h3>
+            <table class="dictionary">
+                <tr>
+                    <th>Message</th>
+                    <th>Type</th>
+                    <th>Sender</th>
+                    <th>Receiver</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>sonar_data</td>
+                    <td>Dispatch</td>
+                    <td>SonarDevice</td>
+                    <td>?</td>
+                    <td>
+                        Sends .
+                    </td>
+                </tr>
+            </table>
+            
+            <h3>Sonar Interaction</h3>
+            <problem>Who does the sonar interact with</problem>
+            The Waste Service
+
+            <problem>What messages and how often</problem>
 
             <h2 id="Logical-Architecture">Logical Architecture</h2>
             
@@ -84,6 +233,24 @@
                     <th>Description</th>
                     <th>Files</th>
                 </tr>
+                <!--<tr>
+                    <td>Defects Solution</td>
+                    <td>
+                        <ul>
+                            <li>SmartDevice</li>
+                            <li>WasteService</li>
+                            <li>TransportTrolley</li>
+                        </ul>
+                    </td>
+                    <td>
+                        We check if the SmartDevice receives a loadrejected immediately,
+                        even though a deposit action is currently being performed by the TransportTrolley.
+                    </td>
+                    <td>
+                        QAK: <a href="">.qak</a>
+                        Test: <a href="">.kt</a>
+                    </td>
+                </tr>-->
                 <tr>
                     <td></td>
                     <td>

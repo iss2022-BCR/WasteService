@@ -81,7 +81,7 @@
                     <th>Description/Behaviour</th>
                 </tr>
                 <tr>
-                    <td>alarmDevice</td>
+                    <td>alarmDevice (sonar)</td>
                     <td>Proactive</td>
                     <td>-</td>
                     <td>
@@ -92,7 +92,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>warningDevice</td>
+                    <td>warningDevice (led)</td>
                     <td>Reactive</td>
                     <td>-</td>
                     <td>
@@ -194,15 +194,31 @@
 
             <h2 id="System-Components">System Components</h2>
             <h3 id="Raspberry-Pi">Raspberry Pi</h3>
-            <h4 id="Led">Led</h3>
-            <h4 id="Sonar">Sonar</h3>
+            A device located on a separate node from the WasteService one, to which two components
+            are attached: Led and Sonar.
+
+            <h4 id="Led">Led</h4>
+            The led is an output component which updates its state in real-time, according to
+            the data received. Those data refers to the Transport Trolley current state:
+            <ul>
+                <li>Transport Trolley is at HOME, then the Led must be off;</li>
+                <li>Transport Trolley is moving, then the Led must be blinking;</li>
+                <li>Transport Trolley is stopped, then the Led must be on.</li>
+            </ul>
+            
+            <h4 id="Sonar">Sonar</h4>
+            The sonar is an input component which measures the distance in a straight line,
+            from the surrounding environmentsends, and sends those data.
             
             <h3 id="Waste-Service">Waste Service</h3>
-            The WasteService receives messages about the distance detected through the sonar...
+            Core of the system, which receives store requests from the clients and handles them.
 
             <h4 id="Transport-Trolley">Transport Trolley</h4>
+            The Transport Trolley receives high level <i>behavioral commands</i> from the Waste Service and 
+            sends low level <i>movement commands</i> to the DDR Robot.
 
             <h3 id="DDR-Robot">DDR Robot</h3>
+            Receives low level movement commands and executes them.
         </div>
     </body>
 </html>
