@@ -40,6 +40,10 @@
 - [ ] **Sprint2** - Raspberry Pi
 - [ ] **Sprint3** - Monitoring
 
+### Competenze Acquisite
+- SCRUM/Agile
+[...]
+
 ### Membri del Team
 <table>
   <!--<tr align="center"><td colspan="3"><b>Team BCR</b></td></tr>-->
