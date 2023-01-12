@@ -43,7 +43,7 @@
             <br/>
 
             il problema principale è realizzare il meccanismo di stop/resume.
-            E conseguentemente implementare il return a home (interrupt(?)).
+            E conseguentemente implementare il return a home.
 
         <!--
             <h2 id="Defects-Solving">Defects Solving</h2>
@@ -113,16 +113,43 @@
                 In fact, from the Waste Service perspective,
                 the sonar functions as a simple switch ON/OFF, which indicates if the system
                 is in a state of alarm (distance &lt; DLIM) or not. Therefore, the only information
-                needed to completely address the customer requirement, is the change of the alarm
-                state.
+                needed to completely address the customer requirement, is <ksi>the change of the alarm
+                state</ksi>.
             </solution>
             
-            
+            <problem>Alarm message type</problem>
+            <b>Problem</b>: What types of message are involved in the sonar interaction?
+            <br/>
+            <b>Consideration</b>
+            sonar_data(distance) -> dispatch since it has a receiver and is asynchronous.
+
+            startAlarm
+            stopAlarm
+
+            stop -> dispatch, since it has a target (TT) and is asynchronous 
+            resume -> dispatch, since it has a target (TT)
+
+            Event because they indicate an emergency (and potentially dangerous) situation
+            of the service in its whole: when the alarm switches on, even though there might 
+            be components which are not interested in the event, everything inside the WasteService
+            must stop.
+
             <problem>Sonar data receiver</problem>
             <b>Problem</b>: Who (in Waste Service context) receives the sonar data?
             
-            <problem>Alarm message type</problem>
+            <alternative>
+                <b>Alternatives</b>:
+                <ol>
+                    <li>WasteService
+                    </li>
+                    <li>TransportTrolley
+                    </li>
+                    <li>A specific component</li>
+                </ol>
+            </alternative>
 
+            
+            
             <h3>Led</h3>
 
             <problem>TT state change message type</problem>
