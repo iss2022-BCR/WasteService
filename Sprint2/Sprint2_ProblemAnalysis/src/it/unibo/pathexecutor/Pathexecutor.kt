@@ -23,7 +23,7 @@ class Pathexecutor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 					action { //it:State
 						 CurMoveTodo = ""  
 						 sysUtil.logMsgs=true  
-						println("[PathExecutor] started")
+						println("[PathExecutor] Started.")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

@@ -37,7 +37,7 @@ class Typesprovider ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( na
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t10",targetState="state_handle_wastetypes_request",cond=whenRequest("typesrequest"))
+					 transition(edgeName="t00",targetState="state_handle_wastetypes_request",cond=whenRequest("typesrequest"))
 				}	 
 				state("state_handle_wastetypes_request") { //this:State
 					action { //it:State

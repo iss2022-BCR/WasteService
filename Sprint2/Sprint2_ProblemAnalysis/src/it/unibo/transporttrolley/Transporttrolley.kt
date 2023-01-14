@@ -47,7 +47,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t15",targetState="state_handle_deposit_request",cond=whenRequest("deposit"))
+					 transition(edgeName="t05",targetState="state_handle_deposit_request",cond=whenRequest("deposit"))
 				}	 
 				state("state_handle_deposit_request") { //this:State
 					action { //it:State
@@ -75,7 +75,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 									plannerBCR.setGoal(goal.first, goal.second)
 									plannerBCR.doPlan()
 									Actions = plannerBCR.getActionsString()
-						request("dopath", "dopath($Actions,transporttrolley)" ,"pathexecutor_bcr" )  
+						request("dopath", "dopath($Actions,transporttrolley)" ,"pathexecutor" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -106,14 +106,14 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 									plannerBCR.setGoal(goal.first, goal.second)
 									plannerBCR.doPlan()
 									Actions = plannerBCR.getActionsString()
-						request("dopath", "dopath($Actions,transporttrolley)" ,"pathexecutor_bcr" )  
+						request("dopath", "dopath($Actions,transporttrolley)" ,"pathexecutor" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t18",targetState="state_dump",cond=whenReply("dopathdone"))
-					transition(edgeName="t19",targetState="state_error",cond=whenReply("dopathfail"))
+					 transition(edgeName="t28",targetState="state_dump",cond=whenReply("dopathdone"))
+					transition(edgeName="t29",targetState="state_error",cond=whenReply("dopathfail"))
 				}	 
 				state("state_dump") { //this:State
 					action { //it:State
@@ -137,40 +137,14 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 									plannerBCR.setGoal(goal.first, goal.second)
 									plannerBCR.doPlan()
 									Actions = plannerBCR.getActionsString()
-						request("dopath", "dopath($Actions,transporttrolley)" ,"pathexecutor_bcr" )  
+						request("dopath", "dopath($Actions,transporttrolley)" ,"pathexecutor" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t110",targetState="state_idle",cond=whenReply("dopathdone"))
-					transition(edgeName="t111",targetState="state_path_fail",cond=whenReply("dopathfail"))
-				}	 
-				state("state_path_fail") { //this:State
-					action { //it:State
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-				}	 
-				state("state_stop") { //this:State
-					action { //it:State
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t112",targetState="state_wait_resume",cond=whenDispatch("resume"))
-				}	 
-				state("state_wait_resume") { //this:State
-					action { //it:State
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t113",targetState="state_idle",cond=whenReply("dopathdone"))
+					 transition(edgeName="t310",targetState="state_idle",cond=whenReply("dopathdone"))
+					transition(edgeName="t311",targetState="state_error",cond=whenReply("dopathfail"))
 				}	 
 				state("state_error") { //this:State
 					action { //it:State
@@ -178,16 +152,15 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								
 												var PathStillToDo = payloadArg(0)
-								println("[TransportTrolley] An Error occurred while trying to move along a path.
-								Path still to do: $PathStillToDo")
-								println("[TransportTrolley] System needs to be rebooted. Check logs for more information.")
-								forward("depositfailed", "depositfailed(payloadArg(0))" ,"wasteservice" ) 
+								println("[TransportTrolley] An Error occurred while trying to move along a path.")
+								println("[TransportTrolley] Path still to do: $PathStillToDo")
 						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition( edgeName="goto",targetState="state_idle", cond=doswitch() )
 				}	 
 			}
 		}

@@ -106,13 +106,38 @@ eclipse {
 
 application {
     // Define the main class for the application.
-    mainClass = 'it.unibo.ctx_defect_solution_test.MainCtx_defect_solution_testKt'
+    mainClass = 'it.unibo.ctx_wasteservice.MainCtx_wasteserviceKt'
 }
 
-jar {
+/*jar {
     println("building jar")
     from sourceSets.main.allSource
     manifest {
         attributes 'Main-Class': "$mainClassName"
     }
+}*/
+
+task(runCtx_SmartDevice, dependsOn: 'classes', type: JavaExec) {
+    mainClass = 'it.unibo.ctx_smartdevice.MainCtx_smartdeviceKt'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task(runCtx_RaspBerry, dependsOn: 'classes', type: JavaExec) {
+    mainClass = 'it.unibo.ctx_raspberry.MainCtx_raspberryKt'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task(runCtx_WasteService, dependsOn: 'classes', type: JavaExec) {
+    mainClass = 'it.unibo.ctx_wasteservice.MainCtx_wasteserviceKt'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task(runCtx_TransportTrolley, dependsOn: 'classes', type: JavaExec) {
+    mainClass = 'it.unibo.ctx_transporttrolley.MainCtx_transporttrolleyKt'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task(runCtx_Robot, dependsOn: 'classes', type: JavaExec) {
+    mainClass = 'it.unibo.ctx_robot.MainCtx_robotKt'
+    classpath = sourceSets.main.runtimeClasspath
 }

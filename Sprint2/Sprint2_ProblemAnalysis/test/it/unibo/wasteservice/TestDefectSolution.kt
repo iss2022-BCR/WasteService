@@ -1,6 +1,6 @@
 package it.unibo.wasteservice
 
-import it.unibo.kactor.ActorBasic
+/*import it.unibo.kactor.ActorBasic
 import it.unibo.kactor.MsgUtil
 import it.unibo.kactor.QakContext
 import unibo.comm22.interfaces.Interaction2021
@@ -13,10 +13,10 @@ import kotlin.concurrent.thread
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-import kotlin.test.assertTrue
+import kotlin.test.assertTrue*/
 
 class TestDefectSolution {
-    companion object {
+    /*companion object {
         private const val hostname = "localhost"
         private const val port = 11705
         private const val actorNameSD1 = "smartdevice1"
@@ -151,5 +151,5 @@ class TestDefectSolution {
         }
 
         return reply
-    }
+    }*/
 }

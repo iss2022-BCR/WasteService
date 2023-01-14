@@ -45,7 +45,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t11",targetState="state_handle_storerequest",cond=whenRequest("storerequest"))
+					 transition(edgeName="t01",targetState="state_handle_storerequest",cond=whenRequest("storerequest"))
 				}	 
 				state("state_handle_storerequest") { //this:State
 					action { //it:State
@@ -125,8 +125,8 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t13",targetState="state_deposit_completed",cond=whenDispatch("depositcompleted"))
-					transition(edgeName="t14",targetState="state_deposit_failed",cond=whenDispatch("depositfailed"))
+					 transition(edgeName="t23",targetState="state_deposit_completed",cond=whenDispatch("depositcompleted"))
+					transition(edgeName="t24",targetState="state_deposit_failed",cond=whenDispatch("depositfailed"))
 				}	 
 				state("state_deposit_completed") { //this:State
 					action { //it:State
