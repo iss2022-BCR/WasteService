@@ -33,6 +33,7 @@ class Alarm_controller ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				state("state_idle") { //this:State
 					action { //it:State
 						println("[AlarmController] Listening for sonar data...")
+						println("[AlarmController] Current state: $Alarm")
 						 PrevAlarm = Alarm  
 						//genTimer( actor, state )
 					}
@@ -44,7 +45,7 @@ class Alarm_controller ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				state("state_handle_sonar_data") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						if( checkMsgContent( Term.createTerm("sonar_data(DISTANCE,TIMESTAMP)"), Term.createTerm("sonarevent(DISTANCE,TIMESTAMP)"), 
+						if( checkMsgContent( Term.createTerm("sonar_data(DISTANCE)"), Term.createTerm("sonar_data(DISTANCE)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 Alarm = wasteservice.Utils.isAlarm(payloadArg(0))  
 								println("[AlarmController] Received sonar data: ${payloadArg(0)}")

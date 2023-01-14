@@ -46,7 +46,7 @@ Event alarm:		alarm(X)
 
 // Sprint2 Problem Analysis
 // Sonar -> AlarmController
-Dispatch sonar_data:	sonar_data(DISTANCE, TIMESTAMP)
+Dispatch sonar_data:	sonar_data(DISTANCE)
 // AlarmController -> System
 Event startAlarm:		startAlarm(_)
 // AlarmController -> System
@@ -521,6 +521,26 @@ QActor basicrobot context ctx_robot {
 }
 
 // Sprint2 Problem Analysis ===================================================
+QActor sonar_mock_test context ctx_raspberry {
+	State state_init initial {
+		println("[SonarMockTest] Started.")
+		
+		delay 10000
+	}
+	Goto state_detect
+	
+	State state_detect {
+		[# var Distance = kotlin.random.Random.nextInt(0, 100) #]
+		println("[SonarMockTest] Sending distance: $Distance")
+		
+		// send distance
+		forward alarm_controller -m sonar_data: sonar_data($Distance)
+		
+		delay 5000
+	}
+	Goto state_detect
+}
+
 QActor alarm_controller context ctx_raspberry {
 	[#
 		var SonarDistance: Double = Double.MAX_VALUE
@@ -534,6 +554,7 @@ QActor alarm_controller context ctx_raspberry {
 	
 	State state_idle {
 		println("[AlarmController] Listening for sonar data...")
+		println("[AlarmController] Current state: $Alarm")
 		[# PrevAlarm = Alarm #]
 	}
 	Transition t0 whenMsg sonar_data -> state_handle_sonar_data
@@ -541,7 +562,7 @@ QActor alarm_controller context ctx_raspberry {
 	State state_handle_sonar_data {
 		printCurrentMessage
 		
-		onMsg(sonar_data: sonarevent(DISTANCE, TIMESTAMP)) {
+		onMsg(sonar_data: sonar_data(DISTANCE)) {
 			[# Alarm = wasteservice.Utils.isAlarm(payloadArg(0)) #]
 	    	println("[AlarmController] Received sonar data: ${payloadArg(0)}")
 	    	
