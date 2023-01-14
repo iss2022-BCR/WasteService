@@ -25,6 +25,8 @@ with Diagram('waste_serviceArch', show=False, outformat='png', graph_attr=grapha
      with Cluster('ctx_transporttrolley', graph_attr=nodeattr):
           transporttrolley=Custom('transporttrolley','./qakicons/symActorSmall.png')
           pathexecutor=Custom('pathexecutor','./qakicons/symActorSmall.png')
+     with Cluster('ctx_raspberry', graph_attr=nodeattr):
+          alarm_controller=Custom('alarm_controller','./qakicons/symActorSmall.png')
      with Cluster('ctx_robot', graph_attr=nodeattr):
           basicrobot=Custom('basicrobot','./qakicons/symActorSmall.png')
      typesprovider >> Edge(color='green', style='dashed', xlabel='typesreply') >> sys 
@@ -42,4 +44,6 @@ with Diagram('waste_serviceArch', show=False, outformat='png', graph_attr=grapha
      pathexecutor >> Edge(color='green', style='dashed', xlabel='dopathfail') >> sys 
      basicrobot >> Edge(color='green', style='dashed', xlabel='stepdone') >> sys 
      basicrobot >> Edge(color='green', style='dashed', xlabel='stepfail') >> sys 
+     alarm_controller >> Edge( xlabel='startAlarm', **eventedgeattr) >> sys
+     alarm_controller >> Edge( xlabel='stopAlarm', **eventedgeattr) >> sys
 diag

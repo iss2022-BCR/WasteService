@@ -109,13 +109,13 @@ application {
     mainClass = 'it.unibo.ctx_wasteservice.MainCtx_wasteserviceKt'
 }
 
-/*jar {
+jar {
     println("building jar")
     from sourceSets.main.allSource
     manifest {
         attributes 'Main-Class': "$mainClassName"
     }
-}*/
+}
 
 task(runCtx_SmartDevice, dependsOn: 'classes', type: JavaExec) {
     mainClass = 'it.unibo.ctx_smartdevice.MainCtx_smartdeviceKt'

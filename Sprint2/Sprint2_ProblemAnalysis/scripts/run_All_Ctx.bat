@@ -4,7 +4,7 @@ cd ..
 :: start .\gradlew runCtx_SmartDevice
 
 :: Run RaspBerry Context
-::start .\gradlew runCtx_Raspberry
+start .\gradlew runCtx_Raspberry
 
 :: Run Robot Context
 start .\gradlew runCtx_Robot
