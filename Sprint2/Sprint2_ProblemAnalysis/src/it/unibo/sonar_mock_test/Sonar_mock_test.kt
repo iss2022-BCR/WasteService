@@ -32,7 +32,7 @@ class Sonar_mock_test ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 						 var Distance = kotlin.random.Random.nextInt(0, 100)  
 						println("[SonarMockTest] Sending distance: $Distance")
 						forward("sonar_data", "sonar_data($Distance)" ,"alarm_controller" ) 
-						delay(5000) 
+						delay(7000) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

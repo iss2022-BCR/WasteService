@@ -38,9 +38,10 @@ with Diagram('waste_serviceArch', show=False, outformat='png', graph_attr=grapha
      transporttrolley >> Edge(color='magenta', style='solid', xlabel='dopath') >> pathexecutor
      transporttrolley >> Edge(color='green', style='dashed', xlabel='pickupcompleted') >> sys 
      transporttrolley >> Edge(color='blue', style='solid', xlabel='depositcompleted') >> wasteservice
-     pathexecutor >> Edge(color='blue', style='solid', xlabel='cmd') >> basicrobot
+     sys >> Edge(color='red', style='dashed', xlabel='stopAlarm') >> transporttrolley
+     sys >> Edge(color='red', style='dashed', xlabel='startAlarm') >> pathexecutor
      pathexecutor >> Edge(color='magenta', style='solid', xlabel='step') >> basicrobot
-     sys >> Edge(color='red', style='dashed', xlabel='alarm') >> pathexecutor
+     pathexecutor >> Edge(color='blue', style='solid', xlabel='cmd') >> basicrobot
      pathexecutor >> Edge(color='green', style='dashed', xlabel='dopathdone') >> sys 
      pathexecutor >> Edge(color='green', style='dashed', xlabel='dopathfail') >> sys 
      basicrobot >> Edge(color='green', style='dashed', xlabel='stepdone') >> sys 

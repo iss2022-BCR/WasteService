@@ -38,9 +38,9 @@ Reply dopathdone:	dopathdone( ARG )
 Reply dopathfail:	dopathfail( ARG )
 Dispatch pathdone:	pathdone( P )
 Dispatch pathfail:	pathdone( P )
-Dispatch cmd:		cmd(MOVE)     
-Request step:		step( TIME )	
-Reply stepdone:		stepdone(V)  
+Dispatch cmd:		cmd(MOVE)
+Request step:		step( TIME )
+Reply stepdone:		stepdone(V)
 Reply stepfail:		stepfail(DURATION, CAUSE)
 Event alarm:		alarm(X)
 
@@ -312,10 +312,22 @@ QActor transporttrolley context ctx_transporttrolley {
 		#]
 		request pathexecutor -m dopath : dopath($Actions, transporttrolley)
 		
-		// TO-DO (Sprint2): Return to HOME in case a new request arrives
+		// TO-DO (Sprint2): Stop returning HOME in case a new request arrives
 	}
 	Transition t3 whenReply dopathdone -> state_idle
 				  whenReply dopathfail -> state_error
+
+	State state_stop {
+		println("[TransportTrolley] Waiting for the alarm to stop...")
+	}
+	Transition t4 whenEvent stopAlarm -> state_resume
+	
+	State state_resume {
+		// Do the remaining path
+		println("[TransportTrolley] Resuming activity...")
+		
+	}
+	Transition t5 whenReply dopathdone -> state_idle
 	
 	State state_error {
 		onMsg(dopathfail: dopathfail(PATH_STILL_TO_DO)) {
@@ -337,32 +349,38 @@ QActor pathexecutor context ctx_transporttrolley {
 		var MovesDone = "" 
 	#]
 	
-	State init initial {
-		[# CurMoveTodo = "" #]
-		[# sysUtil.logMsgs=true #]
+	State state_init initial {
 		println("[PathExecutor] Started.")
 	}
-	Transition t0 whenRequest dopath -> doThePath
+	Goto state_idle
 	
-	State doThePath {
+	State state_idle {
+		[# CurMoveTodo = "" #]
+		[# sysUtil.logMsgs=true #]
+		println("[PathExecutor] Waiting for a path...")
+	}
+	Transition t0	whenRequest dopath		-> state_do_path
+					whenEvent startAlarm	-> state_handle_alarm
+	
+	State state_do_path {
 		printCurrentMessage
-		onMsg(dopath : dopath(P, C)) {
+		onMsg(dopath: dopath(P, C)) {
 			[# val path = payloadArg(0); println(path) #]
 			[# pathut.setPath(path) #]
 		}
 		
-		println("[PathExecutor] pathTodo: ${pathut.getPathTodo()}")
+		println("[PathExecutor] Path to do: ${pathut.getPathTodo()}")
 	}
-	Goto nextMove
+	Goto state_next_move
 	
-	State nextMove {
+	State state_next_move {
 		[# CurMoveTodo = pathut.nextMove() #]
 		[# MovesDone += CurMoveTodo #]
-		println("[PathExecutor] curMoveTodo: $CurMoveTodo")
+		println("[PathExecutor] Current move to do: $CurMoveTodo")
 	}
-	Goto endWorkOk if [# CurMoveTodo.length == 0 #] else doMove
+	Goto state_end_work_ok if [# CurMoveTodo.length == 0 #] else state_do_move
 	
-	State doMove {
+	State state_do_move {
 		[#
 			plannerBCR.updateMap(CurMoveTodo, "")
 			// plannerBCR.showMap()
@@ -370,37 +388,51 @@ QActor pathexecutor context ctx_transporttrolley {
 		#]
 		delay 350
 	}
-	Goto doMoveW if [# CurMoveTodo == "w" #] else doMoveTurn
+	Goto state_do_move_forward if [# CurMoveTodo == "w" #] else state_do_move_turn
 	
-	State doMoveTurn {
-		forward basicrobot -m cmd : cmd($CurMoveTodo)
+	State state_do_move_forward {
+		request basicrobot -m step: step(350)
 	}
-	Transition t1 whenTime 350 -> nextMove
-			
-	State doMoveW {
-		request basicrobot -m step : step(350)
-	}
-	Transition t2 whenEvent alarm -> handleAlarm
-				  whenReply stepdone -> nextMove
-				  whenReply stepfail -> endWorkKo
-				  
-	State handleAlarm {
-		[# var PathTodo = pathut.getPathTodo() #]
-		println("[PathExecutor] handleAlarm ... pathTodo: $PathTodo")
-	}
+	Transition t1	whenEvent startAlarm	-> state_handle_alarm
+					whenReply stepdone		-> state_next_move
+					whenReply stepfail		-> state_end_work_fail
 	
-	State endWorkOk {
-		println("[PathExecutor] Path done - bye")
-		replyTo dopath with dopathdone : dopathdone( ok )
+	State state_do_move_turn {
+		forward basicrobot -m cmd: cmd($CurMoveTodo)
 	}
-	Goto init
+	Transition t2	whenTime 350			-> state_next_move
+					whenEvent startAlarm	-> state_handle_alarm
 	
-	State endWorkKo {
+	State state_end_work_ok {
+		println("[PathExecutor] Path done.")
+		replyTo dopath with dopathdone: dopathdone( ok )
+	}
+	Goto state_idle
+	
+	State state_end_work_fail {
 		[# var PathStillTodo = pathut.getPathTodo() #]
-		println("[PathExecutor] path failure - sorry. PathStillTodo: $PathStillTodo")
-		replyTo dopath with dopathfail : dopathfail( $PathStillTodo )
+		println("[PathExecutor] Path failure. Path still to do: $PathStillTodo")
+		replyTo dopath with dopathfail: dopathfail( $PathStillTodo )
+		
+		println("[PathExecutor] Out of service.")
+		// NB: no more transitions since the WasteService is no longer operative
+		// this state could be caused by an out of sync between the PathExec position and
+		// the actual Robot position -> better to terminate the application
+		
+		terminate 1
 	}
-	Transition t0 whenEvent alarm -> handleAlarm
+	//Transition t0 whenEvent alarm -> handleAlarm
+	
+	State state_handle_alarm {
+		[# var PathTodo = pathut.getPathTodo() #]
+		println("[PathExecutor] Alarm detected, stopped. Path to do: $PathTodo")
+	}
+	Transition t3 whenMsg resume -> state_resume
+	
+	State state_resume {
+		
+	}
+	Goto state_next_move if [# CurMoveTodo.length > 0 #] else state_idle
 }
 
 QActor basicrobot context ctx_robot {
@@ -536,7 +568,7 @@ QActor sonar_mock_test context ctx_raspberry {
 		// send distance
 		forward alarm_controller -m sonar_data: sonar_data($Distance)
 		
-		delay 5000
+		delay 7000
 	}
 	Goto state_detect
 }

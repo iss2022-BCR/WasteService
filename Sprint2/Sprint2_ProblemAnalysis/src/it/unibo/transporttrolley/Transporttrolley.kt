@@ -146,6 +146,26 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					 transition(edgeName="t310",targetState="state_idle",cond=whenReply("dopathdone"))
 					transition(edgeName="t311",targetState="state_error",cond=whenReply("dopathfail"))
 				}	 
+				state("state_stop") { //this:State
+					action { //it:State
+						println("[TransportTrolley] Waiting for the alarm to stop...")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t412",targetState="state_resume",cond=whenEvent("stopAlarm"))
+				}	 
+				state("state_resume") { //this:State
+					action { //it:State
+						println("[TransportTrolley] Resuming activity...")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t513",targetState="state_idle",cond=whenReply("dopathdone"))
+				}	 
 				state("state_error") { //this:State
 					action { //it:State
 						if( checkMsgContent( Term.createTerm("dopathfail(ARG)"), Term.createTerm("dopathfail(PATH_STILL_TO_DO)"), 
