@@ -79,7 +79,7 @@ class ApplMessage {
         type = "event";
         break;
       case ApplMessageType.dispatch:
-        type = "msg";
+        type = "dispatch";
         break;
       case ApplMessageType.request:
         type = "request";
@@ -91,7 +91,7 @@ class ApplMessage {
         type = "invitation";
         break;
       default:
-        type = "msg";
+        type = "dispatch";
     }
     res =
         "msg($msgId, $type, $msgSender, $msgReceiver, $msgContent, $msgNum)\n";

@@ -1,0 +1,97 @@
+System test_interrupt
+
+Request requestdeposit:		requestdeposit(_)
+Reply accepted:				accepted(_)
+Reply rejected:				rejected(_)
+
+Dispatch stop:		stop(_)
+Dispatch resume:	resume(_)
+
+Context ctx_interrupt_test		ip [host="localhost" port=11800]
+
+QActor user context ctx_interrupt_test {
+	State state_init initial {
+		println("[User] Started.")
+	}
+	Goto state_idle
+	
+	State state_idle {
+		delay 1000
+		println("[User] Sending request...")
+		request test -m requestdeposit: requestdeposit
+		delay 1000
+	}
+	Transition t1	whenReply accepted -> state_accepted
+					whenReply rejected -> state_rejected
+	
+	State state_accepted {
+		println("[User] Request accepted...")
+	}
+	Goto state_idle
+	
+	State state_rejected {
+		println("[User] Request rejected...")
+	}
+	Goto state_idle
+}
+
+QActor interruptcaller context ctx_interrupt_test {
+	State state_init initial {
+		println("[InterruptCaller] Started.")
+	}
+	Goto state_idle
+	
+	State state_idle {
+		delay 2000
+		println("[InterruptCaller] Sending stop...")
+		forward test -m stop: stop
+	}
+	Goto state_resume
+	
+	State state_resume {
+		delay 2000
+		println("[InterruptCaller] Resuming stop...")
+		forward test -m resume: resume
+	}
+}
+
+QActor test context ctx_interrupt_test {
+	[# var Counter: Int = 0 #]
+	State state_init initial{
+		println("[Test] Started.")
+	}
+	Goto state_idle
+	
+	State state_idle {
+		println("[Test] Waiting for requests...")
+	}
+	Transition t1	whenRequest requestdeposit -> state_handle_request
+    				whenInterrupt stop -> state_stopped
+    
+    State state_handle_request {
+    	println("[Test] Received deposit request")
+    	onMsg(requestdeposit: requestdeposit(_)) {
+    		if [# Counter <= 5 #] {
+	    		println("[Test] Accepted.")
+	    		[# Counter++ #]
+	    		replyTo requestdeposit with accepted: accepted
+	    	} 
+	    	else {
+	    		println("[Test] Rejected.")
+	    		replyTo requestdeposit with rejected: rejected
+	    	}
+    	}
+    }
+    Goto state_idle
+    
+	State state_stopped {
+		printCurrentMessage
+		println("[Test] Stopped.")
+	}
+	Transition t3 whenMsg resume -> resumeFromStop
+	
+	State resumeFromStop {
+		println("[Test] Resuming...")
+		returnFromInterrupt
+	}
+}

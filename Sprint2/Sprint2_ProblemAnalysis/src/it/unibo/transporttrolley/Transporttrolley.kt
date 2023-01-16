@@ -41,6 +41,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("state_idle") { //this:State
 					action { //it:State
+						forward("updatetrolleystate", "updatetrolleystate(HOME)" ,"trolleystateprovider" ) 
 						println("[TransportTrolley] Waiting for deposit requests...")
 						//genTimer( actor, state )
 					}
@@ -68,6 +69,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("state_move_to_indoor") { //this:State
 					action { //it:State
+						forward("updatetrolleystate", "updatetrolleystate(TO_INDOOR)" ,"trolleystateprovider" ) 
 						println("[TransportTrolley] Moving to INDOOR...")
 						
 									val curPos: Pair<Int, Int> = plannerBCR.get_curPos()
@@ -86,6 +88,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("state_pickup") { //this:State
 					action { //it:State
+						forward("updatetrolleystate", "updatetrolleystate(PICKUP)" ,"trolleystateprovider" ) 
 						println("[TransportTrolley] Picking up the load of $WasteType...")
 						 wasteservice.Utils.simulateAction(WasteLoad)  
 						println("[TransportTrolley] Pickup completed.")
@@ -99,6 +102,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("state_move_to_box") { //this:State
 					action { //it:State
+						forward("updatetrolleystate", "updatetrolleystate(TO_BOX)" ,"trolleystateprovider" ) 
 						println("[TransportTrolley] Moving to ${WasteType.name}_BOX...")
 						
 									val curPos: Pair<Int, Int> = plannerBCR.get_curPos()
@@ -117,6 +121,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("state_dump") { //this:State
 					action { //it:State
+						forward("updatetrolleystate", "updatetrolleystate(DUMP)" ,"trolleystateprovider" ) 
 						println("[TransportTrolley] Dumping the load...")
 						 wasteservice.Utils.simulateAction(WasteLoad)  
 						println("[TransportTrolley] Dump completed.")
@@ -130,6 +135,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("state_move_to_home") { //this:State
 					action { //it:State
+						forward("updatetrolleystate", "updatetrolleystate(TO_HOME)" ,"trolleystateprovider" ) 
 						println("[TransportTrolley] Moving to HOME...")
 						
 									val curPos: Pair<Int, Int> = plannerBCR.get_curPos()
@@ -145,26 +151,6 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					}	 	 
 					 transition(edgeName="t310",targetState="state_idle",cond=whenReply("dopathdone"))
 					transition(edgeName="t311",targetState="state_error",cond=whenReply("dopathfail"))
-				}	 
-				state("state_stop") { //this:State
-					action { //it:State
-						println("[TransportTrolley] Waiting for the alarm to stop...")
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t412",targetState="state_resume",cond=whenEvent("stopAlarm"))
-				}	 
-				state("state_resume") { //this:State
-					action { //it:State
-						println("[TransportTrolley] Resuming activity...")
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t513",targetState="state_idle",cond=whenReply("dopathdone"))
 				}	 
 				state("state_error") { //this:State
 					action { //it:State

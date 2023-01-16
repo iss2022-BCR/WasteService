@@ -1,5 +1,5 @@
 package wasteservice
 
 enum class TransportTrolleyState {
-    HOME, MOVING, STOPPED
+    HOME, TO_INDOOR, PICKUP, TO_BOX, DUMP, TO_HOME, STOPPED
 }

@@ -40,7 +40,7 @@ class Alarm_controller ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t028",targetState="state_handle_sonar_data",cond=whenDispatch("sonar_data"))
+					 transition(edgeName="t029",targetState="state_handle_sonar_data",cond=whenDispatch("sonar_data"))
 				}	 
 				state("state_handle_sonar_data") { //this:State
 					action { //it:State
