@@ -330,7 +330,7 @@ QActor transporttrolley context ctx_transporttrolley {
 			plannerBCR.doPlan()
 			Actions = plannerBCR.getActionsString()
 		#]
-		request pathexecutor -m dopath : dopath($Actions, transporttrolley)
+		request pathexecutorbcr -m dopath : dopath($Actions, transporttrolley)
 	}
 	Transition t1	whenReply dopathdone	-> state_pickup
 					whenReply dopathfail	-> state_error
@@ -357,7 +357,7 @@ QActor transporttrolley context ctx_transporttrolley {
 			plannerBCR.doPlan()
 			Actions = plannerBCR.getActionsString()
 		#]
-		request pathexecutor -m dopath : dopath($Actions, transporttrolley)
+		request pathexecutorbcr -m dopath : dopath($Actions, transporttrolley)
 	}
 	Transition t2	whenReply dopathdone	-> state_dump
 					whenReply dopathfail	-> state_error
@@ -385,7 +385,7 @@ QActor transporttrolley context ctx_transporttrolley {
 			plannerBCR.doPlan()
 			Actions = plannerBCR.getActionsString()
 		#]
-		request pathexecutor -m dopath : dopath($Actions, transporttrolley)
+		request pathexecutorbcr -m dopath : dopath($Actions, transporttrolley)
 		
 		// TO-DO (Sprint2): Stop returning HOME in case a new request arrives
 	}
@@ -468,7 +468,7 @@ QActor trolleystateprovider context ctx_transporttrolley {
 	Goto state_idle
 }
 
-QActor pathexecutor context ctx_transporttrolley {
+QActor pathexecutorbcr context ctx_transporttrolley {
 	[# 
 		var CurMoveTodo = ""
 		var MovesDone = ""
@@ -522,6 +522,7 @@ QActor pathexecutor context ctx_transporttrolley {
 	
 	State state_do_move_forward {
 		request basicrobot -m step: step(350)
+		delay 350
 	}
 	Transition t1	whenEvent startAlarm	-> state_handle_alarm
 					whenReply stepdone		-> state_next_move

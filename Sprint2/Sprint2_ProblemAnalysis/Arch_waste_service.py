@@ -25,7 +25,7 @@ with Diagram('waste_serviceArch', show=False, outformat='png', graph_attr=grapha
      with Cluster('ctx_transporttrolley', graph_attr=nodeattr):
           transporttrolley=Custom('transporttrolley','./qakicons/symActorSmall.png')
           trolleystateprovider=Custom('trolleystateprovider','./qakicons/symActorSmall.png')
-          pathexecutor=Custom('pathexecutor','./qakicons/symActorSmall.png')
+          pathexecutorbcr=Custom('pathexecutorbcr','./qakicons/symActorSmall.png')
      with Cluster('ctx_raspberry', graph_attr=nodeattr):
           alarm_controller=Custom('alarm_controller','./qakicons/symActorSmall.png')
      with Cluster('ctx_robot', graph_attr=nodeattr):
@@ -36,7 +36,7 @@ with Diagram('waste_serviceArch', show=False, outformat='png', graph_attr=grapha
      wasteservice >> Edge(color='green', style='dashed', xlabel='loadrejected') >> sys 
      wasteservice >> Edge(color='green', style='dashed', xlabel='loadaccepted') >> sys 
      transporttrolley >> Edge(color='blue', style='solid', xlabel='updatetrolleystate') >> trolleystateprovider
-     transporttrolley >> Edge(color='magenta', style='solid', xlabel='dopath') >> pathexecutor
+     transporttrolley >> Edge(color='magenta', style='solid', xlabel='dopath') >> pathexecutorbcr
      transporttrolley >> Edge(color='green', style='dashed', xlabel='pickupcompleted') >> sys 
      transporttrolley >> Edge(color='blue', style='solid', xlabel='depositcompleted') >> wasteservice
      trolleystateprovider >> Edge(color='green', style='dashed', xlabel='state_home') >> sys 
@@ -46,12 +46,12 @@ with Diagram('waste_serviceArch', show=False, outformat='png', graph_attr=grapha
      trolleystateprovider >> Edge(color='green', style='dashed', xlabel='state_dump') >> sys 
      trolleystateprovider >> Edge(color='green', style='dashed', xlabel='state_tohome') >> sys 
      trolleystateprovider >> Edge(color='green', style='dashed', xlabel='state_stopped') >> sys 
-     sys >> Edge(color='red', style='dashed', xlabel='startAlarm') >> pathexecutor
-     pathexecutor >> Edge(color='magenta', style='solid', xlabel='step') >> basicrobot
-     pathexecutor >> Edge(color='blue', style='solid', xlabel='cmd') >> basicrobot
-     pathexecutor >> Edge(color='green', style='dashed', xlabel='dopathdone') >> sys 
-     pathexecutor >> Edge(color='green', style='dashed', xlabel='dopathfail') >> sys 
-     sys >> Edge(color='red', style='dashed', xlabel='stopAlarm') >> pathexecutor
+     sys >> Edge(color='red', style='dashed', xlabel='startAlarm') >> pathexecutorbcr
+     pathexecutorbcr >> Edge(color='magenta', style='solid', xlabel='step') >> basicrobot
+     pathexecutorbcr >> Edge(color='blue', style='solid', xlabel='cmd') >> basicrobot
+     pathexecutorbcr >> Edge(color='green', style='dashed', xlabel='dopathdone') >> sys 
+     pathexecutorbcr >> Edge(color='green', style='dashed', xlabel='dopathfail') >> sys 
+     sys >> Edge(color='red', style='dashed', xlabel='stopAlarm') >> pathexecutorbcr
      basicrobot >> Edge(color='green', style='dashed', xlabel='stepdone') >> sys 
      basicrobot >> Edge(color='green', style='dashed', xlabel='stepfail') >> sys 
      alarm_controller >> Edge( xlabel='startAlarm', **eventedgeattr) >> sys

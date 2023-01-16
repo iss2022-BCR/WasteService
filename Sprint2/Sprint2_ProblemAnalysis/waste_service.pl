@@ -9,6 +9,6 @@ context(ctx_robot, "localhost",  "TCP", "8020").
   qactor( wasteservice, ctx_wasteservice, "it.unibo.wasteservice.Wasteservice").
   qactor( transporttrolley, ctx_transporttrolley, "it.unibo.transporttrolley.Transporttrolley").
   qactor( trolleystateprovider, ctx_transporttrolley, "it.unibo.trolleystateprovider.Trolleystateprovider").
-  qactor( pathexecutor, ctx_transporttrolley, "it.unibo.pathexecutor.Pathexecutor").
+  qactor( pathexecutorbcr, ctx_transporttrolley, "it.unibo.pathexecutorbcr.Pathexecutorbcr").
   qactor( basicrobot, ctx_robot, "it.unibo.basicrobot.Basicrobot").
   qactor( alarm_controller, ctx_raspberry, "it.unibo.alarm_controller.Alarm_controller").

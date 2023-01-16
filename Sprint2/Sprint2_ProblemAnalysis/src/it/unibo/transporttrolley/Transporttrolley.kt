@@ -77,7 +77,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 									plannerBCR.setGoal(goal.first, goal.second)
 									plannerBCR.doPlan()
 									Actions = plannerBCR.getActionsString()
-						request("dopath", "dopath($Actions,transporttrolley)" ,"pathexecutor" )  
+						request("dopath", "dopath($Actions,transporttrolley)" ,"pathexecutorbcr" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -110,7 +110,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 									plannerBCR.setGoal(goal.first, goal.second)
 									plannerBCR.doPlan()
 									Actions = plannerBCR.getActionsString()
-						request("dopath", "dopath($Actions,transporttrolley)" ,"pathexecutor" )  
+						request("dopath", "dopath($Actions,transporttrolley)" ,"pathexecutorbcr" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -143,7 +143,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 									plannerBCR.setGoal(goal.first, goal.second)
 									plannerBCR.doPlan()
 									Actions = plannerBCR.getActionsString()
-						request("dopath", "dopath($Actions,transporttrolley)" ,"pathexecutor" )  
+						request("dopath", "dopath($Actions,transporttrolley)" ,"pathexecutorbcr" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
