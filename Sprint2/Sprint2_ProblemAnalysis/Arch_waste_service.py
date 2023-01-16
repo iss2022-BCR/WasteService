@@ -27,7 +27,8 @@ with Diagram('waste_serviceArch', show=False, outformat='png', graph_attr=grapha
           trolleystateprovider=Custom('trolleystateprovider','./qakicons/symActorSmall.png')
           pathexecutorbcr=Custom('pathexecutorbcr','./qakicons/symActorSmall.png')
      with Cluster('ctx_raspberry', graph_attr=nodeattr):
-          alarm_controller=Custom('alarm_controller','./qakicons/symActorSmall.png')
+          alarmcontroller=Custom('alarmcontroller','./qakicons/symActorSmall.png')
+          ledcontroller=Custom('ledcontroller','./qakicons/symActorSmall.png')
      with Cluster('ctx_robot', graph_attr=nodeattr):
           basicrobot=Custom('basicrobot','./qakicons/symActorSmall.png')
      typesprovider >> Edge(color='green', style='dashed', xlabel='typesreply') >> sys 
@@ -35,17 +36,12 @@ with Diagram('waste_serviceArch', show=False, outformat='png', graph_attr=grapha
      wasteservice >> Edge(color='green', style='dashed', xlabel='loadrejected') >> sys 
      wasteservice >> Edge(color='green', style='dashed', xlabel='loadrejected') >> sys 
      wasteservice >> Edge(color='green', style='dashed', xlabel='loadaccepted') >> sys 
-     transporttrolley >> Edge(color='blue', style='solid', xlabel='updatetrolleystate') >> trolleystateprovider
      transporttrolley >> Edge(color='magenta', style='solid', xlabel='dopath') >> pathexecutorbcr
      transporttrolley >> Edge(color='green', style='dashed', xlabel='pickupcompleted') >> sys 
      transporttrolley >> Edge(color='blue', style='solid', xlabel='depositcompleted') >> wasteservice
-     trolleystateprovider >> Edge(color='green', style='dashed', xlabel='state_home') >> sys 
-     trolleystateprovider >> Edge(color='green', style='dashed', xlabel='state_toindoor') >> sys 
-     trolleystateprovider >> Edge(color='green', style='dashed', xlabel='state_pickup') >> sys 
-     trolleystateprovider >> Edge(color='green', style='dashed', xlabel='state_tobox') >> sys 
-     trolleystateprovider >> Edge(color='green', style='dashed', xlabel='state_dump') >> sys 
-     trolleystateprovider >> Edge(color='green', style='dashed', xlabel='state_tohome') >> sys 
-     trolleystateprovider >> Edge(color='green', style='dashed', xlabel='state_stopped') >> sys 
+     transporttrolley >> Edge(color='blue', style='solid', xlabel='coapUpdate') >> trolleystateprovider
+     pathexecutorbcr >> Edge(color='blue', style='solid', xlabel='coapUpdate') >> trolleystateprovider
+     trolleystateprovider >> Edge( xlabel='trolley_state_changed', **eventedgeattr) >> sys
      sys >> Edge(color='red', style='dashed', xlabel='startAlarm') >> pathexecutorbcr
      pathexecutorbcr >> Edge(color='magenta', style='solid', xlabel='step') >> basicrobot
      pathexecutorbcr >> Edge(color='blue', style='solid', xlabel='cmd') >> basicrobot
@@ -54,6 +50,7 @@ with Diagram('waste_serviceArch', show=False, outformat='png', graph_attr=grapha
      sys >> Edge(color='red', style='dashed', xlabel='stopAlarm') >> pathexecutorbcr
      basicrobot >> Edge(color='green', style='dashed', xlabel='stepdone') >> sys 
      basicrobot >> Edge(color='green', style='dashed', xlabel='stepfail') >> sys 
-     alarm_controller >> Edge( xlabel='startAlarm', **eventedgeattr) >> sys
-     alarm_controller >> Edge( xlabel='stopAlarm', **eventedgeattr) >> sys
+     alarmcontroller >> Edge( xlabel='startAlarm', **eventedgeattr) >> sys
+     alarmcontroller >> Edge( xlabel='stopAlarm', **eventedgeattr) >> sys
+     sys >> Edge(color='red', style='dashed', xlabel='trolley_state_changed') >> ledcontroller
 diag

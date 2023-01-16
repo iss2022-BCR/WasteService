@@ -11,4 +11,5 @@ context(ctx_robot, "localhost",  "TCP", "8020").
   qactor( trolleystateprovider, ctx_transporttrolley, "it.unibo.trolleystateprovider.Trolleystateprovider").
   qactor( pathexecutorbcr, ctx_transporttrolley, "it.unibo.pathexecutorbcr.Pathexecutorbcr").
   qactor( basicrobot, ctx_robot, "it.unibo.basicrobot.Basicrobot").
-  qactor( alarm_controller, ctx_raspberry, "it.unibo.alarm_controller.Alarm_controller").
+  qactor( alarmcontroller, ctx_raspberry, "it.unibo.alarmcontroller.Alarmcontroller").
+  qactor( ledcontroller, ctx_raspberry, "it.unibo.ledcontroller.Ledcontroller").

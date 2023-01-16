@@ -22,7 +22,7 @@ class Pathexecutorbcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 		return { //this:ActionBasciFsm
 				state("state_init") { //this:State
 					action { //it:State
-						println("[PathExecutor] Started.")
+						println("[PathExecutorBCR] Started.")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -32,16 +32,18 @@ class Pathexecutorbcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 				}	 
 				state("state_idle") { //this:State
 					action { //it:State
-						 CurMoveTodo = ""  
-						 sysUtil.logMsgs=true  
-						println("[PathExecutor] Waiting for a path...")
+						 
+									CurMoveTodo = ""
+									TotPathMoves = 0
+									sysUtil.logMsgs = true
+						println("[PathExecutorBCR] Waiting for a path...")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t015",targetState="state_do_path",cond=whenRequest("dopath"))
-					transition(edgeName="t016",targetState="state_handle_alarm",cond=whenEvent("startAlarm"))
+					 transition(edgeName="t014",targetState="state_do_path",cond=whenRequest("dopath"))
+					transition(edgeName="t015",targetState="state_stop",cond=whenEvent("startAlarm"))
 				}	 
 				state("state_do_path") { //this:State
 					action { //it:State
@@ -54,7 +56,7 @@ class Pathexecutorbcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 												TotPathMoves = pathut.getPathTodo().length
 								println("$path")
 						}
-						println("[PathExecutor] Path to do: ${pathut.getPathTodo()}")
+						println("[PathExecutorBCR] Path to do: ${pathut.getPathTodo()}")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -66,7 +68,7 @@ class Pathexecutorbcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 					action { //it:State
 						 CurMoveTodo = pathut.nextMove()  
 						 MovesDone += CurMoveTodo  
-						println("[PathExecutor] Current move to do: $CurMoveTodo")
+						println("[PathExecutorBCR] Current move to do: $CurMoveTodo")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -103,9 +105,9 @@ class Pathexecutorbcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t117",targetState="state_handle_alarm",cond=whenEvent("startAlarm"))
-					transition(edgeName="t118",targetState="state_next_move",cond=whenReply("stepdone"))
-					transition(edgeName="t119",targetState="state_end_work_fail",cond=whenReply("stepfail"))
+					 transition(edgeName="t116",targetState="state_stop",cond=whenEvent("startAlarm"))
+					transition(edgeName="t117",targetState="state_next_move",cond=whenReply("stepdone"))
+					transition(edgeName="t118",targetState="state_end_work_fail",cond=whenReply("stepfail"))
 				}	 
 				state("state_do_move_turn") { //this:State
 					action { //it:State
@@ -119,12 +121,12 @@ class Pathexecutorbcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 				 	 			scope, context!!, "local_tout_pathexecutorbcr_state_do_move_turn", 350.toLong() )
 				 	 		//}
 					}	 	 
-					 transition(edgeName="t220",targetState="state_next_move",cond=whenTimeout("local_tout_pathexecutorbcr_state_do_move_turn"))   
-					transition(edgeName="t221",targetState="state_handle_alarm",cond=whenEvent("startAlarm"))
+					 transition(edgeName="t219",targetState="state_next_move",cond=whenTimeout("local_tout_pathexecutorbcr_state_do_move_turn"))   
+					transition(edgeName="t220",targetState="state_stop",cond=whenEvent("startAlarm"))
 				}	 
 				state("state_end_work_ok") { //this:State
 					action { //it:State
-						println("[PathExecutor] Path done.")
+						println("[PathExecutorBCR] Path done.")
 						answer("dopath", "dopathdone", "dopathdone(ok)"   )  
 						//genTimer( actor, state )
 					}
@@ -136,9 +138,9 @@ class Pathexecutorbcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 				state("state_end_work_fail") { //this:State
 					action { //it:State
 						 var PathStillTodo = pathut.getPathTodo()  
-						println("[PathExecutor] Path failure. Path still to do: $PathStillTodo")
+						println("[PathExecutorBCR] Path failure. Path still to do: $PathStillTodo")
 						answer("dopath", "dopathfail", "dopathfail($PathStillTodo)"   )  
-						println("[PathExecutor] Out of service.")
+						println("[PathExecutorBCR] Out of service.")
 						terminate(1)
 						//genTimer( actor, state )
 					}
@@ -146,20 +148,30 @@ class Pathexecutorbcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 					sysaction { //it:State
 					}	 	 
 				}	 
-				state("state_handle_alarm") { //this:State
+				state("state_stop") { //this:State
 					action { //it:State
+						updateResourceRep( "stopped"  
+						)
 						 var PathTodo = pathut.getPathTodo()  
-						println("[PathExecutor] Alarm detected, trolley stopped. Path to do: $PathTodo")
+						println("[PathExecutorBCR] Alarm detected, trolley stopped. Path to do: $PathTodo")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t322",targetState="state_resume",cond=whenEvent("stopAlarm"))
+					 transition(edgeName="t321",targetState="state_resume",cond=whenEvent("stopAlarm"))
 				}	 
 				state("state_resume") { //this:State
 					action { //it:State
-						println("[PathExecutor] Alarm retracted. Resuming...")
+						if(  MovesDone.length != TotPathMoves  
+						 ){updateResourceRep( "moving"  
+						)
+						}
+						else
+						 {updateResourceRep( "home"  
+						 )
+						 }
+						println("[PathExecutorBCR] Alarm retracted. Resuming...")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
