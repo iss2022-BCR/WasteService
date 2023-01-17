@@ -1,0 +1,48 @@
+System demo0 
+   
+Dispatch coapUpdate : coapUpdate(RESOURCE, VALUE) 
+ 
+Context ctxdemo0 ip[host="localhost" port=8095] 
+ 
+QActor demo0 context ctxdemo0{ 
+  State s0 initial { 
+    discardMsg Off 
+    delay 2000 
+  } 
+  Goto s1 
+   
+  State s1{ 
+   updateResource [# "Athome" #] 
+   delay 5000 
+  } 
+  Goto s2 
+   
+  State s2{ 
+   updateResource [# "Moving" #] 
+   delay 5000 
+  } 
+  Goto s3 
+   
+  State s3{ 
+   updateResource [# "Stopped" #] 
+   delay 5000 
+  } 
+  Goto s1 
+} 
+ 
+ 
+QActor observer context ctxdemo0 { 
+  [# var ttstate = "unknown" #] 
+   
+  State s0 initial { 
+   observeResource demo0 
+   [# MsgUtil.outgreen("${ttstate}\n") #] 
+  }Transition t0 whenMsg coapUpdate -> s1 
+   
+  State s1{ 
+   onMsg( coapUpdate : coapUpdate(RESOURCE, VALUE)){ 
+    [# ttstate = payloadArg(1) #] 
+    [# MsgUtil.outgreen("${ttstate}") #] 
+   } 
+  }Transition t0 whenMsg coapUpdate -> s1 
+}

@@ -110,27 +110,18 @@ class _ViewRequestState extends State<ViewRequest> {
   }
 
   Future<void> _sendMessage() async {
-    setState(() {
-      _waitingReply = true;
-      _reply = "";
-    });
-
     ApplMessage applMsg = ApplMessage(
         widget.settings.messageID,
         widget.settings.messageType,
         widget.settings.messageSender,
         widget.settings.messageReceiver,
-        "${widget.settings.messageID}($_currentWasteType, ${_textControllerWeight.text})",
+        "${widget.settings.messageID}(${_textControllerWeight.text})",
         3);
     String msg = applMsg.toString();
 
     _logMessage("Message: $msg");
 
     widget.connection.sendMessage(msg);
-
-    /*if (timeout != null) {
-      _startTimer();
-    }*/
   }
 
   List<String> _parseTypes(String types, String sep) {
@@ -239,7 +230,9 @@ class _ViewRequestState extends State<ViewRequest> {
         "Connected to ${widget.connection.address.address}:${widget.connection.remotePort}");
 
     // Send TypesRequest
-    _sendTypesRequest();
+    if (widget.settings.sendTypesRequest) {
+      _sendTypesRequest();
+    }
     // Loading...
     // Can send StoreRequest
 
@@ -324,59 +317,83 @@ class _ViewRequestState extends State<ViewRequest> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Spacer(flex: 1),
-                  _wasteTypes.isEmpty
+                  _wasteTypes.isEmpty && widget.settings.isDefault()
                       ? const Center(child: CircularProgressIndicator())
                       : Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text(
-                              'Request Parameters',
+                            Text(
+                              widget.settings.isDefault()
+                                  ? 'Request Parameters'
+                                  : 'Message Content',
                               style: TextStyle(fontSize: 26.0),
                             ),
-                            DropdownButtonFormField<String>(
-                              key: const ValueKey('parameterWasteType'),
-                              value: _currentWasteType,
-                              items: _wasteTypes.map<DropdownMenuItem<String>>(
-                                  (String value) {
-                                return DropdownMenuItem(
-                                    value: value, child: Text(value));
-                              }).toList(),
-                              onChanged: (newValue) {
-                                setState(() {
-                                  _currentWasteType = newValue!;
-                                });
-                              },
-                              decoration: const InputDecoration(
-                                border: UnderlineInputBorder(),
-                                labelText: 'Waste Type',
-                              ),
-                            ),
-                            TextFormField(
-                              key: const ValueKey('parameterWasteWeight'),
-                              validator: (value) {
-                                if (value == null || !_checkWeight(value)) {
-                                  return 'Invalid weight';
-                                }
-                                return null;
-                              },
-                              controller: _textControllerWeight,
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                      decimal: true),
-                              inputFormatters: <TextInputFormatter>[
-                                FilteringTextInputFormatter.allow(
-                                  RegExp(
-                                      r'[0-9]+[,.]{0,1}[0-9]*'), // this regex allows only decimal numbers
-                                )
-                              ],
-                              decoration: const InputDecoration(
-                                suffixText: 'KG',
-                                hintText: 'Weight',
-                                border: UnderlineInputBorder(),
-                                labelText: 'Waste Weight',
-                              ),
-                            ),
+                            widget.settings.isDefault()
+                                ? DropdownButtonFormField<String>(
+                                    key: const ValueKey('parameterWasteType'),
+                                    value: _currentWasteType,
+                                    items: _wasteTypes
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                      return DropdownMenuItem(
+                                          value: value, child: Text(value));
+                                    }).toList(),
+                                    onChanged: (newValue) {
+                                      setState(() {
+                                        _currentWasteType = newValue!;
+                                      });
+                                    },
+                                    decoration: const InputDecoration(
+                                      border: UnderlineInputBorder(),
+                                      labelText: 'Waste Type',
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
+                            widget.settings.isDefault()
+                                ? TextFormField(
+                                    key: const ValueKey('parameterWasteWeight'),
+                                    validator: (value) {
+                                      if (value == null ||
+                                          !_checkWeight(value)) {
+                                        return 'Invalid weight';
+                                      }
+                                      return null;
+                                    },
+                                    controller: _textControllerWeight,
+                                    keyboardType:
+                                        const TextInputType.numberWithOptions(
+                                            decimal: true),
+                                    inputFormatters: <TextInputFormatter>[
+                                      FilteringTextInputFormatter.allow(
+                                        RegExp(
+                                            r'[0-9]+[,.]{0,1}[0-9]*'), // this regex allows only decimal numbers
+                                      )
+                                    ],
+                                    decoration: const InputDecoration(
+                                      suffixText: 'KG',
+                                      hintText: 'Weight',
+                                      border: UnderlineInputBorder(),
+                                      labelText: 'Waste Weight',
+                                    ),
+                                  )
+                                : TextFormField(
+                                    key: const ValueKey(
+                                        'parameterMessageReceiver'),
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return 'Message Content';
+                                      }
+                                      return null;
+                                    },
+                                    controller: _textControllerWeight,
+                                    decoration: const InputDecoration(
+                                      border: UnderlineInputBorder(),
+                                      labelText: 'Message Content',
+                                    ),
+                                  ),
                           ],
                         ),
                   const SizedBox(height: 20.0),
@@ -459,26 +476,32 @@ class _ViewRequestState extends State<ViewRequest> {
                 ? null
                 : () {
                     if (_formKeyRequest.currentState!.validate()) {
-                      // Add '.0' or '0' to the weight, in case it's missing
-                      setState(() {
-                        if (!_textControllerWeight.text.contains('.')) {
-                          _textControllerWeight.text += '.0';
-                        }
-                        if (_textControllerWeight.text.endsWith('.')) {
-                          _textControllerWeight.text += '0';
-                        }
-                      });
+                      if (widget.settings.isDefault()) {
+                        // Add '.0' or '0' to the weight, in case it's missing
+                        setState(() {
+                          if (!_textControllerWeight.text.contains('.')) {
+                            _textControllerWeight.text += '.0';
+                          }
+                          if (_textControllerWeight.text.endsWith('.')) {
+                            _textControllerWeight.text += '0';
+                          }
+                        });
+                      }
 
-                      _debug ? _sendMessage() : _sendStoreRequest();
+                      widget.settings.isDefault()
+                          ? _sendStoreRequest()
+                          : _sendMessage();
                     }
                   },
             style: ElevatedButton.styleFrom(
                 textStyle: const TextStyle(fontSize: 22),
                 minimumSize: const Size.fromHeight(56.0),
                 shape: const StadiumBorder()),
-            child: const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text('Send Store Request'),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(widget.settings.isDefault()
+                  ? 'Send Store Request'
+                  : 'Send Message'),
             ),
           ),
         ),

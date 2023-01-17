@@ -29,14 +29,6 @@ class _ViewSettingsState extends State<ViewSettings> {
   String _messageSender = Settings.DEFAULT_MESSAGE_SENDER;
   String _messageReceiver = Settings.DEFAULT_MESSAGE_RECEIVER;
 
-  bool _isDefault() {
-    return _typesRequestAtConnect == Settings.DEFAULT_SEND_TYPES_REQUEST &&
-        _messageID == Settings.DEFAULT_MESSAGE_ID &&
-        _messageType == Settings.DEFAULT_MESSAGE_TYPE &&
-        _messageSender == Settings.DEFAULT_MESSAGE_SENDER &&
-        _messageReceiver == Settings.DEFAULT_MESSAGE_RECEIVER;
-  }
-
   void _restore() {
     setState(() {
       _typesRequestAtConnect = Settings.DEFAULT_SEND_TYPES_REQUEST;
@@ -48,6 +40,10 @@ class _ViewSettingsState extends State<ViewSettings> {
       _messageReceiver = Settings.DEFAULT_MESSAGE_RECEIVER;
       _textReceiverController.text = _messageReceiver;
     });
+  }
+
+  bool _isValid(String s) {
+    return RegExp(r'^[a-zA-Z0-9]+$').hasMatch(s);
   }
 
   @override
@@ -128,8 +124,10 @@ class _ViewSettingsState extends State<ViewSettings> {
                   key: const ValueKey('parameterMessageID'),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (value) {
-                    if (value == null ||
-                        !RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) {
+                    if (value ==
+                            null /*||
+                        !_isValid(value)*/
+                        ) {
                       return 'Invalid Message ID';
                     }
                     return null;
@@ -169,8 +167,10 @@ class _ViewSettingsState extends State<ViewSettings> {
                   key: const ValueKey('parameterMessageSender'),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (value) {
-                    if (value == null ||
-                        !RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) {
+                    if (value ==
+                            null /*||
+                        !_isValid(value)*/
+                        ) {
                       return 'Invalid Sender Name';
                     }
                     return null;
@@ -191,8 +191,10 @@ class _ViewSettingsState extends State<ViewSettings> {
                   key: const ValueKey('parameterMessageReceiver'),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (value) {
-                    if (value == null ||
-                        !RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) {
+                    if (value ==
+                            null /*||
+                        !_isValid(value)*/
+                        ) {
                       return 'Invalid Receiver Name';
                     }
                     return null;
@@ -214,15 +216,17 @@ class _ViewSettingsState extends State<ViewSettings> {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: _isDefault()
+          onPressed: widget.settings.isDefault()
               ? null
               : () {
                   _restore();
                 },
-          backgroundColor:
-              _isDefault() ? const Color.fromRGBO(220, 220, 220, 1.0) : null,
-          foregroundColor:
-              _isDefault() ? const Color.fromRGBO(136, 136, 136, 1.0) : null,
+          backgroundColor: widget.settings.isDefault()
+              ? const Color.fromRGBO(220, 220, 220, 1.0)
+              : null,
+          foregroundColor: widget.settings.isDefault()
+              ? const Color.fromRGBO(136, 136, 136, 1.0)
+              : null,
           child: const Icon(
             Icons.refresh,
             size: 40.0,

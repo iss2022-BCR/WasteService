@@ -50,4 +50,12 @@ class Settings {
     prefs.setString("messageSender", DEFAULT_MESSAGE_SENDER);
     prefs.setString("messageReceiver", DEFAULT_MESSAGE_RECEIVER);
   }
+
+  bool isDefault() {
+    return sendTypesRequest == DEFAULT_SEND_TYPES_REQUEST &&
+        messageID == DEFAULT_MESSAGE_ID &&
+        messageType == DEFAULT_MESSAGE_TYPE &&
+        messageSender == DEFAULT_MESSAGE_SENDER &&
+        messageReceiver == DEFAULT_MESSAGE_RECEIVER;
+  }
 }
