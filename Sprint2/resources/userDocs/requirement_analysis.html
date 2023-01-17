@@ -194,8 +194,18 @@
 
             <h2 id="System-Components">System Components</h2>
             <h3 id="Raspberry-Pi">Raspberry Pi</h3>
-            A device located on a separate node from the WasteService one, to which two components
-            are attached: Led and Sonar.
+            <ksi>Raspberry Pi</ksi> is a single-board computer developed by the Raspberry Pi Foundation
+            in association with Broadcom. It has a CPU/GPU, a RAM, a series of pin for Input and Output, and
+            a USB hub.
+            <br/>
+            It's going to be located on a separate node from the WasteService one, and will have
+            two main components attached: a Led and a Sonar.
+
+            <img src="./culo.png" alt="" />
+
+            <h4 id="Sonar">Sonar</h4>
+            The sonar is an input component which measures the distance in a straight line,
+            from the surrounding environmentsends, and sends those data.
 
             <h4 id="Led">Led</h4>
             The led is an output component which updates its state in real-time, according to
@@ -205,10 +215,9 @@
                 <li>Transport Trolley is moving, then the Led must be blinking;</li>
                 <li>Transport Trolley is stopped, then the Led must be on.</li>
             </ul>
-            
-            <h4 id="Sonar">Sonar</h4>
-            The sonar is an input component which measures the distance in a straight line,
-            from the surrounding environmentsends, and sends those data.
+
+            <h4 id="Extras">Extras</h4>
+            <highlight1>Wires and resistors.</highlight1>
             
             <h3 id="Waste-Service">Waste Service</h3>
             Core of the system, which receives store requests from the clients and handles them.
