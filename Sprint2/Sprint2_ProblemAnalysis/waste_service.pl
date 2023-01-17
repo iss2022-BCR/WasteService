@@ -3,7 +3,7 @@
 %====================================================================================
 context(ctx_wasteservice, "localhost",  "TCP", "11800").
 context(ctx_transporttrolley, "localhost",  "TCP", "11801").
-context(ctx_raspberry, "localhost",  "TCP", "11802").
+context(ctx_raspberrypi, "localhost",  "TCP", "11802").
 context(ctx_robot, "localhost",  "TCP", "8020").
  qactor( typesprovider, ctx_wasteservice, "it.unibo.typesprovider.Typesprovider").
   qactor( wasteservice, ctx_wasteservice, "it.unibo.wasteservice.Wasteservice").
@@ -11,5 +11,5 @@ context(ctx_robot, "localhost",  "TCP", "8020").
   qactor( trolleystateprovider, ctx_transporttrolley, "it.unibo.trolleystateprovider.Trolleystateprovider").
   qactor( pathexecutorbcr, ctx_transporttrolley, "it.unibo.pathexecutorbcr.Pathexecutorbcr").
   qactor( basicrobot, ctx_robot, "it.unibo.basicrobot.Basicrobot").
-  qactor( alarmcontroller, ctx_raspberry, "it.unibo.alarmcontroller.Alarmcontroller").
-  qactor( ledcontroller, ctx_raspberry, "it.unibo.ledcontroller.Ledcontroller").
+  qactor( alarmcontroller, ctx_raspberrypi, "it.unibo.alarmcontroller.Alarmcontroller").
+  qactor( ledcontroller, ctx_raspberrypi, "it.unibo.ledcontroller.Ledcontroller").

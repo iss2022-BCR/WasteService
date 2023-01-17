@@ -58,7 +58,7 @@ Dispatch coapUpdate : coapUpdate(RESOURCE, VALUE)
 //Context ctx_smartdevice 		ip [host="localhost" port=11799]
 Context ctx_wasteservice		ip [host="localhost" port=11800]
 Context ctx_transporttrolley	ip [host="localhost" port=11801]
-Context ctx_raspberry			ip [host="localhost" port=11802]
+Context ctx_raspberrypi			ip [host="localhost" port=11802]
 Context ctx_robot				ip [host="localhost" port=8020]
 
 // ACTORS =====================================================================
@@ -136,7 +136,7 @@ QActor typesprovider context ctx_wasteservice {
 	
 	State state_handle_wastetypes_request {
 		printCurrentMessage
-		replyTo typesrequest with typesreply	: typesreply($WasteTypes)
+		replyTo typesrequest with typesreply	: typesreply($WasteTypes) //caller== smartdevice_simulator
 		println("[TypesProvider] Replied with types list: $WasteTypes")
 	}
 	Goto state_idle
@@ -198,7 +198,7 @@ QActor wasteservice context ctx_wasteservice {
 					[# WaitingPickup = false #]
 					
 					[# wasteservice.Utils.printFail("[WasteService] Load rejected: there is not enough space in the container to store the load.") #]
-					replyTo storerequest with loadrejected: loadrejected(_)
+					replyTo storerequest with loadrejected: loadrejected(_) //caller== smartdevice_simulator
 				}
 			}
 			else
@@ -206,7 +206,7 @@ QActor wasteservice context ctx_wasteservice {
 				[# WaitingPickup = false #]
 				
 				[# wasteservice.Utils.printFail("[WasteService] Load rejected: one or more parameters are invalid.") #]
-				replyTo storerequest with loadrejected: loadrejected(_)
+				replyTo storerequest with loadrejected: loadrejected(_) //caller== smartdevice_simulator
 			}
 			
 			println("[WasteService] Current storage:")
@@ -227,7 +227,7 @@ QActor wasteservice context ctx_wasteservice {
 		#]
 		
 		[# wasteservice.Utils.printCorrect("[WasteService] Pickup completed, sent Load Accepted.") #]
-		replyTo storerequest with loadaccepted: loadaccepted(_)
+		replyTo storerequest with loadaccepted: loadaccepted(_) //caller== smartdevice_simulator
 	}
 	Goto state_waiting_deposit
 	
@@ -288,8 +288,8 @@ QActor transporttrolley context ctx_transporttrolley {
 	Goto state_idle
 	
 	State state_idle {
-		//forward trolleystateprovider -m update_trolley_state: update_trolley_state(home)
-		updateResource [# "home" #]
+		//forward trolleystateprovider -m update_trolley_state: update_trolley_state(HOME)
+		updateResource [# "HOME" #]
 		
 		println("[TransportTrolley] Waiting for deposit requests...")
 	}
@@ -308,8 +308,8 @@ QActor transporttrolley context ctx_transporttrolley {
 	Goto state_move_to_indoor
 	
 	State state_move_to_indoor {
-		//forward trolleystateprovider -m update_trolley_state: update_trolley_state(moving)
-		updateResource [# "moving" #]
+		//forward trolleystateprovider -m update_trolley_state: update_trolley_state(MOVING)
+		updateResource [# "MOVING" #]
 		
 		println("[TransportTrolley] Moving to INDOOR...")
 		[#
@@ -325,17 +325,20 @@ QActor transporttrolley context ctx_transporttrolley {
 					whenReply dopathfail	-> state_error
 	
 	State state_pickup {
+		//forward trolleystateprovider -m update_trolley_state: update_trolley_state(PICKUP)
+		updateResource [# "PICKUP" #]
+		
 		println("[TransportTrolley] Picking up the load of $WasteType...")
 		[# wasteservice.Utils.simulateAction(WasteLoad) #]
 		println("[TransportTrolley] Pickup completed.")
 		
-		replyTo deposit with pickupcompleted: pickupcompleted(_)
+		replyTo deposit with pickupcompleted: pickupcompleted(_) caller== wasteservice
 	}
 	Goto state_move_to_box
 	
 	State state_move_to_box {
-		//forward trolleystateprovider -m update_trolley_state: update_trolley_state(moving)
-		updateResource [# "moving" #]
+		//forward trolleystateprovider -m update_trolley_state: update_trolley_state(MOVING)
+		updateResource [# "MOVING" #]
 		
 		println("[TransportTrolley] Moving to ${WasteType.name}_BOX...")
 		[#
@@ -351,6 +354,9 @@ QActor transporttrolley context ctx_transporttrolley {
 					whenReply dopathfail	-> state_error
 	
 	State state_dump {
+		//forward trolleystateprovider -m update_trolley_state: update_trolley_state(DUMP)
+		updateResource [# "DUMP" #]
+		
 		println("[TransportTrolley] Dumping the load...")
 		[# wasteservice.Utils.simulateAction(WasteLoad) #]
 		
@@ -361,8 +367,8 @@ QActor transporttrolley context ctx_transporttrolley {
 	Goto state_move_to_home
 	
 	State state_move_to_home {
-		//forward trolleystateprovider -m update_trolley_state: update_trolley_state(moving)
-		updateResource [# "moving" #]
+		//forward trolleystateprovider -m update_trolley_state: update_trolley_state(MOVING)
+		updateResource [# "MOVING" #]
 		
 		println("[TransportTrolley] Moving to HOME...")
 		[#
@@ -395,9 +401,7 @@ QActor transporttrolley context ctx_transporttrolley {
 
 QActor trolleystateprovider context ctx_transporttrolley {
 	[#
-		//var PrevState: wasteservice.TransportTrolleyState = wasteservice.TransportTrolleyState.values()[0]
-		//var State: wasteservice.TransportTrolleyState = wasteservice.TransportTrolleyState.values()[0]
-		var TTState: String = ""
+		var TTState: wasteservice.TransportTrolleyState = wasteservice.TransportTrolleyState.HOME
 	#]
 	State state_init initial {
 		observeResource transporttrolley
@@ -414,17 +418,17 @@ QActor trolleystateprovider context ctx_transporttrolley {
 					whenMsg update_trolley_state	-> state_update_trolley_state
 	
 	State state_update_trolley_state {
-		onMsg(coapUpdate : coapUpdate(RESOURCE, VALUE)){
-			if [# payloadArg(1) != TTState #] {
-				[# TTState = payloadArg(1) #]
-	    		println("[TrolleyStateProvider] Resource: ${payloadArg(0)}; Value: ${payloadArg(1)}")
+		onMsg(coapUpdate: coapUpdate(RESOURCE, VALUE)) {
+			if [# wasteservice.TransportTrolleyState.valueOf(payloadArg(1)) != TTState #] {
+				[# TTState = wasteservice.TransportTrolleyState.valueOf(payloadArg(1)) #]
+	    		println("[TrolleyStateProvider] New state. Resource: ${payloadArg(0)}; Value: ${TTState.name}")
 				emit trolley_state_changed: trolley_state_changed($TTState)
 			}
 		}
-		onMsg(update_trolley_state : update_trolley_state(STATE)){
-			if [# payloadArg(1) != TTState #] {
-				[# TTState = payloadArg(0) #]
-	    		println("[TrolleyStateProvider] Resource: ${payloadArg(0)}; Value: ${payloadArg(0)}")
+		onMsg(update_trolley_state: update_trolley_state(STATE)) {
+			if [# wasteservice.TransportTrolleyState.valueOf(payloadArg(1)) != TTState #] {
+				[# TTState = wasteservice.TransportTrolleyState.valueOf(payloadArg(1)) #]
+	    		println("[TrolleyStateProvider] New state. Value: ${TTState.name}")
 				emit trolley_state_changed: trolley_state_changed($TTState)
 			}
 		}
@@ -503,14 +507,14 @@ QActor pathexecutorbcr context ctx_transporttrolley {
 	
 	State state_end_work_ok {
 		println("[PathExecutorBCR] Path done.")
-		replyTo dopath with dopathdone: dopathdone( ok )
+		replyTo dopath with dopathdone: dopathdone( ok ) caller== transporttrolley
 	}
 	Goto state_idle
 	
 	State state_end_work_fail {
 		[# var PathStillTodo = pathut.getPathTodo() #]
 		println("[PathExecutorBCR] Path failure. Path still to do: $PathStillTodo")
-		replyTo dopath with dopathfail: dopathfail( $PathStillTodo )
+		replyTo dopath with dopathfail: dopathfail( $PathStillTodo ) caller== transporttrolley
 		
 		println("[PathExecutorBCR] Out of service.")
 		// NB: no more transitions since the WasteService is no longer operative
@@ -521,8 +525,8 @@ QActor pathexecutorbcr context ctx_transporttrolley {
 	}
 	
 	State state_stop {
-		//forward trolleystateprovider -m update_trolley_state: update_trolley_state(stopped)
-		updateResource [# "stopped" #]
+		//forward trolleystateprovider -m update_trolley_state: update_trolley_state(STOPPED)
+		updateResource [# "STOPPED" #]
 		
 		[# var PathTodo = pathut.getPathTodo() #]
 		println("[PathExecutorBCR] Alarm detected, trolley stopped. Path to do: $PathTodo")
@@ -531,11 +535,11 @@ QActor pathexecutorbcr context ctx_transporttrolley {
 	
 	State state_resume {
 		if [# MovesDone.length != TotPathMoves #] {
-			//forward trolleystateprovider -m update_trolley_state: update_trolley_state(moving)
-			updateResource [# "moving" #]
+			//forward trolleystateprovider -m update_trolley_state: update_trolley_state(MOVING)
+			updateResource [# "MOVING" #]
 		} else {
-			//forward trolleystateprovider -m update_trolley_state: update_trolley_state(home)
-			updateResource [# "home" #]
+			//forward trolleystateprovider -m update_trolley_state: update_trolley_state(HOME)
+			updateResource [# "HOME" #]
 		}
 		
 		
@@ -634,7 +638,7 @@ QActor basicrobot context ctx_robot {
  		run unibo.robot.robotSupport.move( "h" )  //stop the real robot already done ???
 		updateResource [# "stepDone($StepTime)" #]
    		//emit info : info( stepdone($StepTime) )
-   		replyTo step with stepdone : stepdone(ok)
+   		replyTo step with stepdone : stepdone(ok) caller== pathexecutorbcr
 		println("basicrobot | stepDone reply done")
   	}
 	Goto work  
@@ -651,7 +655,7 @@ QActor basicrobot context ctx_robot {
 			run unibo.robot.robotSupport.move( "h" ) 
  		updateResource [# "stepFail($Duration)" #] 
  		//emit info : info( stepFail($Duration) )
- 		replyTo step with stepfail : stepfail($Duration, obst)
+ 		replyTo step with stepfail : stepfail($Duration, obst) caller== pathexecutorbcr
     }
 	Goto work
 	
@@ -662,7 +666,7 @@ QActor basicrobot context ctx_robot {
 }
 
 // Sprint2 Problem Analysis ===================================================
-/*QActor sonar_mock_test context ctx_raspberry {
+/*QActor sonar_simulator context ctx_raspberrypi {
 	State state_init initial {
 		println("[SonarMockTest] Started.")
 		
@@ -682,7 +686,7 @@ QActor basicrobot context ctx_robot {
 	Goto state_detect
 }*/
 
-QActor alarmcontroller context ctx_raspberry {
+QActor alarmcontroller context ctx_raspberrypi {
 	[#
 		var SonarDistance: Double = Double.MAX_VALUE
 		var PrevAlarm: Boolean = false
@@ -724,22 +728,25 @@ QActor alarmcontroller context ctx_raspberry {
 	Goto state_idle
 }
 
-QActor ledcontroller context ctx_raspberry {
-	[# var State: String = "unknown" #]
+QActor ledcontroller context ctx_raspberrypi {
+	[# var State: wasteservice.LedState = wasteservice.LedState.OFF #]
 	State state_init initial {
 		println("[LedController] Started.")
 	}
 	Goto state_idle
 	
 	State state_idle {
-		println("[LedController] Current state: $State")
+		println("[LedController] Led state: ${State.name}")
 	}
 	Transition t0	whenEvent trolley_state_changed -> state_handle
 	
 	State state_handle {
-		println("[LedController] Led state changed!")
 		onMsg(trolley_state_changed: trolley_state_changed(STATE)) {
-			[# State = payloadArg(0) #]
+			[# var NewState = wasteservice.Utils.getLedStateFromTrolleyState(payloadArg(0)) #]
+			if [# NewState != State #] {
+				println("[LedController] Led state changed!")
+				[# State = NewState #]
+			}
 		}
 	}
 	Goto state_idle

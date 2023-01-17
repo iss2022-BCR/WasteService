@@ -3,8 +3,8 @@ cd ..
 :: Run SmartDevice Context
 :: start .\gradlew runCtx_SmartDevice
 
-:: Run RaspBerry Context
-start .\gradlew runCtx_Raspberry
+:: Run Raspberry Context
+start .\gradlew runCtx_RaspberryPi
 
 :: Run Robot Context
 start .\gradlew runCtx_Robot

@@ -127,7 +127,7 @@ class Pathexecutorbcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 				state("state_end_work_ok") { //this:State
 					action { //it:State
 						println("[PathExecutorBCR] Path done.")
-						answer("dopath", "dopathdone", "dopathdone(ok)"   )  
+						answer("dopath", "dopathdone", "dopathdone(ok)","transporttrolley"   )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -139,7 +139,7 @@ class Pathexecutorbcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 					action { //it:State
 						 var PathStillTodo = pathut.getPathTodo()  
 						println("[PathExecutorBCR] Path failure. Path still to do: $PathStillTodo")
-						answer("dopath", "dopathfail", "dopathfail($PathStillTodo)"   )  
+						answer("dopath", "dopathfail", "dopathfail($PathStillTodo)","transporttrolley"   )  
 						println("[PathExecutorBCR] Out of service.")
 						terminate(1)
 						//genTimer( actor, state )
@@ -150,7 +150,7 @@ class Pathexecutorbcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 				}	 
 				state("state_stop") { //this:State
 					action { //it:State
-						updateResourceRep( "stopped"  
+						updateResourceRep( "STOPPED"  
 						)
 						 var PathTodo = pathut.getPathTodo()  
 						println("[PathExecutorBCR] Alarm detected, trolley stopped. Path to do: $PathTodo")
@@ -164,11 +164,11 @@ class Pathexecutorbcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 				state("state_resume") { //this:State
 					action { //it:State
 						if(  MovesDone.length != TotPathMoves  
-						 ){updateResourceRep( "moving"  
+						 ){updateResourceRep( "MOVING"  
 						)
 						}
 						else
-						 {updateResourceRep( "home"  
+						 {updateResourceRep( "HOME"  
 						 )
 						 }
 						println("[PathExecutorBCR] Alarm retracted. Resuming...")

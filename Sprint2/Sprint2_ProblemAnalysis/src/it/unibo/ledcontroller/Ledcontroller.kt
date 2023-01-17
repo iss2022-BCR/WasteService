@@ -15,7 +15,7 @@ class Ledcontroller ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( na
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
-		 var State: String = "unknown"  
+		 var State: wasteservice.LedState = wasteservice.LedState.OFF  
 		return { //this:ActionBasciFsm
 				state("state_init") { //this:State
 					action { //it:State
@@ -29,7 +29,7 @@ class Ledcontroller ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( na
 				}	 
 				state("state_idle") { //this:State
 					action { //it:State
-						println("[LedController] Current state: $State")
+						println("[LedController] Led state: ${State.name}")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -39,10 +39,13 @@ class Ledcontroller ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( na
 				}	 
 				state("state_handle") { //this:State
 					action { //it:State
-						println("[LedController] Led state changed!")
 						if( checkMsgContent( Term.createTerm("trolley_state_changed(STATE)"), Term.createTerm("trolley_state_changed(STATE)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								 State = payloadArg(0)  
+								 var NewState = wasteservice.Utils.getLedStateFromTrolleyState(payloadArg(0))  
+								if(  NewState != State  
+								 ){println("[LedController] Led state changed!")
+								 State = NewState  
+								}
 						}
 						//genTimer( actor, state )
 					}

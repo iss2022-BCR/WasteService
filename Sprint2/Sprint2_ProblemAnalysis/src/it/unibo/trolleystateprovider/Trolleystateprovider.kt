@@ -16,9 +16,7 @@ class Trolleystateprovider ( name: String, scope: CoroutineScope  ) : ActorBasic
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
 		
-				//var PrevState: wasteservice.TransportTrolleyState = wasteservice.TransportTrolleyState.values()[0]
-				//var State: wasteservice.TransportTrolleyState = wasteservice.TransportTrolleyState.values()[0]
-				var TTState: String = ""
+				var TTState: wasteservice.TransportTrolleyState = wasteservice.TransportTrolleyState.HOME
 		return { //this:ActionBasciFsm
 				state("state_init") { //this:State
 					action { //it:State
@@ -47,17 +45,17 @@ class Trolleystateprovider ( name: String, scope: CoroutineScope  ) : ActorBasic
 					action { //it:State
 						if( checkMsgContent( Term.createTerm("coapUpdate(RESOURCE,VALUE)"), Term.createTerm("coapUpdate(RESOURCE,VALUE)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								if(  payloadArg(1) != TTState  
-								 ){ TTState = payloadArg(1)  
-								println("[TrolleyStateProvider] Resource: ${payloadArg(0)}; Value: ${payloadArg(1)}")
+								if(  wasteservice.TransportTrolleyState.valueOf(payloadArg(1)) != TTState  
+								 ){ TTState = wasteservice.TransportTrolleyState.valueOf(payloadArg(1))  
+								println("[TrolleyStateProvider] New state. Resource: ${payloadArg(0)}; Value: ${TTState.name}")
 								emit("trolley_state_changed", "trolley_state_changed($TTState)" ) 
 								}
 						}
 						if( checkMsgContent( Term.createTerm("update_trolley_state(STATE)"), Term.createTerm("update_trolley_state(STATE)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								if(  payloadArg(1) != TTState  
-								 ){ TTState = payloadArg(0)  
-								println("[TrolleyStateProvider] Resource: ${payloadArg(0)}; Value: ${payloadArg(0)}")
+								if(  wasteservice.TransportTrolleyState.valueOf(payloadArg(1)) != TTState  
+								 ){ TTState = wasteservice.TransportTrolleyState.valueOf(payloadArg(1))  
+								println("[TrolleyStateProvider] New state. Value: ${TTState.name}")
 								emit("trolley_state_changed", "trolley_state_changed($TTState)" ) 
 								}
 						}

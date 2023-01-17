@@ -1,6 +1,7 @@
 package wasteservice
 
 import alice.tuprologx.pj.model.Bool
+import com.sun.jdi.connect.Transport
 import unibo.comm22.utils.ColorsOut
 
 
@@ -62,10 +63,27 @@ object Utils {
         return distance < WSconstants.DLIM
     }
     fun isAlarm(distance: String): Boolean {
-        try {
-            return distance.toDouble() < WSconstants.DLIM
+        return try {
+            distance.toDouble() < WSconstants.DLIM
         } catch(e: NumberFormatException) {
-            return false
+            false
+        }
+    }
+
+    fun getLedStateFromTrolleyState(state: TransportTrolleyState ): LedState {
+        return when (state) {
+            TransportTrolleyState.MOVING, TransportTrolleyState.PICKUP, TransportTrolleyState.DUMP -> {
+                LedState.BLINKING
+            }
+            TransportTrolleyState.STOPPED -> LedState.ON
+            else -> LedState.OFF
+        }
+    }
+    fun getLedStateFromTrolleyState(state: String): LedState {
+        return try {
+            getLedStateFromTrolleyState(TransportTrolleyState.valueOf(state))
+        } catch(e: java.lang.IllegalArgumentException) {
+            LedState.OFF
         }
     }
 }

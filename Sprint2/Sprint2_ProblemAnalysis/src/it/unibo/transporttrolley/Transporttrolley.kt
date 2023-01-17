@@ -41,7 +41,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("state_idle") { //this:State
 					action { //it:State
-						updateResourceRep( "home"  
+						updateResourceRep( "HOME"  
 						)
 						println("[TransportTrolley] Waiting for deposit requests...")
 						//genTimer( actor, state )
@@ -70,7 +70,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("state_move_to_indoor") { //this:State
 					action { //it:State
-						updateResourceRep( "moving"  
+						updateResourceRep( "MOVING"  
 						)
 						println("[TransportTrolley] Moving to INDOOR...")
 						
@@ -90,10 +90,12 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("state_pickup") { //this:State
 					action { //it:State
+						updateResourceRep( "PICKUP"  
+						)
 						println("[TransportTrolley] Picking up the load of $WasteType...")
 						 wasteservice.Utils.simulateAction(WasteLoad)  
 						println("[TransportTrolley] Pickup completed.")
-						answer("deposit", "pickupcompleted", "pickupcompleted(_)"   )  
+						answer("deposit", "pickupcompleted", "pickupcompleted(_)","wasteservice"   )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -103,7 +105,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("state_move_to_box") { //this:State
 					action { //it:State
-						updateResourceRep( "moving"  
+						updateResourceRep( "MOVING"  
 						)
 						println("[TransportTrolley] Moving to ${WasteType.name}_BOX...")
 						
@@ -123,6 +125,8 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("state_dump") { //this:State
 					action { //it:State
+						updateResourceRep( "DUMP"  
+						)
 						println("[TransportTrolley] Dumping the load...")
 						 wasteservice.Utils.simulateAction(WasteLoad)  
 						println("[TransportTrolley] Dump completed.")
@@ -136,7 +140,7 @@ class Transporttrolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 				}	 
 				state("state_move_to_home") { //this:State
 					action { //it:State
-						updateResourceRep( "moving"  
+						updateResourceRep( "MOVING"  
 						)
 						println("[TransportTrolley] Moving to HOME...")
 						
