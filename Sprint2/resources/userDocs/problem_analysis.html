@@ -74,18 +74,21 @@
             <h2 id="Raspberry-Pi-Software">Raspberry Pi Software</h2>
             The raspberry pi software includes the alarm and warning devices (sonar and led).
             They both are attached to the Raspberry Pi, which is situated on a
-            computational node different from the Waste Service one.
-            Therefore, we must analyze which software components are going to run on
-            one and which on the other.
-            <br/>
-            <br/>
+            computational node different from the Waste Service one.<br/>
             Therefore, we are going to add a context called <ksi>ctx_raspberry</ksi>
-            where sonar and led actors will be executing.
+            and we will analyze where different software components will be located.
             
             <h3>Sonar</h3>
-            The sonar is an electronical component which detects the presence
-            of obstacles ahead at intervals of time.
-            
+            What's the purpose of the sonar? Which components depend on it and where will
+            them be located?
+
+            <problem>Get input from the component HC-SR04</problem>
+            The sonar needs to get the input from the physical component (HC-SR04)
+
+
+
+            <highlight1>The sonar is responsible for the stop/resume functionality.</highlight1>
+
             <problem>Sonar data sent</problem>
             <b>Problem</b>: What data does the sonar send? Should it send a message for each detection?
             <alternative>
@@ -147,6 +150,7 @@
                     <li>A specific component</li>
                 </ol>
             </alternative>
+
 
             
             
