@@ -52,11 +52,11 @@ class Alarmcontroller ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 								if(  Alarm != PrevAlarm  
 								 ){if(  Alarm == true  
 								 ){println("[AlarmController] Alarm situation!")
-								emit("startAlarm", "startAlarm(_)" ) 
+								emit("stop", "stop(_)" ) 
 								}
 								else
 								 {println("[AlarmController] Alarm over.")
-								 emit("stopAlarm", "stopAlarm(_)" ) 
+								 emit("resume", "resume(_)" ) 
 								 }
 								}
 						}

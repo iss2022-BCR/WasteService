@@ -52,6 +52,43 @@
             <h2 id="Raspberry-Pi-Software-Name">&lt;Raspberry-Pi-Software-Name&gt;</h2>
             <ksi>&lt;Raspberry-Pi-Software-Name&gt;</ksi> (<a href="../../Sprint2_Project/project_directory/">project_directory</a>) is a [...]
             
+            <h4>PathExecutorBCR</h4>
+            We modified the pathexecutor QAK actor to include the stop/resume functionality:
+            <ul>
+                <li>Actor renamed to "pathexecutorbcr"</li>
+                <li>General refactor: renamed states, and added some middle ones (e.g. state_idle)</li>
+                <li>Added a guard checking for stop events (<code>Transition t1 whenEvent stop -> state_stop</code>) at the end of the following states:
+                    <ul>
+                        <li>state_idle (the state where the actor waits for path requests);</li>
+                        <li>state_do_move_forward;</li>
+                        <li>state_do_move_turn.</li>
+                    </ul>
+                </li>
+                <li>
+                    Added the state "state_stop"
+<pre style="white-space: pre;">
+State state_stop {
+    [# var PathTodo = pathut.getPathTodo() #]
+    println("[PathExecutorBCR] Alarm detected, trolley stopped. Path to do: $PathTodo")
+}
+Transition t3 whenEvent resume -> state_resume
+</pre>
+                </li>
+                <li>
+                    Added the state "state_resume"
+<pre style="white-space: pre;">
+State state_resume {
+    println("[PathExecutorBCR] Alarm retracted. Resuming...")
+}
+Goto state_next_move if [# MovesDone.length != TotPathMoves #] else state_idle
+</pre>
+                </li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+
             <br/>
             classe per rappresentare stato trolley
             <br/>

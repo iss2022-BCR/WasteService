@@ -43,7 +43,7 @@ class Pathexecutorbcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 					sysaction { //it:State
 					}	 	 
 					 transition(edgeName="t014",targetState="state_do_path",cond=whenRequest("dopath"))
-					transition(edgeName="t015",targetState="state_stop",cond=whenEvent("startAlarm"))
+					transition(edgeName="t015",targetState="state_stop",cond=whenEvent("stop"))
 				}	 
 				state("state_do_path") { //this:State
 					action { //it:State
@@ -105,7 +105,7 @@ class Pathexecutorbcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t116",targetState="state_stop",cond=whenEvent("startAlarm"))
+					 transition(edgeName="t116",targetState="state_stop",cond=whenEvent("stop"))
 					transition(edgeName="t117",targetState="state_next_move",cond=whenReply("stepdone"))
 					transition(edgeName="t118",targetState="state_end_work_fail",cond=whenReply("stepfail"))
 				}	 
@@ -122,7 +122,7 @@ class Pathexecutorbcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 				 	 		//}
 					}	 	 
 					 transition(edgeName="t219",targetState="state_next_move",cond=whenTimeout("local_tout_pathexecutorbcr_state_do_move_turn"))   
-					transition(edgeName="t220",targetState="state_stop",cond=whenEvent("startAlarm"))
+					transition(edgeName="t220",targetState="state_stop",cond=whenEvent("stop"))
 				}	 
 				state("state_end_work_ok") { //this:State
 					action { //it:State
@@ -159,7 +159,7 @@ class Pathexecutorbcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t321",targetState="state_resume",cond=whenEvent("stopAlarm"))
+					 transition(edgeName="t321",targetState="state_resume",cond=whenEvent("resume"))
 				}	 
 				state("state_resume") { //this:State
 					action { //it:State
