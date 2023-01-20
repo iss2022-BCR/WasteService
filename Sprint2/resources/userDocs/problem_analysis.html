@@ -22,9 +22,19 @@
             <a href="requirement_analysis.html">Requirement<br/>Analysis</a>
             <a class="selected" href="problem_analysis.html">Problem Analysis</a>
             <div class="sidenavSection">
-                <a href="#Raspberry-Pi-Software">Raspberry Pi<br/>Software</a>
+                <a href="#Sprint2-Software">Sprint 2 Software</a>
                 <div class="sidenavSubSection">
+                    <a href="#Sonar">Sonar</a>
+                    <a href="#Stop-Resume">Stop/Resume</a>
+                    <a href="#Led">Led</a>
+                    <a href="#Extra">Extra</a>
                 </div>
+                <a href="#Interactions">Interactions</a>
+                <div class="sidenavSubSection">
+                    <a href="#Messages">New Messages</a>
+                </div>
+                <a href="#Logical-Architecture">Logical Architecture</a>
+                <a href="#Test-Plans">Test Plans</a>
             </div>
             <a href="project.html">Project</a>
             <a href="test_plans.html">Test Plans</a>
@@ -71,14 +81,19 @@
             <img width="100%" src="../../../Sprint1/Sprint1_Project/sprint1_waste_service/project_logical_architecture_core-business.png"/>
             QAK model: <a href="../../../Sprint1/Sprint1_Project/sprint1_waste_service/src/waste_service.qak">waste_service.qak</a>
 
-            <h2 id="Raspberry-Pi-Software">Raspberry Pi Software</h2>
-            The raspberry pi software includes the alarm and warning devices (sonar and led).
-            They both are attached to the Raspberry Pi, which is situated on a
-            computational node different from the Waste Service one.<br/>
-            Therefore, we are going to add a context called <ksi>ctx_raspberry</ksi>
-            and we will analyze where different software components will be located.
+            <h2 id="Sprint2-Software">Sprint 2 Software</h2>
+            The Sprint 2 software will be the product of the analysis of problems
+            related to the Raspberry Pi.
+            We will analyze the main problems of the <b><i>4th requirement</i></b>, and discuss the
+            possible solutions and their differences.
+            <br/>
+            <br/>
+            Since the Raspberry Pi is situated on a computational node different from
+            the Waste Service one, we will need to add a new context, which we're going
+            to call "<ksi>ctx_raspberry</ksi>".
+            The actors of this context will be running on the Raspberry Pi device.
             
-            <h3>Sonar</h3>
+            <h3 id="Sonar">Sonar</h3>
             What's the purpose of the sonar? Which components depend on it and where will
             them be located?
             <highlight1>The sonar is responsible for the stop/resume functionality.</highlight1>
@@ -135,7 +150,7 @@
                 Service Area and has no specific recipient.
             </solution>
 
-            <h3>Stop/Resume</h3>
+            <h3 id="Stop-Resume">Stop/Resume</h3>
 
             <problem>What to stop</problem>
             <b>Problem</b>: <i>"what"</i> or <i>"which"</i> Transport Trolley actions can be
@@ -209,7 +224,7 @@
                 <b>Alternatives</b>: <highlight2>interrupt/returnFromInterrupt; prima soluzione provata</highlight2>
             </alternative>
 
-            <h3>Led</h3>
+            <h3 id="Led">Led</h3>
             What's the purpose of the led? Which components does it
             depend on? What information does it need?
             <br/>
@@ -229,7 +244,8 @@
                 <b>Alternatives</b>: use a dispatch to update the state of the trolley
             </alternative>
 
-            <h3>Return to home/Go to pickup</h3>
+            <h3 id="Extras">Extras</h3>
+            <h4>Return to home/Go to pickup</h4>
 
             <h2 id="Raspberry-Pi-Components">Raspberry Pi Components</h2>
             
@@ -314,24 +330,6 @@
                     <th>Description</th>
                     <th>Files</th>
                 </tr>
-                <!--<tr>
-                    <td>Defects Solution</td>
-                    <td>
-                        <ul>
-                            <li>SmartDevice</li>
-                            <li>WasteService</li>
-                            <li>TransportTrolley</li>
-                        </ul>
-                    </td>
-                    <td>
-                        We check if the SmartDevice receives a loadrejected immediately,
-                        even though a deposit action is currently being performed by the TransportTrolley.
-                    </td>
-                    <td>
-                        QAK: <a href="">.qak</a>
-                        Test: <a href="">.kt</a>
-                    </td>
-                </tr>-->
                 <tr>
                     <td></td>
                     <td>
