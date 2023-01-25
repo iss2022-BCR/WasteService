@@ -235,9 +235,17 @@
             <problem>Track Trolley State</problem>
             <b>Problem</b>: How do we keep track of the trolley state?
             <solution>
-                <b>Solution</b>: make the <ksi>trolley state COAP observable</ksi> and use an actor
+                <b>Solution</b>: separate the trolley state from the led, make the
+                <ksi>trolley state COAP observable</ksi> and use an actor
                 to keep track of the current state of the Transport Trolley: <ks><code>trolleystateprovider</code></ks>.
                 <br/>
+                <pre>
+                    TROLLEY_STATE := HOME | MOVING | PICKUP | DUMP | STOPPED
+                </pre>
+
+                <pre>
+                    LED_STATE := ON | BLINKING | OFF
+                </pre>
                 <b>Reasons</b>:
             </solution>
             <alternative>
@@ -331,7 +339,35 @@
                     <th>Files</th>
                 </tr>
                 <tr>
+                    <td>Stop Test</td>
+                    <td>
+                        <ul>
+                            <li></li>
+                            <li></li>
+                        </ul>
+                    </td>
                     <td></td>
+                    <td rowspan="2">
+                        QAK: <a href="">.qak</a>
+                        Test: <a href="">.kt</a>
+                    </td>
+                    <!-- NB: to test the TypesProvider we can just use a TCP connection and analyze the reply content,
+                        we don't need COAP, since it's a simple task to verify -->
+                </tr>
+                <tr>
+                    <td>Resume Test</td>
+                    <td>
+                        <ul>
+                            <li></li>
+                            <li></li>
+                        </ul>
+                    </td>
+                    <td></td>
+                    <!-- NB: to test the TypesProvider we can just use a TCP connection and analyze the reply content,
+                        we don't need COAP, since it's a simple task to verify -->
+                </tr>
+                <tr>
+                    <td>Trolley State Test</td>
                     <td>
                         <ul>
                             <li></li>
