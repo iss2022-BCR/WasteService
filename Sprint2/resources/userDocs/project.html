@@ -45,6 +45,9 @@
             <h2>Defects Solution</h2>
             - smart device;
             - map editor
+            
+            <h3>Waste Service Changes</h3>
+            - added stop/resume feature
 
             <h2 id="Logical-Architecture">Logical Architecture</h2>
             The main change in the logical architecture from the Problem Analysis is [...].
@@ -104,7 +107,37 @@ Goto state_next_move if [# MovesDone.length != TotPathMoves #] else state_idle
             <h3 id="Device">Device</h3>
             The device used is a <a href="https://www.raspberrypi.com/products/raspberry-pi-4-model-b/">Raspberry Pi 4 Model B</a>: <highlight1>Specifiche</highlight1>
             
+
+            <h2>Sprint 2.2: Radar GUI</h2>
+            Since our software house already developed a project capable of showing sonar
+            information in a fancy way, we considered its usage and analyzed if there was
+            a way to adapt it and include it in our Waste Service project.
+            <br/><br/>
+
+            The <ksi>Radar GUI</ksi> project consists of an application able to display
+            elaborated information of detected obstacles, with a sonar-like graphical
+            interface:
+            a line the length of the radius constantly rotates with its pivot in the
+            center of the screen, <b><i>simulating a sonar</i></b>. Detected obstacles (with their
+            distance and angle) are stored in a queue and, if the detected obstacle 
+            distance is within the bounds of interest, as soon as the line encounters
+            the point, the application display
+
+            <center>
+                <img width="50%" src="../imgs/radarGUI.gif"/>
+            </center>
+
+            The Radar GUI project is completely written in C with SDL2 library and 
+            includes an interface to ease the networking communication, using UDP and 
+            TCP.
+
+            Example usage: run the radarGUI on a computer, and a client on a Raspberry Pi,
+            which detects obstacles with the sonar module, and sends the data by using the
+            networking interface.
             
+            <problem>Problemi: PIN del raspberry</problem>
+
+
             <h2 id="Raspberry-Demo">Raspberry Demo</h2>
             In order to run demo components we need:
             [...]
