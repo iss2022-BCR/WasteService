@@ -32,7 +32,6 @@ class Trolleystateprovider ( name: String, scope: CoroutineScope  ) : ActorBasic
 				}	 
 				state("state_idle") { //this:State
 					action { //it:State
-						println("[TrolleyStateProvider] Idle")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
