@@ -36,15 +36,17 @@ import kotlin.test.Test
  */
 class TestStopResume {
     companion object {
+        private const val suffix = "_sr_test"
+
         private const val hostCtx = "localhost"
         private const val portCtx = 11704
         private const val ctxName = "ctx_stopresume_test"
-        private const val actorNameTT = "transporttrolley_sr_test"
-        private const val actorNamePE = "pathexecutorbcr_sr_test"
-        private const val actorNameAC = "alarmcontroller_sr_test"
+        private const val actorNameTT = "transporttrolley$suffix"
+        private const val actorNamePE = "pathexecutorbcr$suffix"
+        private const val actorNameAC = "alarmcontroller$suffix"
 
-        private const val actorNameWS = "mock_wasteservice_sr_test"
-        private const val actorNameSR = "mock_sonar_sr_test"
+        private const val actorNameWS = "mock_wasteservice$suffix"
+        private const val actorNameSR = "mock_sonar$suffix"
     }
 
     private lateinit var obs: CoapObserver
@@ -138,7 +140,7 @@ class TestStopResume {
             ColorsOut.outappl("TEST STOP - TransportTrolley stopped: FAILED", ColorsOut.RED)
         }
 
-        simulate_distance(WSconstants.DLIM + 1.0)
+        simulate_distance(WSconstants.DLIM)
 
         res = obs.waitForSpecificHistoryEntry("transporttrolley(HOME)", timeout = 5000)
         assertTrue(res)
@@ -158,7 +160,7 @@ class TestStopResume {
             ColorsOut.outappl("TEST DEPOSIT - TransportTrolley moving: FAILED", ColorsOut.RED)
         }
 
-        simulate_distance(WSconstants.DLIM - 1.0)
+        simulate_distance(WSconstants.DLIM - 5.0)
 
         res = obs.waitForSpecificHistoryEntry("transporttrolley(STOPPED)", timeout = 5000)
         assertTrue(res)
@@ -168,7 +170,7 @@ class TestStopResume {
             ColorsOut.outappl("TEST STOP - TransportTrolley stopped: FAILED", ColorsOut.RED)
         }
 
-        simulate_distance(WSconstants.DLIM + 1.0)
+        simulate_distance(WSconstants.DLIM + 10.0)
 
         res = obs.waitForSpecificHistoryEntry("transporttrolley(MOVING)", timeout = 5000)
         assertTrue(res)
@@ -178,7 +180,7 @@ class TestStopResume {
             ColorsOut.outappl("TEST RESUME - TransportTrolley moving: FAILED", ColorsOut.RED)
         }
 
-        simulate_distance(WSconstants.DLIM + 1.0)
+        simulate_distance(WSconstants.DLIM + 30.0)
 
         obs.checkLast("transporttrolley(MOVING)")
     }

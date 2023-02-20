@@ -1,0 +1,1 @@
+{"actor":"alarmcontroller_sr_test", "msgType":"dispatch", "curstate":"state_idle", "nextstate":"state_handle_sonar_data", "msgId":"sonar_data"}

@@ -189,6 +189,30 @@ class CoapObserver : CoapHandler {
     }
 
     /**
+     * Removes an entry from the history (searches from the beginning of the list).
+     * @return true if the entry was found and correctly removed, false otherwise.
+     */
+    fun removeHistoryEntry(entry: String): Boolean {
+        return coapHistory.remove(entry)
+    }
+
+    /**
+     * Removes an entry from the history (searches from the end of the list).
+     * @return true if the entry was found and correctly removed, false otherwise.
+     */
+    fun removeHistoryEntryFromLast(entry: String): Boolean {
+        var i = coapHistory.lastIndex
+        while(i >= 0) {
+            if (coapHistory.get(i) == entry) {
+                coapHistory.removeAt(i)
+                return true
+            }
+            i--
+        }
+        return false
+    }
+
+    /**
      * Remove all the resource messages from the COAP history.
      */
     fun clearCoapHistory() {
