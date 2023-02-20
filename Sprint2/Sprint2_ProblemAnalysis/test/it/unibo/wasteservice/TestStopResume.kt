@@ -117,7 +117,7 @@ class TestStopResume {
     }
 
     @Test
-    fun test_stop_while_at_home() {
+    fun test_stop_resume() {
         ColorsOut.outappl("TEST: Check if the TransportTrolley correctly stops while at home.", ColorsOut.CYAN);
 
         var res = obs.waitForSpecificHistoryEntry("transporttrolley(HOME)", timeout = 5000)
