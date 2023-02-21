@@ -6,7 +6,16 @@ System test_led_state
  * Trolley State Test: trolley state & led state handling.
  *
  * Test Recap:
- *  1)
+ *  1) TEST: TransportTrolley is at HOME
+ *  2) TEST: Led is OFF
+ *  
+ *  3) Mock_WasteService sends a deposit request to TransportTrolley
+ *  4) TEST: TransportTrolley is MOVING
+ *  5) TEST: Led is BLINKING
+ *
+ *  6) Mock_Sonar sends a distance < DLIM to the AlarmController
+ *  7) TEST: TransportTrolley is STOPPED
+ *  8) TEST: Led is ON
  */
 
 // MESSAGES AND EVENTS ========================================================
@@ -317,6 +326,43 @@ QActor pathexecutorbcr_ls_test context ctx_ledstate_test {
 	Goto state_next_move if [# MovesDone.length != TotPathMoves #] else state_idle
 }
 
+QActor trolleystateprovider_ls_test context ctx_ledstate_test {
+	[#
+		var TTState: wasteservice.TransportTrolleyState = wasteservice.TransportTrolleyState.HOME
+	#]
+	State state_init initial {
+		observeResource transporttrolley_ls_test
+		observeResource pathexecutorbcr_ls_test
+		
+		println("[TrolleyStateProvider] Started.")
+	}
+	Goto state_idle
+	
+	State state_idle {
+		//println("[TrolleyStateProvider] Idle")
+	}
+	Transition t0	whenMsg coapUpdate				-> state_update_trolley_state
+					whenMsg update_trolley_state	-> state_update_trolley_state
+	
+	State state_update_trolley_state {
+		onMsg(coapUpdate: coapUpdate(RESOURCE, VALUE)) {
+			if [# wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) != TTState #] {
+				[# TTState = wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) #]
+	    		println("[TrolleyStateProvider] New state. Resource: ${payloadArg(0)}; Value: ${TTState.name}")
+				emit trolley_state_changed: trolley_state_changed($TTState)
+			}
+		}
+		onMsg(update_trolley_state: update_trolley_state(STATE)) {
+			if [# wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) != TTState #] {
+				[# TTState = wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) #]
+	    		println("[TrolleyStateProvider] New state. Value: ${TTState.name}")
+				emit trolley_state_changed: trolley_state_changed($TTState)
+			}
+		}
+	}
+	Goto state_idle
+}
+
 QActor alarmcontroller_ls_test context ctx_ledstate_test {
 	[#
 		var SonarDistance: Double = Double.MAX_VALUE
@@ -363,6 +409,7 @@ QActor ledcontroller_ls_test context ctx_ledstate_test {
 	[# var State: wasteservice.LedState = wasteservice.LedState.OFF #]
 	State state_init initial {
 		println("[LedController] Started.")
+		updateResource [# "ledstate(OFF)" #]
 	}
 	Goto state_idle
 	

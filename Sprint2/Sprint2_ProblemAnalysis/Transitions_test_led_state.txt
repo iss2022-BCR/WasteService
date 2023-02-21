@@ -1,1 +1,3 @@
+{"actor":"trolleystateprovider_ls_test", "msgType":"dispatch", "curstate":"state_idle", "nextstate":"state_update_trolley_state", "msgId":"coapUpdate"}
+{"actor":"trolleystateprovider_ls_test", "msgType":"dispatch", "curstate":"state_idle", "nextstate":"state_update_trolley_state", "msgId":"update_trolley_state"}
 {"actor":"alarmcontroller_ls_test", "msgType":"dispatch", "curstate":"state_idle", "nextstate":"state_handle_sonar_data", "msgId":"sonar_data"}
