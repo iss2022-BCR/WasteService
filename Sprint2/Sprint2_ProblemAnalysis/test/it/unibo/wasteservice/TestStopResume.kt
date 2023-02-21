@@ -101,9 +101,6 @@ class TestStopResume {
 
     @AfterTest
     fun shutdown() {
-        println("COAP History:")
-        println(obs.getCoapHistory().toString())
-
         try {
             ctxConnection.close()
         } catch (e: java.lang.Exception) {
