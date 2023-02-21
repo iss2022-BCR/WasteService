@@ -25,10 +25,12 @@ import kotlin.test.Test
  *  3) TEST: TransportTrolley enters STOPPED state
  *  4) Mock_Sonar sends a distance > DLIM to the AlarmController
  *  5) TEST: TransportTrolley is at HOME state (resumed)
+ *
  *  6) Mock_WasteService sends a deposit request to TransportTrolley
  *  7) TEST: TransportTrolley starts MOVING
  *  8) Mock_Sonar sends a distance < DLIM to the AlarmController
  *  9) TEST: TransportTrolley enters STOPPED state
+ *
  *  10) Mock_Sonar sends a distance > DLIM to the AlarmController
  *  11) TEST: TransportTrolley is back MOVING (resumed)
  *  12) Mock_Sonar sends a distance > DLIM to the AlarmController
@@ -74,6 +76,7 @@ class TestStopResume {
         // wait for actors to be ready before instantiating the COAP connection (it could fail quietly!)
         waitForActor(actorNameTT)
         waitForActor(actorNamePE)
+        waitForActor(actorNameAC)
 
         // Setup COAP
         obs = CoapObserver()
@@ -84,7 +87,7 @@ class TestStopResume {
         obs.createCoapConnection(actorNamePE)
         //obs.clearCoapHistory() // clearing the coap history before the test makes it fail for unknown reason
 
-        CommUtils.delay(3000)
+        CommUtils.delay(1000)
 
         // establish TCP connections
         try {
@@ -93,7 +96,7 @@ class TestStopResume {
         } catch (e: java.lang.Exception) {
             e.printStackTrace();
         }
-        CommUtils.delay(3000)
+        CommUtils.delay(1000)
 
         ColorsOut.outappl("===== TEST Started =====", ColorsOut.CYAN);
 
@@ -127,6 +130,8 @@ class TestStopResume {
             ColorsOut.outappl("TEST START - TransportTrolley at home: FAILED", ColorsOut.RED)
         }
 
+        CommUtils.delay(1000)
+
         simulate_distance(wasteservice.WSconstants.DLIM - 1.0)
 
         res = obs.waitForSpecificHistoryEntry("transporttrolley(STOPPED)", timeout = 5000)
@@ -136,6 +141,8 @@ class TestStopResume {
         else {
             ColorsOut.outappl("TEST STOP - TransportTrolley stopped: FAILED", ColorsOut.RED)
         }
+
+        CommUtils.delay(1000)
 
         simulate_distance(WSconstants.DLIM)
 
@@ -147,6 +154,8 @@ class TestStopResume {
             ColorsOut.outappl("TEST RESUME - TransportTrolley at home: FAILED", ColorsOut.RED)
         }
 
+        CommUtils.delay(1000)
+
         simulate_deposit(WasteType.PLASTIC, 10.0)
 
         res = obs.waitForSpecificHistoryEntry("transporttrolley(MOVING)", timeout = 5000)
@@ -157,6 +166,8 @@ class TestStopResume {
             ColorsOut.outappl("TEST DEPOSIT - TransportTrolley moving: FAILED", ColorsOut.RED)
         }
 
+        CommUtils.delay(1000)
+
         simulate_distance(WSconstants.DLIM - 5.0)
 
         res = obs.waitForSpecificHistoryEntry("transporttrolley(STOPPED)", timeout = 5000)
@@ -166,6 +177,8 @@ class TestStopResume {
         else {
             ColorsOut.outappl("TEST STOP - TransportTrolley stopped: FAILED", ColorsOut.RED)
         }
+
+        CommUtils.delay(1000)
 
         simulate_distance(WSconstants.DLIM + 10.0)
 
@@ -180,6 +193,8 @@ class TestStopResume {
         simulate_distance(WSconstants.DLIM + 30.0)
 
         obs.checkLast("transporttrolley(MOVING)")
+
+        CommUtils.delay(1000)
     }
 
     private fun simulate_deposit(wasteType: WasteType, wasteLoad: Double) {
@@ -196,7 +211,7 @@ class TestStopResume {
     }
 
     private fun simulate_distance(value: Double) {
-        ColorsOut.outappl("[Mock_Sonar] Sending sonar_data($value) to AlarmController.", ColorsOut.GREEN);
+        ColorsOut.outappl("[Mock_Sonar] Sending sonar_data($value) to AlarmController.", ColorsOut.MAGENTA);
 
         val event = MsgUtil.buildDispatch(actorNameSR, "sonar_data", "sonar_data($value)", actorNameAC);
 
