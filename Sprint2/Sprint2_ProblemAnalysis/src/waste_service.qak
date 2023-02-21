@@ -419,15 +419,15 @@ QActor trolleystateprovider context ctx_transporttrolley {
 	
 	State state_update_trolley_state {
 		onMsg(coapUpdate: coapUpdate(RESOURCE, VALUE)) {
-			if [# wasteservice.TransportTrolleyState.valueOf(payloadArg(1)) != TTState #] {
-				[# TTState = wasteservice.TransportTrolleyState.valueOf(payloadArg(1)) #]
+			if [# wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) != TTState #] {
+				[# TTState = wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) #]
 	    		println("[TrolleyStateProvider] New state. Resource: ${payloadArg(0)}; Value: ${TTState.name}")
 				emit trolley_state_changed: trolley_state_changed($TTState)
 			}
 		}
 		onMsg(update_trolley_state: update_trolley_state(STATE)) {
-			if [# wasteservice.TransportTrolleyState.valueOf(payloadArg(1)) != TTState #] {
-				[# TTState = wasteservice.TransportTrolleyState.valueOf(payloadArg(1)) #]
+			if [# wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) != TTState #] {
+				[# TTState = wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) #]
 	    		println("[TrolleyStateProvider] New state. Value: ${TTState.name}")
 				emit trolley_state_changed: trolley_state_changed($TTState)
 			}

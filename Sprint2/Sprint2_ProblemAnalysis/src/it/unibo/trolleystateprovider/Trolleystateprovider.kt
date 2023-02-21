@@ -44,16 +44,16 @@ class Trolleystateprovider ( name: String, scope: CoroutineScope  ) : ActorBasic
 					action { //it:State
 						if( checkMsgContent( Term.createTerm("coapUpdate(RESOURCE,VALUE)"), Term.createTerm("coapUpdate(RESOURCE,VALUE)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								if(  wasteservice.TransportTrolleyState.valueOf(payloadArg(1)) != TTState  
-								 ){ TTState = wasteservice.TransportTrolleyState.valueOf(payloadArg(1))  
+								if(  wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) != TTState  
+								 ){ TTState = wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1))  
 								println("[TrolleyStateProvider] New state. Resource: ${payloadArg(0)}; Value: ${TTState.name}")
 								emit("trolley_state_changed", "trolley_state_changed($TTState)" ) 
 								}
 						}
 						if( checkMsgContent( Term.createTerm("update_trolley_state(STATE)"), Term.createTerm("update_trolley_state(STATE)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								if(  wasteservice.TransportTrolleyState.valueOf(payloadArg(1)) != TTState  
-								 ){ TTState = wasteservice.TransportTrolleyState.valueOf(payloadArg(1))  
+								if(  wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) != TTState  
+								 ){ TTState = wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1))  
 								println("[TrolleyStateProvider] New state. Value: ${TTState.name}")
 								emit("trolley_state_changed", "trolley_state_changed($TTState)" ) 
 								}
