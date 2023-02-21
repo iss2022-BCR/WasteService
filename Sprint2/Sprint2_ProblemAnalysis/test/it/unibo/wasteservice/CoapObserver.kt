@@ -149,8 +149,28 @@ class CoapObserver : CoapHandler {
         }
     }
 
+    /**
+     * Check if the last history entry contains @param entry
+     * @return true if the last entry equals to entry, false otherwise
+     */
     fun checkLast(entry: String): Boolean {
-        return coapHistory.last().contains(entry)
+        return coapHistory.last() == entry
+    }
+
+    /**
+     * Check if, starting from the end of the list, the history contains an entry for the resource @param resourceName
+     * with value @param value
+     * @return true if the last entry of type resourceName has that value, false otherwise, false otherwise
+     */
+    fun checkFromLastOf(resourceName: String, value: String): Boolean {
+        var i = coapHistory.lastIndex
+
+        while(i >= 0) {
+            if(coapHistory[i].startsWith(resourceName)) {
+                return coapHistory[i].contains(value)
+            }
+        }
+        return false
     }
 
     /**
