@@ -104,11 +104,7 @@ class TestLedState {
     }
 
     @AfterTest
-    fun shutdown() {
-        println("COAP History:")
-        println(obs.getCoapHistory().toString())
-
-        try {
+    fun shutdown() {try {
             ctxConnection.close()
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
