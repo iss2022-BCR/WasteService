@@ -96,15 +96,24 @@
             <h3 id="Sonar">Sonar</h3>
             What's the purpose of the sonar? Which components depend on it and where will
             them be located?
+            <br/>
             <highlight1>The sonar is responsible for the stop/resume functionality.</highlight1>
-
+            
             <problem>Get input from the component HC-SR04</problem>
             The sonar needs to get the input from the physical component (HC-SR04)
 
             <br/>
             For the problem analysis test plans we're going to use an actor that simulates
             the sonar input component, in localhost.
-
+            <highlight3>What kind of interaction? Polling? , constantly sending a request to the sonar?
+            </highlight3>
+            <b>NO!! Parlare solo del tipo di interazione qui. Il resto lo diciamo dopo.</b>
+            Solution: separate the sonar raw data receiver from the stopper:<br/>
+            - a component constantly get the raw data from the sonar component and sends the distance to a controller;
+            <br/>
+            - the controller receives all the sonar data containing the distance, and check when
+            the distance decrease below or increase over the threshold sending a stop/resume message,
+            emitting respectively stop/resume events. 
             
             <problem>Sonar data sent</problem>
             <b>Problem</b>: What data does the sonar send to the other WasteService actors?
@@ -247,6 +256,7 @@
                     LED_STATE := ON | BLINKING | OFF
                 </pre>
                 <b>Reasons</b>:
+                <highlight1>TODO</highlight1>
             </solution>
             <alternative>
                 <b>Alternatives</b>: use a dispatch to update the state of the trolley
@@ -289,7 +299,7 @@
                     <td>AlarmController</td>
                     <td>PathExecutorBCR</td>
                     <td>
-                        Indicates that the TransportTrolley activity must be stopped.
+                        Indicates that the TransportTrolley activity <ks><code>must be stopped</code></ks>.
                     </td>
                 </tr>
                 <tr>
@@ -298,7 +308,7 @@
                     <td>AlarmController</td>
                     <td>PathExecutorBCR</td>
                     <td>
-                        Indicates that the TransportTrolley activity can be resumed.
+                        Indicates that the TransportTrolley activity <ks><code>can be resumed</code></ks>.
                     </td>
                 </tr>
                 <tr>
@@ -338,38 +348,65 @@
                     <th>Description</th>
                     <th>Files</th>
                 </tr>
-                <tr>
-                    <td>Stop Test</td>
+                <tr> 
+                    <td>Stop/Resume Test</td>
                     <td>
                         <ul>
-                            <li></li>
-                            <li></li>
+                            <li>Mock_WasteService</li>
+                            <li>TransportTrolley</li>
+                            <li>PathExecutorBCR</li>
+                            <li>Mock_Sonar</li>
+                            <li>AlarmController</li>
                         </ul>
                     </td>
-                    <td></td>
-                    <td rowspan="2">
-                        QAK: <a href="">.qak</a>
-                        Test: <a href="">.kt</a>
-                    </td>
-                    <!-- NB: to test the TypesProvider we can just use a TCP connection and analyze the reply content,
-                        we don't need COAP, since it's a simple task to verify -->
-                </tr>
-                <tr>
-                    <td>Resume Test</td>
                     <td>
-                        <ul>
-                            <li></li>
-                            <li></li>
-                        </ul>
+                        We check if the TransportTrolley actor:
+                        <ol>
+                            <li>
+                                correctly stops its activity when the AlarmController
+                                receives a distance <b>less than</b> <ks><code>DLIM</code></ks> from the sonar;
+                            </li>
+                            <li>
+                                correctly resumes its activity when the AlarmController
+                                receives a distance <b>greater than</b> <ks><code>DLIM</code></ks> from the sonar;
+                            </li>
+                        </ol>
                     </td>
-                    <td></td>
-                    <!-- NB: to test the TypesProvider we can just use a TCP connection and analyze the reply content,
-                        we don't need COAP, since it's a simple task to verify -->
+                    <td>
+                        QAK: <a href="../../Sprint2_ProblemAnalysis/src/test_stop_resume.qak">test_stop_resume.qak</a>
+                        Test: <a href="../../Sprint2_ProblemAnalysis/test/it/unibo/wasteservice/TestStopResume.kt">TestStopResume.kt</a>
+                    </td>
                 </tr>
                 <tr>
                     <td>Trolley State Test</td>
                     <td>
                         <ul>
+                            <li>Mock_WasteService</li>
+                            <li>TransportTrolley</li>
+                            <li>PathExecutorBCR</li>
+                            <li>TrolleyStateProvider</li>
+                            <li>Mock_Sonar</li>
+                            <li>AlarmController</li>
+                        </ul>
+                    </td>
+                    <td>
+                        We check if the Led state correctly gets updates when
+                        the TransportTrolley changes:
+                        <ol>
+                            <li>When the TransportTrolley is <code>AT HOME</code>, the led is <ks><code>OFF</code></ks></li>
+                            <li>When the TransportTrolley is <code>MOVING</code>, the led is <ks><code>BLINKING</code></ks></li>
+                            <li>When the TransportTrolley is <code>STOPPED</code>, the led is <ks><code>ON</code></ks></li>
+                        </ol>
+                    </td>
+                    <td>
+                        QAK: <a href="../../Sprint2_ProblemAnalysis/src/test_led_state.qak">test_led_state.qak</a>
+                        Test: <a href="../../Sprint2_ProblemAnalysis/test/it/unibo/wasteservice/TestLedState.kt">TestLedState.kt</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Return Home Test</td>
+                    <td>
+                        <ul>
                             <li></li>
                             <li></li>
                         </ul>
@@ -379,8 +416,6 @@
                         QAK: <a href="">.qak</a>
                         Test: <a href="">.kt</a>
                     </td>
-                    <!-- NB: to test the TypesProvider we can just use a TCP connection and analyze the reply content,
-                        we don't need COAP, since it's a simple task to verify -->
                 </tr>
             </table>
             <!-- 
