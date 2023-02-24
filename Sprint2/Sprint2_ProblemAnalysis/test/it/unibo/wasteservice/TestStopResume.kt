@@ -67,6 +67,9 @@ class TestStopResume {
 
     @BeforeTest
     fun startup() {
+        ColorsOut.outappl("===== Preparing the Stop/Resume Test... =====", ColorsOut.CYAN)
+        CommUtils.delay(3000)
+
         CommSystemConfig.tracing = false
 
         thread {
@@ -112,7 +115,7 @@ class TestStopResume {
 
         CommUtils.delay(1000)
         ColorsOut.outappl("===== TEST Completed =====", ColorsOut.CYAN)
-        CommUtils.delay(1000)
+        CommUtils.delay(3000)
 
         obs.clearCoapHistory()
         obs.closeAllCoapConnections()
@@ -120,7 +123,8 @@ class TestStopResume {
 
     @Test
     fun test_stop_resume() {
-        ColorsOut.outappl("TEST: Check if the TransportTrolley correctly stops while at home.", ColorsOut.CYAN);
+        ColorsOut.outappl("TEST: Check if the TransportTrolley correctly stops and resumes its activity.", ColorsOut.CYAN);
+        CommUtils.delay(3000)
 
         var res = obs.waitForSpecificHistoryEntry("transporttrolley(HOME)", timeout = 5000)
         assertTrue(res)
@@ -130,7 +134,7 @@ class TestStopResume {
             ColorsOut.outappl("TEST START - TransportTrolley at home: FAILED", ColorsOut.RED)
         }
 
-        CommUtils.delay(1000)
+        CommUtils.delay(2000)
 
         simulate_distance(wasteservice.WSconstants.DLIM - 1.0)
 
@@ -142,7 +146,7 @@ class TestStopResume {
             ColorsOut.outappl("TEST STOP - TransportTrolley stopped: FAILED", ColorsOut.RED)
         }
 
-        CommUtils.delay(1000)
+        CommUtils.delay(2000)
 
         simulate_distance(WSconstants.DLIM)
 
@@ -154,7 +158,7 @@ class TestStopResume {
             ColorsOut.outappl("TEST RESUME - TransportTrolley at home: FAILED", ColorsOut.RED)
         }
 
-        CommUtils.delay(1000)
+        CommUtils.delay(2000)
 
         simulate_deposit(WasteType.PLASTIC, 10.0)
 
@@ -166,7 +170,7 @@ class TestStopResume {
             ColorsOut.outappl("TEST DEPOSIT - TransportTrolley moving: FAILED", ColorsOut.RED)
         }
 
-        CommUtils.delay(1000)
+        CommUtils.delay(2000)
 
         simulate_distance(WSconstants.DLIM - 5.0)
 
@@ -178,7 +182,7 @@ class TestStopResume {
             ColorsOut.outappl("TEST STOP - TransportTrolley stopped: FAILED", ColorsOut.RED)
         }
 
-        CommUtils.delay(1000)
+        CommUtils.delay(2000)
 
         simulate_distance(WSconstants.DLIM + 10.0)
 
@@ -194,7 +198,7 @@ class TestStopResume {
 
         obs.checkLast("transporttrolley(MOVING)")
 
-        CommUtils.delay(1000)
+        CommUtils.delay(3000)
     }
 
     private fun simulate_deposit(wasteType: WasteType, wasteLoad: Double) {

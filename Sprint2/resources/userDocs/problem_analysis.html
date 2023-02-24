@@ -334,7 +334,7 @@
             </table>
             
             <h2 id="Logical-Architecture">Logical Architecture</h2>
-            The Sprint2_ProblemAnalysis project aims to address the main issues
+            The <a href="../../Sprint2_ProblemAnalysis/">Sprint2_ProblemAnalysis</a> project aims to address the main issues
             of the warning/alarm features and give a first solution and implementation,
             using some simulators.
             <img width="100%" src="../../Sprint2_ProblemAnalysis/problem_analysis_logical_architecture_waste_service.png"/>
@@ -393,9 +393,9 @@
                         We check if the Led state correctly gets updates when
                         the TransportTrolley changes:
                         <ol>
-                            <li>When the TransportTrolley is <code>AT HOME</code>, the led is <ks><code>OFF</code></ks></li>
-                            <li>When the TransportTrolley is <code>MOVING</code>, the led is <ks><code>BLINKING</code></ks></li>
-                            <li>When the TransportTrolley is <code>STOPPED</code>, the led is <ks><code>ON</code></ks></li>
+                            <li>When the TransportTrolley is <code>AT HOME</code>, the led is <ks><code>OFF</code></ks>;</li>
+                            <li>When the TransportTrolley is <code>MOVING</code>, the led is <ks><code>BLINKING</code></ks>;</li>
+                            <li>When the TransportTrolley is <code>STOPPED</code>, the led is <ks><code>ON</code></ks>;</li>
                         </ol>
                     </td>
                     <td>
@@ -403,7 +403,7 @@
                         Test: <a href="../../Sprint2_ProblemAnalysis/test/it/unibo/wasteservice/TestLedState.kt">TestLedState.kt</a>
                     </td>
                 </tr>
-                <tr>
+                <!--<tr> TO-DO
                     <td>Return Home Test</td>
                     <td>
                         <ul>
@@ -416,8 +416,14 @@
                         QAK: <a href="">.qak</a>
                         Test: <a href="">.kt</a>
                     </td>
-                </tr>
+                </tr>-->
             </table>
+
+            <br/>
+            To execute all the tests, run the following command:
+            <pre>
+                ./gradlew test
+            </pre>
             <!-- 
                 - How to run the tests
                 - Test Reports(?)

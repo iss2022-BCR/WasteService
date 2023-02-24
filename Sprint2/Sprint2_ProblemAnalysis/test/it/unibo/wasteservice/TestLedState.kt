@@ -65,6 +65,9 @@ class TestLedState {
 
     @BeforeTest
     fun startup() {
+        ColorsOut.outappl("===== Preparing the Led State Test... =====", ColorsOut.CYAN)
+        CommUtils.delay(3000)
+
         CommSystemConfig.tracing = false
 
         thread {
@@ -112,7 +115,7 @@ class TestLedState {
 
         CommUtils.delay(1000)
         ColorsOut.outappl("===== TEST Completed =====", ColorsOut.CYAN)
-        CommUtils.delay(1000)
+        CommUtils.delay(3000)
 
         obs.clearCoapHistory()
         obs.closeAllCoapConnections()
@@ -121,6 +124,7 @@ class TestLedState {
     @Test
     fun test_led_state_update() {
         ColorsOut.outappl("TEST: Check if the Led state updates correctly.", ColorsOut.CYAN);
+        CommUtils.delay(3000)
 
         var res = obs.waitForSpecificHistoryEntry("transporttrolley(HOME)", timeout = 5000)
         assertTrue(res)
@@ -138,7 +142,7 @@ class TestLedState {
             ColorsOut.outappl("TEST LED - LedState is OFF: FAILED", ColorsOut.RED)
         }
 
-        CommUtils.delay(1000)
+        CommUtils.delay(2000)
 
         simulate_deposit(WasteType.PLASTIC, 10.0)
 
@@ -158,7 +162,7 @@ class TestLedState {
             ColorsOut.outappl("TEST LED - LedState is BLINKING: FAILED", ColorsOut.RED)
         }
 
-        CommUtils.delay(1000)
+        CommUtils.delay(2000)
 
         simulate_distance(WSconstants.DLIM - 5.0)
 
@@ -178,7 +182,7 @@ class TestLedState {
             ColorsOut.outappl("TEST LED - LedState is ON: FAILED", ColorsOut.RED)
         }
 
-        CommUtils.delay(1000)
+        CommUtils.delay(3000)
     }
 
     private fun simulate_deposit(wasteType: WasteType, wasteLoad: Double) {
