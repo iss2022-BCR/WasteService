@@ -16,7 +16,7 @@ eventedgeattr = {
     'color': 'red',
     'style': 'dotted'
 }
-with Diagram('waste_serviceArch', show=False, outformat='png', graph_attr=graphattr) as diag:
+with Diagram('sprint2_waste_service_analysisArch', show=False, outformat='png', graph_attr=graphattr) as diag:
   with Cluster('env'):
      sys = Custom('','./qakicons/system.png')
      with Cluster('ctx_wasteservice', graph_attr=nodeattr):
@@ -38,15 +38,15 @@ with Diagram('waste_serviceArch', show=False, outformat='png', graph_attr=grapha
      transporttrolley >> Edge(color='blue', style='solid', xlabel='coapUpdate', fontcolor='blue') >> trolleystateprovider
      pathexecutorbcr >> Edge(color='blue', style='solid', xlabel='coapUpdate', fontcolor='blue') >> trolleystateprovider
      trolleystateprovider >> Edge( xlabel='trolley_state_changed', **eventedgeattr, fontcolor='red') >> sys
-     sys >> Edge(color='red', style='dashed', xlabel='startAlarm', fontcolor='red') >> pathexecutorbcr
+     sys >> Edge(color='red', style='dashed', xlabel='stop', fontcolor='red') >> pathexecutorbcr
      pathexecutorbcr >> Edge(color='magenta', style='solid', xlabel='step', fontcolor='magenta') >> basicrobot
      pathexecutorbcr >> Edge(color='blue', style='solid', xlabel='cmd', fontcolor='blue') >> basicrobot
      pathexecutorbcr >> Edge(color='darkgreen', style='dashed', xlabel='dopathdone', fontcolor='darkgreen') >> transporttrolley
      pathexecutorbcr >> Edge(color='darkgreen', style='dashed', xlabel='dopathfail', fontcolor='darkgreen') >> transporttrolley
-     sys >> Edge(color='red', style='dashed', xlabel='stopAlarm', fontcolor='red') >> pathexecutorbcr
+     sys >> Edge(color='red', style='dashed', xlabel='resume', fontcolor='red') >> pathexecutorbcr
      basicrobot >> Edge(color='darkgreen', style='dashed', xlabel='stepdone', fontcolor='darkgreen') >> pathexecutorbcr
      basicrobot >> Edge(color='darkgreen', style='dashed', xlabel='stepfail', fontcolor='darkgreen') >> pathexecutorbcr
-     alarmcontroller >> Edge( xlabel='startAlarm', **eventedgeattr, fontcolor='red') >> sys
-     alarmcontroller >> Edge( xlabel='stopAlarm', **eventedgeattr, fontcolor='red') >> sys
+     alarmcontroller >> Edge( xlabel='stop', **eventedgeattr, fontcolor='red') >> sys
+     alarmcontroller >> Edge( xlabel='resume', **eventedgeattr, fontcolor='red') >> sys
      sys >> Edge(color='red', style='dashed', xlabel='trolley_state_changed', fontcolor='red') >> ledcontroller
 diag
