@@ -42,6 +42,12 @@
             <h1 align="center">Project</h1>
             The project contains all the software our team developed to achieve the Sprint2 SCRUM goal.
 
+            <h2>Defects Solution</h2>
+            - smart device;
+            - map editor
+            
+            <h3>Waste Service Changes</h3>
+            - added stop/resume feature
 
             <h2 id="Logical-Architecture">Logical Architecture</h2>
             The main change in the logical architecture from the Problem Analysis is [...].
@@ -52,6 +58,43 @@
             <h2 id="Raspberry-Pi-Software-Name">&lt;Raspberry-Pi-Software-Name&gt;</h2>
             <ksi>&lt;Raspberry-Pi-Software-Name&gt;</ksi> (<a href="../../Sprint2_Project/project_directory/">project_directory</a>) is a [...]
             
+            <h4>PathExecutorBCR</h4>
+            We modified the pathexecutor QAK actor to include the stop/resume functionality:
+            <ul>
+                <li>Actor renamed to "pathexecutorbcr"</li>
+                <li>General refactor: renamed states, and added some middle ones (e.g. state_idle)</li>
+                <li>Added a guard checking for stop events (<code>Transition t1 whenEvent stop -> state_stop</code>) at the end of the following states:
+                    <ul>
+                        <li>state_idle (the state where the actor waits for path requests);</li>
+                        <li>state_do_move_forward;</li>
+                        <li>state_do_move_turn.</li>
+                    </ul>
+                </li>
+                <li>
+                    Added the state "state_stop"
+<pre style="white-space: pre;">
+State state_stop {
+    [# var PathTodo = pathut.getPathTodo() #]
+    println("[PathExecutorBCR] Alarm detected, trolley stopped. Path to do: $PathTodo")
+}
+Transition t3 whenEvent resume -> state_resume
+</pre>
+                </li>
+                <li>
+                    Added the state "state_resume"
+<pre style="white-space: pre;">
+State state_resume {
+    println("[PathExecutorBCR] Alarm retracted. Resuming...")
+}
+Goto state_next_move if [# MovesDone.length != TotPathMoves #] else state_idle
+</pre>
+                </li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+
             <br/>
             classe per rappresentare stato trolley
             <br/>
@@ -64,7 +107,37 @@
             <h3 id="Device">Device</h3>
             The device used is a <a href="https://www.raspberrypi.com/products/raspberry-pi-4-model-b/">Raspberry Pi 4 Model B</a>: <highlight1>Specifiche</highlight1>
             
+
+            <h2>Sprint 2.2: Radar GUI</h2>
+            Since our software house already developed a project capable of showing sonar
+            information in a fancy way, we considered its usage and analyzed if there was
+            a way to adapt it and include it in our Waste Service project.
+            <br/><br/>
+
+            The <ksi>Radar GUI</ksi> project consists of an application able to display
+            elaborated information of detected obstacles, with a sonar-like graphical
+            interface:
+            a line the length of the radius constantly rotates with its pivot in the
+            center of the screen, <b><i>simulating a sonar</i></b>. Detected obstacles (with their
+            distance and angle) are stored in a queue and, if the detected obstacle 
+            distance is within the bounds of interest, as soon as the line encounters
+            the point, the application display
+
+            <center>
+                <img width="50%" src="../imgs/radarGUI.gif"/>
+            </center>
+
+            The Radar GUI project is completely written in C with SDL2 library and 
+            includes an interface to ease the networking communication, using UDP and 
+            TCP.
+
+            Example usage: run the radarGUI on a computer, and a client on a Raspberry Pi,
+            which detects obstacles with the sonar module, and sends the data by using the
+            networking interface.
             
+            <problem>Problemi: PIN del raspberry</problem>
+
+
             <h2 id="Raspberry-Demo">Raspberry Demo</h2>
             In order to run demo components we need:
             [...]

@@ -1,0 +1,414 @@
+// PROBLEM ANALYSIS - TEST PLAN
+System test_led_state
+
+// TEST ABSTRACT ==============================================================
+/**
+ * Trolley State Test: trolley state & led state handling.
+ *
+ * Test Recap:
+ *  1) TEST: TransportTrolley is at HOME
+ *  2) TEST: Led is OFF
+ *  
+ *  3) Mock_WasteService sends a deposit request to TransportTrolley
+ *  4) TEST: TransportTrolley is MOVING
+ *  5) TEST: Led is BLINKING
+ *
+ *  6) Mock_Sonar sends a distance < DLIM to the AlarmController
+ *  7) TEST: TransportTrolley is STOPPED
+ *  8) TEST: Led is ON
+ */
+
+// MESSAGES AND EVENTS ========================================================
+// WasteService -> TransportTrolley
+Request deposit:			deposit(TYPE, LOAD)
+// TransportTrolley -> WasteService
+Reply pickupcompleted:		pickupcompleted(_)
+// TransportTrolley -> WasteService
+Dispatch depositcompleted:	depositcompleted(_)
+Dispatch depositfailed:		depositfailed(REASON)
+
+// TransportTrolley -> PathExecutorBCR
+Request	dopath:		dopath(PATH, OWNER)
+// PathExecutorBCR -> TransportTrolley
+Reply dopathdone:	dopathdone(ARG)
+Reply dopathfail:	dopathfail(ARG)
+
+// Basicrobot
+Reply stepdone:		stepdone(V)
+Reply stepfail:		stepfail(V)
+
+// Sprint2 Problem Analysis
+// Sonar -> AlarmController
+Dispatch sonar_data:	sonar_data(DISTANCE)
+// AlarmController -> PathExecutorBCR
+Event stop:		stop(_)
+// AlarmController -> PathExecutorBCR
+Event resume:	resume(_)
+
+// -> TrolleyStateProvider
+Dispatch update_trolley_state:	update_trolley_state(STATE)
+// TrolleyStateProvider -> LedController
+Event trolley_state_changed:	trolley_state_changed(STATE)
+
+// COAP
+Dispatch coapUpdate : coapUpdate(RESOURCE, VALUE) 
+
+// CONTEXES ===================================================================
+Context ctx_ledstate_test		ip [host="localhost" port=11705]
+
+// ACTORS =====================================================================
+QActor transporttrolley_ls_test context ctx_ledstate_test {
+	[# 
+		var Actions: String = "" 
+		var Progress = ""
+		
+		var WasteType: wasteservice.WasteType = wasteservice.WasteType.PLASTIC
+		var WasteLoad: Double = 0.0
+	#]
+	State state_init initial {
+		[#
+			plannerBCR.initAI()
+			plannerBCR.loadRoomMap("mapRoomEmpty")
+			plannerBCR.showMap()
+			plannerBCR.loadMapConfig("mapConfigWasteService")
+			println("MapConfig:")
+			plannerBCR.showFancyMapConfig()
+		#]
+		println("[TransportTrolley] Started.")
+	}
+	Goto state_idle
+	
+	State state_idle {
+		//forward trolleystateprovider -m update_trolley_state: update_trolley_state(HOME)
+		updateResource [# "transporttrolley(HOME)" #]
+		
+		println("[TransportTrolley] Waiting for deposit requests...")
+	}
+	Transition t0	whenRequest deposit		-> state_handle_deposit_request
+	
+	State state_handle_deposit_request {
+		printCurrentMessage
+		onMsg(deposit: deposit(TYPE, LOAD)) {
+			[#
+				WasteType = wasteservice.WasteType.valueOf(payloadArg(0))
+				WasteLoad = payloadArg(1).toDouble()
+			#]
+			println("[TransportTrolley] Deposit request received.")
+		}
+	}
+	Goto state_move_to_indoor
+	
+	State state_move_to_indoor {
+		//forward trolleystateprovider -m update_trolley_state: update_trolley_state(MOVING)
+		updateResource [# "transporttrolley(MOVING)" #]
+		
+		println("[TransportTrolley] Moving to INDOOR...")
+		[#
+			val curPos: Pair<Int, Int> = plannerBCR.get_curPos()
+			val goal: Pair<Int, Int> = plannerBCR.getNearestPositionToCellType(curPos, "INDOOR")
+			plannerBCR.setGoal(goal.first, goal.second)
+			plannerBCR.doPlan()
+			Actions = plannerBCR.getActionsString()
+		#]
+		request pathexecutorbcr_ls_test -m dopath : dopath($Actions, transporttrolley)
+	}
+	Transition t1	whenReply dopathdone	-> state_pickup
+					whenReply dopathfail	-> state_error
+	
+	State state_pickup {
+		//forward trolleystateprovider -m update_trolley_state: update_trolley_state(PICKUP)
+		updateResource [# "transporttrolley(PICKUP)" #]
+		
+		println("[TransportTrolley] Picking up the load of $WasteType...")
+		[# wasteservice.Utils.simulateAction(WasteLoad) #]
+		println("[TransportTrolley] Pickup completed.")
+		
+		replyTo deposit with pickupcompleted: pickupcompleted(_) //caller== wasteservice // TEST
+	}
+	Goto state_move_to_box
+	
+	State state_move_to_box {
+		//forward trolleystateprovider -m update_trolley_state: update_trolley_state(MOVING)
+		updateResource [# "transporttrolley(MOVING)" #]
+		
+		println("[TransportTrolley] Moving to ${WasteType.name}_BOX...")
+		[#
+			val curPos: Pair<Int, Int> = plannerBCR.get_curPos()
+			val goal: Pair<Int, Int> = plannerBCR.getNearestPositionToCellType(curPos, WasteType.name)
+			plannerBCR.setGoal(goal.first, goal.second)
+			plannerBCR.doPlan()
+			Actions = plannerBCR.getActionsString()
+		#]
+		request pathexecutorbcr_ls_test -m dopath : dopath($Actions, transporttrolley)
+	}
+	Transition t2	whenReply dopathdone	-> state_dump
+					whenReply dopathfail	-> state_error
+	
+	State state_dump {
+		//forward trolleystateprovider -m update_trolley_state: update_trolley_state(DUMP)
+		updateResource [# "transporttrolley(DUMP)" #]
+		
+		println("[TransportTrolley] Dumping the load...")
+		[# wasteservice.Utils.simulateAction(WasteLoad) #]
+		
+		println("[TransportTrolley] Dump completed.")
+		
+		//forward wasteservice -m depositcompleted : depositcompleted(_) // TEST
+	}
+	Goto state_move_to_home
+	
+	State state_move_to_home {
+		//forward trolleystateprovider -m update_trolley_state: update_trolley_state(MOVING)
+		updateResource [# "transporttrolley(MOVING)" #]
+		
+		println("[TransportTrolley] Moving to HOME...")
+		[#
+			val curPos: Pair<Int, Int> = plannerBCR.get_curPos()
+			val goal: Pair<Int, Int> = plannerBCR.getNearestPositionToCellType(curPos, "HOME")
+			plannerBCR.setGoal(goal.first, goal.second)
+			plannerBCR.doPlan()
+			Actions = plannerBCR.getActionsString()
+		#]
+		request pathexecutorbcr_ls_test -m dopath : dopath($Actions, transporttrolley)
+		
+		// TO-DO (Sprint2): Stop returning HOME in case a new request arrives
+	}
+	Transition t3	whenReply dopathdone	-> state_idle
+					whenReply dopathfail	-> state_error
+
+	State state_error {
+		onMsg(dopathfail: dopathfail(PATH_STILL_TO_DO)) {
+			[#
+				var PathStillToDo = payloadArg(0)
+			#]
+			println("[TransportTrolley] An Error occurred while trying to move along a path.")
+			println("[TransportTrolley] Path still to do: $PathStillToDo")
+			
+			// TO-DO: Return to HOME?
+		}
+	}
+	Goto state_idle
+}
+
+QActor pathexecutorbcr_ls_test context ctx_ledstate_test {
+	[# 
+		var CurMoveTodo = ""
+		var MovesDone = ""
+		var TotPathMoves = 0
+	#]
+	
+	State state_init initial {
+		println("[PathExecutorBCR] Started.")
+	}
+	Goto state_idle
+	
+	State state_idle {
+		[# 
+			CurMoveTodo = ""
+			TotPathMoves = 0
+			sysUtil.logMsgs = true
+		#]
+		println("[PathExecutorBCR] Waiting for a path...")
+	}
+	Transition t0	whenRequest dopath	-> state_do_path
+					whenEvent stop		-> state_stop
+	
+	State state_do_path {
+		printCurrentMessage
+		onMsg(dopath: dopath(P, C)) {
+			[# 
+				val path = payloadArg(0)
+				pathut.setPath(path)
+				TotPathMoves = pathut.getPathTodo().length
+			#]
+			println("$path")
+		}
+		
+		println("[PathExecutorBCR] Path to do: ${pathut.getPathTodo()}")
+	}
+	Goto state_next_move
+	
+	State state_next_move {
+		[# CurMoveTodo = pathut.nextMove() #]
+		[# MovesDone += CurMoveTodo #]
+		println("[PathExecutorBCR] Current move to do: $CurMoveTodo")
+	}
+	Goto state_end_work_ok if [# CurMoveTodo.length == 0 #] else state_do_move
+	
+	/*State state_check_interrupt {
+		
+	}
+	Transition t1	whenTime 350			-> state_do_move
+					whenEvent startAlarm	-> state_stop*/
+	
+	State state_do_move {
+		[#
+			plannerBCR.updateMap(CurMoveTodo, "")
+			// plannerBCR.showMap()
+			// plannerBCR.showCurrentRobotState()	
+		#]
+		delay 350
+	}
+	Goto state_do_move_forward if [# CurMoveTodo == "w" #] else state_do_move_turn
+	
+	State state_do_move_forward {
+		//request basicrobot -m step: step(350) // TEST
+		delay 350
+	}
+	Transition t1	whenEvent stop		-> state_stop
+					whenReply stepdone	-> state_next_move
+					whenReply stepfail	-> state_end_work_fail
+	
+	State state_do_move_turn {
+		//forward basicrobot -m cmd: cmd($CurMoveTodo) // TEST
+	}
+	Transition t2	whenTime 350	-> state_next_move
+					whenEvent stop	-> state_stop
+	
+	State state_end_work_ok {
+		println("[PathExecutorBCR] Path done.")
+		replyTo dopath with dopathdone: dopathdone( ok ) caller== transporttrolley_ls_test // TEST
+	}
+	Goto state_idle
+	
+	State state_end_work_fail {
+		[# var PathStillTodo = pathut.getPathTodo() #]
+		println("[PathExecutorBCR] Path failure. Path still to do: $PathStillTodo")
+		replyTo dopath with dopathfail: dopathfail( $PathStillTodo ) caller== transporttrolley_ls_test
+		
+		println("[PathExecutorBCR] Out of service.")
+		// NB: no more transitions since the WasteService is no longer operative
+		// this state could be caused by an out of sync between the PathExec position and
+		// the actual Robot position -> better to terminate the application
+		
+		terminate 1
+	}
+	
+	State state_stop {
+		//forward trolleystateprovider -m update_trolley_state: update_trolley_state(STOPPED)
+		updateResource [# "transporttrolley(STOPPED)" #]
+		
+		[# var PathTodo = pathut.getPathTodo() #]
+		println("[PathExecutorBCR] Alarm detected, trolley stopped. Path to do: $PathTodo")
+	}
+	Transition t3 whenEvent resume -> state_resume
+	
+	State state_resume {
+		if [# MovesDone.length != TotPathMoves #] {
+			//forward trolleystateprovider -m update_trolley_state: update_trolley_state(MOVING)
+			updateResource [# "transporttrolley(MOVING)" #]
+		} else {
+			//forward trolleystateprovider -m update_trolley_state: update_trolley_state(HOME)
+			updateResource [# "transporttrolley(HOME)" #]
+		}
+		
+		
+		println("[PathExecutorBCR] Alarm retracted. Resuming...")
+	}
+	Goto state_next_move if [# MovesDone.length != TotPathMoves #] else state_idle
+}
+
+QActor trolleystateprovider_ls_test context ctx_ledstate_test {
+	[#
+		var TTState: wasteservice.TransportTrolleyState = wasteservice.TransportTrolleyState.HOME
+	#]
+	State state_init initial {
+		observeResource transporttrolley_ls_test
+		observeResource pathexecutorbcr_ls_test
+		
+		println("[TrolleyStateProvider] Started.")
+	}
+	Goto state_idle
+	
+	State state_idle {
+		//println("[TrolleyStateProvider] Idle")
+	}
+	Transition t0	whenMsg coapUpdate				-> state_update_trolley_state
+					whenMsg update_trolley_state	-> state_update_trolley_state
+	
+	State state_update_trolley_state {
+		onMsg(coapUpdate: coapUpdate(RESOURCE, VALUE)) {
+			if [# wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) != TTState #] {
+				[# TTState = wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) #]
+	    		println("[TrolleyStateProvider] New state. Resource: ${payloadArg(0)}; Value: ${TTState.name}")
+				emit trolley_state_changed: trolley_state_changed($TTState)
+			}
+		}
+		onMsg(update_trolley_state: update_trolley_state(STATE)) {
+			if [# wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) != TTState #] {
+				[# TTState = wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) #]
+	    		println("[TrolleyStateProvider] New state. Value: ${TTState.name}")
+				emit trolley_state_changed: trolley_state_changed($TTState)
+			}
+		}
+	}
+	Goto state_idle
+}
+
+QActor alarmcontroller_ls_test context ctx_ledstate_test {
+	[#
+		var SonarDistance: Double = Double.MAX_VALUE
+		var PrevAlarm: Boolean = false
+		var Alarm: Boolean = false
+	#]
+	State state_init initial {
+		println("[AlarmController] Started.")
+	}
+	Goto state_idle
+	
+	State state_idle {
+		println("[AlarmController] Listening for sonar data...")
+		println("[AlarmController] Current state: $Alarm")
+		[# PrevAlarm = Alarm #]
+	}
+	Transition t0 whenMsg sonar_data -> state_handle_sonar_data
+	
+	State state_handle_sonar_data {
+		printCurrentMessage
+		
+		onMsg(sonar_data: sonar_data(DISTANCE)) {
+			[# Alarm = wasteservice.Utils.isAlarm(payloadArg(0)) #]
+	    	println("[AlarmController] Received sonar data: ${payloadArg(0)}")
+	    	
+	    	// Check if state changed
+	    	if [# Alarm != PrevAlarm #] {
+	    		if [# Alarm == true #] {
+	    			println("[AlarmController] Alarm situation!")
+	    	
+	    			emit stop: stop(_)
+	    		} else {
+	    			println("[AlarmController] Alarm over.")
+	    			
+	    			emit resume: resume(_)
+	    		}
+	    	}
+	    }
+	}
+	Goto state_idle
+}
+
+QActor ledcontroller_ls_test context ctx_ledstate_test {
+	[# var State: wasteservice.LedState = wasteservice.LedState.OFF #]
+	State state_init initial {
+		println("[LedController] Started.")
+		updateResource [# "ledstate(OFF)" #]
+	}
+	Goto state_idle
+	
+	State state_idle {
+		println("[LedController] Led state: ${State.name}")
+	}
+	Transition t0	whenEvent trolley_state_changed -> state_handle
+	
+	State state_handle {
+		onMsg(trolley_state_changed: trolley_state_changed(STATE)) {
+			[# var NewState = wasteservice.Utils.getLedStateFromTrolleyState(payloadArg(0)) #]
+			if [# NewState != State #] {
+				println("[LedController] Led state changed!")
+				[# State = NewState #]
+				updateResource [# "ledstate($NewState)" #]
+			}
+		}
+	}
+	Goto state_idle
+}

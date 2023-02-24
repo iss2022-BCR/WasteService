@@ -22,8 +22,22 @@
             <a href="requirement_analysis.html">Requirement<br/>Analysis</a>
             <a class="selected" href="problem_analysis.html">Problem Analysis</a>
             <div class="sidenavSection">
-                <a href="#Raspberry-Pi-Software">Raspberry Pi<br/>Software</a>
+                <a href="#Sprint2-Software">Sprint2 Software</a>
                 <div class="sidenavSubSection">
+                    <a href="#Sonar">Sonar</a>
+                    <a href="#Stop-Resume">Stop/Resume</a>
+                    <a href="#Led">Led</a>
+                    <a href="#Extra">Extra</a>
+                </div>
+                <a href="#Interactions">Interactions</a>
+                <div class="sidenavSubSection">
+                    <a href="#Messages">New Messages</a>
+                </div>
+                <a href="#Logical-Architecture">Logical Architecture</a>
+                <a href="#Test-Plans">Test Plans</a>
+                <div class="sidenavSubSection">
+                    <a href="#Execute-Test">Execute Test</a>
+                    <a href="#Test-Report">Test Report</a>
                 </div>
             </div>
             <a href="project.html">Project</a>
@@ -71,28 +85,48 @@
             <img width="100%" src="../../../Sprint1/Sprint1_Project/sprint1_waste_service/project_logical_architecture_core-business.png"/>
             QAK model: <a href="../../../Sprint1/Sprint1_Project/sprint1_waste_service/src/waste_service.qak">waste_service.qak</a>
 
-            <h2 id="Raspberry-Pi-Software">Raspberry Pi Software</h2>
-            The raspberry pi software includes the alarm and warning devices (sonar and led).
-            They both are attached to the Raspberry Pi, which is situated on a
-            computational node different from the Waste Service one.
-            Therefore, we must analyze which software components are going to run on
-            one and which on the other.
+            <h2 id="Sprint2-Software">Sprint2 Software</h2>
+            The Sprint 2 software will be the product of the analysis of problems
+            related to the Raspberry Pi.
+            We will analyze the main problems of the <b><i>4th requirement</i></b>, and discuss the
+            possible solutions and their differences.
             <br/>
             <br/>
-            Therefore, we are going to add a context called <ksi>ctx_raspberry</ksi>
-            where sonar and led actors will be executing.
+            Since the Raspberry Pi is situated on a computational node different from
+            the Waste Service one, we will need to add a new context, which we're going
+            to call "<ksi>ctx_raspberry</ksi>".
+            The actors of this context will be running on the Raspberry Pi device.
             
-            <h3>Sonar</h3>
-            The sonar is an electronical component which detects the presence
-            of obstacles ahead at intervals of time.
+            <h3 id="Sonar">Sonar</h3>
+            What's the purpose of the sonar? Which components depend on it and where will
+            them be located?
+            <br/>
+            <highlight1>The sonar is responsible for the stop/resume functionality.</highlight1>
+            
+            <problem>Get input from the component HC-SR04</problem>
+            The sonar needs to get the input from the physical component (HC-SR04)
+
+            <br/>
+            For the problem analysis test plans we're going to use an actor that simulates
+            the sonar input component, in localhost.
+            <highlight3>What kind of interaction? Polling? , constantly sending a request to the sonar?
+            </highlight3>
+            <b>NO!! Parlare solo del tipo di interazione qui. Il resto lo diciamo dopo.</b>
+            Solution: separate the sonar raw data receiver from the stopper:<br/>
+            - a component constantly get the raw data from the sonar component and sends the distance to a controller;
+            <br/>
+            - the controller receives all the sonar data containing the distance, and check when
+            the distance decrease below or increase over the threshold sending a stop/resume message,
+            emitting respectively stop/resume events. 
             
             <problem>Sonar data sent</problem>
-            <b>Problem</b>: What data does the sonar send? Should it send a message for each detection?
+            <b>Problem</b>: What data does the sonar send to the other WasteService actors?
+            Should it send a message for each detection?
             <alternative>
-                <b>Alternatives</b>:
+                <b>Possible solutions</b>:
                 <ol>
                     <li>
-                        Send a message <b>for each data input</b> detection. That solution
+                        Send a message <b>for each input data</b> detection. That solution
                         is the most flexible and general purpose to implement: we send everything
                         the sonar knows and let the Waste Service do the rest. However, that generates
                         an increase in bandwidth consumption, especially in the case the sonar performs
@@ -103,113 +137,137 @@
                         Send a message only <b>when the state changes</b>. That greatly reduces
                         the number of exchanged messages, saving bandwidth, and directly addresses the requirement.
                     </li>
+                    <li>
+                        <b>Hybrid approach</b> where we send every input data detection to a <b>middle component</b>,
+                        which acts like a controller: it receives a sequence of distances, and mantains
+                        the current state of the alarm (ON/OFF). Then, each time the state changes, propagate
+                        a message to other contexts or to the actor which will detect the stop. The bandwidth
+                        consumption depends on whether the sonar and the component are on the same or different nodes:
+                        if the node is the same, then the only messages that are propagated are the ones on the state change.
+                    </li>
                 </ol>
             </alternative>
             
             <solution>
-                <b>Solution</b>: Send a message only <ksi>when the state changes</ksi>.
+                <b>Solution</b>: Hybrid approach, using a <ksi>middle controller</ksi>, which sends 
+                <code>stop</code> and <code>resume</code> events to the system.
                 <br/>
                 <b>Reasons</b>: the core-business doesn't care about the distance at all.
                 In fact, from the Waste Service perspective,
                 the sonar functions as a simple switch ON/OFF, which indicates if the system
                 is in a state of alarm (distance &lt; DLIM) or not. Therefore, the only information
-                needed to completely address the customer requirement, is <ksi>the change of the alarm
-                state</ksi>.
+                needed to completely address the customer requirement, is <ksi>the change of the "alarm"
+                state</ksi> (the alarm just started &rarr; stop, the alarm is over &rarr; resume).
+                Why using events for stop/resume? Because even though the Transport Trolley
+                is the main interested in detecting the message, the alarm concerns the whole
+                Service Area and has no specific recipient.
             </solution>
-            
-            <problem>Alarm message type</problem>
-            <b>Problem</b>: What types of message are involved in the sonar interaction?
+
+            <h3 id="Stop-Resume">Stop/Resume</h3>
+
+            <problem>What to stop</problem>
+            <b>Problem</b>: <i>"what"</i> or <i>"which"</i> Transport Trolley actions can be
+            stopped by the alarm message?
             <br/>
-            <b>Consideration</b>
-            sonar_data(distance) -> dispatch since it has a receiver and is asynchronous.
+            <highlight1>We want to stop the movement: if the robot is still, while it's stopped it cannot
+            star moving; if it was already moving, it must stop in place and remain still.</highlight1>
 
-            startAlarm
-            stopAlarm
+            <!--Ideally we want to stop the robot doing things. However, the robot can be really
+            stopped only when it wants to move from a position to another, because it won't.
+            -->
 
-            stop -> dispatch, since it has a target (TT) and is asynchronous 
-            resume -> dispatch, since it has a target (TT)
-
-            Event because they indicate an emergency (and potentially dangerous) situation
-            of the service in its whole: when the alarm switches on, even though there might 
-            be components which are not interested in the event, everything inside the WasteService
-            must stop.
-
-            <problem>Sonar data receiver</problem>
-            <b>Problem</b>: Who (in Waste Service context) receives the sonar data?
-            
+            <problem>When to stop</problem>
+            <b>Problem</b>: <i>"when"</i> do we stop the robot while it's moving?
+            <br/>
+            <b>Considerations</b>: our robot moves in steps in the area, since
+            the room is represented as a M x N matrix.<br/>
+            If we consider a real situation, the stop could be caused by an emergency
+            or could be due to dangerous circumstances. Therefore, we would need to stop the
+            robot instantly.
             <alternative>
-                <b>Alternatives</b>:
-                <ol>
-                    <li>WasteService
-                    </li>
-                    <li>TransportTrolley
-                    </li>
-                    <li>A specific component</li>
-                </ol>
-            </alternative>
-
-            
-            
-            <h3>Led</h3>
-
-            <problem>TT state change message type</problem>
-
-            <problem>Problem</problem>
-            <b>Problem</b>: 
-            <solution>
-                <b>Solution</b>:
+                <b>Possible solution</b>: stop the robot <b>as soon as the stop/alarm message is received</b>.
+                A possible solution could be save the duration of the interrupted
+                step and calculate the remaining time to complete it (a full step is 350ms).
                 <br/>
-                <b>Reasons</b>:
+                <b>Cons</b>: those calculations based on execution time are never 100% accurate, due to
+                many factors (CPU/resources, network latency, unpredictable jitter, etc.).
+                Moreover, in case the step total duration gets shortened or extended, the whole map
+                representation could be affected, and cause it not to be accurate anymore.
+            </alternative>
+            
+            <solution>
+                <b>Solution</b>: for each step of the path, check if there is a stop/alarm event <ksi>only at the beginning or
+                at the end of the step</ksi>.
+                <br/>
+                <b>Reasons</b>: the robot position gets updated only when a step is completed,
+                so it might be easier to make the steps not interruptible; since our map
+                has specific positions, identified by discrete coordinates, that solution
+                can prevent the possibility of the robot to be located in between two different
+                cells, and also reduces the possibility to get an out of sync situation between
+                the robot position inside the map representation and its actual real position.
             </solution>
+            
+            <highlight1>FIX: add one state, to check if should stop, BEFORE the step</highlight1>
+            
+            <problem>How to stop</problem>
+            <b>Problem</b>: <i>"how"</i> do we stop the robot while it's moving? How do we enter
+            in a stop state? How do we resume from the stopped state? Who should handle those states?
+            
+            <br/>
+            <b>Considerations</b>: a deposit action consists of a <ks><code>deposit</code></ks>
+            request sent by the Waste Service to the Transport Trolley, which then sends a
+            <ks><code>dopath</code></ks> request to the Path Executor, which finally sends the
+            command/step to the Basic Robot.
+
+            
+            <solution>
+                <b>Solution</b>: <ksi>handle the stop and resume from the pathexecutor</ksi> by adding a guard
+                (<code>Transition t# whenEvent stop -> state_stop</code>) in those states that can be interrupted.
+                <br/>
+                <b>Reasons</b>: ideally we want to act on the transport trolley, but it's busy waiting
+                for the pathexecutor reply, until the path is completed. Therefore, since the pathexecutor
+                is the one responsible for scheduling the steps, to interact with it is the best solution,
+                also considering the fact that it's located in the Transport Trolley context, acting like an
+                actuator for the trolley.
+            </solution>
+            NB: the defined solution requires that we will have to modify the pathexecutor QAK actor code, we are going to rename 
+            it <i>"pathexecutorbcr"</i>.
+
             <alternative>
-                <b>Alternatives</b>:    
+                <b>Alternatives</b>: <highlight2>interrupt/returnFromInterrupt; prima soluzione provata</highlight2>
             </alternative>
 
-            <h3>Stop/Resume feature</h3>
-            <highlight1>Requisito Stop/Resume:
-            la soluzione più desiderabile sarebbe poter fermare il robot non appena si verifica l'alarm: l'alarm infatti, potrebbe essere dovuto ad un guasto o ad un'emergenza che potrebbe potenzialmente mettere in pericolo eventuali operatori o l'integrità del sistema. Tuttavia, il software del basic robot, dispone solo di due interfacce per la comunicazione con il VirtualRobot: command e step. Step prevede un'interazione sincrona, ed è possibile specificare la durata dell'azione; command asincrona, ma non è possibile specificare la durata. Per questo motivo, avendo diviso la stanza in celle di egual dimensione, è necessario che il robot si muova appunto di una cella alla volta, e ciò diventerebbe difficile con...
-            in quanto bisognerebbe prevedere un meccanismo per terminare il comando, una volta interrotto a metà, ecc.
-            In ogni caso sarebbe necessario modificare il codice del prof.
+            <h3 id="Led">Led</h3>
+            What's the purpose of the led? Which components does it
+            depend on? What information does it need?
+            <br/>
+            The Led is an output warning device, which is responsible for giving
+            real-time information about the state of the transport trolley,
+            and therefore it needs to access to data about it.
 
-            Per semplicità...</highlight1>
-            <problem>Movimento del Robot</problem>
-            il robot si muove a step? Sì, perché nello Sprint1 abbiamo ritenuto che rappresentare la stanza
-            come una mappa di caselle, fosse la soluzione migliore. Dunque, per rispettare questa rappresentazione,
-            e far muovere il robot all'interno della stanza, è necessario farlo muovere a step.
-            Gli step sono delle request/reply: il TT manda una request al basic robot, che esegue lo step e 
-            invia una reply col risultato (OK in caso di successo).
-            <br/>
-            Cosa succede quando arriva una stop? La stop non viene inviata dal TT, in quanto lui si lavora a
-            request/reply, quindi è già impegnato in un'interazione sincrona.
-            La stop viene inviata da un componente esterno, direttamente al basic robot, che la gestisce e
-            interrompe prematuramente, se ve ne è una in corso, l'azione di step.
-            <br/>
-            NB: quando il TT riceve una stop:
-            - se stava eseguendo una step -> riceverà una stepError e, analizzandone il contenuto,
-            capirà che il motivo è la stop, ed entrerà in stato di stop;
-            - se non stava eseguendo azioni -> riceverà un dispatch di stop, e andrà direttamente
-            nello stato stop.
-            <br/>
-            Quando in stato di stop, il TT non esegue azioni, ma aspetta solo messaggi di resume.
-            Quando riceve resume, se sono presenti
-            <br/>
-            Il robot interrompe l'azione che stava facendo, 
+            <problem>Track Trolley State</problem>
+            <b>Problem</b>: How do we keep track of the trolley state?
+            <solution>
+                <b>Solution</b>: separate the trolley state from the led, make the
+                <ksi>trolley state COAP observable</ksi> and use an actor
+                to keep track of the current state of the Transport Trolley: <ks><code>trolleystateprovider</code></ks>.
+                <br/>
+                <pre>
+                    TROLLEY_STATE := HOME | MOVING | PICKUP | DUMP | STOPPED
+                </pre>
 
-            <br/>
-            ----
-            <br/>
-            <alternative>Possibile soluzione: controllare ad ogni step se è presente un messaggio di stop.</alternative>
-            Se il robot si muove a step e controlla ad ogni step se c'è una stop -> soluzione stupida
-            e semplice da implementare, ma considerando un ambiente reale, il problema che si genera è
-            che il robot potrebbe non fermarsi immediatamente quando riceve la stop, ma proseguire per
-            completare lo step. Questo potrebbe rappresentare un problema, nel caso ci fosse un'emergenza
-            dovuta ad un ostacolo.
+                <pre>
+                    LED_STATE := ON | BLINKING | OFF
+                </pre>
+                <b>Reasons</b>:
+                <highlight1>TODO</highlight1>
+            </solution>
+            <alternative>
+                <b>Alternatives</b>: use a dispatch to update the state of the trolley
+            </alternative>
 
-            <br/>
-            Modificare pathexecutor -> pathexecutorBCR? Aggiungere doStepOfPath oppure
-            doCmd
-
-            <h3>Return to home/Go to pickup</h3>
+            <h3 id="Extras">Extras</h3>
+            <h4>Return to home/Go to pickup</h4>
 
             <h2 id="Raspberry-Pi-Components">Raspberry Pi Components</h2>
             
@@ -221,7 +279,7 @@
 
             <h2 id="Interactions">Interactions</h2>
 
-            <h3 id="Messages">Raspberry Pi Messages</h3>
+            <h3 id="Messages">New Messages</h3>
             <table class="dictionary">
                 <tr>
                     <th>Message</th>
@@ -234,21 +292,53 @@
                     <td>sonar_data</td>
                     <td>Dispatch</td>
                     <td>SonarDevice</td>
-                    <td>?</td>
+                    <td>AlarmController</td>
                     <td>
-                        Sends .
+                        Contains the <ks><code>distance</code></ks> detected by the sonar device.
+                    </td>
+                </tr>
+                <tr>
+                    <td>stop</td>
+                    <td>Event</td>
+                    <td>AlarmController</td>
+                    <td>PathExecutorBCR</td>
+                    <td>
+                        Indicates that the TransportTrolley activity <ks><code>must be stopped</code></ks>.
+                    </td>
+                </tr>
+                <tr>
+                    <td>resume</td>
+                    <td>Event</td>
+                    <td>AlarmController</td>
+                    <td>PathExecutorBCR</td>
+                    <td>
+                        Indicates that the TransportTrolley activity <ks><code>can be resumed</code></ks>.
+                    </td>
+                </tr>
+                <tr>
+                    <td>coapUpdate</td>
+                    <td>Dispatch</td>
+                    <td>COAP framework</td>
+                    <td>TrolleyStateProvider</td>
+                    <td>
+                        Built-in dispatch to notify when a COAP observed resource gets updated.
+                        It contains 2 parameters: the resource name, and the associated value.
+                    </td>
+                </tr>
+                <tr>
+                    <td>trolley_state_changed</td>
+                    <td>Dispatch</td>
+                    <td>TrolleyStateProvider</td>
+                    <td>LedController</td>
+                    <td>
+                        Message that notifies the LedController (component that communicate with the Led
+                        device) that the Transport Trolley has entered a new state.
                     </td>
                 </tr>
             </table>
             
-            <h3>Sonar Interaction</h3>
-            <problem>Who does the sonar interact with</problem>
-            The Waste Service
-
-            <problem>What messages and how often</problem>
-
             <h2 id="Logical-Architecture">Logical Architecture</h2>
-            The Sprint2_ProblemAnalysis project aims to address the main issues
+            The <a href="../../Sprint2_ProblemAnalysis/">Sprint2_ProblemAnalysis</a> project aims to address the main issues
             of the warning/alarm features and give a first solution and implementation,
             using some simulators.
             <img width="100%" src="../../Sprint2_ProblemAnalysis/problem_analysis_logical_architecture_waste_service.png"/>
@@ -262,45 +352,86 @@
                     <th>Description</th>
                     <th>Files</th>
                 </tr>
-                <!--<tr>
-                    <td>Defects Solution</td>
+                <tr> 
+                    <td>Stop/Resume Test</td>
                     <td>
                         <ul>
-                            <li>SmartDevice</li>
-                            <li>WasteService</li>
+                            <li>Mock_WasteService</li>
                             <li>TransportTrolley</li>
+                            <li>PathExecutorBCR</li>
+                            <li>Mock_Sonar</li>
+                            <li>AlarmController</li>
                         </ul>
                     </td>
                     <td>
-                        We check if the SmartDevice receives a loadrejected immediately,
-                        even though a deposit action is currently being performed by the TransportTrolley.
+                        We check if the TransportTrolley actor:
+                        <ol>
+                            <li>
+                                correctly stops its activity when the AlarmController
+                                receives a distance <b>less than</b> <ks><code>DLIM</code></ks> from the sonar;
+                            </li>
+                            <li>
+                                correctly resumes its activity when the AlarmController
+                                receives a distance <b>greater than</b> <ks><code>DLIM</code></ks> from the sonar;
+                            </li>
+                        </ol>
                     </td>
+                    <td>
+                        QAK: <a href="../../Sprint2_ProblemAnalysis/src/test_stop_resume.qak">test_stop_resume.qak</a>
+                        Test: <a href="../../Sprint2_ProblemAnalysis/test/it/unibo/wasteservice/TestStopResume.kt">TestStopResume.kt</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Trolley State Test</td>
+                    <td>
+                        <ul>
+                            <li>Mock_WasteService</li>
+                            <li>TransportTrolley</li>
+                            <li>PathExecutorBCR</li>
+                            <li>TrolleyStateProvider</li>
+                            <li>Mock_Sonar</li>
+                            <li>AlarmController</li>
+                        </ul>
+                    </td>
+                    <td>
+                        We check if the Led state correctly gets updates when
+                        the TransportTrolley changes:
+                        <ol>
+                            <li>When the TransportTrolley is <code>AT HOME</code>, the led is <ks><code>OFF</code></ks>;</li>
+                            <li>When the TransportTrolley is <code>MOVING</code>, the led is <ks><code>BLINKING</code></ks>;</li>
+                            <li>When the TransportTrolley is <code>STOPPED</code>, the led is <ks><code>ON</code></ks>;</li>
+                        </ol>
+                    </td>
+                    <td>
+                        QAK: <a href="../../Sprint2_ProblemAnalysis/src/test_led_state.qak">test_led_state.qak</a>
+                        Test: <a href="../../Sprint2_ProblemAnalysis/test/it/unibo/wasteservice/TestLedState.kt">TestLedState.kt</a>
+                    </td>
+                </tr>
+                <!--<tr> TO-DO
+                    <td>Return Home Test</td>
+                    <td>
+                        <ul>
+                            <li></li>
+                            <li></li>
+                        </ul>
+                    </td>
+                    <td></td>
                     <td>
                         QAK: <a href="">.qak</a>
                         Test: <a href="">.kt</a>
                     </td>
                 </tr>-->
-                <tr>
-                    <td></td>
-                    <td>
-                        <ul>
-                            <li></li>
-                            <li></li>
-                        </ul>
-                    </td>
-                    <td></td>
-                    <td>
-                        QAK: <a href="">.qak</a>
-                        Test: <a href="">.kt</a>
-                    </td>
-                    <!-- NB: to test the TypesProvider we can just use a TCP connection and analyze the reply content,
-                        we don't need COAP, since it's a simple task to verify -->
-                </tr>
             </table>
-            <!-- 
-                - How to run the tests
-                - Test Reports(?)
-            -->
+
+            <h3 id="Execute-Test">Execute Test</h3>
+            To execute all the tests, run the following command:
+            <pre>
+                ./gradlew test
+            </pre>
+            
+            <h3 id="Test-Report">Test Report</h3>
+            The test report is generated automatically and is available here: <a href="../../Sprint2_ProblemAnalysis/build/reports/tests/test/index.html">index.html</a>.
+
         </div>
 
     </body>

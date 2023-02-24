@@ -141,3 +141,11 @@ task(runCtx_Robot, dependsOn: 'classes', type: JavaExec) {
     mainClass = 'it.unibo.ctx_robot.MainCtx_robotKt'
     classpath = sourceSets.main.runtimeClasspath
 }
+
+tasks.withType(Test) {
+    testLogging {
+        exceptionFormat "full"
+        events "started", "skipped", "passed", "failed"
+        showStandardStreams true
+    }
+}
