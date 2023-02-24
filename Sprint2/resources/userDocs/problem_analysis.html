@@ -22,7 +22,7 @@
             <a href="requirement_analysis.html">Requirement<br/>Analysis</a>
             <a class="selected" href="problem_analysis.html">Problem Analysis</a>
             <div class="sidenavSection">
-                <a href="#Sprint2-Software">Sprint 2 Software</a>
+                <a href="#Sprint2-Software">Sprint2 Software</a>
                 <div class="sidenavSubSection">
                     <a href="#Sonar">Sonar</a>
                     <a href="#Stop-Resume">Stop/Resume</a>
@@ -35,6 +35,10 @@
                 </div>
                 <a href="#Logical-Architecture">Logical Architecture</a>
                 <a href="#Test-Plans">Test Plans</a>
+                <div class="sidenavSubSection">
+                    <a href="#Execute-Test">Execute Test</a>
+                    <a href="#Test-Report">Test Report</a>
+                </div>
             </div>
             <a href="project.html">Project</a>
             <a href="test_plans.html">Test Plans</a>
@@ -81,7 +85,7 @@
             <img width="100%" src="../../../Sprint1/Sprint1_Project/sprint1_waste_service/project_logical_architecture_core-business.png"/>
             QAK model: <a href="../../../Sprint1/Sprint1_Project/sprint1_waste_service/src/waste_service.qak">waste_service.qak</a>
 
-            <h2 id="Sprint2-Software">Sprint 2 Software</h2>
+            <h2 id="Sprint2-Software">Sprint2 Software</h2>
             The Sprint 2 software will be the product of the analysis of problems
             related to the Raspberry Pi.
             We will analyze the main problems of the <b><i>4th requirement</i></b>, and discuss the
@@ -419,15 +423,15 @@
                 </tr>-->
             </table>
 
-            <br/>
+            <h3 id="Execute-Test">Execute Test</h3>
             To execute all the tests, run the following command:
             <pre>
                 ./gradlew test
             </pre>
-            <!-- 
-                - How to run the tests
-                - Test Reports(?)
-            -->
+            
+            <h3 id="Test-Report">Test Report</h3>
+            The test report is generated automatically and is available here: <a href="../../Sprint2_ProblemAnalysis/build/reports/tests/test/index.html">index.html</a>.
+
         </div>
 
     </body>
