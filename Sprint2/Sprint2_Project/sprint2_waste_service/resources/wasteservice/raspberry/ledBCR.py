@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-# Usage: ./ledBCR.py <on | off | blink>
+# Usage: ./ledBCR.py <on | off | blink [delay]>
 
 import sys
 import time
