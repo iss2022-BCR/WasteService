@@ -5,11 +5,14 @@
 from rpi_lcd import LCD
 import sys
 
-lcd = LCD()
+try:
+        lcd = LCD()
 
-if len(sys.argv) == 1 or len(sys.argv) > 3:
-        lcd.clear()
-        exit(0)
+        if len(sys.argv) == 1 or len(sys.argv) > 3:
+                lcd.clear()
+                exit(0)
 
-for i in range(1, len(sys.argv)):
-        lcd.text(str(sys.argv[i]), i)
+        for i in range(1, len(sys.argv)):
+                lcd.text(str(sys.argv[i]), i)
+except:
+        pass
