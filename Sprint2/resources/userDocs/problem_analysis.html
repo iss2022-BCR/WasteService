@@ -22,6 +22,8 @@
             <a href="requirement_analysis.html">Requirement<br/>Analysis</a>
             <a class="selected" href="problem_analysis.html">Problem Analysis</a>
             <div class="sidenavSection">
+                <a href="#Logical-Architecture-from-Sprint1">Logical Architecture<br/>from Sprint1</a>
+                <a href="#Defect-Analysis">Defect Analysis</a>
                 <a href="#Sprint2-Software">Sprint2 Software</a>
                 <div class="sidenavSubSection">
                     <a href="#Sonar">Sonar</a>
@@ -81,9 +83,48 @@
             
             <h3>MapEditor</h3>
         -->
-            <h2>Logical Architecture from Sprint1</h2>
+            <h2 id="Logical-Architecture-from-Sprint1">Logical Architecture from Sprint1</h2>
             <img width="100%" src="../../../Sprint1/Sprint1_Project/sprint1_waste_service/project_logical_architecture_core-business.png"/>
             QAK model: <a href="../../../Sprint1/Sprint1_Project/sprint1_waste_service/src/waste_service.qak">waste_service.qak</a>
+
+            <h2 id="Defects-Analysis">Defects Analysis</h2>
+            <problem><a href="../../../Sprint1/resources/userDocs/conclusions.html#Bugs">Bug #6</a> Windows Build</problem>
+            <b>Considerations</b>:
+            <br/>
+            This bug requires further investigations for us to understand how the Flutter framework translates and treats the Dart TCP sockets code.
+            
+            <solution>
+                Since that exceedes the objectives of our project and is a <i>minor issue</i> (given the fact that the user can still
+                use and will probably prefer the Android version), we decide <ksi>not to solve it</ksi>, at least 
+                for the moment. Therefore we opened an <a href="https://github.com/iss2022-BCR/WasteService/issues/11">issue</a> on the GitHub repository and added the "wontfix" label.
+            </solution>
+
+            <problem><a href="../../../Sprint1/resources/userDocs/conclusions.html#Bugs">Bug #7</a>: loadrejected</h4></problem>
+            <solution><b>Possible solution</b>:
+                <br/>
+                we could add one more SmartDevice-WasteService interaction before the store request:
+                by introducing a <b>new actor</b>, the SmartDevice could ask if there is enough space for the deposit,
+                and after getting the reply, if it's positive it would send a store request.
+            </solution>
+            <consideration>
+                This solution would work but it presents some issues:
+                <ul>
+                    <li>
+                        There's a small window of time in which another SmartDevice could
+                        send the store request "stealing" the priority for the deposit.
+                    </li>
+                    <li>
+                        The loadrejected reply to the storerequest would lose value,
+                        since we know for sure that a storerequest can be sent only if
+                        a SmartDevice knows there's enough space.
+                    </li>
+                </ul>
+                For these reasons, at the moment we decide <ksi>not to</ksi> spend further time
+                analyzing and/or implementing that issue, and stick with the solution
+                we already developed.
+                Therefore we opened an <a href="https://github.com/iss2022-BCR/WasteService/issues/12">issue</a> on the GitHub repository and added the "wontfix" label.
+            </consideration>
+            
 
             <h2 id="Sprint2-Software">Sprint2 Software</h2>
             The Sprint 2 software will be the product of the analysis of problems
@@ -243,7 +284,7 @@
             <br/>
             The Led is an output warning device, which is responsible for giving
             real-time information about the state of the transport trolley,
-            and therefore it needs to access to data about it.
+            and therefore it needs to access its data.
 
             <problem>Track Trolley State</problem>
             <b>Problem</b>: How do we keep track of the trolley state?

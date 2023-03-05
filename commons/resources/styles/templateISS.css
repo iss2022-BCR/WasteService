@@ -228,7 +228,7 @@ solution {
 	border-radius: 15px;
     display: block;
 }
-alternative {
+alternative, consideration {
     background-color: #faf7be;
     border: 1.5px solid #faf7be;
     padding: 5px;
