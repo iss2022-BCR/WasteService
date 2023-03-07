@@ -1,0 +1,48 @@
+System test_messages
+
+Event eventMessage: eventMessage(_)
+Dispatch forwardMessage:	forwardMessage(_)
+Event eventMessage:			eventMessage(_)
+
+Dispatch ack: ack(_)
+
+Context ctx_pc		ip [host="192.168.1.4" port=11760]
+Context ctx_rpi		ip [host="localhost" port=11761]
+
+ExternalQActor pc context ctx_pc
+
+QActor rpi context ctx_rpi {
+	State state_init initial {
+		println("[RPi] Waiting to send a forward message...")
+		delay 5000
+	}
+	Goto state_forward
+	
+	State state_forward {
+		forward pc -m forwardMessage: forwardMessage(_)
+		println("\t[RPi] Sent a FORWARD message")
+	}
+	Transition t0 whenMsg ack -> state_received_ack1
+	
+	State state_received_ack1 {
+		printCurrentMessage
+		println("[RPi] Received ACK")
+		delay 2000
+		println("[RPi] Waiting to send an event message...")
+		
+	}
+	Goto state_event
+	
+	State state_event {
+		emit eventMessage: eventMessage(_)
+		println("\t[RPi] Emitted an EVENT message")
+	}
+	Transition t0 whenMsg ack -> state_received_ack2
+	
+	State state_received_ack2 {
+		printCurrentMessage
+		println("[RPi] Received ACK")
+		delay 10000
+	}
+	Goto state_init
+}

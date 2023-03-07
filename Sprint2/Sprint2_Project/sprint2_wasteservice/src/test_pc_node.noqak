@@ -1,0 +1,36 @@
+System test_messages_tmp
+
+Event eventMessage: eventMessage(_)
+Dispatch forwardMessage:	forwardMessage(_)
+Dispatch ack: ack(_)
+
+Context ctx_pc		ip [host="localhost" port=11760]
+Context ctx_rpi		ip [host="raspberrypi.local" port=11761]
+
+QActor pc context ctx_pc {
+	State state_init initial {
+		println("[PC] Waiting for messages")
+	}
+	Transition t0 	whenMsg forwardMessage -> state_received_forward
+					whenEvent eventMessage -> state_received_event
+	
+	State state_received_forward {
+		printCurrentMessage
+		println("\t[PC] Received a FORWARD message")
+	}
+	Goto state_reply
+	
+	State state_received_event {
+		printCurrentMessage
+		println("\t[PC] Received an EVENT message")
+	}
+	Goto state_reply
+	
+	State state_reply {
+		forward rpi -m ack: ack(_)
+		println("[PC] Sent ACK")
+	}
+	Goto state_init
+}
+
+ExternalQActor rpi context ctx_rpi 
