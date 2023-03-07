@@ -1,0 +1,2 @@
+{"actor":"rpi", "msgType":"dispatch", "curstate":"state_forward", "nextstate":"state_received_ack1", "msgId":"ack"}
+{"actor":"rpi", "msgType":"dispatch", "curstate":"state_event", "nextstate":"state_received_ack2", "msgId":"ack"}
