@@ -80,13 +80,14 @@ dependencies {
     implementation name: '2p301'
     implementation name: 'unibo.qakactor22-3.2'
     implementation name: 'unibo.comm22-1.1'
+    implementation name: 'it.unibo.radarSystem22.domain-1.0'
+    implementation name: 'it.unibo.radarSystem22.domainBCR-1.0'
 
     /* AIMA **************************************************************************************************************** */
     //PLANNER
     implementation name: 'unibo.planner22-1.0'
     // https://mvnrepository.com/artifact/com.googlecode.aima-java/aima-core
     implementation group: 'com.googlecode.aima-java', name: 'aima-core', version: '3.0.0'
-
 }
 
 sourceSets {
@@ -117,7 +118,7 @@ jar {
 }*/
 
 task(runCtx_RaspberryPi, dependsOn: 'classes', type: JavaExec) {
-    mainClass = 'it.unibo.ctx_rpi.MainCtx_rpiKt'
+    mainClass = 'it.unibo.ctx_raspberrypi.MainCtx_raspberrypiKt'
     classpath = sourceSets.main.runtimeClasspath
 }
 
@@ -146,5 +147,27 @@ jar {
         exclude 'META-INF/*.SF'
         exclude 'META-INF/*.DSA'
         exclude 'META-INF/*.RSA'
+    }
+}
+
+// Deployment: ./gradlew distZip
+distributions {
+    main {
+        contents {
+            // Put the files into the following folder
+            into('bin/') {
+                from "./DomainSystemConfig.json"
+                from "./sprint2_raspberry_pi.pl"
+                from "./sysRules.pl"
+                from "./SonarAlone.c"
+                from "./compileSonarAlone.sh"
+            }
+            /*from "./DomainSystemConfig.json"
+            from "./sprint2_raspberry_pi.pl"
+            from "./sysRules.pl"
+            //from "./led25GpioTurnOn.sh"
+            //from "./led25GpioTurnOff.sh"
+            from "./SonarAlone.c"*/
+        }
     }
 }

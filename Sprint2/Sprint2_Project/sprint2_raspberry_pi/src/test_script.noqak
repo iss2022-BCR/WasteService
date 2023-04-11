@@ -1,0 +1,84 @@
+System sprint2_raspberry_pi
+
+/* Messages for Sonar */
+Dispatch sonaractivate   : info(ARG)
+Dispatch sonardeactivate : info(ARG)
+Event    sonar           : distance( V )   			//emitted by sonardatasource	
+Event    sonardata 		 : distance( V )   			//for the application level
+
+Context ctxpi ip [host="localhost" port=8065 ]
+
+CodedQActor sonardatasource context ctxpi className "wasteservice.sonarTestEV.sonarSupport2022_test" 
+CodedQActor datacleaner    	context ctxpi className "wasteservice.sonarTestEV.dataCleaner"
+
+//CodedQActor datalogger     context ctxpi className "dataLogger"
+//CodedQActor distancefilter context ctxpi className "distanceFilter"
+
+QActor sonarbcr context ctxpi{
+	[# 
+	   	val sonarActorName = "sonarbcr"
+	   	var VALUE = 0
+	#]
+	State s0 initial {
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	starting...", unibo.comm22.utils.ColorsOut.YELLOW)#]
+		run  wasteservice.sonarTestEV.utility.configureTheSonar(sonarActorName)
+	}
+	Goto sonarActivate
+				 
+	State sonarActivate{
+		forward sonarbcr -m sonaractivate : info(ok)
+	}			
+	Transition t0 whenMsg sonaractivate   -> activateTheSonar
+			      whenMsg sonardeactivate -> deactivateTheSonar
+	
+	State activateTheSonar{
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	waiting...", unibo.comm22.utils.ColorsOut.YELLOW)#]
+		forward sonardatasource -m sonaractivate : info(ok)  
+	}
+	Transition t0  whenEvent sonar         		-> handleSonarData  
+	               whenMsg 	 sonardeactivate 	-> deactivateTheSonar
+	
+	State deactivateTheSonar{
+		forward sonardatasource -m sonardeactivate : info(ko)
+	}
+	Goto end
+ 
+  	State handleSonarData{
+  		 onMsg( sonar : distance(D) ){
+   		 	[# val D = payloadArg(0) #] 
+   		 	[# unibo.comm22.utils.ColorsOut.outappl("$name	|	DISTANCE: ${D}", unibo.comm22.utils.ColorsOut.YELLOW)#] 
+  		 	emit sonardata : distance($D) //for the application
+  		 }
+  	}
+   	Transition t0 whenEvent sonar -> handleSonarData
+   				  whenMsg sonardeactivate -> deactivateTheSonar
+   		
+	State end{ 
+		[# unibo.comm22.utils.ColorsOut.outappl("$name	|	BYE", unibo.comm22.utils.ColorsOut.YELLOW)#]
+		[# System.exit(0) #]
+	}
+}
+
+QActor test context ctxpi {
+	[#
+		var distance : Int = 0
+	#]
+	State state_init initial {
+		[# unibo.comm22.utils.ColorsOut.outappl("$name TEST |	waiting for distance...", unibo.comm22.utils.ColorsOut.YELLOW) #]
+	}
+	Transition t0 whenEvent sonardata -> handleSonarData
+	
+	State handleSonarData {
+		onMsg(sonardata : distance( V )) {
+			[#
+				try{
+					distance = payloadArg(0).toInt()
+					unibo.comm22.utils.ColorsOut.outappl("$name TEST |	handle data: $distance", unibo.comm22.utils.ColorsOut.YELLOW)
+				} catch(e : Exception) {
+					unibo.comm22.utils.ColorsOut.outappl("$name	TEST |	some err...", unibo.comm22.utils.ColorsOut.YELLOW)
+				}	
+			#]	
+		}
+	}
+	Goto state_init
+}

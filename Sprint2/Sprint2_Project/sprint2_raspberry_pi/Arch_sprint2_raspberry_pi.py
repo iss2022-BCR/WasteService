@@ -19,19 +19,15 @@ eventedgeattr = {
 with Diagram('sprint2_raspberry_piArch', show=False, outformat='png', graph_attr=graphattr) as diag:
   with Cluster('env'):
      sys = Custom('','./qakicons/system.png')
-     with Cluster('ctx_wasteservice', graph_attr=nodeattr):
-          typesprovider=Custom('typesprovider(ext)','./qakicons/externalQActor.png')
-          wasteservice=Custom('wasteservice(ext)','./qakicons/externalQActor.png')
-     with Cluster('ctx_transporttrolley', graph_attr=nodeattr):
-          transporttrolley=Custom('transporttrolley(ext)','./qakicons/externalQActor.png')
-          trolleystateprovider=Custom('trolleystateprovider(ext)','./qakicons/externalQActor.png')
-          pathexecutorbcr=Custom('pathexecutorbcr(ext)','./qakicons/externalQActor.png')
-     with Cluster('ctx_robot', graph_attr=nodeattr):
-          basicrobot=Custom('basicrobot(ext)','./qakicons/externalQActor.png')
      with Cluster('ctx_raspberrypi', graph_attr=nodeattr):
-          alarmcontroller=Custom('alarmcontroller','./qakicons/symActorSmall.png')
-          ledcontroller=Custom('ledcontroller','./qakicons/symActorSmall.png')
-     alarmcontroller >> Edge( xlabel='stop', **eventedgeattr, fontcolor='red') >> sys
-     alarmcontroller >> Edge( xlabel='resume', **eventedgeattr, fontcolor='red') >> sys
-     sys >> Edge(color='red', style='dashed', xlabel='trolley_state_changed', fontcolor='red') >> ledcontroller
+          sonar_bcr=Custom('sonar_bcr','./qakicons/symActorSmall.png')
+          testalarmreceiver=Custom('testalarmreceiver','./qakicons/symActorSmall.png')
+          sonardatasource_concrete=Custom('sonardatasource_concrete(coded)','./qakicons/codedQActor.png')
+          sonardatasource_mock=Custom('sonardatasource_mock(coded)','./qakicons/codedQActor.png')
+          filterdistancechanged=Custom('filterdistancechanged(coded)','./qakicons/codedQActor.png')
+          filterdistancebounds=Custom('filterdistancebounds(coded)','./qakicons/codedQActor.png')
+          filteralarm=Custom('filteralarm(coded)','./qakicons/codedQActor.png')
+     sonar_bcr >> Edge(color='blue', style='solid', xlabel='sonaractivate', fontcolor='blue') >> sonardatasource_concrete
+     sonar_bcr >> Edge(color='blue', style='solid', xlabel='sonardeactivate', fontcolor='blue') >> sonardatasource_concrete
+     sys >> Edge(color='red', style='dashed', xlabel='stop', fontcolor='red') >> testalarmreceiver
 diag

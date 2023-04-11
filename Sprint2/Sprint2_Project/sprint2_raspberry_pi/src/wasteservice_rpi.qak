@@ -40,7 +40,10 @@ Event info:			info(ARG) 	    //for external components, not coap-observed
 
 // Sprint2
 // Sonar -> AlarmController
-Dispatch sonar_data:	sonar_data(DISTANCE)
+Dispatch sonar_data:	distance(DISTANCE)
+Dispatch sonaractivate: sonaractivate(_)
+Dispatch sonardeactivate: sonardeactivate(_)
+
 // AlarmController -> PathExecutorBCR
 Event stop:		stop(_)
 // AlarmController -> PathExecutorBCR
@@ -55,15 +58,18 @@ Event trolley_state_changed:	trolley_state_changed(STATE)
 Dispatch coapUpdate : coapUpdate(RESOURCE, VALUE)
 
 // CONTEXES ===================================================================
-Context ctx_wasteservice		ip [host="192.168.1.4" port=11800]
+/*Context ctx_wasteservice		ip [host="localhost" port=11800]
+Context ctx_transporttrolley	ip [host="localhost" port=11801]
+Context ctx_robot				ip [host="localhost" port=8020]*/
+/*Context ctx_wasteservice		ip [host="192.168.1.4" port=11800]
 Context ctx_transporttrolley	ip [host="192.168.1.4" port=11801]
-Context ctx_robot				ip [host="192.168.1.4" port=8020]
+Context ctx_robot				ip [host="192.168.1.4" port=8020]*/
 
 Context ctx_raspberrypi			ip [host="localhost" port=11802]
 
 // ACTORS =====================================================================
 // CTX WasteService -----------------------------------------------------------
-ExternalQActor typesprovider context ctx_wasteservice
+/*ExternalQActor typesprovider context ctx_wasteservice
 ExternalQActor wasteservice context ctx_wasteservice
 
 // CTX TransportTrolley -------------------------------------------------------
@@ -138,4 +144,57 @@ QActor ledcontroller context ctx_raspberrypi {
 		}
 	}
 	Goto state_idle
+}*/
+
+// Sonar data source providers
+CodedQActor sonardatasource_concrete	context ctx_raspberrypi className "wasteservice.raspberry.sonar.sonarDataSourceHCSR04"
+CodedQActor sonardatasource_mock		context ctx_raspberrypi className "wasteservice.raspberry.sonar.sonarDataSourceMock"
+
+// Sonar filters
+CodedQActor filterdistancechanged	context ctx_raspberrypi className "wasteservice.raspberry.sonar.filterDistanceChanged"
+CodedQActor filterdistancebounds	context ctx_raspberrypi className "wasteservice.raspberry.sonar.filterDistanceBounds"
+CodedQActor filteralarm				context ctx_raspberrypi className "wasteservice.raspberry.sonar.filterAlarm"
+
+QActor sonar_bcr context ctx_raspberrypi {
+	State state_init initial {
+		println("[SonarBCR] Started.")
+		run wasteservice.raspberry.sonar.sonarBuilder.createSonar()
+	}
+	Goto state_activate
+	
+	State state_activate {
+		forward sonardatasource_concrete -m sonaractivate : sonaractivate(_)
+		println("[SonarBCR] Sent activation message.")
+		delay 10000
+	}
+	Goto state_deactivate
+	
+	State state_deactivate {
+		forward sonardatasource_concrete -m sonardeactivate : sonardeactivate(_)
+		println("[SonarBCR] Sent deactivation message.")
+	}
 }
+
+QActor testalarmreceiver context ctx_raspberrypi {
+	State state_init initial {
+		println("[TestAlarmReceiver] Started.")
+	}
+	Goto state_idle
+	
+	State state_idle {
+		println("[TestAlarmReceiver] Idle.")
+	}
+	Transition t0 whenEvent stop -> state_handle
+	
+	State state_handle {
+		onMsg(stop: stop(_)) {
+			println("[TestAlarmReceiver] Received stop.")
+		}
+		onMsg(resume: resume(_)) {
+			println("[TestAlarmReceiver] Received resume.")
+		}
+	}
+	Goto state_idle
+}
+
+// LED
