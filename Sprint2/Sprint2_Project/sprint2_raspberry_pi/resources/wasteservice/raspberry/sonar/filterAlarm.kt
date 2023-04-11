@@ -16,8 +16,9 @@ class filterAlarm(name: String): ActorBasic(name) {
 
     override suspend fun actorBody(msg: IApplMessage)
     {
-        if(msg.msgSender() == name)
-            return // Avoid handling the event emitted by itself
+        //println("[$name] Message: ${msg.toString()}")
+        if(msg.msgSender() == name || msg.msgId() != "sonar_data")
+            return
 
         filterData(msg)
     }
@@ -32,17 +33,13 @@ class filterAlarm(name: String): ActorBasic(name) {
         // Emit an event only if the state changed
         if(alarm != prevAlarm)
         {
-            println("[$name] Alarm: $alarm")
+            //println("[$name] Alarm: $alarm")
             val message = if(alarm) "stop" else "resume"
 
             val event = MsgUtil.buildEvent(name, message, "$message(_)")
             emit(event)
 
             prevAlarm = alarm
-        }
-        else
-        {
-            println("[$name] Message discarded. PrevAlarm: $prevAlarm, alarm: $alarm")
         }
     }
 }

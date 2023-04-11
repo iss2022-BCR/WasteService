@@ -156,18 +156,11 @@ distributions {
         contents {
             // Put the files into the following folder
             into('bin/') {
-                from "./DomainSystemConfig.json"
                 from "./sprint2_raspberry_pi.pl"
                 from "./sysRules.pl"
-                from "./SonarAlone.c"
-                from "./compileSonarAlone.sh"
+                from "./resources/wasteservice/raspberry/sonar/sonarBCR.py"
+                from "./resources/wasteservice/raspberry/led/ledBCR.py"
             }
-            /*from "./DomainSystemConfig.json"
-            from "./sprint2_raspberry_pi.pl"
-            from "./sysRules.pl"
-            //from "./led25GpioTurnOn.sh"
-            //from "./led25GpioTurnOff.sh"
-            from "./SonarAlone.c"*/
         }
     }
 }

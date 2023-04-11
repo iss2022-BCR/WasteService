@@ -10,8 +10,9 @@ import wasteservice.WSconstants
 class filterDistanceBounds(name: String): ActorBasic(name) {
     override suspend fun actorBody(msg: IApplMessage)
     {
-        if(msg.msgSender() == name)
-            return // Avoid handling the event emitted by itself
+        //println("[$name] Message: ${msg.toString()}")
+        if(msg.msgSender() == name || msg.msgId() != "sonar_data")
+            return
 
         filterData(msg)
     }
@@ -26,13 +27,9 @@ class filterDistanceBounds(name: String): ActorBasic(name) {
         if(distance >= WSconstants.SONAR_MIN && distance <= WSconstants.SONAR_MAX)
         {
             msg.msgId()
-            println("[$name] Distance: $distance")
+            //println("[$name] Distance: $distance")
 
             emit(msg)
-        }
-        else
-        {
-            println("[$name] Message discarded. Distance: $distance, out of bounds [${WSconstants.SONAR_MIN}, ${WSconstants.SONAR_MAX}]")
         }
     }
 }

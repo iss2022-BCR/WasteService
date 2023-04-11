@@ -40,8 +40,8 @@ class sonarDataSourceHCSR04(name: String): ActorBasic(name) {
 
     private fun runSonarScript()
     {
-        //val builder = ProcessBuilder("/bin/python3", "./sonarBCR.py", "loop")
-        val builder = ProcessBuilder("./SonarAlone")
+        val builder = ProcessBuilder("/usr/bin/python3", "-u", "./sonarBCR.py", "loop", "500")
+        //val builder = ProcessBuilder("./SonarAlone")
         builder.redirectErrorStream(true)
 
         try {
@@ -56,8 +56,11 @@ class sonarDataSourceHCSR04(name: String): ActorBasic(name) {
 
     private fun stopSonarScript()
     {
-        process.destroy()
-        `in`.close()
+        if(this::process.isInitialized && process.isAlive)
+        {
+            process.destroy()
+            `in`.close()
+        }
     }
 
     private fun readSonarData()
@@ -72,17 +75,17 @@ class sonarDataSourceHCSR04(name: String): ActorBasic(name) {
                     // if the sonar script output is not ready wait 100ms
                     if (!`in`.ready())
                     {
-                        delay(100)
+                        delay(50)
                     }
                     else
                     {
                         val line = `in`.readLine();
                         val distance = line.toInt()
 
-                        println("[$name] Sonar data: $distance")
+                        //println("[$name] Sonar data: $distance")
 
                         val messageContent = "distance($distance)"
-                        val event = MsgUtil.buildEvent(name, "sonardata", messageContent)
+                        val event = MsgUtil.buildEvent(name, "sonar_data", messageContent)
                         emitLocalStreamEvent(event)
                     }
                 }

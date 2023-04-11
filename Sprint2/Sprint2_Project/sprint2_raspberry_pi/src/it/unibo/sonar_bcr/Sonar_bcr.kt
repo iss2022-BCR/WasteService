@@ -37,17 +37,18 @@ class Sonar_bcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="state_deactivate", cond=doswitch() )
 				}	 
 				state("state_deactivate") { //this:State
 					action { //it:State
 						forward("sonardeactivate", "sonardeactivate(_)" ,"sonardatasource_concrete" ) 
 						println("[SonarBCR] Sent deactivation message.")
+						delay(5000) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition( edgeName="goto",targetState="state_activate", cond=doswitch() )
 				}	 
 			}
 		}

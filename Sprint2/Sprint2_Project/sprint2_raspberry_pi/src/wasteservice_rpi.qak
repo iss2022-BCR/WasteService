@@ -151,9 +151,9 @@ CodedQActor sonardatasource_concrete	context ctx_raspberrypi className "wasteser
 CodedQActor sonardatasource_mock		context ctx_raspberrypi className "wasteservice.raspberry.sonar.sonarDataSourceMock"
 
 // Sonar filters
-CodedQActor filterdistancechanged	context ctx_raspberrypi className "wasteservice.raspberry.sonar.filterDistanceChanged"
-CodedQActor filterdistancebounds	context ctx_raspberrypi className "wasteservice.raspberry.sonar.filterDistanceBounds"
-CodedQActor filteralarm				context ctx_raspberrypi className "wasteservice.raspberry.sonar.filterAlarm"
+CodedQActor filter_distancechanged	context ctx_raspberrypi className "wasteservice.raspberry.sonar.filterDistanceChanged"
+CodedQActor filter_distancebounds	context ctx_raspberrypi className "wasteservice.raspberry.sonar.filterDistanceBounds"
+CodedQActor filter_alarm				context ctx_raspberrypi className "wasteservice.raspberry.sonar.filterAlarm"
 
 QActor sonar_bcr context ctx_raspberrypi {
 	State state_init initial {
@@ -167,12 +167,14 @@ QActor sonar_bcr context ctx_raspberrypi {
 		println("[SonarBCR] Sent activation message.")
 		delay 10000
 	}
-	Goto state_deactivate
+	//Goto state_deactivate
 	
 	State state_deactivate {
 		forward sonardatasource_concrete -m sonardeactivate : sonardeactivate(_)
 		println("[SonarBCR] Sent deactivation message.")
+		delay 5000
 	}
+	Goto state_activate
 }
 
 QActor testalarmreceiver context ctx_raspberrypi {
@@ -184,7 +186,8 @@ QActor testalarmreceiver context ctx_raspberrypi {
 	State state_idle {
 		println("[TestAlarmReceiver] Idle.")
 	}
-	Transition t0 whenEvent stop -> state_handle
+	Transition t0	whenEvent stop -> state_handle
+					whenEvent resume -> state_handle
 	
 	State state_handle {
 		onMsg(stop: stop(_)) {
@@ -198,3 +201,56 @@ QActor testalarmreceiver context ctx_raspberrypi {
 }
 
 // LED
+
+QActor led_bcr context ctx_raspberrypi {
+	[# var State: wasteservice.LedState = wasteservice.LedState.OFF #]
+	State state_init initial {
+		println("[LedBCR] Started.")
+	}
+	Goto state_idle
+	
+	State state_idle {
+		println("[LedBCR] Led state: ${State.name}")
+	}
+	Transition t0	whenEvent trolley_state_changed -> state_handle
+	
+	State state_handle {
+		onMsg(trolley_state_changed: trolley_state_changed(STATE)) {
+			[# var NewState = wasteservice.Utils.getLedStateFromTrolleyState(payloadArg(0)) #]
+			if [# NewState != State #] {
+				println("[LedBCR] Led state changed!")
+				[# wasteservice.raspberry.led.ledSupportBCR.doLed(NewState) #]
+				[# State = NewState #]
+			}
+		}
+	}
+	Goto state_idle
+}
+
+QActor led_test context ctx_raspberrypi {
+	State state_init initial {
+		println("[LedTest] Started.")
+	}
+	Goto state_off
+	
+	State state_off {
+		[# wasteservice.raspberry.led.ledSupportBCR.doLed(wasteservice.LedState.OFF) #]
+		println("[LedTest] Led OFF.")
+		delay 3000
+	}
+	Goto state_on
+	
+	State state_on {
+		[# wasteservice.raspberry.led.ledSupportBCR.doLed(wasteservice.LedState.ON) #]
+		println("[LedTest] Led ON.")
+		delay 3000
+	}
+	Goto state_blink
+	
+	State state_blink {
+		[# wasteservice.raspberry.led.ledSupportBCR.doLed(wasteservice.LedState.BLINKING) #]
+		println("[LedTest] Led BLINKING.")
+		delay 5000
+	}
+	Goto state_off
+}
