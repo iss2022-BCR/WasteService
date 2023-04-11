@@ -11,3 +11,4 @@ context(ctx_raspberrypi, "localhost",  "TCP", "11802").
   qactor( testalarmreceiver, ctx_raspberrypi, "it.unibo.testalarmreceiver.Testalarmreceiver").
   qactor( led_bcr, ctx_raspberrypi, "it.unibo.led_bcr.Led_bcr").
   qactor( led_test, ctx_raspberrypi, "it.unibo.led_test.Led_test").
+  qactor( filter_display, ctx_raspberrypi, "wasteservice.raspberry.display.filterDisplay").

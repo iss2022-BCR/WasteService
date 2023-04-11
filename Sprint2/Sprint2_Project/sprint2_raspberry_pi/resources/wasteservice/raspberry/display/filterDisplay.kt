@@ -1,13 +1,17 @@
-package wasteservice.raspberry.sonar
+package wasteservice.raspberry.display
 
 import alice.tuprolog.Struct
 import alice.tuprolog.Term
 import it.unibo.kactor.ActorBasic
 import it.unibo.kactor.IApplMessage
-import it.unibo.kactor.MsgUtil
-import wasteservice.WSconstants
+import wasteservice.raspberry.display.displaySupportBCR.writeToDisplay
 
-class filterDistanceBounds(name: String): ActorBasic(name) {
+/*
+* Actor that filters a pipeline event and directly propagates it,
+* updating the display with the distance.
+ */
+class filterDisplay(name: String): ActorBasic(name) {
+
     override suspend fun actorBody(msg: IApplMessage)
     {
         //println("[$name] Message: ${msg.toString()}")
@@ -16,22 +20,16 @@ class filterDistanceBounds(name: String): ActorBasic(name) {
 
         val filteredMsg = filterData(msg)
         if(filteredMsg != null)
-            emitLocalStreamEvent(msg)
+            emitLocalStreamEvent(filteredMsg)
     }
 
     private suspend fun filterData(msg: IApplMessage): IApplMessage?
     {
         val data  = (Term.createTerm(msg.msgContent()) as Struct).getArg(0).toString()
-
         val distance = Integer.parseInt(data)
 
-        // Emit an event only if the distance doesn't exceed the bounds
-        if(distance >= WSconstants.SONAR_MIN && distance <= WSconstants.SONAR_MAX)
-        {
-            //println("[$name] Distance: $distance")
+        writeToDisplay("Distance: $distance cm", "")
 
-            return msg
-        }
-        return null
+        return msg
     }
 }

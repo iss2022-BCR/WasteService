@@ -39,11 +39,11 @@ class Testalarmreceiver ( name: String, scope: CoroutineScope  ) : ActorBasicFsm
 				}	 
 				state("state_handle") { //this:State
 					action { //it:State
-						if( checkMsgContent( Term.createTerm("stop(_)"), Term.createTerm("stop(_)"), 
+						if( checkMsgContent( Term.createTerm("stop(_)"), Term.createTerm("stop"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								println("[TestAlarmReceiver] Received stop.")
 						}
-						if( checkMsgContent( Term.createTerm("resume(_)"), Term.createTerm("resume(_)"), 
+						if( checkMsgContent( Term.createTerm("resume(_)"), Term.createTerm("resume"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								println("[TestAlarmReceiver] Received resume.")
 						}

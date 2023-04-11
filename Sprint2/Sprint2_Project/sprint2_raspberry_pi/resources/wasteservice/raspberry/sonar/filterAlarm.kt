@@ -20,10 +20,12 @@ class filterAlarm(name: String): ActorBasic(name) {
         if(msg.msgSender() == name || msg.msgId() != "sonar_data")
             return
 
-        filterData(msg)
+        val filteredMsg = filterData(msg)
+        if(filteredMsg != null)
+            emit(filteredMsg)
     }
 
-    private suspend fun filterData(msg: IApplMessage)
+    private suspend fun filterData(msg: IApplMessage): IApplMessage?
     {
         val data  = (Term.createTerm(msg.msgContent()) as Struct).getArg(0).toString()
 
@@ -31,15 +33,14 @@ class filterAlarm(name: String): ActorBasic(name) {
 
         val alarm = (distance < wasteservice.WSconstants.DLIM)
         // Emit an event only if the state changed
-        if(alarm != prevAlarm)
-        {
-            //println("[$name] Alarm: $alarm")
-            val message = if(alarm) "stop" else "resume"
-
-            val event = MsgUtil.buildEvent(name, message, "$message(_)")
-            emit(event)
-
+        if(alarm != prevAlarm) {
             prevAlarm = alarm
+            println("[$name] Alarm: $alarm")
+
+            val messageId = if (alarm) "stop" else "resume"
+
+            return MsgUtil.buildEvent(name, messageId, "$messageId")
         }
+        return null
     }
 }

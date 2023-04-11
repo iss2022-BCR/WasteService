@@ -29,6 +29,7 @@ with Diagram('sprint2_raspberry_piArch', show=False, outformat='png', graph_attr
           filter_distancechanged=Custom('filter_distancechanged(coded)','./qakicons/codedQActor.png')
           filter_distancebounds=Custom('filter_distancebounds(coded)','./qakicons/codedQActor.png')
           filter_alarm=Custom('filter_alarm(coded)','./qakicons/codedQActor.png')
+          filter_display=Custom('filter_display(coded)','./qakicons/codedQActor.png')
      sonar_bcr >> Edge(color='blue', style='solid', xlabel='sonaractivate', fontcolor='blue') >> sonardatasource_concrete
      sonar_bcr >> Edge(color='blue', style='solid', xlabel='sonardeactivate', fontcolor='blue') >> sonardatasource_concrete
      sys >> Edge(color='red', style='dashed', xlabel='stop', fontcolor='red') >> testalarmreceiver

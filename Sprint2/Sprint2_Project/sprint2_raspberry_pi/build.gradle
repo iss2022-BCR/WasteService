@@ -160,6 +160,7 @@ distributions {
                 from "./sysRules.pl"
                 from "./resources/wasteservice/raspberry/sonar/sonarBCR.py"
                 from "./resources/wasteservice/raspberry/led/ledBCR.py"
+                from "./resources/wasteservice/raspberry/display/displayBCR.py"
             }
         }
     }

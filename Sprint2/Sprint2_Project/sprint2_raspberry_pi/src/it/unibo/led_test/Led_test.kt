@@ -29,6 +29,7 @@ class Led_test ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, s
 				state("state_off") { //this:State
 					action { //it:State
 						 wasteservice.raspberry.led.ledSupportBCR.doLed(wasteservice.LedState.OFF)  
+						 wasteservice.raspberry.display.displaySupportBCR.writeToDisplay("", "Trolley at HOME")  
 						println("[LedTest] Led OFF.")
 						delay(3000) 
 						//genTimer( actor, state )
@@ -41,6 +42,7 @@ class Led_test ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, s
 				state("state_on") { //this:State
 					action { //it:State
 						 wasteservice.raspberry.led.ledSupportBCR.doLed(wasteservice.LedState.ON)  
+						 wasteservice.raspberry.display.displaySupportBCR.writeToDisplay("", "Trolley STOPPED")  
 						println("[LedTest] Led ON.")
 						delay(3000) 
 						//genTimer( actor, state )
@@ -53,6 +55,7 @@ class Led_test ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, s
 				state("state_blink") { //this:State
 					action { //it:State
 						 wasteservice.raspberry.led.ledSupportBCR.doLed(wasteservice.LedState.BLINKING)  
+						 wasteservice.raspberry.display.displaySupportBCR.writeToDisplay("", "Trolley MOVING")  
 						println("[LedTest] Led BLINKING.")
 						delay(5000) 
 						//genTimer( actor, state )

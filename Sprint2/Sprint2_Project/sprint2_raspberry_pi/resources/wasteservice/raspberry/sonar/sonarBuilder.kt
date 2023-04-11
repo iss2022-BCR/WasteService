@@ -17,8 +17,9 @@ object sonarBuilder {
         else firstActorInPipe = sonarActor
 
         firstActorInPipe
-            .subscribeLocalActor("filter_distancechanged")
             .subscribeLocalActor("filter_distancebounds")
+            .subscribeLocalActor("filter_distancechanged")
+            .subscribeLocalActor("filter_display")
             .subscribeLocalActor("filter_alarm")
 
     }

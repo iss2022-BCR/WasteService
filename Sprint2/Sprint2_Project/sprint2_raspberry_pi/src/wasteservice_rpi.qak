@@ -190,10 +190,10 @@ QActor testalarmreceiver context ctx_raspberrypi {
 					whenEvent resume -> state_handle
 	
 	State state_handle {
-		onMsg(stop: stop(_)) {
+		onMsg(stop: stop) {
 			println("[TestAlarmReceiver] Received stop.")
 		}
-		onMsg(resume: resume(_)) {
+		onMsg(resume: resume) {
 			println("[TestAlarmReceiver] Received resume.")
 		}
 	}
@@ -235,6 +235,7 @@ QActor led_test context ctx_raspberrypi {
 	
 	State state_off {
 		[# wasteservice.raspberry.led.ledSupportBCR.doLed(wasteservice.LedState.OFF) #]
+		[# wasteservice.raspberry.display.displaySupportBCR.writeToDisplay("", "Trolley at HOME") #]
 		println("[LedTest] Led OFF.")
 		delay 3000
 	}
@@ -242,6 +243,7 @@ QActor led_test context ctx_raspberrypi {
 	
 	State state_on {
 		[# wasteservice.raspberry.led.ledSupportBCR.doLed(wasteservice.LedState.ON) #]
+		[# wasteservice.raspberry.display.displaySupportBCR.writeToDisplay("", "Trolley STOPPED") #]
 		println("[LedTest] Led ON.")
 		delay 3000
 	}
@@ -249,8 +251,14 @@ QActor led_test context ctx_raspberrypi {
 	
 	State state_blink {
 		[# wasteservice.raspberry.led.ledSupportBCR.doLed(wasteservice.LedState.BLINKING) #]
+		[# wasteservice.raspberry.display.displaySupportBCR.writeToDisplay("", "Trolley MOVING") #]
 		println("[LedTest] Led BLINKING.")
 		delay 5000
 	}
 	Goto state_off
 }
+
+// DISPLAY
+
+// Display filters
+CodedQActor filter_display	context ctx_raspberrypi className "wasteservice.raspberry.display.filterDisplay"

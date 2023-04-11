@@ -19,10 +19,12 @@ class filterDistanceChanged (name : String ) : ActorBasic( name ) {
         if(msg.msgSender() == name || msg.msgId() != "sonar_data")
             return
 
-        filterData(msg)
+        val filteredMsg = filterData(msg)
+        if(filteredMsg != null)
+            emitLocalStreamEvent(filteredMsg)
     }
 
-    private suspend fun filterData(msg: IApplMessage)
+    private suspend fun filterData(msg: IApplMessage): IApplMessage?
     {
         val data  = (Term.createTerm(msg.msgContent()) as Struct).getArg(0).toString()
         val distance = Integer.parseInt(data)
@@ -30,12 +32,11 @@ class filterDistanceChanged (name : String ) : ActorBasic( name ) {
         // Emit an event only if the distance changed
         if(distance != prevDistance)
         {
-            msg.msgId()
-            //println("[$name] Distance: $distance")
-
-            emit(msg)
-
             prevDistance = distance
+            println("[$name] Distance: $distance")
+
+            return msg
         }
+        return null
     }
 }
