@@ -23,13 +23,13 @@
             <a class="selected" href="problem_analysis.html">Problem Analysis</a>
             <div class="sidenavSection">
                 <a href="#Logical-Architecture-from-Sprint1">Logical Architecture<br/>from Sprint1</a>
-                <a href="#Defect-Analysis">Defect Analysis</a>
+                <a href="#Defects-Analysis">Defect Analysis</a>
                 <a href="#Sprint2-Software">Sprint2 Software</a>
                 <div class="sidenavSubSection">
+                    <a href="#Software-Provided-by-the-Customer">Software Provided<br/>by the Customer</a>
                     <a href="#Sonar">Sonar</a>
                     <a href="#Stop-Resume">Stop/Resume</a>
                     <a href="#Led">Led</a>
-                    <a href="#Extra">Extra</a>
                 </div>
                 <a href="#Interactions">Interactions</a>
                 <div class="sidenavSubSection">
@@ -53,15 +53,8 @@
 
         <div id="main">
             <h1 align="center">Problem Analysis</h1>
-            Problematiche che possono verificarsi;
-            <br/>
-            Vedere quale software è disponibile e dove/come possiamo utilizzarlo;
-            <br/>
-
-            il problema principale è realizzare il meccanismo di stop/resume.
-            E conseguentemente implementare il return a home.
-
-        <!--
+            
+            <!--
             <h2 id="Defects-Solving">Defects Solving</h2>
             
             <problem><a href="../../../Sprint1/resources/userDocs/conclusions.html#Bugs">Bug #7</a>: LoarRejected Blocked</problem>
@@ -82,17 +75,18 @@
             </solution>
             
             <h3>MapEditor</h3>
-        -->
+            -->
             <h2 id="Logical-Architecture-from-Sprint1">Logical Architecture from Sprint1</h2>
             <img width="100%" src="../../../Sprint1/Sprint1_Project/sprint1_waste_service/project_logical_architecture_core-business.png"/>
             QAK model: <a href="../../../Sprint1/Sprint1_Project/sprint1_waste_service/src/waste_service.qak">waste_service.qak</a>
 
             <h2 id="Defects-Analysis">Defects Analysis</h2>
             <problem><a href="../../../Sprint1/resources/userDocs/conclusions.html#Bugs">Bug #6</a> Windows Build</problem>
-            <b>Considerations</b>:
-            <br/>
-            This bug requires further investigations for us to understand how the Flutter framework translates and treats the Dart TCP sockets code.
-            
+            <consideration>
+                <b>Considerations</b>:
+                <br/>
+                This bug requires further investigations for us to understand how the Flutter framework translates and treats the Dart TCP sockets code.
+            </consideration>
             <solution>
                 Since that exceedes the objectives of our project and is a <i>minor issue</i> (given the fact that the user can still
                 use and will probably prefer the Android version), we decide <ksi>not to solve it</ksi>, at least 
@@ -120,6 +114,7 @@
                         a SmartDevice knows there's enough space.
                     </li>
                 </ul>
+                <b>Decision</b>:
                 For these reasons, at the moment we decide not to spend further time
                 analyzing and/or implementing that issue, and therefore <ksi>not to solve it</ksi>:
                 we stick with the solution we already developed.
@@ -156,7 +151,7 @@
                 device, but for the moment, for simplicity reasons we assume they will be (same node, same context).
             </solution>
 
-            <h3>Software provided by the customer</h3>
+            <h3 id="Software-Provided-by-the-Customer">Software Provided by the Customer</h3>
             <div class="remark">
                 The customer provides the project <a href="https://github.com/anatali/issLab2022/tree/main/it.unibo.radarSystem22.domain">it.unibo.radarSystem22.domain</a> 
                 which implements a RadarSystem using concrete or simulated devices (Led/Sonar), implemented by following 
@@ -417,9 +412,6 @@ public interface IDistance {
                 <b>Alternatives</b>: use a dispatch to update the state of the trolley
             </alternative>
 
-            <h3 id="Extras">Extras</h3>
-            <h4>Return to home/Go to pickup</h4>
-
             <h2 id="Interactions">Interactions</h2>
 
             <h3 id="Messages">New Messages</h3>
@@ -483,7 +475,7 @@ public interface IDistance {
             <h2 id="Logical-Architecture">Logical Architecture</h2>
             The <a href="../../Sprint2_ProblemAnalysis/">Sprint2_ProblemAnalysis</a> project aims to address the main issues
             of the warning/alarm features and give a first solution and implementation,
-            using some simulators.
+            using <ksi>simulated components and mocks</ksi>.
             <img width="100%" src="../../Sprint2_ProblemAnalysis/sprint2_waste_service_analysisarch_edited.png"/>
             QAK model: <a href="../../Sprint2_ProblemAnalysis/src/waste_service.qak">waste_service.qak</a>
             
