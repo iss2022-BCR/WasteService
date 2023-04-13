@@ -49,8 +49,8 @@ eclipse {
     }
 }
 
-/*
-mainClassName = 'it.unibo.xxx' //TODO
+
+/*mainClassName = 'it.unibo.xxx' //TODO
 
 jar {
     from sourceSets.main.allSource
