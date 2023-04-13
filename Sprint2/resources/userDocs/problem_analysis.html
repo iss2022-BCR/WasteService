@@ -22,12 +22,14 @@
             <a href="requirement_analysis.html">Requirement<br/>Analysis</a>
             <a class="selected" href="problem_analysis.html">Problem Analysis</a>
             <div class="sidenavSection">
+                <a href="#Logical-Architecture-from-Sprint1">Logical Architecture<br/>from Sprint1</a>
+                <a href="#Defects-Analysis">Defect Analysis</a>
                 <a href="#Sprint2-Software">Sprint2 Software</a>
                 <div class="sidenavSubSection">
+                    <a href="#Software-Provided-by-the-Customer">Software Provided<br/>by the Customer</a>
                     <a href="#Sonar">Sonar</a>
                     <a href="#Stop-Resume">Stop/Resume</a>
                     <a href="#Led">Led</a>
-                    <a href="#Extra">Extra</a>
                 </div>
                 <a href="#Interactions">Interactions</a>
                 <div class="sidenavSubSection">
@@ -51,15 +53,8 @@
 
         <div id="main">
             <h1 align="center">Problem Analysis</h1>
-            Problematiche che possono verificarsi;
-            <br/>
-            Vedere quale software è disponibile e dove/come possiamo utilizzarlo;
-            <br/>
-
-            il problema principale è realizzare il meccanismo di stop/resume.
-            E conseguentemente implementare il return a home.
-
-        <!--
+            
+            <!--
             <h2 id="Defects-Solving">Defects Solving</h2>
             
             <problem><a href="../../../Sprint1/resources/userDocs/conclusions.html#Bugs">Bug #7</a>: LoarRejected Blocked</problem>
@@ -80,10 +75,52 @@
             </solution>
             
             <h3>MapEditor</h3>
-        -->
-            <h2>Logical Architecture from Sprint1</h2>
+            -->
+            <h2 id="Logical-Architecture-from-Sprint1">Logical Architecture from Sprint1</h2>
             <img width="100%" src="../../../Sprint1/Sprint1_Project/sprint1_waste_service/project_logical_architecture_core-business.png"/>
             QAK model: <a href="../../../Sprint1/Sprint1_Project/sprint1_waste_service/src/waste_service.qak">waste_service.qak</a>
+
+            <h2 id="Defects-Analysis">Defects Analysis</h2>
+            <problem><a href="../../../Sprint1/resources/userDocs/conclusions.html#Bugs">Bug #6</a> Windows Build</problem>
+            <consideration>
+                <b>Considerations</b>:
+                <br/>
+                This bug requires further investigations for us to understand how the Flutter framework translates and treats the Dart TCP sockets code.
+            </consideration>
+            <solution>
+                Since that exceedes the objectives of our project and is a <i>minor issue</i> (given the fact that the user can still
+                use and will probably prefer the Android version), we decide <ksi>not to solve it</ksi>, at least 
+                for the moment. Therefore we opened an <a href="https://github.com/iss2022-BCR/WasteService/issues/11">issue</a> on the GitHub repository and added the "wontfix" label.
+            </solution>
+
+            <problem><a href="../../../Sprint1/resources/userDocs/conclusions.html#Bugs">Bug #7</a>: loadrejected</h4></problem>
+            <solution><b>Possible solution</b>:
+                <br/>
+                we could add one more SmartDevice-WasteService interaction before the store request:
+                by introducing a <b>new actor</b>, the SmartDevice could ask if there is enough space for the deposit,
+                and after getting the reply, if it's positive it would send a store request.
+            </solution>
+            <consideration>
+                <b>Considerations</b>:
+                this solution would work but it presents some issues:
+                <ul>
+                    <li>
+                        There's a small window of time in which another SmartDevice could
+                        send the store request "stealing" the priority for the deposit.
+                    </li>
+                    <li>
+                        The loadrejected reply to the storerequest would lose value,
+                        since we know for sure that a storerequest can be sent only if
+                        a SmartDevice knows there's enough space.
+                    </li>
+                </ul>
+                <b>Decision</b>:
+                For these reasons, at the moment we decide not to spend further time
+                analyzing and/or implementing that issue, and therefore <ksi>not to solve it</ksi>:
+                we stick with the solution we already developed.
+                Therefore we opened an <a href="https://github.com/iss2022-BCR/WasteService/issues/12">issue</a> on the GitHub repository and added the "wontfix" label.
+            </consideration>
+            
 
             <h2 id="Sprint2-Software">Sprint2 Software</h2>
             The Sprint 2 software will be the product of the analysis of problems
@@ -92,32 +129,125 @@
             possible solutions and their differences.
             <br/>
             <br/>
-            Since the Raspberry Pi is situated on a computational node different from
-            the Waste Service one, we will need to add a new context, which we're going
-            to call "<ksi>ctx_raspberry</ksi>".
-            The actors of this context will be running on the Raspberry Pi device.
+            <problem>Where to place the Raspberry Pi node</problem>
+            If we think about a Raspberry Pi, we imagine it as a physical device, a unit with
+            computing capabilities: a board with a CPU, memories, ports and an Internet connection.
+            <br/>
+            However, that doesn't necessarily mean that the Raspberry node needs to be a <b>real device</b>.
+            In fact, the Raspberry might be <b>simulated</b> as well, for example to ease the testing
+            of its software and the integration with the rest of the distributed system.
+            <br/><br/>
+            <b>Problem</b>: where will the Raspberry Pi software be placed and execute? How is it
+            going to interact with the rest of the system, and with which components?
             
+            <solution>
+                <b>Solution</b>: since the software related to the Raspberry Pi (and it's business logic) will
+                conceptually be separated from the Waste Service ones, we introduce a new context, which
+                we're going to call "<ksi>ctx_raspberry</ksi>". The actors of this context will be running
+                on the Raspberry Pi device in production, but could also be running in a simulation environment,
+                for example on a Windows machine already hosting the WasteService software.
+                <br/><br/>
+                <b>NB</b>: the customer doesn't specify if the single components needs to be placed on the same
+                device, but for the moment, for simplicity reasons we assume they will be (same node, same context).
+            </solution>
+
+            <h3 id="Software-Provided-by-the-Customer">Software Provided by the Customer</h3>
+            <div class="remark">
+                The customer provides the project <a href="https://github.com/anatali/issLab2022/tree/main/it.unibo.radarSystem22.domain">it.unibo.radarSystem22.domain</a> 
+                which implements a RadarSystem using concrete or simulated devices (Led/Sonar), implemented by following 
+                software engineering principles and design patterns.
+                <br/><br/>
+                In particular, it exposes interfaces:
+                <ul>
+                    <li>
+                        for the <kc>Sonar</kc>
+<pre style="white-space: pre;">
+public interface ISonar extends IDevice{
+    public void activate();		 
+    public void deactivate();
+    public IDistance getDistance();	
+    public boolean isActive();
+}
+</pre>
+                    </li>
+                    <li>
+                        for the <kc>Led</kc>
+<pre style="white-space: pre;">
+public interface ILed extends IDevice{
+    public void turnOn();
+    public void turnOff();
+    public boolean getState();
+}
+</pre>
+                    </li>
+                    <li>
+                        for the concept of the <kc>Distance</kc>
+<pre style="white-space: pre;">
+public interface IDistance {
+    public int getVal();
+    public String toString();
+}
+</pre>
+                    </li>
+                </ul>
+                The main choice made for the <code>radarSystem22.domain</code> project is that the
+                different layers of abstraction (interfaces, the abstract classes <kc>SonarModel</kc>
+                and <kc>LedModel</kc>, factories, ...) make it possible to separate components from
+                their actual implementation, which could be whether real or virtual (simulated).
+                <br/>
+                <br/>
+                In fact, what we are most interested in about this project, is the possibility to choose
+                which implementation to use, through the configuration class <kc>DomainSystemConfig</kc>:
+                that configuration can be loaded from a file, and that enables the project to be customizable
+                even after the deployment phase.
+            </div>
+             
             <h3 id="Sonar">Sonar</h3>
             What's the purpose of the sonar? Which components depend on it and where will
             them be located?
             <br/>
-            <highlight1>The sonar is responsible for the stop/resume functionality.</highlight1>
+            NB: The sonar is an input alarm device, which is related to the stop/resume functionality.
             
             <problem>Get input from the component HC-SR04</problem>
-            The sonar needs to get the input from the physical component (HC-SR04)
+            <b>Problem</b>: How do we obtain the input data from the sonar?
+            Does the customer provide some software/project we could exploit?
+            
+            <consideration>
+                <b>Consideration</b>:
+                to use the HC-SR04 real component it must be attached to a power
+                source and used properly follwing a sequence of actions. To do so,
+                the customer provides the following software:
+                <ul>
+                    <li>
+                        <a href="../../Sprint2_ProblemAnalysis/resources/robotNano/SonarAlone.c">SonarAlone.c</a> - a small program which performs detections
+                        each time interval (30ms);
+                    </li>
+                    <li>
+                        <a href="https://github.com/anatali/issLab2022/tree/main/it.unibo.radarSystem22.domain">it.unibo.radarSystem22.domain</a>;
+                    </li>
+                    <li>
+                        <a href="https://github.com/anatali/issLab2022/tree/main/unibo.sonarqak22">unibo.sonarqak22</a> - a project which
+                        uses different actors to obtain the sonar data from a simulated or concrete device, implemented using both coded actors
+                        and QAK actors, and without exploiting the it.unibo.radarSystem22.domain functionalities.
+                        <br/>
+                        Moreover, this project make use of the "Actors as streams" feature of QAK, which might help
+                        in reducing the traffic load.
+                    </li>
+                </ul>
+            </consideration>
 
-            <br/>
-            For the problem analysis test plans we're going to use an actor that simulates
-            the sonar input component, in localhost.
-            <highlight3>What kind of interaction? Polling? , constantly sending a request to the sonar?
-            </highlight3>
-            <b>NO!! Parlare solo del tipo di interazione qui. Il resto lo diciamo dopo.</b>
-            Solution: separate the sonar raw data receiver from the stopper:<br/>
-            - a component constantly get the raw data from the sonar component and sends the distance to a controller;
-            <br/>
-            - the controller receives all the sonar data containing the distance, and check when
-            the distance decrease below or increase over the threshold sending a stop/resume message,
-            emitting respectively stop/resume events. 
+            <solution>
+                <b>Solution</b>: Exploit the project <ksi>it.unibo.radarSystem22.domain</ksi> and/or
+                make changes to it to obtain a more suitable piece of software to be integrated in the
+                system.
+                <br/>
+                <b>Reasons</b>: the possibility to have simulated devices makes it easier to
+                test the system without having to deploy on a real Raspberry Pi.
+                The project already implements the features we need to satisfy the requirements,
+                we just have to integrate it with the rest of the system.
+                The project structure makes it easier to extend the project with additional
+                features/functionalities.
+            </solution>
             
             <problem>Sonar data sent</problem>
             <b>Problem</b>: What data does the sonar send to the other WasteService actors?
@@ -154,13 +284,14 @@
                 <br/>
                 <b>Reasons</b>: the core-business doesn't care about the distance at all.
                 In fact, from the Waste Service perspective,
-                the sonar functions as a simple switch ON/OFF, which indicates if the system
+                the sonar acts as a simple switch ON/OFF, which indicates if the system
                 is in a state of alarm (distance &lt; DLIM) or not. Therefore, the only information
                 needed to completely address the customer requirement, is <ksi>the change of the "alarm"
                 state</ksi> (the alarm just started &rarr; stop, the alarm is over &rarr; resume).
                 Why using events for stop/resume? Because even though the Transport Trolley
-                is the main interested in detecting the message, the alarm concerns the whole
-                Service Area and has no specific recipient.
+                is the main actor interested in detecting the message, the alarm concerns the whole
+                Service Area and has no specific recipient. That also makes the system more easily
+                exteendable with additional features.
             </solution>
 
             <h3 id="Stop-Resume">Stop/Resume</h3>
@@ -169,8 +300,12 @@
             <b>Problem</b>: <i>"what"</i> or <i>"which"</i> Transport Trolley actions can be
             stopped by the alarm message?
             <br/>
-            <highlight1>We want to stop the movement: if the robot is still, while it's stopped it cannot
-            star moving; if it was already moving, it must stop in place and remain still.</highlight1>
+            <solution>
+                <b>Solution</b>:
+                we want to <ksi>stop the movement</ksi> if the robot is still, while it's stopped it cannot
+                start moving until a resume event occurs; if it was already moving, it must stop
+                in place and remain still.
+            </solution>
 
             <!--Ideally we want to stop the robot doing things. However, the robot can be really
             stopped only when it wants to move from a position to another, because it won't.
@@ -207,18 +342,16 @@
                 the robot position inside the map representation and its actual real position.
             </solution>
             
-            <highlight1>FIX: add one state, to check if should stop, BEFORE the step</highlight1>
-            
             <problem>How to stop</problem>
             <b>Problem</b>: <i>"how"</i> do we stop the robot while it's moving? How do we enter
             in a stop state? How do we resume from the stopped state? Who should handle those states?
             
-            <br/>
-            <b>Considerations</b>: a deposit action consists of a <ks><code>deposit</code></ks>
-            request sent by the Waste Service to the Transport Trolley, which then sends a
-            <ks><code>dopath</code></ks> request to the Path Executor, which finally sends the
-            command/step to the Basic Robot.
-
+            <consideration>
+                <b>Considerations</b>: a deposit action consists of a <ks><code>deposit</code></ks>
+                request sent by the Waste Service to the Transport Trolley, which then sends a
+                <ks><code>dopath</code></ks> request to the Path Executor, which finally sends the
+                command/step to the Basic Robot.
+            </consideration>
             
             <solution>
                 <b>Solution</b>: <ksi>handle the stop and resume from the pathexecutor</ksi> by adding a guard
@@ -233,17 +366,17 @@
             NB: the defined solution requires that we will have to modify the pathexecutor QAK actor code, we are going to rename 
             it <i>"pathexecutorbcr"</i>.
 
-            <alternative>
+            <!--<alternative>
                 <b>Alternatives</b>: <highlight2>interrupt/returnFromInterrupt; prima soluzione provata</highlight2>
-            </alternative>
+            </alternative>-->
 
             <h3 id="Led">Led</h3>
             What's the purpose of the led? Which components does it
             depend on? What information does it need?
             <br/>
-            The Led is an output warning device, which is responsible for giving
+            NB: The Led is an output warning device, which is responsible for giving
             real-time information about the state of the transport trolley,
-            and therefore it needs to access to data about it.
+            and therefore it needs to access its data.
 
             <problem>Track Trolley State</problem>
             <b>Problem</b>: How do we keep track of the trolley state?
@@ -260,22 +393,24 @@
                     LED_STATE := ON | BLINKING | OFF
                 </pre>
                 <b>Reasons</b>:
-                <highlight1>TODO</highlight1>
+                <ul>
+                    <li>
+                        Making the trolley state COAP observable could facilitate the
+                        the implementation of the last requirement.
+                    </li>
+                    <li>
+                        separating the 2 components makes sense, since they could be
+                        located in different contexts and therefore in different nodes;
+                    </li>
+                    <li>
+                        separating the 2 states makes the system more modular and ease
+                        the extension through new features;
+                    </li>
+                </ul>
             </solution>
             <alternative>
                 <b>Alternatives</b>: use a dispatch to update the state of the trolley
             </alternative>
-
-            <h3 id="Extras">Extras</h3>
-            <h4>Return to home/Go to pickup</h4>
-
-            <h2 id="Raspberry-Pi-Components">Raspberry Pi Components</h2>
-            
-            <highlight1>Led behaviour</highlight1>
-            How fast make it blink? Do some test and discover the optimal time
-            <br/>
-            <highlight2>Sonar distance capture intervals</highlight2>
-            How many times per second the sonar must 
 
             <h2 id="Interactions">Interactions</h2>
 
@@ -340,8 +475,8 @@
             <h2 id="Logical-Architecture">Logical Architecture</h2>
             The <a href="../../Sprint2_ProblemAnalysis/">Sprint2_ProblemAnalysis</a> project aims to address the main issues
             of the warning/alarm features and give a first solution and implementation,
-            using some simulators.
-            <img width="100%" src="../../Sprint2_ProblemAnalysis/problem_analysis_logical_architecture_waste_service.png"/>
+            using <ksi>simulated components and mocks</ksi>.
+            <img width="100%" src="../../Sprint2_ProblemAnalysis/sprint2_waste_service_analysisarch_edited.png"/>
             QAK model: <a href="../../Sprint2_ProblemAnalysis/src/waste_service.qak">waste_service.qak</a>
             
             <h2 id="Test-Plans">Test Plans</h2>

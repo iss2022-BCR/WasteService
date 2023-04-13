@@ -23,6 +23,7 @@
             <a href="problem_analysis.html">Problem Analysis</a>
             <a class="selected" href="project.html">Project</a>
             <div class="sidenavSection">
+                <a href="#Defects-Solution">Defects-Solution</a>
                 <a href="#Logical-Architecture">Logical Architecture</a>
                 <a href="#Software-Name">&lt;Software Name&gt;</a>
                 <div class="sidenavSubSection">
@@ -42,12 +43,31 @@
             <h1 align="center">Project</h1>
             The project contains all the software our team developed to achieve the Sprint2 SCRUM goal.
 
-            <h2>Defects Solution</h2>
-            - smart device;
-            - map editor
-            
-            <h3>Waste Service Changes</h3>
-            - added stop/resume feature
+            <h2 id="Defects-Solution">Defects Solution</h2>
+            <h3>SmartDevice</h3>
+            We upgraded the <ksi>SmartDevice</ksi> application to include a Menu and a <kc>Settings page</kc>.
+            This page allows the user to change the <i>message parameter</i>:
+            <ul>
+                <li>message <b>ID</b>;</li>
+                <li>message <b>type</b>;</li>
+                <li><b>sender</b> actor name;</li>
+                <li><b>receiver</b> actor name.</li>
+            </ul>
+            If the parameters are different from the ones for the WasteService <ks><code>storerequest</code></ks>,
+            the view for the sending interface is simple. 
+            <h4>Views</h4>
+            <img width="200px" src="../imgs/project/SmartDeviceSimulator_Settings.png">
+            <img width="200px" src="../imgs/project/SmartDeviceSimulator_SendMessageInterface.png">
+
+            <h3>MapEditor</h3>
+            We upgraded the <ksi>MapEditor</ksi> application to fix/implement the following <kc>features</kc>:
+            <ul>
+                <li><code>roomMap</code> and <code>mapConfig</code> objects loading from file
+                    and saving to file with path tracking from settings;</li>
+                <li>File errors handling;</li>
+                <li>Persistent settings;</li>
+                <li>Logger (to console and to file).</li>
+            </ul>
 
             <h2 id="Logical-Architecture">Logical Architecture</h2>
             The main change in the logical architecture from the Problem Analysis is [...].
@@ -55,10 +75,10 @@
             <img width="100%" src="../../Sprint1_Project/sprint1_waste_service/project_logical_architecture_core-business.png"/>
             QAK model: <a href="../../Sprint1_Project/sprint1_waste_service/src/project_logical_architecture.qak">project_logical_architecture.qak</a>
 
-            <h2 id="Raspberry-Pi-Software-Name">&lt;Raspberry-Pi-Software-Name&gt;</h2>
+            <h2 id="WasteService">Sprint2.1: WasteService</h2>
             <ksi>&lt;Raspberry-Pi-Software-Name&gt;</ksi> (<a href="../../Sprint2_Project/project_directory/">project_directory</a>) is a [...]
             
-            <h4>PathExecutorBCR</h4>
+            <h4>Actor PathExecutorBCR</h4>
             We modified the pathexecutor QAK actor to include the stop/resume functionality:
             <ul>
                 <li>Actor renamed to "pathexecutorbcr"</li>
@@ -89,26 +109,49 @@ State state_resume {
 Goto state_next_move if [# MovesDone.length != TotPathMoves #] else state_idle
 </pre>
                 </li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
             </ul>
 
             <br/>
+
+            <h4>Class TransportTrolleyState</h4>
             classe per rappresentare stato trolley
-            <br/>
+            <h4>Class LedState</h4>
             classe per rappresentare stato led
-            <br/>
+            <h4>Utility Functions</h4>
+            
             funzione isAlarm()
             <br/>
             funzione getLedStateFromTrolleyState()
 
+            
+            <h2>Sprint 2.2: Raspberry Pi Software</h2>
             <h3 id="Device">Device</h3>
             The device used is a <a href="https://www.raspberrypi.com/products/raspberry-pi-4-model-b/">Raspberry Pi 4 Model B</a>: <highlight1>Specifiche</highlight1>
-            
+            <br/>
+            <highlight1>Schema pin</highlight1>
+            <br/>
+            <highlight1>Setup SSH without password</highlight1>
+            <h3>Sonar</h3>
+            Per implementare la feature del sonar, abbiamo preso un progetto fornito dalla nostra
+            software house (sonarqak) e ne abbiamo ricavato una versione specializzata:
+            abbiamo creato degli script python per diverse funzionalità
 
-            <h2>Sprint 2.2: Radar GUI</h2>
+            <ol>
+                <li>SonarAloneBCR.c</li>
+                <li>buzzerBCR.py</li>
+                <li>displayBCR.py</li>
+                <li>sonarBCR.py</li>
+                <li>ledBCR.py</li>
+            </ol>
+
+            Inizialmente abbiamo creato un programma C chiamato SonarWrapperBCR.c che utilizzasse
+            gli script python. Tuttavia, la chiamata di programmi esterni generava overhead e ne rallentava
+            l'esecuzione. Quindi abbiamo deciso di creare un programma completamente in C che implementasse
+            tutte le funzioni, ed implementare la possibilità di abilitare le varie feature tramite opzioni passate
+            come argomenti del programma.
+
+            <h3>Led</h3>
+            <h2 id="Extras">Sprint 2 Extras: Radar GUI</h2>
             Since our software house already developed a project capable of showing sonar
             information in a fancy way, we considered its usage and analyzed if there was
             a way to adapt it and include it in our Waste Service project.
@@ -127,15 +170,28 @@ Goto state_next_move if [# MovesDone.length != TotPathMoves #] else state_idle
                 <img width="50%" src="../imgs/radarGUI.gif"/>
             </center>
 
-            The Radar GUI project is completely written in C with SDL2 library and 
+            The Radar GUI project is completely written in C with SDL2 and 
             includes an interface to ease the networking communication, using UDP and 
             TCP.
+            <br/><br/>
 
             Example usage: run the radarGUI on a computer, and a client on a Raspberry Pi,
             which detects obstacles with the sonar module, and sends the data by using the
             networking interface.
             
             <problem>Problemi: PIN del raspberry</problem>
+            <highlight1>Spiegare dettagliatamente perché abbiamo scartato l'idea di mettere
+                radarGUI sul raspberry
+            </highlight1>
+
+            
+            <h2 id="Deployment">Deployment</h2>
+            Until now we deployed our sistem using the Gradle JAR plugin.
+            
+            However, a better approach would be to use the distribution plugin:
+            https://docs.gradle.org/current/userguide/distribution_plugin.html
+
+            which allows
 
 
             <h2 id="Raspberry-Demo">Raspberry Demo</h2>

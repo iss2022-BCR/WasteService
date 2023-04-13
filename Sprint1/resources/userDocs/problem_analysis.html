@@ -113,10 +113,11 @@
             <problem>Service Area Representation</problem>
             <b>Problem</b>: How do we represent the Service Area?
             <br/>
-            <solution>
+            <consideration>
                 <b>Consideration</b>:
-                According to the requirements notes, the robot doesn't have to move optimally but shouldn't even wander too much around the room. 
-                <br/>
+                according to the requirements notes, the robot doesn't have to move optimally but shouldn't even wander too much around the room. 
+            </consideration>
+            <solution>
                 <b>Solution</b>: 
                 <ul>
                     <li>
@@ -220,8 +221,9 @@
             <h3 id="Transport-Trolley-and-DDR-Robot">Transport Trolley and DDR Robot</h3>
             <problem>Robot Concepts</problem>
             <b>Problem</b>: what is the Transport Trolley and what is the DDR Robot?
-            <solution>
-                <b>Considerations</b>: The DDR Robot is the final endpoint of the core-business chain,
+            
+            <consideration>
+                <b>Considerations</b>: the DDR Robot is the final endpoint of the core-business chain,
                 the entity that performs the deposit actions and dumps the waste into the containers.
                 Therefore we can think of it as the actual "robot", which might be real or virtual (e.g. for
                 simulation purposes).
@@ -240,7 +242,9 @@
                     </tr>
                 </table>
 
-                <br/>
+                <br/>    
+            </consideration>
+            <solution>
                 <b>Solution</b>: we can use the BasicRobot QAK actor, provided by the customer together with unibo.basicRobot22 project,
                 to have both a <ksi>virtual environment</ksi> to simulate the DDR Robot (WEnv/VirtualRobot), and a <ksi>virtual interface</ksi> to communicate with it (BasicRobot).
                 <br/><br/>
@@ -417,18 +421,20 @@
             <problem>Waste Types</problem>
             <b>Problem</b>: how does the smart device know which types of waste can be dumped to the waste service?
             <br/>
-            <b>Possible solution</b>: hard-code the types into the Smart Device.
-            <br/>
-            <b>Considerations</b>:
-            <ol>
-                <li>
-                    <b>Pros</b>: this is the easiest solution to implement, since they can be just implemented as a list or an enumerative.
-                </li>
-                <li>
-                    <b>Cons</b>: not scalable, since it doesn't allow the Waste Service to have different waste containers but
-                    the ones initially specified by the customer in the requirements.
-                </li>
-            </ol>
+            <consideration>
+                <b>Possible solution</b>: hard-code the types into the Smart Device.
+                <br/>
+                <b>Considerations</b>:
+                <ol>
+                    <li>
+                        <b>Pros</b>: this is the easiest solution to implement, since they can be just implemented as a list or an enumerative.
+                    </li>
+                    <li>
+                        <b>Cons</b>: not scalable, since it doesn't allow the Waste Service to have different waste containers but
+                        the ones initially specified by the customer in the requirements.
+                    </li>
+                </ol>
+            </consideration>
             <solution>
                 <b>Better solution</b>: <ksi>ask the Waste Service for the allowed waste types</ksi>, along with the
                 connection message, and update the Smart Device list to be chosen.
@@ -478,32 +484,36 @@
                     </li>
                 </ul>
             </solution>
-            <b>Eventual extra features</b>: having a security layer which allows only trusted devices to send store requests.
-            This way, by knowing that the smart device will always be an original one (produced and deployed by our
-            software house), we know for sure that a certain behaviour will be respected,
-            therefore it won't be possible to send invalid store requests.
-            
+            <alternative>
+                <b>Eventual extra features</b>: having a security layer which allows only trusted devices to send store requests.
+                This way, by knowing that the smart device will always be an original one (produced and deployed by our
+                software house), we know for sure that a certain behaviour will be respected,
+                therefore it won't be possible to send invalid store requests.
+            </alternative>
+
             <problem>Replies and Waste Truck Dismiss</problem>
             <b>Problem</b>: when is the reply sent and what message do we send? Do we introduce other messages apart from loadaccepted and loadrejected?
             How do we know immediately if the Waste Service can store the waste of a new request? How can we meet the requirement that
             the waste truck must be sent away as soon as possible?
             <br/>
-            <b>Considerations</b>:
-            <ul>
-                <li>
-                    The Waste Service might receive a new request while it is handling another one.
-                </li>
-                <li>The pickup action takes some time (a defined and known amount).</li>
-                <li>
-                    If the Smart Device sends a request while there is another deposit action
-                    in progress, it must wait it to be completed.
-                </li>
-                <li>
-                    If we're able to know if the load can be deposited as soon as we receive the request,
-                    we could reply instantly, and therefore meet the <em>requirement</em> that the truck driver must
-                    be sent away <i>as soon as possible</i>.
-                </li>
-            </ul>
+            <consideration>
+                <b>Considerations</b>:
+                <ul>
+                    <li>
+                        The Waste Service might receive a new request while it is handling another one.
+                    </li>
+                    <li>The pickup action takes some time (a defined and known amount).</li>
+                    <li>
+                        If the Smart Device sends a request while there is another deposit action
+                        in progress, it must wait it to be completed.
+                    </li>
+                    <li>
+                        If we're able to know if the load can be deposited as soon as we receive the request,
+                        we could reply instantly, and therefore meet the <em>requirement</em> that the truck driver must
+                        be sent away <i>as soon as possible</i>.
+                    </li>
+                </ul>
+            </consideration>
             <solution>
                 <b>Adopted solution</b>:
                 <ul>
