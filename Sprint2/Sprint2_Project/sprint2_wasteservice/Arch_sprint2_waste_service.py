@@ -29,8 +29,10 @@ with Diagram('sprint2_waste_serviceArch', show=False, outformat='png', graph_att
      with Cluster('ctx_robot', graph_attr=nodeattr):
           basicrobot=Custom('basicrobot','./qakicons/symActorSmall.png')
      with Cluster('ctx_raspberrypi', graph_attr=nodeattr):
-          alarmcontroller=Custom('alarmcontroller(ext)','./qakicons/externalQActor.png')
-          ledcontroller=Custom('ledcontroller(ext)','./qakicons/externalQActor.png')
+          sonar_bcr=Custom('sonar_bcr(ext)','./qakicons/externalQActor.png')
+          led_bcr=Custom('led_bcr(ext)','./qakicons/externalQActor.png')
+          buzzer_bcr=Custom('buzzer_bcr(ext)','./qakicons/externalQActor.png')
+          textdisplay_bcr=Custom('textdisplay_bcr(ext)','./qakicons/externalQActor.png')
      wasteservice >> Edge(color='magenta', style='solid', xlabel='deposit', fontcolor='magenta') >> transporttrolley
      transporttrolley >> Edge(color='magenta', style='solid', xlabel='dopath', fontcolor='magenta') >> pathexecutorbcr
      transporttrolley >> Edge(color='darkgreen', style='dashed', xlabel='pickupcompleted', fontcolor='darkgreen') >> wasteservice

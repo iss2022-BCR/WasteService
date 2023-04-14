@@ -87,7 +87,9 @@ dependencies {
     // https://mvnrepository.com/artifact/com.googlecode.aima-java/aima-core
     implementation group: 'com.googlecode.aima-java', name: 'aima-core', version: '3.0.0'
 
-    implementation files('../unibolibs/map_editor_bcr.jar')
+    /* BCR ***************************************************************************************************************** */
+    // Our JAR library to use the MapEditor classes
+    implementation name: 'map_editor_bcr'
 }
 
 sourceSets {
