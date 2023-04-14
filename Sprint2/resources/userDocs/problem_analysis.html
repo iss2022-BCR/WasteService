@@ -116,8 +116,8 @@
                 </ul>
                 <b>Decision</b>:
                 For these reasons, at the moment we decide not to spend further time
-                analyzing and/or implementing that issue, and therefore <ksi>not to solve it</ksi>:
-                we stick with the solution we already developed.
+                analyzing and/or implementing this issue, and therefore <ksi>not to solve it</ksi>:
+                we stick with the solution we have already developed.
                 Therefore we opened an <a href="https://github.com/iss2022-BCR/WasteService/issues/12">issue</a> on the GitHub repository and added the "wontfix" label.
             </consideration>
             
@@ -141,7 +141,7 @@
             going to interact with the rest of the system, and with which components?
             
             <solution>
-                <b>Solution</b>: since the software related to the Raspberry Pi (and it's business logic) will
+                <b>Solution</b>: since the software related to the Raspberry Pi (and its business logic) will
                 conceptually be separated from the Waste Service ones, we introduce a new context, which
                 we're going to call "<ksi>ctx_raspberry</ksi>". The actors of this context will be running
                 on the Raspberry Pi device in production, but could also be running in a simulation environment,
@@ -293,7 +293,7 @@ public interface IDistance {
                 Why using events for stop/resume? Because even though the Transport Trolley
                 is the main actor interested in detecting the message, the alarm concerns the whole
                 Service Area and has no specific recipient. That also makes the system more easily
-                exteendable with additional features.
+                extendable with additional features.
             </solution>
 
             <h3 id="Stop-Resume">Stop/Resume</h3>
@@ -304,9 +304,9 @@ public interface IDistance {
             <br/>
             <solution>
                 <b>Solution</b>:
-                we want to <ksi>stop the movement</ksi> if the robot is still, while it's stopped it cannot
+                we want to <ksi>stop the movement</ksi> if the robot is still moving, while if it is stopped it cannot
                 start moving until a resume event occurs; if it was already moving, it must stop
-                in place and remain still.
+                in place and remain motionless.
             </solution>
 
             <!--Ideally we want to stop the robot doing things. However, the robot can be really
@@ -314,7 +314,7 @@ public interface IDistance {
             -->
 
             <problem>When to stop</problem>
-            <b>Problem</b>: <i>"when"</i> do we stop the robot while it's moving?
+            <b>Problem</b>: <i>"when"</i> do we stop the robot while it is moving?
             <br/>
             <b>Considerations</b>: our robot moves in steps in the area, since
             the room is represented as a M x N matrix.<br/>
@@ -345,13 +345,13 @@ public interface IDistance {
             </solution>
             
             <problem>How to stop</problem>
-            <b>Problem</b>: <i>"how"</i> do we stop the robot while it's moving? How do we enter
+            <b>Problem</b>: <i>"how"</i> do we stop the robot while it is moving? How do we enter
             in a stop state? How do we resume from the stopped state? Who should handle those states?
             
             <consideration>
                 <b>Considerations</b>: a deposit action consists of a <ks><code>deposit</code></ks>
-                request sent by the Waste Service to the Transport Trolley, which then sends a
-                <ks><code>dopath</code></ks> request to the Path Executor, which finally sends the
+                request sent by the Waste Service to the Transport Trolley; then it sends a
+                <ks><code>dopath</code></ks> request to the Path Executor; finally it sends the
                 command/step to the Basic Robot.
             </consideration>
             
