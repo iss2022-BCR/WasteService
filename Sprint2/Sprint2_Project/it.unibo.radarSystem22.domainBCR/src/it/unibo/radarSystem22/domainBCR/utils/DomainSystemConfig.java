@@ -23,10 +23,14 @@ public class DomainSystemConfig {
 	public static boolean ledGui			= false;
 
 	// Buzzer
+	public static boolean enableBuzzer		= false;
 	public static int buzzerDelay			=  100;
 	public static boolean buzzerSound		= false;
 
 	// TextDisplay
+	public static boolean enableTextDisplay	= false;
+	public static long textLine1Delay		= 1000;
+	public static long textLine2Delay		= 1000;
 	public static boolean textDisplay		= false;
 
 	// Webcam
@@ -74,9 +78,13 @@ public class DomainSystemConfig {
 			ledDelay			= object.getInt("ledDelay");
 			ledGui				= object.getBoolean("ledGui");
 
+			enableBuzzer		= object.getBoolean("enableBuzzer");
 			buzzerDelay			= object.getInt("buzzerDelay");
 			buzzerSound			= object.getBoolean("buzzerSound");
 
+			enableTextDisplay	= object.getBoolean("enableTextDisplay");
+			textLine1Delay		= object.getLong("textLine1Delay");
+			textLine2Delay		= object.getLong("textLine2Delay");
 			textDisplay			= object.getBoolean("textDisplay");
 
 			//webcam				= object.getBoolean("webCam");

@@ -10,6 +10,8 @@ import it.unibo.radarSystem22.domainBCR.utils.DomainSystemConfig;
 public abstract class TextDisplayModel implements ITextDisplay {
     private String text1 = "";
     private String text2 = "";
+    private long lastUpdate1 = Integer.MIN_VALUE;
+    private long lastUpdate2 = Integer.MIN_VALUE;
 
     public static ITextDisplay create()
     {
@@ -34,16 +36,32 @@ public abstract class TextDisplayModel implements ITextDisplay {
     @Override
     public void setLines(String text1, String text2)
     {
-        if(!text1.isEmpty())
-            this.text1 = text1;
+        if(!text1.isEmpty() && !this.text1.equals(text1))
+            setLine1(text1);
 
-        if(!text2.isEmpty())
-            this.text2 = text2;
-
-        if(text1.isEmpty() && text2.isEmpty())
-            clear();
+        if(!text2.isEmpty() && !this.text2.equals(text2))
+            setLine2(text2);
 
         textDisplayActivate(text1, text2);
+    }
+
+    private void setLine1(String text)
+    {
+        System.out.println("Current: " + System.currentTimeMillis() + ", Last: " + lastUpdate1);
+        if(System.currentTimeMillis() - lastUpdate1 > DomainSystemConfig.textLine1Delay)
+        {
+            text1 = text;
+            lastUpdate1 = System.currentTimeMillis();
+        }
+    }
+
+    private void setLine2(String text)
+    {
+        if(System.currentTimeMillis() - lastUpdate2 > DomainSystemConfig.textLine2Delay)
+        {
+            text2 = text;
+            lastUpdate2 = System.currentTimeMillis();
+        }
     }
 
     @Override

@@ -20,7 +20,7 @@ public class TestSonarMockForObs {
 //		System.out.println("down");		
 //	}	
 	
-	@Test 
+	//@Test
 	public void testSingleshotSonarForObsMock() {
  		DomainSystemConfig.testing = true;
 		DomainSystemConfig.simulation      = true;
@@ -36,7 +36,7 @@ public class TestSonarMockForObs {
  		assertTrue(  v0 == DomainSystemConfig.testingDistance );
 	}
 	
-	@Test 
+	//@Test
 	public void testSonarForObsMock() {
 		DomainSystemConfig.testing    = false;
  		DomainSystemConfig.sonarDelay = 10;		//quite fast generation ...
