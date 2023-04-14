@@ -34,7 +34,7 @@ public class TestTextDisplay {
 
         String line1 = "Test line1";
         String line2 = "";
-        textDisplay.setLine1(line1);
+        textDisplay.setLines(line1, line2);
         assertTrue(textDisplay.getLine1().equals(line1) && textDisplay.getLine2().equals(line2));
 
         BasicUtils.delay(1000);
@@ -44,8 +44,9 @@ public class TestTextDisplay {
 
         BasicUtils.delay(1000);
 
+        line1 = "";
         line2 = "Test line2";
-        textDisplay.setLine2(line2);
+        textDisplay.setLines(line1, line2);
         assertTrue(textDisplay.getLine1().isEmpty() && textDisplay.getLine2().equals(line2));
 
         BasicUtils.delay(1000);
@@ -90,7 +91,7 @@ public class TestTextDisplay {
 
         String line1 = "Test line1";
         String line2 = "";
-        textDisplay.setLine1(line1);
+        textDisplay.setLines(line1, line2);
         assertTrue(textDisplay.getLine1().equals(line1) && textDisplay.getLine2().equals(line2));
 
         BasicUtils.delay(1000);
@@ -100,8 +101,9 @@ public class TestTextDisplay {
 
         BasicUtils.delay(1000);
 
+        line1 = "";
         line2 = "Test line2";
-        textDisplay.setLine2(line2);
+        textDisplay.setLines(line1, line2);
         assertTrue(textDisplay.getLine1().isEmpty() && textDisplay.getLine2().equals(line2));
 
         BasicUtils.delay(1000);

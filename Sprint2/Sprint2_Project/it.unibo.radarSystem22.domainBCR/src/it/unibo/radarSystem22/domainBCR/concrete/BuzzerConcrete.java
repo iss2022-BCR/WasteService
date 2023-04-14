@@ -34,8 +34,12 @@ public class BuzzerConcrete extends BuzzerModel implements IBuzzer {
                     command.addAll(Arrays.asList("intermittent", "100"));
                     break;
                 default:
-                    throw new IOException("Unknown Led State: " + val);
+                    throw new IOException("Unknown Buzzer State: " + val);
             }
+
+            ProcessBuilder builder = new ProcessBuilder(command);
+            process = builder.start();
+
         } catch (IOException e) {
             System.out.println("[" + this.getClass().getSimpleName() + "] ERROR: " +  e.getMessage());
         }

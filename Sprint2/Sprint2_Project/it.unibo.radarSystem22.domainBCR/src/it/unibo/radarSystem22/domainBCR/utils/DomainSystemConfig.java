@@ -15,7 +15,7 @@ public class DomainSystemConfig {
 	public static int sonarDistanceMax		=  300;
 	public static int sonarDistanceMin		=  5;
 	public static boolean sonarObservable	=  false;
-	public static int DLIMIT				=  15;
+	public static int DLIMIT				=  30;
 	public static int testingDistance		=  DLIMIT - 2;
 
 	// Led
@@ -27,7 +27,7 @@ public class DomainSystemConfig {
 	// TextDisplay
 	public static boolean textDisplay		= false;
 
-
+	// WebCam
 	public static boolean webCam			= false;
  
 

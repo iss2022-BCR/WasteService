@@ -32,20 +32,6 @@ public abstract class TextDisplayModel implements ITextDisplay {
     protected abstract void textDisplayActivate(String text1, String text2);
 
     @Override
-    public void setLine1(String text)
-    {
-        text1 = text;
-        textDisplayActivate(text1, text2);
-    }
-
-    @Override
-    public void setLine2(String text)
-    {
-        text2 = text;
-        textDisplayActivate(text1, text2);
-    }
-
-    @Override
     public void setLines(String text1, String text2)
     {
         if(!text1.isEmpty())

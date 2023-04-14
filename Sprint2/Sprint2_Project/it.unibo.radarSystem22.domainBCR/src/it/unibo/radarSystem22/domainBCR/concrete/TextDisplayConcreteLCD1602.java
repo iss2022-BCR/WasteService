@@ -13,7 +13,7 @@ public class TextDisplayConcreteLCD1602 extends TextDisplayModel implements ITex
     @Override
     protected void textDisplayActivate(String text1, String text2)
     {
-        String[] command = { "/usr/bin/python3", "-u", "./displayBCR.py", text1, text2 };
+        String[] command = { "/usr/bin/python3", "-u", "./displayBCR.py", getLine1(), getLine2()};
         ProcessBuilder builder = new ProcessBuilder(command);
         try {
             builder.start();

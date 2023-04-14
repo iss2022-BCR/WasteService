@@ -75,22 +75,6 @@ public class TextDisplayMockGUI extends TextDisplayMockCLI {
     }
 
     @Override
-    public void setLine1(String text)
-    {
-        super.setLine1(text);
-        textField1.setText(text);
-        textField1.validate();
-    }
-
-    @Override
-    public void setLine2(String text)
-    {
-        super.setLine2(text);
-        textField2.setText(text);
-        textField2.validate();
-    }
-
-    @Override
     public void setLines(String text1, String text2)
     {
         super.setLines(text1, text2);
