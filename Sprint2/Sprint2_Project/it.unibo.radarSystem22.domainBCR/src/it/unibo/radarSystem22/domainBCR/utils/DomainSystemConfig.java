@@ -14,21 +14,23 @@ public class DomainSystemConfig {
 	public static int sonarDelay			=  500;
 	public static int sonarDistanceMax		=  300;
 	public static int sonarDistanceMin		=  5;
+	public static int DLIMT					=  30;
 	public static boolean sonarObservable	=  false;
-	public static int DLIMIT				=  30;
-	public static int testingDistance		=  DLIMIT - 2;
+	public static int testingDistance		=  DLIMT - 2;
 
 	// Led
+	public static int ledDelay				=  100;
 	public static boolean ledGui			= false;
 
 	// Buzzer
+	public static int buzzerDelay			=  100;
 	public static boolean buzzerSound		= false;
 
 	// TextDisplay
 	public static boolean textDisplay		= false;
 
-	// WebCam
-	public static boolean webCam			= false;
+	// Webcam
+	public static boolean webcam			= false;
  
 
 	public static boolean tracing			= false;
@@ -62,16 +64,28 @@ public class DomainSystemConfig {
 	 		
 	        simulation			= object.getBoolean("simulation");
 
-	        webCam				= object.getBoolean("webCam");
+			sonarDelay			= object.getInt("sonarDelay");
+			sonarDistanceMax	= object.getInt("sonarDistanceMax");
+			sonarDistanceMin	= object.getInt("sonarDistanceMin");
+			DLIMT				= object.getInt("DLIMT");
+			//sonarObservable		= object.getBoolean("sonarObservable");
+			//testingDistance		= object.getInt("testingDistance");
+
+			ledDelay			= object.getInt("ledDelay");
+			ledGui				= object.getBoolean("ledGui");
+
+			buzzerDelay			= object.getInt("buzzerDelay");
+			buzzerSound			= object.getBoolean("buzzerSound");
+
+			textDisplay			= object.getBoolean("textDisplay");
+
+			//webcam				= object.getBoolean("webCam");
 	        
-	        sonarObservable		= object.getBoolean("sonarObservable");
-	        sonarDelay			= object.getInt("sonarDelay");
-	        sonarDistanceMax	= object.getInt("sonarDistanceMax");
-	        DLIMIT				= object.getInt("DLIMIT");
-	        tracing				= object.getBoolean("tracing");
-	        testing				= object.getBoolean("testing");
+	        //tracing				= object.getBoolean("tracing");
+	        //testing				= object.getBoolean("testing");
+
 		} catch (FileNotFoundException e) {
- 			ColorsOut.outerr("setTheConfiguration ERROR " + e.getMessage() );
+ 			ColorsOut.outerr("setTheConfiguration ERROR " + e.getMessage());
 		}
 	}
 }

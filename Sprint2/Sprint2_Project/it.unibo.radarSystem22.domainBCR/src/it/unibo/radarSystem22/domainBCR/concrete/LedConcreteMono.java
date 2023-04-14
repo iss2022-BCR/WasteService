@@ -7,6 +7,7 @@ import java.util.Arrays;
 import it.unibo.radarSystem22.domainBCR.interfaces.ILed;
 import it.unibo.radarSystem22.domainBCR.models.LedModel;
 import it.unibo.radarSystem22.domainBCR.state.LedState;
+import it.unibo.radarSystem22.domainBCR.utils.DomainSystemConfig;
 
 /*
 * Class that implements a real monochromatic LED component.
@@ -31,7 +32,7 @@ public class LedConcreteMono extends LedModel implements ILed {
 					command.add("off");
 					break;
 				case BLINKING:
-					command.addAll(Arrays.asList("blink", "100"));
+					command.addAll(Arrays.asList("blink", "" + DomainSystemConfig.ledDelay));
 					break;
 				default:
 					throw new IOException("Unknown Led State: " + val);

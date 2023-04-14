@@ -31,7 +31,7 @@ public class SonarConcreteHCSR04 extends SonarModel implements ISonar {
 
 		if(process == null)
 		{
-			String[] command = { "/usr/bin/python3", "-u", "./sonarBCR.py", "loop", "500"};
+			String[] command = { "/usr/bin/python3", "-u", "./sonarBCR.py", "loop", "" + DomainSystemConfig.sonarDelay};
 			ProcessBuilder builder = new ProcessBuilder(command);
 			try {
 				process = builder.start();
