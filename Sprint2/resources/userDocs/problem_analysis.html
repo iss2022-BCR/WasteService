@@ -230,8 +230,10 @@ public interface IDistance {
                         uses different actors to obtain the sonar data from a simulated or concrete device, implemented using both coded actors
                         and QAK actors, and without exploiting the it.unibo.radarSystem22.domain functionalities.
                         <br/>
-                        Moreover, this project make use of the "Actors as streams" feature of QAK, which might help
-                        in reducing the traffic load.
+                        Moreover, this project make use of the "<b>Actors as streams</b>" feature of QAK, which allows the actors of a pipeline,
+                        which are subscribed to the first one, to receive one after the other in cascade, local events (or, more in general,
+                        messages). That feature could be extremely helpful in <b>reducing the traffic load</b>, since we don't know a priori
+                        which will be the network capacity nor the bandwidth.
                     </li>
                 </ul>
             </consideration>
@@ -409,7 +411,7 @@ public interface IDistance {
                 </ul>
             </solution>
             <alternative>
-                <b>Alternatives</b>: use a dispatch to update the state of the trolley
+                <b>Alternatives</b>: use a dispatch to update the state of the trolley.
             </alternative>
 
             <h2 id="Interactions">Interactions</h2>
