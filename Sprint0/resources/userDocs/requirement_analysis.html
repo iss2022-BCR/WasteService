@@ -315,7 +315,7 @@
                     <td>To deposit the WasteLoad</td>
                     <td>Transport trolley</td>
                     <td>WasteLoad</td>
-                    <td>The <b>transport trolley</b> dumps the <b>WasteLoad</b> into the container, that must have enough space to fit the waste, and </td>
+                    <td>The <b>transport trolley</b> dumps the <b>WasteLoad</b> into the container, which must have enough space to fit the waste. </td>
                 </tr>
                 <tr>
                     <td>To be ON</td>
@@ -393,11 +393,10 @@
             <ul>
                 <li>
                     <a href="../../../commons/basicRobot/BasicRobot22.html"><b>BasicRobot</b></a> -
-                    software component which executes movement commands of a DDR-robot "independently 
-                    of the technology" with which the robot is implemented (virtual or real); 
+                    software component which executes movement commands of a DDR-robot, regardless of the technology with which the robot is implemented (virtual or real); 
                 </li>
                 <li>
-                    <a href="../../../commons/it.unibo.raspIntro2022/code/"><b>RaspberryPi utility software</b></a> - 
+                    <a href="../../../commons/it.unibo.raspIntro2022/code/"><b>RaspberryPi utility software</b></a> 
                 </li>
                 <li>
                     <b>SmartDevice</b> - a software already implemented and usable which allows the truck driver to send
@@ -416,7 +415,7 @@
                 <li><b>Monitoring</b> node</li>
             </ul>
             However, since the WasteService software doesn't run on the robot
-            machine, it must comunicate with it. Therefore we're going to consider an ulterior one:
+            machine, it must comunicate with it. Therefore, we are going to consider an ulterior one:
             the <b>DDR robot</b> node, which task is to drive the robot, according to the TransportTrolley
             "orders".
             <h4 id="Computational-Nodes">Computational Nodes</h4>
@@ -439,7 +438,7 @@
                         <emni>High priority</emni>: the system cannot provide the service without it.
                     </li>
                     <li>
-                        <ksi>RaspberryPi</ksi> component (requirement <b>4</b>), includes all the hardware that's going to be
+                        <ksi>RaspberryPi</ksi> component (requirement <b>4</b>), includes all the hardware that will be
                         attached to the Raspberry Pi device, and the software that handles the alarm and
                         warning interactions.
                         <br/>
@@ -576,7 +575,7 @@
                     <td>Floating point variable</td>
                     <td>
                         Indicates the <b>weight</b> of the waste that the truck wants <b>to dump</b>.
-                        Since the weight is expressed in kg, we have to use decimal too.
+                        Since the weight is expressed in kg, we have to use float value.
                         <pre>
                             var truckLoad : Float
                         </pre>
