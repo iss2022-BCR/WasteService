@@ -1,4 +1,4 @@
-cd ../sprint2_waste_service/
+cd ../sprint2_wasteservice/
 
 :: Run SmartDevice Context
 :: start .\gradlew runCtx_SmartDevice
