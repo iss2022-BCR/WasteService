@@ -3,6 +3,7 @@ package it.unibo.radarSystem22.domainBCR.concrete;
 import it.unibo.radarSystem22.domainBCR.interfaces.IBuzzer;
 import it.unibo.radarSystem22.domainBCR.models.BuzzerModel;
 import it.unibo.radarSystem22.domainBCR.state.BuzzerState;
+import it.unibo.radarSystem22.domainBCR.utils.ColorsOut;
 import it.unibo.radarSystem22.domainBCR.utils.DomainSystemConfig;
 
 import java.io.IOException;
@@ -27,12 +28,15 @@ public class BuzzerConcrete extends BuzzerModel implements IBuzzer {
             {
                 case ON:
                     command.add("on");
+                    ColorsOut.out("[" + this.getClass().getSimpleName() + "] state = ON");
                     break;
                 case OFF:
                     command.add("off");
+                    ColorsOut.out("[" + this.getClass().getSimpleName() + "] state = OFF");
                     break;
                 case INTERMITTENT:
                     command.addAll(Arrays.asList("intermittent", "" + DomainSystemConfig.buzzerDelay));
+                    ColorsOut.out("[" + this.getClass().getSimpleName() + "] state = INTERMITTENT");
                     break;
                 default:
                     throw new IOException("Unknown Buzzer State: " + val);

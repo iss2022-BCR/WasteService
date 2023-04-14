@@ -35,8 +35,7 @@ public class SonarConcreteHCSR04 extends SonarModel implements ISonar {
 			ProcessBuilder builder = new ProcessBuilder(command);
 			try {
 				process = builder.start();
- 				//p       = Runtime.getRuntime().exec("sudo ./SonarAlone");
- 		        reader  = new BufferedReader( new InputStreamReader(process.getInputStream()));
+ 				reader  = new BufferedReader( new InputStreamReader(process.getInputStream()));
  		        ColorsOut.out("[" + this.getClass().getSimpleName() + "] sonarSetUp done");
  	       	}catch( Exception e) {
  	       		ColorsOut.outerr("[" + this.getClass().getSimpleName() + "] sonarSetUp ERROR " + e.getMessage() );
@@ -50,16 +49,18 @@ public class SonarConcreteHCSR04 extends SonarModel implements ISonar {
 	{
         try {
 			String data = reader.readLine();
-			if(data == null) return;
+
+			if (data == null)
+				return;
+
 			int v = Integer.parseInt(data);
 
-			ColorsOut.out("[" + this.getClass().getSimpleName() + "]  v=" + v );
+			ColorsOut.out("[" + this.getClass().getSimpleName() + "] distance = " + v + " cm");
 
 			int lastSonarVal = curVal.getVal();
-			if(lastSonarVal != v && v < DomainSystemConfig.sonarDistanceMax)
+			if(lastSonarVal != v)
 			{
-				//Eliminiamo dati del tipo 3430 //TODO: filtri in sottosistemi a stream
-  	 			updateDistance(v);
+				updateDistance(v);
 			}
        } catch(Exception e) {
        		ColorsOut.outerr("[" + this.getClass().getSimpleName() + "] " + e.getMessage() );
@@ -74,7 +75,7 @@ public class SonarConcreteHCSR04 extends SonarModel implements ISonar {
 		curVal = new Distance();
 		if(process != null)
 		{
-			process.destroy();  //Block the runtime process
+			process.destroy();
 			process = null;
 		}
 		super.deactivate();
