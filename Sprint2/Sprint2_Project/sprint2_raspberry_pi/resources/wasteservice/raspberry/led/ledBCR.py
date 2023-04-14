@@ -6,7 +6,6 @@ import sys
 import time
 
 import RPi.GPIO as GPIO
-GPIO.setwarnings(False)
 
 class Led:
         pin = 25
@@ -29,33 +28,42 @@ class Led:
         def toggle(self):
                 self.turnOFF() if self.stateON else self.turnON()
 
-led = Led(25)
+# MAIN =================================
+if __name__ == "__main__":
+        GPIO.setwarnings(False)
 
-if len(sys.argv) == 1 or len(sys.argv) > 3:
-        led.turnOFF()
-        exit(1)
+        led = Led(25)
 
-if sys.argv[1].lower() == "on":
-        led.turnON()
-        
-elif sys.argv[1].lower() == "blink":
-        delay = 100
-        try:
-                if 25 <= int(sys.argv[2]) <= 1000:
-                        delay = int(sys.argv[2])
-        except:
-                pass
+        if len(sys.argv) == 1 or len(sys.argv) > 3:
+                led.turnOFF()
+                exit(1)
+
+        if sys.argv[1].lower() == "on":
+                led.turnON()
                 
-        while True:
-                led.toggle()
+        elif (
+                sys.argv[1].lower() == "blink" or
+                sys.argv[1].lower() == "blinking"
+        ):
+                delay = 100
                 try:
-                        time.sleep(delay / 1000)
+                        if 25 <= int(sys.argv[2]) <= 5000:
+                                delay = int(sys.argv[2])
                 except:
-                        led.turnOFF()
-                        exit(0)
-                
-else:
-        led.turnOFF()
-        
+                        pass
+                        
+                while True:
+                        led.toggle()
+                        try:
+                                time.sleep(delay / 1000)
+                        except:
+                                led.turnOFF()
+                                exit(0)
+                        
+        else:
+                led.turnOFF()
+
+
+
 
 

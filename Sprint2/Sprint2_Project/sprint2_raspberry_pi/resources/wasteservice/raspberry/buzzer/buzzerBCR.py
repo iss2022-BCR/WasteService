@@ -6,29 +6,67 @@ import sys
 import time
 
 import RPi.GPIO as GPIO
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BCM)
-GPIO.cleanup()
 
-GPIO_BUZZER = 18
-
-GPIO.setup(GPIO_BUZZER, GPIO.OUT)
-
-if len(sys.argv) > 2:
-        GPIO.output(GPIO_BUZZER, GPIO.LOW)
-        exit(1)
+class Buzzer:
+        pin = 18
+        stateON = False
         
-duration = 25
+        def __init__(self, pin = 18):
+                GPIO.setmode(GPIO.BCM)
+                GPIO.cleanup()
+                GPIO.setup(pin, GPIO.OUT)
+                self.pin = pin
+        
+        def turnON(self):
+                GPIO.output(self.pin, GPIO.HIGH)
+                self.stateON = True
+        
+        def turnOFF(self):
+                GPIO.output(self.pin, GPIO.LOW)
+                self.stateON = False
+        
+        def toggle(self):
+                self.turnOFF() if self.stateON else self.turnON()
 
-if len(sys.argv) == 2:
-        try:
-                duration = int(sys.argv[1])
-        except:
-                pass
+# MAIN =================================
+if __name__ == "__main__":
+        GPIO.setwarnings(False)
+        
+        buzzer = Buzzer(18)
 
-try:
-        GPIO.output(GPIO_BUZZER, GPIO.HIGH)
-        time.sleep(duration / 1000)
-        GPIO.output(GPIO_BUZZER, GPIO.LOW)
-except:
-        GPIO.output(GPIO_BUZZER, GPIO.LOW)
+        if len(sys.argv) == 1 or len(sys.argv) > 3:
+                buzzer.turnOFF()
+                exit(1)
+                
+        if sys.argv[1].lower() == "on":
+                buzzer.turnON()
+                
+        elif (
+                sys.argv[1].lower() == "intermit" or
+                sys.argv[1].lower() == "intermittent" or
+                sys.argv[1].lower() == "intermitting"
+        ):
+                delay = 100
+                try:
+                        if 25 <= int(sys.argv[2]) <= 5000:
+                                delay = int(sys.argv[2])
+                except:
+                        pass
+                        
+                while True:
+                        buzzer.toggle()
+                        try:
+                                time.sleep(delay / 1000)
+                        except:
+                                buzzer.turnOFF()
+                                exit(0)
+                        
+        else:
+                buzzer.turnOFF()
+
+
+
+
+
+
+    
