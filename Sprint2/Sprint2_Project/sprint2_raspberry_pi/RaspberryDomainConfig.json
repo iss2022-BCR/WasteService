@@ -1,0 +1,16 @@
+{
+	"simulation":			false,
+	
+	"sonarDelay":			500,
+	"sonarDistanceMax":		300,
+	"sonarDistanceMin":		5,
+	"DLIMT":				30,
+	
+	"ledDelay":				100,
+	"ledGui":				false,
+	
+	"buzzerDelay":			100,
+	"buzzerSound":			false,
+	
+	"textDisplay":			false,
+}

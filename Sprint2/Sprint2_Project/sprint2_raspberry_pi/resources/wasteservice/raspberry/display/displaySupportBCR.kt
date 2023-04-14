@@ -1,54 +1,23 @@
 package wasteservice.raspberry.display
 
-import unibo.comm22.utils.ColorsOut
-import wasteservice.raspberry.led.ledSupportBCR
-import java.io.IOException
+import it.unibo.radarSystem22.domainBCR.DeviceFactory
+import it.unibo.radarSystem22.domainBCR.interfaces.ITextDisplay
+import it.unibo.radarSystem22.domainBCR.utils.DomainSystemConfig
 
 object displaySupportBCR {
-    private var prevLine1: String = ""
-    private var prevLine2: String = ""
+    lateinit var display: ITextDisplay
 
-    fun writeToDisplay(line1: String, line2: String)
+    fun createTextDisplay()
     {
-        // Update a line only if the new one is not empty/blank
-        if(line1.isNotBlank())
-        {
-            prevLine1 = line1
-        }
-        if(line2.isNotBlank())
-        {
-            prevLine2 = line2
-        }
-        // Clear the display if both lines are empty/blank
-        if(line1.isBlank() && line2.isBlank())
-        {
-            prevLine1 = ""
-            prevLine2 = ""
-        }
-
-        val builder = ProcessBuilder("/usr/bin/python3", "-u", "./displayBCR.py", prevLine1, prevLine2)
-        builder.redirectErrorStream(true)
-
-        try {
-            builder.start()
-        }
-        catch (e: IOException) {
-            ColorsOut.outappl("An error occurred while starting the display program.\n${e.toString()}", unibo.comm22.utils.ColorsOut.RED)
-            e.printStackTrace()
-        }
+        DomainSystemConfig.setTheConfiguration("RaspberryDomainConfig.json")
+        display = DeviceFactory.createTextDisplay()
     }
 
-    fun clearDisplay()
+    fun doDisplay(text1: String, text2: String)
     {
-        val builder = ProcessBuilder("/usr/bin/python3", "-u", "./displayBCR.py")
-        builder.redirectErrorStream(true)
+        if(!this::display.isInitialized)
+            return
 
-        try {
-            builder.start()
-        }
-        catch (e: IOException) {
-            ColorsOut.outappl("An error occurred while starting the display program.\n${e.toString()}", unibo.comm22.utils.ColorsOut.RED)
-            e.printStackTrace()
-        }
+        display.setLines(text1, text2)
     }
 }

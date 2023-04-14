@@ -15,7 +15,7 @@ class filterDistanceChanged (name : String ) : ActorBasic( name ) {
 
     override suspend fun actorBody(msg: IApplMessage)
     {
-        //println("[$name] Message: ${msg.toString()}")
+        //println("[$name] Message: $msg")
         if(msg.msgSender() == name || msg.msgId() != "sonar_data")
             return
 
@@ -33,7 +33,8 @@ class filterDistanceChanged (name : String ) : ActorBasic( name ) {
         if(distance != prevDistance)
         {
             prevDistance = distance
-            println("[$name] Distance: $distance")
+
+            //println("[$name] Distance: $distance")
 
             return msg
         }

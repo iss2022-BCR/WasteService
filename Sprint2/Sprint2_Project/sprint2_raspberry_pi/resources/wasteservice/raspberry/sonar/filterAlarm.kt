@@ -5,6 +5,7 @@ import it.unibo.kactor.IApplMessage
 import alice.tuprolog.Term
 import alice.tuprolog.Struct
 import it.unibo.kactor.MsgUtil
+import it.unibo.radarSystem22.domainBCR.utils.DomainSystemConfig
 
 /*
 * Actor that filters a pipeline event and issues a stop/resume event,
@@ -16,7 +17,7 @@ class filterAlarm(name: String): ActorBasic(name) {
 
     override suspend fun actorBody(msg: IApplMessage)
     {
-        //println("[$name] Message: ${msg.toString()}")
+        //println("[$name] Message: $msg")
         if(msg.msgSender() == name || msg.msgId() != "sonar_data")
             return
 
@@ -31,11 +32,11 @@ class filterAlarm(name: String): ActorBasic(name) {
 
         val distance = Integer.parseInt(data)
 
-        val alarm = (distance < wasteservice.WSconstants.DLIM)
-        // Emit an event only if the state changed
-        if(alarm != prevAlarm) {
+        val alarm = (distance < DomainSystemConfig.DLIMT)
+        if(alarm != prevAlarm) // Emit an event only if the state changed
+        {
             prevAlarm = alarm
-            println("[$name] Alarm: $alarm")
+            //println("[$name] Alarm: $alarm")
 
             val messageId = if (alarm) "stop" else "resume"
 

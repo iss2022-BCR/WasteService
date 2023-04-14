@@ -80,7 +80,7 @@ dependencies {
     implementation name: '2p301'
     implementation name: 'unibo.qakactor22-3.2'
     implementation name: 'unibo.comm22-1.1'
-    implementation name: 'it.unibo.radarSystem22.domain-1.0'
+    //implementation name: 'it.unibo.radarSystem22.domain-1.0'
     implementation name: 'it.unibo.radarSystem22.domainBCR-1.0'
 
     /* AIMA **************************************************************************************************************** */
@@ -161,6 +161,8 @@ distributions {
                 from "./resources/wasteservice/raspberry/sonar/sonarBCR.py"
                 from "./resources/wasteservice/raspberry/led/ledBCR.py"
                 from "./resources/wasteservice/raspberry/display/displayBCR.py"
+                from "./resources/wasteservice/raspberry/buzzer/buzzerBCR.py"
+                from "./RaspberryDomainConfig.json"
             }
         }
     }

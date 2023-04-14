@@ -1,0 +1,11 @@
+{
+	"simulation":	false,
+	"sonarCommand":	"./SonarAlone",
+	"sonarMax":		300,
+	"sonarMin":		5,
+	"sonarDelay":	250,
+	
+	"debug":		false,
+	"logPath":		".",
+	"scriptPath":	"..",
+}

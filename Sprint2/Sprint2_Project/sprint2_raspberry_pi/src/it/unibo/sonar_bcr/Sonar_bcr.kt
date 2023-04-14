@@ -29,7 +29,7 @@ class Sonar_bcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 				}	 
 				state("state_activate") { //this:State
 					action { //it:State
-						forward("sonaractivate", "sonaractivate(_)" ,"sonardatasource_concrete" ) 
+						forward("sonaractivate", "sonaractivate(_)" ,"sonarinput" ) 
 						println("[SonarBCR] Sent activation message.")
 						delay(10000) 
 						//genTimer( actor, state )
@@ -40,7 +40,7 @@ class Sonar_bcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 				}	 
 				state("state_deactivate") { //this:State
 					action { //it:State
-						forward("sonardeactivate", "sonardeactivate(_)" ,"sonardatasource_concrete" ) 
+						forward("sonardeactivate", "sonardeactivate(_)" ,"sonarinput" ) 
 						println("[SonarBCR] Sent deactivation message.")
 						delay(5000) 
 						//genTimer( actor, state )

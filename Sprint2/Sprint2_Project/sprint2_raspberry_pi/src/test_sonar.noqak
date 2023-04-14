@@ -55,9 +55,7 @@ Dispatch update_trolley_state:	update_trolley_state(STATE)
 Event trolley_state_changed:	trolley_state_changed(STATE)
 
 // COAP
-Dispatch coapUpdate: coapUpdate(RESOURCE, VALUE)
-
-Dispatch setup: setup(_)
+Dispatch coapUpdate : coapUpdate(RESOURCE, VALUE)
 
 // CONTEXES ===================================================================
 /*Context ctx_wasteservice		ip [host="localhost" port=11800]
@@ -148,13 +146,16 @@ QActor ledcontroller context ctx_raspberrypi {
 	Goto state_idle
 }*/
 
+// Sonar data source providers
+CodedQActor sonardatasource_concrete	context ctx_raspberrypi className "wasteservice.raspberry.sonar.sonarDataSourceHCSR04"
+CodedQActor sonardatasource_mock		context ctx_raspberrypi className "wasteservice.raspberry.sonar.sonarDataSourceMock"
+
 // Sonar filters
 CodedQActor filter_distancechanged	context ctx_raspberrypi className "wasteservice.raspberry.sonar.filterDistanceChanged"
 CodedQActor filter_distancebounds	context ctx_raspberrypi className "wasteservice.raspberry.sonar.filterDistanceBounds"
-CodedQActor filter_textdisplay		context ctx_raspberrypi className "wasteservice.raspberry.display.filterTextDisplay"
-CodedQActor filter_alarm			context ctx_raspberrypi className "wasteservice.raspberry.sonar.filterAlarm"
+CodedQActor filter_alarm				context ctx_raspberrypi className "wasteservice.raspberry.sonar.filterAlarm"
 
-CodedQActor sonarinput context ctx_raspberrypi className "wasteservice.raspberry.sonar.sonarSupportBCR"
+CodedQActor sonarinput context ctx_raspberrypi className "wasteservice.raspberry.sonar.sonarInput"
 QActor sonar_bcr context ctx_raspberrypi {
 	State state_init initial {
 		println("[SonarBCR] Started.")
@@ -163,193 +164,19 @@ QActor sonar_bcr context ctx_raspberrypi {
 	Goto state_activate
 	
 	State state_activate {
-		forward sonarinput -m sonaractivate : sonaractivate(_)
+		forward sonardatasource_concrete -m sonaractivate : sonaractivate(_)
 		println("[SonarBCR] Sent activation message.")
 		delay 10000
 	}
 	//Goto state_deactivate
 	
 	State state_deactivate {
-		forward sonarinput -m sonardeactivate : sonardeactivate(_)
+		forward sonardatasource_concrete -m sonardeactivate : sonardeactivate(_)
 		println("[SonarBCR] Sent deactivation message.")
 		delay 5000
 	}
 	Goto state_activate
 }
-
-
-// LED
-/*QActor led_bcr context ctx_raspberrypi {
-	State state_init initial {
-		println("[LedBCR] Started.")
-		run wasteservice.raspberry.led.ledSupportBCR.createLed()
-		
-		observeResource transporttrolley
-		observeResource pathexecutorbcr
-	}
-	Goto state_idle
-	
-	State state_idle {
-		
-	}
-	Transition t0	whenMsg coapUpdate	-> state_handle
-
-	State state_handle {
-		onMsg(coapUpdate: coapUpdate(RESOURCE, VALUE)) {
-			if [# wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) != TTState #] {
-				[# TTState = wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) #]
-	    		println("[TrolleyStateProvider] New state. Resource: ${payloadArg(0)}; Value: ${TTState.name}")
-				emit trolley_state_changed: trolley_state_changed($TTState)
-			}
-		}
-		// TO-DO
-	}
-	Goto state_idle
-}*/
-
-QActor led_test context ctx_raspberrypi {
-	State state_init initial {
-		println("[LedTest] Started.")
-		run wasteservice.raspberry.led.ledSupportBCR.createLed()
-		
-		observeResource faketrolley
-	}
-	Goto state_idle
-	
-	State state_idle {
-		
-	}
-	Transition t0 whenMsg coapUpdate -> state_handle
-	
-	State state_handle {
-		onMsg(coapUpdate: coapUpdate(RESOURCE, VALUE)) {
-			[# val TTState = wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) #]
-	    	//println("[LedTest] New state. Resource: ${payloadArg(0)}; Value: ${TTState.name}")
-			[# wasteservice.raspberry.led.ledSupportBCR.doLed(TTState) #]
-		}
-	}
-	Goto state_idle
-	
-	// TEST
-	State state_off {
-		[# wasteservice.raspberry.led.ledSupportBCR.doLed(wasteservice.TransportTrolleyState.HOME) #]		
-		println("[LedTest] Led OFF.")
-		delay 3000
-	}
-	Goto state_on
-	
-	State state_on {
-		[# wasteservice.raspberry.led.ledSupportBCR.doLed(wasteservice.TransportTrolleyState.STOPPED) #]		
-		println("[LedTest] Led ON.")
-		delay 3000
-	}
-	Goto state_blink
-	
-	State state_blink {
-		[# wasteservice.raspberry.led.ledSupportBCR.doLed(wasteservice.TransportTrolleyState.MOVING) #]						
-		println("[LedTest] Led BLINKING.")
-		delay 5000
-	}
-	Goto state_off
-}
-
-// DISPLAY
-/*QActor textdisplay_bcr context ctx_raspberrypi {
-	State state_init initial {
-		println("[TextDisplayBCR] Started.")
-	}
-	
-	State state_idle {
-		
-	}
-}*/
-
-// Display filters
-
-/*QActor display_bcr context ctx_raspberrypi {
-	State state_init initial {
-		println("[TextDisplayBCR] Started.")
-		
-		//observeResource transporttrolley
-		//observeResource pathexecutorbcr
-	}
-	Transition t0 whenMsg setup -> state_setup
-	
-	State state_setup {
-		[# wasteservice.raspberry.display.displaySupportBCR.createTextDisplay() #]
-	}
-	Goto state_idle
-	
-	State state_idle {
-		println("[TextDisplayBCR] Idle.")
-	}
-	Transition t1 whenMsg coapUpdate -> state_handle_update
-	
-	State state_handle_update {
-		
-	}
-	Goto state_idle
-}*/
-
-QActor display_test context ctx_raspberrypi {
-	[#
-		var TTState: wasteservice.TransportTrolleyState = wasteservice.TransportTrolleyState.HOME
-	#]
-	State state_init initial {
-		println("[TextDisplayTest] Started.")
-		run wasteservice.raspberry.display.displaySupportBCR.createTextDisplay()
-		
-		observeResource faketrolley
-	}
-	Goto state_idle
-	
-	State state_idle {
-		
-	}
-	Transition t0 whenMsg coapUpdate -> state_handle
-	
-	State state_handle {
-		onMsg(coapUpdate: coapUpdate(RESOURCE, VALUE)) {
-			if [# wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) != TTState #] {
-				[# TTState = wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) #]
-	    		//println("[TextDisplayTest] New state. Resource: ${payloadArg(0)}; Value: ${TTState.name}")
-				[# wasteservice.raspberry.display.displaySupportBCR.doDisplay("", "TT: ${TTState.name}") #]
-			}
-		}
-	}
-	Goto state_idle
-}
-
-// BUZZER
-/*QActor buzzer_test context ctx_raspberrypi {
-	[#
-		var TTState: wasteservice.TransportTrolleyState = wasteservice.TransportTrolleyState.HOME
-	#]
-	State state_init initial {
-		println("[BuzzerTest] Started.")
-		run wasteservice.raspberry.buzzer.buzzerSupportBCR.createBuzzer()
-		
-		observeResource faketrolley
-	}
-	Goto state_idle
-	
-	State state_idle {
-		
-	}
-	Transition t0 whenMsg coapUpdate -> state_handle
-	
-	State state_handle {
-		onMsg(coapUpdate: coapUpdate(RESOURCE, VALUE)) {
-			if [# wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) != TTState #] {
-				[# val TTState = wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) #]
-		    	//println("[BuzzerTest] New state. Resource: ${payloadArg(0)}; Value: ${TTState.name}")
-				[# wasteservice.raspberry.buzzer.buzzerSupportBCR.doBuzzer(TTState) #]	
-			}
-		}
-	}
-	Goto state_idle
-}*/
-
 
 QActor testalarmreceiver context ctx_raspberrypi {
 	State state_init initial {
@@ -360,51 +187,88 @@ QActor testalarmreceiver context ctx_raspberrypi {
 	State state_idle {
 		println("[TestAlarmReceiver] Idle.")
 	}
-	Transition t0	whenEvent stop -> state_handle_stop
-					whenEvent resume -> state_handle_resume
+	Transition t0	whenEvent stop -> state_handle
+					whenEvent resume -> state_handle
 	
-	State state_handle_stop {
-		printCurrentMessage
-		println("[TestAlarmReceiver] Received stop.")
-	}
-	Goto state_idle
-	
-	State state_handle_resume {
-		printCurrentMessage
-		println("[TestAlarmReceiver] Received resume.")
+	State state_handle {
+		onMsg(stop: stop) {
+			println("[TestAlarmReceiver] Received stop.")
+		}
+		onMsg(resume: resume) {
+			println("[TestAlarmReceiver] Received resume.")
+		}
 	}
 	Goto state_idle
 }
 
+// LED
 
-// FAKE TRANSPORT TROLLEY
-QActor faketrolley context ctx_raspberrypi {
+QActor led_bcr context ctx_raspberrypi {
+	[# var State: wasteservice.LedState = wasteservice.LedState.OFF #]
 	State state_init initial {
-		println("[TransportTrolley] Started.")
-		delay 1000
+		println("[LedBCR] Started.")
 	}
-	Goto state_home
+	Goto state_idle
 	
-	State state_home {
-		println("[TransportTrolley] HOME.")
-		updateResource [# "transporttrolley(HOME)" #]
-		delay 2000
+	State state_idle {
+		println("[LedBCR] Led state: ${State.name}")
 	}
-	Goto state_moving
+	Transition t0	whenEvent trolley_state_changed -> state_handle
 	
-	State state_moving {
-		println("[TransportTrolley] MOVING.")
-		updateResource [# "transporttrolley(MOVING)" #]
-		delay 2000
+	State state_handle {
+		onMsg(trolley_state_changed: trolley_state_changed(STATE)) {
+			[# var NewState = wasteservice.Utils.getLedStateFromTrolleyState(payloadArg(0)) #]
+			if [# NewState != State #] {
+				println("[LedBCR] Led state changed!")
+				[# wasteservice.raspberry.led.ledSupportBCR.doLed(NewState) #]
+				[# State = NewState #]
+			}
+		}
 	}
-	Goto state_stopped
-	
-	State state_stopped {
-		println("[TransportTrolley] STOPPED.")
-		updateResource [# "transporttrolley(STOPPED)" #]
-		
-		delay 2000
-	}
-	Goto state_home
-	
+	Goto state_idle
 }
+
+QActor led_test context ctx_raspberrypi {
+	State state_init initial {
+		println("[LedTest] Started.")
+	}
+	Goto state_off
+	
+	State state_off {
+		[# wasteservice.raspberry.led.ledSupportBCR.doLed(wasteservice.LedState.OFF) #]
+		[# wasteservice.raspberry.display.displaySupportBCR.writeToDisplay("", "Trolley at HOME") #]
+		println("[LedTest] Led OFF.")
+		delay 3000
+	}
+	Goto state_on
+	
+	State state_on {
+		[# wasteservice.raspberry.led.ledSupportBCR.doLed(wasteservice.LedState.ON) #]
+		[# wasteservice.raspberry.display.displaySupportBCR.writeToDisplay("", "Trolley STOPPED") #]
+		println("[LedTest] Led ON.")
+		delay 3000
+	}
+	Goto state_blink
+	
+	State state_blink {
+		[# wasteservice.raspberry.led.ledSupportBCR.doLed(wasteservice.LedState.BLINKING) #]
+		[# wasteservice.raspberry.display.displaySupportBCR.writeToDisplay("", "Trolley MOVING") #]
+		println("[LedTest] Led BLINKING.")
+		delay 5000
+	}
+	Goto state_off
+}
+
+// DISPLAY
+QActor textdisplay_bcr context ctx_raspberrypi {
+	State state_init initial {
+		println("[TextDisplayBCR] Started.")
+	}
+	
+	State state_idle {
+		
+	}
+}
+
+// Display filters
+CodedQActor filter_textdisplay	context ctx_raspberrypi className "wasteservice.raspberry.display.filterTextDisplay"

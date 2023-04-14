@@ -1,0 +1,2 @@
+{"actor":"led_test", "msgType":"dispatch", "curstate":"state_idle", "nextstate":"state_handle", "msgId":"coapUpdate"}
+{"actor":"display_test", "msgType":"dispatch", "curstate":"state_idle", "nextstate":"state_handle", "msgId":"coapUpdate"}

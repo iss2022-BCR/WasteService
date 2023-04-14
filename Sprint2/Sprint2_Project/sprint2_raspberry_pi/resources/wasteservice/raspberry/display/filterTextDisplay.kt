@@ -4,17 +4,17 @@ import alice.tuprolog.Struct
 import alice.tuprolog.Term
 import it.unibo.kactor.ActorBasic
 import it.unibo.kactor.IApplMessage
-import wasteservice.raspberry.display.displaySupportBCR.writeToDisplay
+import wasteservice.raspberry.display.displaySupportBCR.doDisplay
 
 /*
 * Actor that filters a pipeline event and directly propagates it,
 * updating the display with the distance.
  */
-class filterDisplay(name: String): ActorBasic(name) {
+class filterTextDisplay(name: String): ActorBasic(name) {
 
     override suspend fun actorBody(msg: IApplMessage)
     {
-        //println("[$name] Message: ${msg.toString()}")
+        //println("[$name] Message: $msg")
         if(msg.msgSender() == name || msg.msgId() != "sonar_data")
             return
 
@@ -28,7 +28,9 @@ class filterDisplay(name: String): ActorBasic(name) {
         val data  = (Term.createTerm(msg.msgContent()) as Struct).getArg(0).toString()
         val distance = Integer.parseInt(data)
 
-        writeToDisplay("Distance: $distance cm", "")
+        doDisplay("Distance: $distance cm", "")
+
+        //println("[$name] Distance: $distance")
 
         return msg
     }

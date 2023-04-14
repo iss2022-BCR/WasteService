@@ -4,13 +4,12 @@ import alice.tuprolog.Struct
 import alice.tuprolog.Term
 import it.unibo.kactor.ActorBasic
 import it.unibo.kactor.IApplMessage
-import it.unibo.kactor.MsgUtil
-import wasteservice.WSconstants
+import it.unibo.radarSystem22.domainBCR.utils.DomainSystemConfig
 
 class filterDistanceBounds(name: String): ActorBasic(name) {
     override suspend fun actorBody(msg: IApplMessage)
     {
-        //println("[$name] Message: ${msg.toString()}")
+        //println("[$name] Message: $msg")
         if(msg.msgSender() == name || msg.msgId() != "sonar_data")
             return
 
@@ -26,7 +25,8 @@ class filterDistanceBounds(name: String): ActorBasic(name) {
         val distance = Integer.parseInt(data)
 
         // Emit an event only if the distance doesn't exceed the bounds
-        if(distance >= WSconstants.SONAR_MIN && distance <= WSconstants.SONAR_MAX)
+        if(distance >= DomainSystemConfig.sonarDistanceMin &&
+            distance <= DomainSystemConfig.sonarDistanceMax)
         {
             //println("[$name] Distance: $distance")
 
