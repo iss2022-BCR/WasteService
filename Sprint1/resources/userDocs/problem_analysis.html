@@ -63,7 +63,7 @@
 
             <h3 id="Smart-Device">Smart Device</h3>
             The software of the Smart Device will be provided by the customer. However, since we want to test a distributed system
-            with all of its nodes, we're going to implement an application that will run on a smartphone (Android) and will simulate
+            with all of its nodes, we are going to implement an application that will run on a smartphone (Android) and will simulate
             store requests to  the WasteService.
             
             <problem id="Smart-Device-Technology">Smart Device Technology</problem>
@@ -256,7 +256,7 @@
                 <br/>
                 <b>Reasons</b>:
                 <ul>
-                    <li>we reuse code that's already implemented</li>
+                    <li>we reuse code already implemented</li>
                     <li>
                         basicRobot is built following the actors paradigm (and QAK meta-modeling lang),
                         so it's easy to integrate it with the rest of the project
@@ -321,7 +321,7 @@
             <solution>
                 <b>Solution</b>: Prolog terms syntax
                 <br/>
-                <b>Reasons</b>: it's the message format of the QAK (meta-)modeleing language
+                <b>Reasons</b>: it's the message format of the QAK (meta-)modelling language
             </solution>
             <alternative>
                 <b>Alternatives</b>: JSON object format. However, we would still need to parse that to communicate with QAK actors.
@@ -508,7 +508,7 @@
                         in progress, it must wait it to be completed.
                     </li>
                     <li>
-                        If we're able to know if the load can be deposited as soon as we receive the request,
+                        If we are able to know if the load can be deposited as soon as we receive the request,
                         we could reply instantly, and therefore meet the <em>requirement</em> that the truck driver must
                         be sent away <i>as soon as possible</i>.
                     </li>
@@ -576,20 +576,20 @@
                 <b>Solution</b>: extend the plannerUtil22 code to include methods that can parse the map configuration file
                 to find the coordinates of specific locations.
                 <br/>
-                <b>Example</b>: go from <red>H</red> (HOME) to a <yellow>P</yellow> (PLASTICBOX), the nearest P would be the first on the left.
+                <b>Example</b>: go from <red>H</red> (HOME) to <yellow>P</yellow> (PLASTICBOX) cell; the nearest P would be the marked one in the diagram below.
                 <pre>
                     |<red>H</red>, 1, 1, 1, <green>G</green>, <green>G</green>, <green>G</green>, 
                     |1, 0, 0, 0, 0, 0, 1, 
-                    |1, 0, 0, 0, 0, 0, <yellow>P</yellow>, 
-                    |1, 0, 0, 0, 0, 0,<b>&gt;</b><yellow>P</yellow><b>&lt;</b>
+                    |1, 0, 0, 0, 0, 0 <b>&gt;</b><yellow>P</yellow><b>&lt;</b> 
+                    |1, 0, 0, 0, 0, 0, <yellow>P</yellow>
                     |<cyan>I</cyan>, <cyan>I</cyan>, <cyan>I</cyan>, 1, 1, 1, <yellow>P</yellow>, 
                 </pre>
                 And one of the best paths would be:
                 <pre>
                     |<red>H</red>, 1, 1, 1, <green>G</green>, <green>G</green>, <green>G</green>, 
                     |&darr;, 0, 0, 0, 0, 0, 1, 
-                    |&darr;, 0, 0, 0, 0, 0, <yellow>P</yellow>, 
-                    |&#8627;, &rarr;, &rarr;, &rarr;, &rarr;, &rarr;,<b>&gt;</b><yellow>P</yellow><b>&lt;</b>
+                    |&#8627;, &rarr;, &rarr;, &rarr;, &rarr;, &rarr;<b>&gt;</b><yellow>P</yellow><b>&lt;</b>
+                    |1, 0, 0, 0, 0, 0, <yellow>P</yellow>
                     |<cyan>I</cyan>, <cyan>I</cyan>, <cyan>I</cyan>, 1, 1, 1, <yellow>P</yellow>, 
                 </pre>
 
