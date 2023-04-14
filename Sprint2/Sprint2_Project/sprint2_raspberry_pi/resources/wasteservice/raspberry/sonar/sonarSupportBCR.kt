@@ -47,7 +47,7 @@ class sonarSupportBCR(name: String): ActorBasic(name) {
                 // Read the distance from the sonar component
                 data = sonar.distance.`val`
 
-                println("[$name] data: $data")
+                //println("[$name] data: $data")
 
                 val content = "distance($data)"
                 val event = MsgUtil.buildEvent(name, "sonar_data", content)

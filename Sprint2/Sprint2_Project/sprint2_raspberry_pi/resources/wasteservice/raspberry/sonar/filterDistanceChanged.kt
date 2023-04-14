@@ -15,7 +15,6 @@ class filterDistanceChanged (name : String ) : ActorBasic( name ) {
 
     override suspend fun actorBody(msg: IApplMessage)
     {
-        //println("[$name] Message: $msg")
         if(msg.msgSender() == name || msg.msgId() != "sonar_data")
             return
 

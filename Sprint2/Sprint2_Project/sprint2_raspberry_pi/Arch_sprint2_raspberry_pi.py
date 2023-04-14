@@ -19,12 +19,21 @@ eventedgeattr = {
 with Diagram('sprint2_raspberry_piArch', show=False, outformat='png', graph_attr=graphattr) as diag:
   with Cluster('env'):
      sys = Custom('','./qakicons/system.png')
+     with Cluster('ctx_wasteservice', graph_attr=nodeattr):
+          typesprovider=Custom('typesprovider(ext)','./qakicons/externalQActor.png')
+          wasteservice=Custom('wasteservice(ext)','./qakicons/externalQActor.png')
+     with Cluster('ctx_transporttrolley', graph_attr=nodeattr):
+          transporttrolley=Custom('transporttrolley(ext)','./qakicons/externalQActor.png')
+          trolleystateprovider=Custom('trolleystateprovider(ext)','./qakicons/externalQActor.png')
+          pathexecutorbcr=Custom('pathexecutorbcr(ext)','./qakicons/externalQActor.png')
+     with Cluster('ctx_robot', graph_attr=nodeattr):
+          basicrobot=Custom('basicrobot(ext)','./qakicons/externalQActor.png')
      with Cluster('ctx_raspberrypi', graph_attr=nodeattr):
           sonar_bcr=Custom('sonar_bcr','./qakicons/symActorSmall.png')
-          led_test=Custom('led_test','./qakicons/symActorSmall.png')
-          display_test=Custom('display_test','./qakicons/symActorSmall.png')
+          led_bcr=Custom('led_bcr','./qakicons/symActorSmall.png')
+          textdisplay_bcr=Custom('textdisplay_bcr','./qakicons/symActorSmall.png')
+          buzzer_bcr=Custom('buzzer_bcr','./qakicons/symActorSmall.png')
           testalarmreceiver=Custom('testalarmreceiver','./qakicons/symActorSmall.png')
-          faketrolley=Custom('faketrolley','./qakicons/symActorSmall.png')
           filter_distancechanged=Custom('filter_distancechanged(coded)','./qakicons/codedQActor.png')
           filter_distancebounds=Custom('filter_distancebounds(coded)','./qakicons/codedQActor.png')
           filter_textdisplay=Custom('filter_textdisplay(coded)','./qakicons/codedQActor.png')
@@ -32,8 +41,9 @@ with Diagram('sprint2_raspberry_piArch', show=False, outformat='png', graph_attr
           sonarinput=Custom('sonarinput(coded)','./qakicons/codedQActor.png')
      sonar_bcr >> Edge(color='blue', style='solid', xlabel='sonaractivate', fontcolor='blue') >> sonarinput
      sonar_bcr >> Edge(color='blue', style='solid', xlabel='sonardeactivate', fontcolor='blue') >> sonarinput
-     faketrolley >> Edge(color='blue', style='solid', xlabel='coapUpdate', fontcolor='blue') >> led_test
-     faketrolley >> Edge(color='blue', style='solid', xlabel='coapUpdate', fontcolor='blue') >> display_test
+     sys >> Edge(color='red', style='dashed', xlabel='trolley_state_changed', fontcolor='red') >> led_bcr
+     sys >> Edge(color='red', style='dashed', xlabel='trolley_state_changed', fontcolor='red') >> textdisplay_bcr
+     sys >> Edge(color='red', style='dashed', xlabel='trolley_state_changed', fontcolor='red') >> buzzer_bcr
      sys >> Edge(color='red', style='dashed', xlabel='stop', fontcolor='red') >> testalarmreceiver
      sys >> Edge(color='red', style='dashed', xlabel='resume', fontcolor='red') >> testalarmreceiver
 diag

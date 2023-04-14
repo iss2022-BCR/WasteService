@@ -34,8 +34,8 @@ class Testalarmreceiver ( name: String, scope: CoroutineScope  ) : ActorBasicFsm
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t02",targetState="state_handle_stop",cond=whenEvent("stop"))
-					transition(edgeName="t03",targetState="state_handle_resume",cond=whenEvent("resume"))
+					 transition(edgeName="t03",targetState="state_handle_stop",cond=whenEvent("stop"))
+					transition(edgeName="t04",targetState="state_handle_resume",cond=whenEvent("resume"))
 				}	 
 				state("state_handle_stop") { //this:State
 					action { //it:State
