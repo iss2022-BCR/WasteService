@@ -1,6 +1,6 @@
 package it.unibo.radarSystem22.domainBCR.interfaces;
 
-import it.unibo.radarSystem22.domainBCR.utils.LedState;
+import it.unibo.radarSystem22.domainBCR.state.LedState;
 
 public interface ILed extends IDevice {
 	public void turnOn();

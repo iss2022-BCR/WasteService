@@ -6,13 +6,12 @@ import java.io.FileNotFoundException;
 
 import org.json.JSONObject;
 import org.json.JSONTokener;
- 
-
 
 public class DomainSystemConfig {
-	public static  boolean simulation		= true;
- 	public static  boolean ledGui			= false;
-	public static  boolean webCam			= false;
+	public static boolean simulation		= true;
+ 	public static boolean ledGui			= false;
+	public static boolean buzzerSound		= false;
+	public static boolean webCam			= false;
  
 	public static int sonarDelay			=  500;
 	public static int sonarDistanceMax		=  300;
@@ -31,18 +30,22 @@ public class DomainSystemConfig {
 	public static String camExecPath		= "";*/
 
 
-	public static void setTheConfiguration(  ) {
+	public static void setTheConfiguration()
+	{
 		setTheConfiguration("../DomainSystemConfig.json");
 	}
 	
-	public static void setTheConfiguration( String resourceName ) {
+	public static void setTheConfiguration(String resourceName)
+	{
 		//Nella distribuzione resourceName � in una dir che include la bin  
 		FileInputStream fis = null;
 		try {
 			ColorsOut.out("%%% setTheConfiguration from file:" + resourceName);
-			if(  fis == null ) {
+			if(fis == null)
+			{
  				 fis = new FileInputStream(new File(resourceName));
 			}
+
 	        JSONTokener tokener = new JSONTokener(fis);
 	        JSONObject object   = new JSONObject(tokener);
 	 		
@@ -57,12 +60,8 @@ public class DomainSystemConfig {
 	        DLIMIT           = object.getInt("DLIMIT");	
 	        tracing          = object.getBoolean("tracing");
 	        testing          = object.getBoolean("testing");
-	        
- 	        
 		} catch (FileNotFoundException e) {
  			ColorsOut.outerr("setTheConfiguration ERROR " + e.getMessage() );
 		}
-
-	}	
-	 
+	}
 }

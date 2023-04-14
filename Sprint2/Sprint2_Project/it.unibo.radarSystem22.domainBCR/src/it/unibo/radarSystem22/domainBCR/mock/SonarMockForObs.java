@@ -11,7 +11,7 @@ import it.unibo.radarSystem22.domainBCR.utils.DomainSystemConfig;
  
 
 public class SonarMockForObs extends SonarModel implements ISonarForObs    {
-	protected IDistanceMeasured observableDistance ; 
+	protected IDistanceMeasured observableDistance;
 
 	@Override
 	public IDistanceMeasured getDistance() {

@@ -9,7 +9,7 @@ import it.unibo.radarSystem22.domainBCR.utils.ColorsOut;
 import it.unibo.radarSystem22.domainBCR.utils.DomainSystemConfig;
 
 public class SonarConcreteHCSR04 extends SonarModel implements ISonar {
-	private Process p;
+	private Process process;
 	private BufferedReader reader;
 
 	/*
@@ -26,14 +26,14 @@ public class SonarConcreteHCSR04 extends SonarModel implements ISonar {
 	{
 		ColorsOut.out("[" + this.getClass().getSimpleName() + "] activate ");
 
-		if(p == null)
+		if(process == null)
 		{
 			String[] command = { "/usr/bin/python3", "-u", "./sonarBCR.py", "loop", "500"};
 			ProcessBuilder builder = new ProcessBuilder(command);
 			try {
-				p = builder.start();
+				process = builder.start();
  				//p       = Runtime.getRuntime().exec("sudo ./SonarAlone");
- 		        reader  = new BufferedReader( new InputStreamReader(p.getInputStream()));
+ 		        reader  = new BufferedReader( new InputStreamReader(process.getInputStream()));
  		        ColorsOut.out("[" + this.getClass().getSimpleName() + "] sonarSetUp done");
  	       	}catch( Exception e) {
  	       		ColorsOut.outerr("[" + this.getClass().getSimpleName() + "] sonarSetUp ERROR " + e.getMessage() );
@@ -64,13 +64,15 @@ public class SonarConcreteHCSR04 extends SonarModel implements ISonar {
 	}
  
 	@Override
-	public void deactivate() {
+	public void deactivate()
+	{
 		ColorsOut.out("[" + this.getClass().getSimpleName() + "] deactivate", ColorsOut.GREEN);
 
-		curVal = new Distance(90);
-		if( p != null ) {
-			p.destroy();  //Block the runtime process
-			p=null;
+		curVal = new Distance();
+		if(process != null)
+		{
+			process.destroy();  //Block the runtime process
+			process = null;
 		}
 		super.deactivate();
  	}

@@ -8,7 +8,7 @@ import it.unibo.radarSystem22.domainBCR.utils.ColorsOut;
 import it.unibo.radarSystem22.domainBCR.utils.DomainSystemConfig;
 
 public abstract class SonarModel implements ISonar {
-protected IDistance curVal = new Distance(90);
+protected IDistance curVal = new Distance();
 protected boolean stopped = true;
  	
 	public static ISonar create()
@@ -18,49 +18,58 @@ protected boolean stopped = true;
 		else return createSonarConcrete();
 	}
 
-	public static ISonar createSonarMock() {
+	public static ISonar createSonarMock()
+	{
 		ColorsOut.out("createSonarMock", ColorsOut.BLUE);
 		return new SonarMock();
 	}	
-	public static ISonar createSonarConcrete() {
+	public static ISonar createSonarConcrete()
+	{
 		ColorsOut.out("createSonarConcrete", ColorsOut.BLUE);
 		return new SonarConcreteHCSR04();
-	}	
-	
-	protected SonarModel() {//hidden costructor, to force setup
+	}
+
+	// Hidden constructor, to force setup
+	protected SonarModel()
+	{
 		ColorsOut.out("[" + this.getClass().getSimpleName() + "] calling (specialized) sonarSetUp ", ColorsOut.BLUE );
 		sonarSetUp();   
 	}
 	
-	protected void updateDistance( int d ) {
-		curVal = new Distance( d );
+	protected void updateDistance(int d)
+	{
+		curVal = new Distance(d);
 		ColorsOut.out("[" + this.getClass().getSimpleName() + "] updateDistance "+ d, ColorsOut.BLUE);
 	}	
 
-	protected abstract void sonarSetUp() ;
- 	protected abstract void sonarProduce() ;
+	protected abstract void sonarSetUp();
+ 	protected abstract void sonarProduce();
 
 	@Override
-	public boolean isActive() {
+	public boolean isActive()
+	{
 		//ColorsOut.out("SonarModel | isActive "+ (! stopped), ColorsOut.GREEN);
 		return !stopped;
 	}
 	
 	@Override
-	public IDistance getDistance() {
+	public IDistance getDistance()
+	{
 		return curVal;
 	}
 	
 	@Override
-	public void activate() {
+	public void activate()
+	{
 		curVal = new Distance();
  		ColorsOut.out("[" + this.getClass().getSimpleName() + "] activate" );
 		stopped = false;
 		new Thread() {
 			public void run() {
-				while( ! stopped  ) {
+				while(!stopped)
+				{
 					//Colors.out("SonarModel | call produce", Colors.GREEN);
-					sonarProduce(  );
+					sonarProduce();
 					//Utils.delay(RadarSystemConfig.sonarDelay);
 				}
 				ColorsOut.out("[" + this.getClass().getSimpleName() + "] ENDS" );
@@ -69,7 +78,8 @@ protected boolean stopped = true;
 	}
  	
 	@Override
-	public void deactivate() {
+	public void deactivate()
+	{
 		ColorsOut.out("[" + this.getClass().getSimpleName() + "] deactivate", ColorsOut.BgYellow );
 		stopped = true;
 	}
