@@ -7,6 +7,7 @@ import it.unibo.radarSystem22.domainBCR.mock.SonarMockForObs;
 import it.unibo.radarSystem22.domainBCR.models.BuzzerModel;
 import it.unibo.radarSystem22.domainBCR.models.LedModel;
 import it.unibo.radarSystem22.domainBCR.models.SonarModel;
+import it.unibo.radarSystem22.domainBCR.models.TextDisplayModel;
 import it.unibo.radarSystem22.domainBCR.utils.DomainSystemConfig;
 
 public class DeviceFactory {
@@ -51,7 +52,7 @@ public class DeviceFactory {
 
 	public static IBuzzer createBuzzer()
 	{
-		//Colors.out("[" + this.getClass().getSimpleName() + "] | createSonar simulated="+RadarSystemConfig.simulation);
+		//Colors.out("[" + this.getClass().getSimpleName() + "] | createBuzzer simulated="+RadarSystemConfig.simulation);
 		if(DomainSystemConfig.simulation)
 		{
 			return BuzzerModel.createBuzzerMock();
@@ -59,6 +60,19 @@ public class DeviceFactory {
 		else
 		{
 			return BuzzerModel.createBuzzerConcrete();
+		}
+	}
+
+	public static ITextDisplay createTextDisplay()
+	{
+		//Colors.out("[" + this.getClass().getSimpleName() + "] | createTextDisplay simulated="+RadarSystemConfig.simulation);
+		if(DomainSystemConfig.simulation)
+		{
+			return TextDisplayModel.createTextDisplayMock();
+		}
+		else
+		{
+			return TextDisplayModel.createTextDisplayConcrete();
 		}
 	}
  

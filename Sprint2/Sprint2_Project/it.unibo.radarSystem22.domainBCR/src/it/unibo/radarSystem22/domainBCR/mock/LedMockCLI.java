@@ -17,4 +17,10 @@ public class LedMockCLI extends LedModel implements ILed {
 	{
 		ColorsOut.outappl("[" + this.getClass().getSimpleName() + "] State: " + getState(), ColorsOut.MAGENTA);
 	}
+
+	public static void main(String[] args)
+	{
+		LedMockCLI tmp = new LedMockCLI();
+		tmp.ledActivate(LedState.ON);
+	}
 } 

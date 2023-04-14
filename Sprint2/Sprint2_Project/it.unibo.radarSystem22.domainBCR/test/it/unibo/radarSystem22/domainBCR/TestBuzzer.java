@@ -52,7 +52,7 @@ public class TestBuzzer {
         buzzer.turnOff();
         assertTrue(buzzer.getState().equals(BuzzerState.OFF));
 
-        BasicUtils.delay(1000);
+        BasicUtils.delay(3000);
     }
 
     //@Test
@@ -84,6 +84,6 @@ public class TestBuzzer {
         buzzer.turnOff();
         assertTrue(buzzer.getState().equals(BuzzerState.OFF));
 
-        BasicUtils.delay(1000);
+        BasicUtils.delay(3000);
     }
 }

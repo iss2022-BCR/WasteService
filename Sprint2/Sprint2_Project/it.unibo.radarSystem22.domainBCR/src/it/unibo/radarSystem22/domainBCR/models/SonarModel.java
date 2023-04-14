@@ -3,7 +3,7 @@ package it.unibo.radarSystem22.domainBCR.models;
 import it.unibo.radarSystem22.domainBCR.Distance;
 import it.unibo.radarSystem22.domainBCR.concrete.SonarConcreteHCSR04;
 import it.unibo.radarSystem22.domainBCR.interfaces.*;
-import it.unibo.radarSystem22.domainBCR.mock.SonarMock;
+import it.unibo.radarSystem22.domainBCR.mock.SonarMockCLI;
 import it.unibo.radarSystem22.domainBCR.utils.ColorsOut;
 import it.unibo.radarSystem22.domainBCR.utils.DomainSystemConfig;
 
@@ -21,7 +21,7 @@ protected boolean stopped = true;
 	public static ISonar createSonarMock()
 	{
 		ColorsOut.out("createSonarMock", ColorsOut.BLUE);
-		return new SonarMock();
+		return new SonarMockCLI();
 	}	
 	public static ISonar createSonarConcrete()
 	{

@@ -9,17 +9,28 @@ import org.json.JSONTokener;
 
 public class DomainSystemConfig {
 	public static boolean simulation		= true;
- 	public static boolean ledGui			= false;
-	public static boolean buzzerSound		= false;
-	public static boolean webCam			= false;
- 
+
+	// Sonar
 	public static int sonarDelay			=  500;
 	public static int sonarDistanceMax		=  300;
 	public static int sonarDistanceMin		=  5;
 	public static boolean sonarObservable	=  false;
 	public static int DLIMIT				=  15;
 	public static int testingDistance		=  DLIMIT - 2;
-    
+
+	// Led
+	public static boolean ledGui			= false;
+
+	// Buzzer
+	public static boolean buzzerSound		= false;
+
+	// TextDisplay
+	public static boolean textDisplay		= false;
+
+
+	public static boolean webCam			= false;
+ 
+
 	public static boolean tracing			= false;
 	public static boolean testing			= false;
 
@@ -37,7 +48,7 @@ public class DomainSystemConfig {
 	
 	public static void setTheConfiguration(String resourceName)
 	{
-		//Nella distribuzione resourceName � in una dir che include la bin  
+		// Nella distribuzione resourceName � in una dir che include la bin
 		FileInputStream fis = null;
 		try {
 			ColorsOut.out("%%% setTheConfiguration from file:" + resourceName);
@@ -46,20 +57,19 @@ public class DomainSystemConfig {
  				 fis = new FileInputStream(new File(resourceName));
 			}
 
-	        JSONTokener tokener = new JSONTokener(fis);
-	        JSONObject object   = new JSONObject(tokener);
+	        JSONTokener tokenizer = new JSONTokener(fis);
+	        JSONObject object   = new JSONObject(tokenizer);
 	 		
-	        simulation          = object.getBoolean("simulation");
+	        simulation			= object.getBoolean("simulation");
+
+	        webCam				= object.getBoolean("webCam");
 	        
-	        
-	        webCam           = object.getBoolean("webCam");
-	        
-	        sonarObservable  = object.getBoolean("sonarObservable");	
-	        sonarDelay       = object.getInt("sonarDelay");	
-	        sonarDistanceMax = object.getInt("sonarDistanceMax");	
-	        DLIMIT           = object.getInt("DLIMIT");	
-	        tracing          = object.getBoolean("tracing");
-	        testing          = object.getBoolean("testing");
+	        sonarObservable		= object.getBoolean("sonarObservable");
+	        sonarDelay			= object.getInt("sonarDelay");
+	        sonarDistanceMax	= object.getInt("sonarDistanceMax");
+	        DLIMIT				= object.getInt("DLIMIT");
+	        tracing				= object.getBoolean("tracing");
+	        testing				= object.getBoolean("testing");
 		} catch (FileNotFoundException e) {
  			ColorsOut.outerr("setTheConfiguration ERROR " + e.getMessage() );
 		}

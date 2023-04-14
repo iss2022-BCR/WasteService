@@ -8,12 +8,13 @@ import it.unibo.radarSystem22.domainBCR.utils.BasicUtils;
 import it.unibo.radarSystem22.domainBCR.utils.ColorsOut;
 import it.unibo.radarSystem22.domainBCR.utils.DomainSystemConfig;
 
-public class SonarMock extends SonarModel implements ISonar {
-private int delta = 5;
+public class SonarMockCLI extends SonarModel implements ISonar {
+	private int delta = 5;
+
 	@Override
 	protected void sonarSetUp()
 	{
-		curVal = new Distance(90);		
+		curVal = new Distance();
 		ColorsOut.out("[" + this.getClass().getSimpleName() + "] sonarSetUp curVal="+curVal);
 	}
 	
@@ -27,7 +28,8 @@ private int delta = 5;
 	protected void sonarProduce()
 	{
 		if(DomainSystemConfig.testing)
-		{	//produces always the same value
+		{
+			//produces always the same value
 			updateDistance(DomainSystemConfig.testingDistance);
 			//stopped = true; //one shot
 		}
@@ -37,6 +39,6 @@ private int delta = 5;
 			updateDistance(v);
 			stopped = (v <= 0);
 		}
-		BasicUtils.delay(DomainSystemConfig.sonarDelay);  //avoid fast generation
+		BasicUtils.delay(DomainSystemConfig.sonarDelay);  // avoid fast generation
  	}
 }

@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/*
+ * Class that implements a real buzzer component.
+ */
 public class BuzzerConcrete extends BuzzerModel implements IBuzzer {
     private Process process;
 

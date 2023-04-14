@@ -8,6 +8,9 @@ import it.unibo.radarSystem22.domainBCR.models.SonarModel;
 import it.unibo.radarSystem22.domainBCR.utils.ColorsOut;
 import it.unibo.radarSystem22.domainBCR.utils.DomainSystemConfig;
 
+/*
+ * Class that implements a real HC-SR04 sonar component.
+ */
 public class SonarConcreteHCSR04 extends SonarModel implements ISonar {
 	private Process process;
 	private BufferedReader reader;

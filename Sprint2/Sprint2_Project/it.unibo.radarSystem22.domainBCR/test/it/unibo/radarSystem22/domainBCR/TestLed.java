@@ -52,7 +52,7 @@ public class TestLed {
 		led.turnOff();
 		assertTrue(led.getState().equals(LedState.OFF));
 
-		BasicUtils.delay(1000);
+		BasicUtils.delay(3000);
 	}	
 	
 	//@Test
@@ -92,5 +92,7 @@ public class TestLed {
 		
  		led.turnOff();
 		assertTrue(led.getState().equals(LedState.OFF));
+
+		BasicUtils.delay(3000);
 	}
 }

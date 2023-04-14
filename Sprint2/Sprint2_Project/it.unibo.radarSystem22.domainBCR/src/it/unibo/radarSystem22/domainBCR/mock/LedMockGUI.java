@@ -1,17 +1,11 @@
 package it.unibo.radarSystem22.domainBCR.mock;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.Panel;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.*;
+import java.awt.event.*;
 
 import it.unibo.radarSystem22.domainBCR.interfaces.ILed;
 import it.unibo.radarSystem22.domainBCR.state.LedState;
 import it.unibo.radarSystem22.domainBCR.utils.BasicUtils;
-
 
 public class LedMockGUI extends LedMockCLI {
 	private final Color colorOff = Color.gray;
@@ -19,8 +13,8 @@ public class LedMockGUI extends LedMockCLI {
 
 	private static int positionOffset = 0;
 
-	private Panel panel;
 	private Frame frame;
+	private Panel panel;
 	private final Dimension sizeOn  = new Dimension(100,100);
 	private final Dimension sizeOff = new Dimension(30,30);
 
@@ -35,6 +29,35 @@ public class LedMockGUI extends LedMockCLI {
 		this.frame = frame;
  		configure();
   	}
+
+	public static Frame initFrame(int dx, int dy)
+	{
+		Frame frame         = new Frame();
+		BorderLayout layout = new BorderLayout();
+		frame.setSize(new Dimension(dx,dy));
+		frame.setLayout(layout);
+		frame.addWindowListener(new WindowListener() {
+			@Override
+			public void windowOpened(WindowEvent e) {}
+			@Override
+			public void windowIconified(WindowEvent e) {}
+			@Override
+			public void windowDeiconified(WindowEvent e) {}
+			@Override
+			public void windowDeactivated(WindowEvent e) {}
+			@Override
+			public void windowClosing(WindowEvent e)
+			{
+				System.exit(0);
+			}
+			@Override
+			public void windowClosed(WindowEvent e) {}
+			@Override
+			public void windowActivated(WindowEvent e) {}
+		});
+		frame.setVisible(true);
+		return frame;
+	}
 
 	protected void configure()
 	{
@@ -101,34 +124,5 @@ public class LedMockGUI extends LedMockCLI {
 		});
 
 		blinker.start();
-	}
-
-	public static Frame initFrame(int dx, int dy)
-	{
- 		Frame frame         = new Frame();
- 		BorderLayout layout = new BorderLayout();
- 		frame.setSize(new Dimension(dx,dy));
- 		frame.setLayout(layout);		
- 		frame.addWindowListener(new WindowListener() {			
-			@Override
-			public void windowOpened(WindowEvent e) {}				
-			@Override
-			public void windowIconified(WindowEvent e) {}
-			@Override
-			public void windowDeiconified(WindowEvent e) {}
-			@Override
-			public void windowDeactivated(WindowEvent e) {}
-			@Override
-			public void windowClosing(WindowEvent e)
-			{
-				System.exit(0);				
-			}			
-			@Override
-			public void windowClosed(WindowEvent e) {}
-			@Override
-			public void windowActivated(WindowEvent e) {}
-		});
-		frame.setVisible(true);
-		return frame;
 	}
 }

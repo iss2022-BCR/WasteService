@@ -10,9 +10,6 @@ object displaySupportBCR {
 
     fun writeToDisplay(line1: String, line2: String)
     {
-        var newLine1: String
-        var newLine2: String
-
         // Update a line only if the new one is not empty/blank
         if(line1.isNotBlank())
         {
