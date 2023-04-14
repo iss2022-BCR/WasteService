@@ -20,4 +20,3 @@ context(ctx_raspberrypi, "localhost",  "TCP", "11802").
   qactor( led_bcr, ctx_raspberrypi, "it.unibo.led_bcr.Led_bcr").
   qactor( textdisplay_bcr, ctx_raspberrypi, "it.unibo.textdisplay_bcr.Textdisplay_bcr").
   qactor( buzzer_bcr, ctx_raspberrypi, "it.unibo.buzzer_bcr.Buzzer_bcr").
-  qactor( testalarmreceiver, ctx_raspberrypi, "it.unibo.testalarmreceiver.Testalarmreceiver").

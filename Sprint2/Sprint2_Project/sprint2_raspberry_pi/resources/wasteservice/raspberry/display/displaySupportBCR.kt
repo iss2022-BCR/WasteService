@@ -10,7 +10,8 @@ object displaySupportBCR {
     fun createTextDisplay()
     {
         DomainSystemConfig.setTheConfiguration("RaspberryDomainConfig.json")
-        display = DeviceFactory.createTextDisplay()
+        if(DomainSystemConfig.enableTextDisplay)
+            display = DeviceFactory.createTextDisplay()
     }
 
     fun doDisplay(text1: String, text2: String)

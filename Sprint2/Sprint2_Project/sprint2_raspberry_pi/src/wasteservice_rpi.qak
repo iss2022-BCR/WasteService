@@ -71,16 +71,16 @@ Context ctx_raspberrypi			ip [host="localhost" port=11802]
 
 // ACTORS =====================================================================
 // CTX WasteService -----------------------------------------------------------
-ExternalQActor typesprovider context ctx_wasteservice
-ExternalQActor wasteservice context ctx_wasteservice
+ExternalQActor typesprovider		context ctx_wasteservice
+ExternalQActor wasteservice			context ctx_wasteservice
 
 // CTX TransportTrolley -------------------------------------------------------
-ExternalQActor transporttrolley context ctx_transporttrolley
-ExternalQActor trolleystateprovider context ctx_transporttrolley
-ExternalQActor pathexecutorbcr context ctx_transporttrolley
+ExternalQActor transporttrolley		context ctx_transporttrolley
+ExternalQActor trolleystateprovider	context ctx_transporttrolley
+ExternalQActor pathexecutorbcr		context ctx_transporttrolley
 
 // CTX Robot ------------------------------------------------------------------
-ExternalQActor basicrobot context ctx_robot
+ExternalQActor basicrobot			context ctx_robot
 
 // CTX RaspberryPi ------------------------------------------------------------
 // Sonar filters
@@ -133,6 +133,9 @@ QActor led_bcr context ctx_raspberrypi {
 				val TTState = wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(0))
 				wasteservice.raspberry.led.ledSupportBCR.doLed(TTState)
 			#]
+			
+			// test
+			println("[LedBCR] State: $TTState")
 		}
 	}
 	Goto state_idle
@@ -160,11 +163,15 @@ QActor textdisplay_bcr context ctx_raspberrypi {
 				val TTState = wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(0))
 				wasteservice.raspberry.display.displaySupportBCR.doDisplay("", "TT: ${TTState.name}")
 			#]
+			
+			// test
+			println("[TextDisplayBCR] State: $TTState")
 		}
 	}
 	Goto state_idle
 }
 
+// BUZZER
 QActor buzzer_bcr context ctx_raspberrypi {
 	[#
 		var TTState: wasteservice.TransportTrolleyState = wasteservice.TransportTrolleyState.HOME
@@ -186,6 +193,9 @@ QActor buzzer_bcr context ctx_raspberrypi {
 				val TTState = wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(0))
 				wasteservice.raspberry.buzzer.buzzerSupportBCR.doBuzzer(TTState)
 			#]
+			
+			// test
+			println("[BuzzerBCR] State: $TTState")
 		}
 	}
 	Goto state_idle
@@ -223,7 +233,7 @@ QActor buzzer_bcr context ctx_raspberrypi {
 }*/
 
 
-QActor testalarmreceiver context ctx_raspberrypi {
+/*QActor testalarmreceiver context ctx_raspberrypi {
 	State state_init initial {
 		println("[TestAlarmReceiver] Started.")
 	}
@@ -246,9 +256,7 @@ QActor testalarmreceiver context ctx_raspberrypi {
 		println("[TestAlarmReceiver] Received resume.")
 	}
 	Goto state_idle
-}
-
-
+}*/
 
 
 // TEST --------

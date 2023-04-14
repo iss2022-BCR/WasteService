@@ -2,6 +2,7 @@ package wasteservice
 
 import alice.tuprologx.pj.model.Bool
 import com.sun.jdi.connect.Transport
+import it.unibo.radarSystem22.domainBCR.state.LedState
 import unibo.comm22.utils.ColorsOut
 
 

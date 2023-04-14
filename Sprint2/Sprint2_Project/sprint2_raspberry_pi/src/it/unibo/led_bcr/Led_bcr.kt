@@ -43,6 +43,7 @@ class Led_bcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 								 
 												val TTState = wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(0))
 												wasteservice.raspberry.led.ledSupportBCR.doLed(TTState)
+								println("[LedBCR] State: $TTState")
 						}
 						//genTimer( actor, state )
 					}

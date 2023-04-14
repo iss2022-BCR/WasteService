@@ -9,8 +9,12 @@
 	"ledDelay":				100,
 	"ledGui":				false,
 	
+	"enableBuzzer":			false,
 	"buzzerDelay":			100,
 	"buzzerSound":			false,
 	
+	"enableTextDisplay":	true,
+	"textLine1Delay":		1000,
+	"textLine2Delay":		1000,
 	"textDisplay":			false,
 }

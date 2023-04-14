@@ -45,6 +45,7 @@ class Textdisplay_bcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 								 
 												val TTState = wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(0))
 												wasteservice.raspberry.display.displaySupportBCR.doDisplay("", "TT: ${TTState.name}")
+								println("[TextDisplayBCR] State: $TTState")
 						}
 						//genTimer( actor, state )
 					}

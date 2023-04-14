@@ -11,7 +11,8 @@ object buzzerSupportBCR {
     fun createBuzzer()
     {
         DomainSystemConfig.setTheConfiguration("RaspberryDomainConfig.json")
-        buzzer = DeviceFactory.createBuzzer()
+        if(DomainSystemConfig.enableBuzzer)
+            buzzer = DeviceFactory.createBuzzer()
     }
 
     fun doBuzzer(state: TransportTrolleyState)

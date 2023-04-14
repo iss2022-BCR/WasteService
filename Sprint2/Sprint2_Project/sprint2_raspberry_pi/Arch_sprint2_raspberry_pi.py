@@ -33,7 +33,6 @@ with Diagram('sprint2_raspberry_piArch', show=False, outformat='png', graph_attr
           led_bcr=Custom('led_bcr','./qakicons/symActorSmall.png')
           textdisplay_bcr=Custom('textdisplay_bcr','./qakicons/symActorSmall.png')
           buzzer_bcr=Custom('buzzer_bcr','./qakicons/symActorSmall.png')
-          testalarmreceiver=Custom('testalarmreceiver','./qakicons/symActorSmall.png')
           filter_distancechanged=Custom('filter_distancechanged(coded)','./qakicons/codedQActor.png')
           filter_distancebounds=Custom('filter_distancebounds(coded)','./qakicons/codedQActor.png')
           filter_textdisplay=Custom('filter_textdisplay(coded)','./qakicons/codedQActor.png')
@@ -44,6 +43,4 @@ with Diagram('sprint2_raspberry_piArch', show=False, outformat='png', graph_attr
      sys >> Edge(color='red', style='dashed', xlabel='trolley_state_changed', fontcolor='red') >> led_bcr
      sys >> Edge(color='red', style='dashed', xlabel='trolley_state_changed', fontcolor='red') >> textdisplay_bcr
      sys >> Edge(color='red', style='dashed', xlabel='trolley_state_changed', fontcolor='red') >> buzzer_bcr
-     sys >> Edge(color='red', style='dashed', xlabel='stop', fontcolor='red') >> testalarmreceiver
-     sys >> Edge(color='red', style='dashed', xlabel='resume', fontcolor='red') >> testalarmreceiver
 diag

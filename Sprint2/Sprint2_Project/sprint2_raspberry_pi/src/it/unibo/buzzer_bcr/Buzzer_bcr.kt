@@ -45,6 +45,7 @@ class Buzzer_bcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name,
 								 
 												val TTState = wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(0))
 												wasteservice.raspberry.buzzer.buzzerSupportBCR.doBuzzer(TTState)
+								println("[BuzzerBCR] State: $TTState")
 						}
 						//genTimer( actor, state )
 					}
