@@ -18,8 +18,8 @@ public class TextDisplayConcreteLCD1602 extends TextDisplayModel implements ITex
         ProcessBuilder builder = new ProcessBuilder(command);
 
         String className = "[" + this.getClass().getSimpleName() + "]";
-        ColorsOut.outappl(className + " Line1: " + getLine1(), ColorsOut.MAGENTA);
-        ColorsOut.outappl(className.replaceAll("(?s)(?<!\\\\S).(?!\\\\S)", " ") + " Line2: " + getLine2(), ColorsOut.MAGENTA);
+        ColorsOut.out(className + " Line1: " + getLine1());
+        ColorsOut.out(className.replaceAll("(?s)(?<!\\\\S).(?!\\\\S)", " ") + " Line2: " + getLine2());
 
         try {
             builder.start();
