@@ -15,6 +15,6 @@
 	
 	"enableTextDisplay":	true,
 	"textLine1Delay":		1000,
-	"textLine2Delay":		1000,
+	"textLine2Delay":		50,
 	"textDisplay":			false,
 }
