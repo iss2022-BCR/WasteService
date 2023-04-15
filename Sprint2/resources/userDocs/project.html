@@ -70,20 +70,44 @@
             </ul>
 
             <h2 id="Logical-Architecture">Logical Architecture</h2>
-            The main change in the logical architecture from the Problem Analysis is [...].
-            <br/>
-            <img width="100%" src="../../Sprint1_Project/sprint1_waste_service/project_logical_architecture_core-business.png"/>
-            QAK model: <a href="../../Sprint1_Project/sprint1_waste_service/src/project_logical_architecture.qak">project_logical_architecture.qak</a>
+            As the project is starting to grow considerably in size, we decided to
+            split the system in 2 parts, one for each node:
 
-            <h2 id="WasteService">Sprint2.1: WasteService</h2>
-            <ksi>&lt;Raspberry-Pi-Software-Name&gt;</ksi> (<a href="../../Sprint2_Project/project_directory/">project_directory</a>) is a [...]
-            
-            <h4>Actor PathExecutorBCR</h4>
-            We modified the pathexecutor QAK actor to include the stop/resume functionality:
             <ul>
-                <li>Actor renamed to "pathexecutorbcr"</li>
-                <li>General refactor: renamed states, and added some middle ones (e.g. state_idle)</li>
-                <li>Added a guard checking for stop events (<code>Transition t1 whenEvent stop -> state_stop</code>) at the end of the following states:
+                <li>
+                    WasteService Core
+                    <img width="100%" src="../../Sprint2_Project/sprint2_wasteservice/sprint2_waste_servicearch_no_extension_edited.png"/>
+                    QAK model: <a href="../../Sprint2_Project/sprint2_wasteservice/src/wasteservice_core_no_extension.noqak">wasteservice_core_no_extension.noqak</a>
+                </li>
+                <li>
+                    Raspberry Pi
+                    <img width="100%" src="../../Sprint2_Project/sprint2_raspberry_pi/sprint2_raspberry_pi_no_extensionarch_edited.png"/>
+                    QAK model: <a href="../../Sprint2_Project/sprint2_raspberry_pi/src/wasteservice_rpi_no_extension.noqak">wasteservice_rpi_no_extension.noqak</a>
+                </li>
+            </ul>
+            
+            <h2 id="WasteService">Sprint2.1: WasteService</h2>
+            We upgraded the <ksi>Waste Service</ksi> (<a href="../../Sprint2_Project/sprint2_wasteservice/">sprint2_wasteservice</a>) project to make it
+            easier for us to integrate the Raspberry Pi functionalities.
+            
+            <h3 id="Waste-Service-Updated-Logical-Architecture">Waste Service Updated Logical Architecture</h3>
+            <img width="100%" src="../../Sprint2_Project/sprint2_wasteservice/sprint2_waste_servicearch_edited.png"/>
+            QAK model: <a href="../../Sprint2_Project/sprint2_wasteservice/src/wasteservice_core.qak">wasteservice_core.qak</a>
+
+            <h3 id="Waste-Service-Upgrades">Waste Service Upgrades</h3>
+            The remarkable changes are the following:
+
+            <h4>Stop/Resume feature</h4>
+            To support the stop/resume functionality, we modified the pathexecutor QAK
+            actor (renamed to PathExecutorBCR):
+            <div class="remark">
+                When PathExecutorBCR detects a stop event, if it's performing a task
+                it <b>finishes the current action</b>, then enters the STOP state, which will
+                cause it to ignore any other request, until a RESUME event is detected.
+            </div>
+            In particular:
+            <ul>
+                <li>We added a guard checking for stop events (<code>Transition t1 whenEvent stop -> state_stop</code>) at the end of the following states:
                     <ul>
                         <li>state_idle (the state where the actor waits for path requests);</li>
                         <li>state_do_move_forward;</li>
@@ -91,7 +115,7 @@
                     </ul>
                 </li>
                 <li>
-                    Added the state "state_stop"
+                    We added the state "<ks><code>state_stop</code></ks>"
 <pre style="white-space: pre;">
 State state_stop {
     [# var PathTodo = pathut.getPathTodo() #]
@@ -101,7 +125,7 @@ Transition t3 whenEvent resume -> state_resume
 </pre>
                 </li>
                 <li>
-                    Added the state "state_resume"
+                    We added the state "<ks><code>state_resume</code></ks>"
 <pre style="white-space: pre;">
 State state_resume {
     println("[PathExecutorBCR] Alarm retracted. Resuming...")
@@ -111,26 +135,131 @@ Goto state_next_move if [# MovesDone.length != TotPathMoves #] else state_idle
                 </li>
             </ul>
 
-            <br/>
+            <h4>TransportTrolley State</h4>
+            <div class="remark">
+                When the Transport Trolley performs an action, arrives at HOME or
+                becomes stopped/resumed, its state changes and is notified to the rest
+                of the system, so that the interested components (e.g the Led) can
+                get updated.
+            </div>
 
-            <h4>Class TransportTrolleyState</h4>
-            classe per rappresentare stato trolley
-            <h4>Class LedState</h4>
-            classe per rappresentare stato led
-            <h4>Utility Functions</h4>
+            To track the Transport Trolley state and make it COAP observable
+            since the QAK framework already supports COAP:
             
-            funzione isAlarm()
-            <br/>
-            funzione getLedStateFromTrolleyState()
+            <ul>
+                <li>
+                    We created a new enum class <code>TransportTrolleyState</code>
+<pre style="white-space: pre;">
+enum class TransportTrolleyState {
+    NONE, HOME, MOVING, PICKUP, DUMP, STOPPED;
 
-            
-            <h2>Sprint 2.2: Raspberry Pi Software</h2>
+    companion object {
+        fun parseFromMessage(s: String): TransportTrolleyState
+    }
+}
+</pre>
+                    <b>NB</b>: The TransportTrolley state is different from the Led state.
+                </li>
+                <li>
+                    We added a call to <b>update the COAP resource</b> idicating the Transport Trolley
+                    state
+                    <pre>
+                        updateResource [# "transporttrolley(STATE)" #]
+                    </pre>
+                    inside the involved actors:
+                    <ul>
+                        <li>TransportTrolley</li>
+                        <li>PathExecutor</li>
+                    </ul>
+                </li>
+                <li>
+                    Created an actor that acts as an observer of the COAP
+                    resource: the actor <ks><code>TrolleyStateProvider</code></ks>
+                    registers itself to the COAP observable resource:
+                    <pre>
+                        observeResource transporttrolley
+		                observeResource pathexecutorbcr
+                    </pre>
+                    and generates an event (that other actors can detect) whenever the state changes:
+<pre style="white-space: pre;">
+onMsg(coapUpdate: coapUpdate(RESOURCE, VALUE)) {
+    // Check if the state changed
+    if [# wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) != TTState #] {
+        [# TTState = wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) #]
+        
+        // Emit event
+        emit trolley_state_changed: trolley_state_changed($TTState)
+    }
+}
+</pre>
+                </li>
+            </ul>
+           
+            <h2 id="RadarSystem-DomainBCR">Sprint 2.2: RadarSystem.DomainBCR</h2>
+            Before implementing the Raspberry Pi QAK, we needed something to use the real/simulated
+            components.
+
+
+            <h3>Led changes</h3>
+            We updated the ILed interface to add the method <code>blink()</code>
+            which should make the Led to blink the led flash at intervals of time:
+<pre style="white-space: pre;">
+public interface ILed extends IDevice {
+    public void turnOn();
+    public void turnOff();
+    public void blink();
+    public LedState getState();
+}
+</pre>
+
+            We implemented the mock method by using a Thread which makes the
+            led blink by turning it ON and OFF at intervals of time delayed by
+            <code>blinkDelay</code>:
+<pre style="white-space: pre;">
+@Override
+public void blink() {
+    if(isBlinking)
+        return;
+
+    super.blink();
+    blinker = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            while(isBlinking) {
+                isOn = !isOn;
+
+                panel.setSize(isOn ? sizeOn : sizeOff);
+                panel.setBackground(isOn ? colorOn : colorOff);
+                panel.validate();
+                panel.repaint();
+
+                try { Thread.sleep(blinkDelay); }
+                catch (InterruptedException e) { e.printStackTrace(); }
+            }
+        }
+    });
+
+    isBlinking = true;
+    blinker.start();
+</pre>
+
+            <h3>Integration with WasteService</h3>
+            + add entry to build.gradle
+
+            <h2 id="Raspberry-Pi">Sprint 2.3: Raspberry Pi</h2>
             <h3 id="Device">Device</h3>
             The device used is a <a href="https://www.raspberrypi.com/products/raspberry-pi-4-model-b/">Raspberry Pi 4 Model B</a>: <highlight1>Specifiche</highlight1>
             <br/>
-            <highlight1>Schema pin</highlight1>
-            <br/>
+
+            <h4>Pin scheme and components</h4>
+            
+            <h4>Setup</h4>
+            <ul>
+                <li>ssh/vnc</li>
+                <li>Make sure python is installed</li>
+            </ul>
             <highlight1>Setup SSH without password</highlight1>
+            
             <h3>Sonar</h3>
             Per implementare la feature del sonar, abbiamo preso un progetto fornito dalla nostra
             software house (sonarqak) e ne abbiamo ricavato una versione specializzata:
@@ -151,15 +280,20 @@ Goto state_next_move if [# MovesDone.length != TotPathMoves #] else state_idle
             come argomenti del programma.
 
             <h3>Led</h3>
-            <h2 id="Extras">Sprint 2 Extras: Radar GUI</h2>
+
+            <h2 id="Command-Runner">Sprint 2.4: Command Runner</h2>
+
+            <h2 id="Extensions">Sprint 2 Extensions</h2>
+            <h3>RadarSystem22: Radar GUI</h3>
             Since our software house already developed a project capable of showing sonar
             information in a fancy way, we considered its usage and analyzed if there was
             a way to adapt it and include it in our Waste Service project.
             <br/><br/>
 
-            The <ksi>Radar GUI</ksi> project consists of an application able to display
-            elaborated information of detected obstacles, with a sonar-like graphical
-            interface:
+            The <a href="https://github.com/mikyll/righimichele/tree/master/iss2022/RadarSystem22/radarGUI"><ksi>Radar GUI</ksi></a>
+            project consists of an application able to display elaborated information of 
+            detected obstacles, with a sonar-like graphical interface:
+
             a line the length of the radius constantly rotates with its pivot in the
             center of the screen, <b><i>simulating a sonar</i></b>. Detected obstacles (with their
             distance and angle) are stored in a queue and, if the detected obstacle 
@@ -178,12 +312,25 @@ Goto state_next_move if [# MovesDone.length != TotPathMoves #] else state_idle
             Example usage: run the radarGUI on a computer, and a client on a Raspberry Pi,
             which detects obstacles with the sonar module, and sends the data by using the
             networking interface.
-            
-            <problem>Problemi: PIN del raspberry</problem>
-            <highlight1>Spiegare dettagliatamente perché abbiamo scartato l'idea di mettere
-                radarGUI sul raspberry
-            </highlight1>
 
+            <consideration>
+                <b>Consideration</b>: our first idea was to enhance the Raspberry Pi node 
+                by attaching to the device an LCD touchscreen display with 3.5" size, so that
+                it <b>would show the obstacle/distances detected by the sonar already on the device</b>. 
+                <br/>
+                We also already had the LCD display component.
+            </consideration>
+            
+            <problem>Raspberry Device PINs</problem>
+            <b>Problem</b>: what prevent us from pursuing this enhancement, was the fact that
+            that particular display needs to be attached to the first 26 pins of the Raspberry Pi,
+            including the 5V power supply one. That's an issue since the HC-SR04, which is a <i><b>requirement</b></i>
+            needs it too.
+            
+            <solution>
+                <b>Decision</b>: we decided <ksi>not to implement that extension</ksi>, due to the time and
+                it would have required to search for and develop a workaround.
+            </solution>
             
             <h2 id="Deployment">Deployment</h2>
             Until now we deployed our sistem using the Gradle JAR plugin.
@@ -194,7 +341,7 @@ Goto state_next_move if [# MovesDone.length != TotPathMoves #] else state_idle
             which allows
 
 
-            <h2 id="Raspberry-Demo">Raspberry Demo</h2>
+            <h2 id="Demo">Sprint2 Demo</h2>
             In order to run demo components we need:
             [...]
             
