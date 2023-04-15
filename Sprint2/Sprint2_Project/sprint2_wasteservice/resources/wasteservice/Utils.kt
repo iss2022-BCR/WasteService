@@ -2,6 +2,7 @@ package wasteservice
 
 import alice.tuprologx.pj.model.Bool
 import com.sun.jdi.connect.Transport
+import kotlinx.coroutines.delay
 import unibo.comm22.utils.ColorsOut
 
 
@@ -48,8 +49,8 @@ object Utils {
         return res;
     }
 
-    fun simulateAction(load: Double) {
-        Thread.sleep(load.toLong() * 100)
+    suspend fun simulateAction(load: Double) {
+        delay(load.toLong() * 100)
     }
 
     fun printCorrect(msg: String) {
