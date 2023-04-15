@@ -25,6 +25,21 @@
             <div class="sidenavSection">
                 <a href="#Defects-Solution">Defects-Solution</a>
                 <a href="#Logical-Architecture">Logical Architecture</a>
+                <a href="#WasteService">WasteService</a>
+                <div class="sidenavSubSection">
+                    <a href="#Waste-Service-Updated-Logical-Architecture">Waste Service Updated<br/>Logical Architecture</a>
+                    <a href="#Waste-Service-Upgrades">Waste Service Upgrades</a>
+                    <a href="#Waste-Service-Bug-Fixes">Waste Service<br/>Bug Fixes</a>
+                </div>
+                <a href="#RadarSystem22-DomainBCR">RadarSystem22.<br/>DomainBCR</a>
+                <div class="sidenavSubSection">
+                    <a href="#Scripts-and-Programs">Scripts and Programs</a>
+                    <a href="#Led-and-Sonar-Changes">Led and Sonar Changes</a>
+                    <a href="#Buzzer-Component">Buzzer Component</a>
+                    <a href="#TextDisplay-Component">TextDisplay Component</a>
+                    <a href="#DomainSystemConfig-Changes">DomainSystemConfig Changes</a>
+                </div>
+                
                 <a href="#Software-Name">&lt;Software Name&gt;</a>
                 <div class="sidenavSubSection">
                 </div>
@@ -194,14 +209,92 @@ onMsg(coapUpdate: coapUpdate(RESOURCE, VALUE)) {
 </pre>
                 </li>
             </ul>
-           
-            <h2 id="RadarSystem-DomainBCR">Sprint 2.2: RadarSystem.DomainBCR</h2>
+
+            <h3 id="Waste-Service-Bug-Fixes">Waste Service Bug Fixes</h3>
+            <problem>Bug: <a href="https://github.com/iss2022-BCR/WasteService/issues/24">Pickup/Dump Trolley State</a></problem>
+            <b>Problem</b>: the PICKUP and DUMP trolley states were arriving too late and that caused for
+            example the LED to never turn ON when the trolley was performing those actions.
+            <solution>
+                <b>Solution</b>: fix the implementation of <code>simulateAction()</code>,
+                by using <code>delay()</code> instead of <code>Thread.sleep()</code>.
+                <br/>
+                <b>Reason</b>: QAK actors of the same context run on the same thread,
+                therefore when calling <code>Thread.sleep()</code> they would get all blocked,
+                the TrolleyStateProvider too, preventing it from processing the <code>coapUpdate()</code>. 
+            </solution>
+            
+            <problem>Bug: <a href="https://github.com/iss2022-BCR/WasteService/issues/25">Home/Moving Trolley State</a></problem>
+            <b>Problem</b>: after completing at least one deposit, when the Transport Trolley returns at home,
+            if a stop event is detected and the Transport Trolley enters the STOPPED state, when resuming the
+            PathExecutor mistakenly propagates the state MOVING, instead of HOME.
+
+            <h2 id="RadarSystem22-DomainBCR">Sprint 2.2: RadarSystem22.DomainBCR</h2>
             Before implementing the Raspberry Pi QAK, we needed something to use the real/simulated
             components.
+            <br/><br/>
 
+            To achieve this goal, we developed <ksi>RadarSystem22.DomainBCR</ksi>
+            (<a href="../../Sprint2_Project/it.unibo.radarSystem22.domainBCR/">it.unibo.radarSystem22.domainBCR</a>),
+            which we obtained by modifying the project provided by the customer:
+            <a href="https://github.com/anatali/issLab2022/tree/main/it.unibo.radarSystem22.domain">it.unibo.radarSystem22.domain</a>.
+            
+            <h3 id="Scripts-and-Programs">Scripts and Programs</h3>
+            The RadarSystem22.domain project used some scripts and programs which were
+            already provided by the customer: <a href="../../Sprint2_Project/misc/SonarAlone.c">SonarAlone.c</a>,
+            <a href="../../Sprint2_Project/misc/led25GpioTurnOn.sh">led25GpioTurnOn.sh</a>,
+            <a href="../../Sprint2_Project/misc/led25GpioTurnOff.sh">led25GpioTurnOff.sh</a>).
+            However, we decided to recreate them using Python scripts, for a number of reasons:
+            <ul>
+                <li>
+                    <b>portability</b>, since they wouldn't depend on libraries like WiringPi which is not supported
+                    anymore and generates problems with new Raspberry OS versions;
+                </li>
+                <li>
+                    <b>consistency</b> and <b>homogeneity</b>, since this way they all use the
+                    python interpreter and packages. That also makes it possible to avoid for example
+                    problems related to the End-Of-Line characters, which are different from
+                    Windows and Linux (a bash script written on a Windows OS won't work in Linux
+                    unless the EOF characters get replaced);
+                </li>
+                <li>
+                    <b>Ease of use and deployment</b>, Python is easy to install and already shipped with
+                    Raspberry OS images. Python scripts also doesn't need to be compiled, which is one
+                    operation less to do during the deployment phase. 
+                </li>
+            </ul>
+            For these reason we developed the following scripts:
+            <ul>
+                <li>
+                    <a href="../../Sprint2_Project/scripts/raspberry/sonarBCR.py"><ksi>sonarBCR.py</ksi></a> - is used to
+                    get the distance (in CM) from the SC-HR04 component. It uses the <b>GPIO 23</b> (Pin #16/40) as Trigger,
+                    and <b>GPIO 24</b> (Pin #18/40) as Echo.<br/>
+                    With the <code>loop</code> parameter (and optionally the delay) the script continuously
+                    prints the detected distance, until the user interrupts it.
+                </li>
+                <li>
+                    <a href="../../Sprint2_Project/scripts/raspberry/ledBCR.py"><ksi>ledBCR.py</ksi></a> - is used to
+                    turn ON/OFF a Led component or make it blink. It uses the <b>GPIO 25</b> (Pin #22/40).
+                    The state (on / off / blink) must be passed as a parameter. When blinking, the script keeps
+                    running until the user interrupts it.
+                </li>
+                <li>
+                    <a href="../../Sprint2_Project/scripts/raspberry/buzzerBCR.py"><ksi>buzzerBCR.py</ksi></a> - is used to
+                    turn ON/OFF a Buzzer component or make it intermittent. It uses the <b>GPIO 18</b> (Pin #12/40).
+                    The state (on / off / intermittent) must be passed as a parameter. When intermittent, the script keeps
+                    running until the user interrupts it.
+                </li>
+                <li>
+                    <a href="../../Sprint2_Project/scripts/raspberry/displayBCR.py"><ksi>displayBCR.py</ksi></a> - is used to
+                    write on a text display LCD 1602 (16 characters per line, 2 lines) with a I2C expander module. It uses the
+                    special GPIOs <b>GPIO 2</b> (Pin #3/40) and <b>GPIO 3</b> (Pin #5/40) which are needed to use the I2C interface.
+                    The script accepts 2 parameters which are the strings (characters sequence) to be passed to the component.
+                    If no paramters are passed, the script clears the display.
+                </li>
+            </ul>
+            <a href="https://it.pinout.xyz/pinout/">Raspberry Pi Pinout reference</a>.
 
-            <h3>Led changes</h3>
-            We updated the ILed interface to add the method <code>blink()</code>
+            <h3 id="Led-and-Sonar-Changes">Led and Sonar Changes</h3>
+            We updated the <code>ILed</code> interface to add the method <code>blink()</code>
             which should make the Led to blink the led flash at intervals of time:
 <pre style="white-space: pre;">
 public interface ILed extends IDevice {
@@ -212,39 +305,135 @@ public interface ILed extends IDevice {
 }
 </pre>
 
-            We implemented the mock method by using a Thread which makes the
-            led blink by turning it ON and OFF at intervals of time delayed by
-            <code>blinkDelay</code>:
+            We implemented the mock version of the <code>blink()</code> method by 
+            using a Thread which turns the Led ON and OFF at intervals of time delayed by
+            a number of milliseconds:
 <pre style="white-space: pre;">
-@Override
-public void blink() {
-    if(isBlinking)
+@Override // LedMock
+public void blink()
+{
+    if(getState().equals(LedState.BLINKING))
         return;
 
     super.blink();
     blinker = new Thread(new Runnable() {
+        private boolean isOn = false;
         @Override
         public void run() {
-            while(isBlinking) {
+            while(getState().equals(LedState.BLINKING)) {
                 isOn = !isOn;
 
                 panel.setSize(isOn ? sizeOn : sizeOff);
                 panel.setBackground(isOn ? colorOn : colorOff);
+
                 panel.validate();
                 panel.repaint();
 
-                try { Thread.sleep(blinkDelay); }
-                catch (InterruptedException e) { e.printStackTrace(); }
+                BasicUtils.delay(DomainSystemConfig.ledDelay);
             }
         }
     });
 
-    isBlinking = true;
     blinker.start();
+}
+</pre>
+            We also changed the concrete implementation of both Led and Sonar
+            in order to make them use our new python scripts.
+<pre style="white-space: pre;">
+/usr/bin/python3 -u ./ledBCR.py &lt;on | off | blink [delay]&gt;
+/usr/bin/python3 -u ./sonarBCR.py &lt;loop [delay]&gt;
 </pre>
 
-            <h3>Integration with WasteService</h3>
-            + add entry to build.gradle
+            <h3 id="Buzzer-Component">Buzzer Component</h3>
+            The buzzer component is almost identical to the Led one. We implemented
+            an <code>IBuzzer</code> interface and then mock/concrete classes:
+<pre style="white-space: pre;">
+public interface IBuzzer extends IDevice {
+    public void turnOn();
+    public void turnOff();
+    public void turnIntermittent();
+    public BuzzerState getState();
+}
+</pre>
+            To implement the mock we used the <code>javax.sound</code> library
+            to play a "beep" sound effect:
+<pre style="white-space: pre;">
+try {
+    URL url = new URL("https://www.soundjay.com/buttons/beep-09.wav");
+    clip = AudioSystem.getClip();
+
+    AudioInputStream ais = AudioSystem.getAudioInputStream(url);
+    clip.open(ais);
+}
+catch (Exception e) {e.printStackTrace();}
+</pre>
+
+            <h3 id="TextDisplay-Component">TextDisplay Component</h3>
+            To implement the TextDisplay component we first created an <code>ITextDisplay</code> interface:
+<pre style="white-space: pre;">
+public interface ITextDisplay extends IDevice {
+    public void setLines(String text1, String text2);
+    public String getLine1();
+    public String getLine2();
+    public void clear();
+}
+</pre>
+            Then we implemented a mock version of the device, which creates a GUI with
+            2 text boxes to simulate the output of the display:
+<pre style="white-space: pre;">
+protected void configure()
+{
+    textField1 = new TextField();
+    textField1.setEditable(false);
+    textField1.setColumns(16);
+    textField1.setFont(new Font(Font.MONOSPACED, Font.BOLD, 16));
+    textField2 = new TextField();
+    textField2.setEditable(false);
+    textField2.setColumns(16);
+    textField2.setFont(new Font(Font.MONOSPACED, Font.BOLD, 16));
+    frame.add(BorderLayout.PAGE_START, textField1);
+    frame.add(BorderLayout.PAGE_END, textField2);
+}
+</pre>
+            <img src="../../resources/imgs/project/TextDisplayMockGUI.png">
+            <br/><br/>
+            Finally we implemented the concrete version which simply executes the
+            <code>displayBCR.py</code> script passing the text as parameters:
+<pre style="white-space: pre;">
+    @Override
+    protected void textDisplayActivate(String text1, String text2)
+    {
+        String[] command = { "/usr/bin/python3", "-u", "./displayBCR.py", getLine1(), getLine2()};
+        ProcessBuilder builder = new ProcessBuilder(command);
+
+        String className = "[" + this.getClass().getSimpleName() + "]";
+        ColorsOut.out(className + " Line1: " + getLine1());
+        ColorsOut.out(className.replaceAll("(?s)(?&lt;!\\\\S).(?!\\\\S)", " ") + " Line2: " + getLine2());
+
+        try { builder.start(); }
+        catch(IOException e) { System.out.println("[" + this.getClass().getSimpleName() + "] ERROR: " +  e.getMessage()); }
+    }
+</pre>
+
+            <h3 id="DomainSystemConfig-Changes">DomainSystemConfig Changes</h3>
+            To make the system more customizable at runtime, we extended the
+            <code>DomainSystemConfig</code> class too. In particular, we added:
+            <ul>
+                <li><code>sonarDelay</code> - used to delay the sonar detections.</li>
+                <li>
+                    <code>ledDelay</code> and <code>buzzerDelay</code> - used to choose how quickly
+                    the led and buzzer must blink/beep.
+                </li>
+                <li>
+                    <code>enableBuzzer</code> and <code>enableTextDisplay</code> - used to
+                    enable/disable the usage of the buzzer and display components (since they're not
+                    specifically required by the customer).
+                </li>
+                <li>
+                    <code>textLine1Delay</code> and <code>textLine2Delay</code> - used to
+                    limit the display refresh rate (may be different for each line).
+                </li>
+            </ul>
 
             <h2 id="Raspberry-Pi">Sprint 2.3: Raspberry Pi</h2>
             <h3 id="Device">Device</h3>
@@ -280,6 +469,9 @@ public void blink() {
             come argomenti del programma.
 
             <h3>Led</h3>
+
+            <h3>Integration with WasteService</h3>
+            + add entry to build.gradle
 
             <h2 id="Command-Runner">Sprint 2.4: Command Runner</h2>
 
