@@ -20,7 +20,6 @@ object sonarBuilder {
         firstActorInPipe = sonarActor
         lastActorInPipe = sonarActor
 
-
         lastActorInPipe = lastActorInPipe.subscribeLocalActor("filter_distancebounds")
         lastActorInPipe = lastActorInPipe.subscribeLocalActor("filter_distancechanged")
         if(enableText)

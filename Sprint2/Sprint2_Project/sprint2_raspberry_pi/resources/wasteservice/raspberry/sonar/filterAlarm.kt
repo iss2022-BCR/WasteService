@@ -35,7 +35,7 @@ class filterAlarm(name: String): ActorBasic(name) {
         if(alarm != prevAlarm) // Emit an event only if the state changed
         {
             prevAlarm = alarm
-            //println("[$name] Alarm: $alarm")
+            println("[$name] Alarm: $alarm")
 
             val messageId = if (alarm) "stop" else "resume"
 
