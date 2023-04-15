@@ -6,6 +6,7 @@ import java.awt.event.*;
 import it.unibo.radarSystem22.domainBCR.interfaces.ILed;
 import it.unibo.radarSystem22.domainBCR.state.LedState;
 import it.unibo.radarSystem22.domainBCR.utils.BasicUtils;
+import it.unibo.radarSystem22.domainBCR.utils.DomainSystemConfig;
 
 public class LedMockGUI extends LedMockCLI {
 	private final Color colorOff = Color.gray;
@@ -19,7 +20,6 @@ public class LedMockGUI extends LedMockCLI {
 	private final Dimension sizeOff = new Dimension(30,30);
 
 	private Thread blinker;
-	private int blinkDelay = 50;
 
 	// Constructor
 	public LedMockGUI(Frame frame)
@@ -118,7 +118,7 @@ public class LedMockGUI extends LedMockCLI {
 					panel.validate();
 					panel.repaint();
 
-					BasicUtils.delay(blinkDelay);
+					BasicUtils.delay(DomainSystemConfig.ledDelay);
 				}
 			}
 		});

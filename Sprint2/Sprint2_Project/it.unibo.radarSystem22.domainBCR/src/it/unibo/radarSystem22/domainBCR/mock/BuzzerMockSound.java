@@ -3,6 +3,7 @@ package it.unibo.radarSystem22.domainBCR.mock;
 import it.unibo.radarSystem22.domainBCR.interfaces.IBuzzer;
 import it.unibo.radarSystem22.domainBCR.state.BuzzerState;
 import it.unibo.radarSystem22.domainBCR.utils.BasicUtils;
+import it.unibo.radarSystem22.domainBCR.utils.DomainSystemConfig;
 
 import javax.sound.sampled.*;
 import java.io.File;
@@ -12,7 +13,6 @@ public class BuzzerMockSound extends BuzzerMockCLI {
     private Clip clip;
 
     private Thread intermittenceProvider;
-    private int intermittingDelay = 50;
 
     public BuzzerMockSound()
     {
@@ -79,7 +79,7 @@ public class BuzzerMockSound extends BuzzerMockCLI {
                     else
                         clip.stop();
 
-                    BasicUtils.delay(intermittingDelay);
+                    BasicUtils.delay(DomainSystemConfig.buzzerDelay);
                 }
             }
         });
