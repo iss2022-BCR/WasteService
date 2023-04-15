@@ -47,7 +47,6 @@ public abstract class TextDisplayModel implements ITextDisplay {
 
     private void setLine1(String text)
     {
-        System.out.println("Current: " + System.currentTimeMillis() + ", Last: " + lastUpdate1);
         if(System.currentTimeMillis() - lastUpdate1 > DomainSystemConfig.textLine1Delay)
         {
             text1 = text;
