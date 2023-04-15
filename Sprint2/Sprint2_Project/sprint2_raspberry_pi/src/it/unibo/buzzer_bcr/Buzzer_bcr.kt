@@ -22,6 +22,7 @@ class Buzzer_bcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name,
 					action { //it:State
 						println("[BuzzerBCR] Started.")
 						wasteservice.raspberry.buzzer.buzzerSupportBCR.createBuzzer(  )
+						wasteservice.raspberry.buzzer.buzzerSupportBCR.doBuzzer( TTState  )
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

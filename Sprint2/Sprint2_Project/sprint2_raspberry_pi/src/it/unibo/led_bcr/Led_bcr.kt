@@ -15,11 +15,14 @@ class Led_bcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		val interruptedStateTransitions = mutableListOf<Transition>()
+		
+				var TTState: wasteservice.TransportTrolleyState = wasteservice.TransportTrolleyState.HOME
 		return { //this:ActionBasciFsm
 				state("state_init") { //this:State
 					action { //it:State
 						println("[LedBCR] Started.")
 						wasteservice.raspberry.led.ledSupportBCR.createLed(  )
+						wasteservice.raspberry.led.ledSupportBCR.doLed( TTState  )
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -41,7 +44,7 @@ class Led_bcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						if( checkMsgContent( Term.createTerm("trolley_state_changed(STATE)"), Term.createTerm("trolley_state_changed(STATE)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 
-												val TTState = wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(0))
+												TTState = wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(0))
 												wasteservice.raspberry.led.ledSupportBCR.doLed(TTState)
 								println("[LedBCR] State: $TTState")
 						}

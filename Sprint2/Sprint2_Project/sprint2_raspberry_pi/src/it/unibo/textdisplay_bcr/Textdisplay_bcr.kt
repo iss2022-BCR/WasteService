@@ -22,6 +22,7 @@ class Textdisplay_bcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 					action { //it:State
 						println("[TextDisplayBCR] Started.")
 						wasteservice.raspberry.display.displaySupportBCR.createTextDisplay(  )
+						wasteservice.raspberry.display.displaySupportBCR.doDisplay( "", "TT: ${TTState.name}"  )
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

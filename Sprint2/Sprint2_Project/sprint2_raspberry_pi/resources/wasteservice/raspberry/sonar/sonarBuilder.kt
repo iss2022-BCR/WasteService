@@ -6,8 +6,9 @@ import it.unibo.kactor.sysUtil
 object sonarBuilder {
     const val firstActorName = "sonarinput"
     lateinit var firstActorInPipe: ActorBasic
+    lateinit var lastActorInPipe: ActorBasic
 
-    fun createSonar()
+    fun createSonar(enableText: Boolean = true)
     {
         val sonarActor = sysUtil.getActor(firstActorName)
         if(sonarActor == null)
@@ -15,12 +16,15 @@ object sonarBuilder {
             println("ERROR: actor '$firstActorName' not found.")
             return
         }
-        else firstActorInPipe = sonarActor
 
-        firstActorInPipe
-            .subscribeLocalActor("filter_distancebounds")
-            .subscribeLocalActor("filter_distancechanged")
-            .subscribeLocalActor("filter_textdisplay")
-            .subscribeLocalActor("filter_alarm")
+        firstActorInPipe = sonarActor
+        lastActorInPipe = sonarActor
+
+
+        lastActorInPipe = lastActorInPipe.subscribeLocalActor("filter_distancebounds")
+        lastActorInPipe = lastActorInPipe.subscribeLocalActor("filter_distancechanged")
+        if(enableText)
+            lastActorInPipe = lastActorInPipe.subscribeLocalActor("filter_textdisplay")
+        lastActorInPipe = lastActorInPipe.subscribeLocalActor("filter_alarm")
     }
 }
