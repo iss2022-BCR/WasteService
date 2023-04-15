@@ -8,7 +8,7 @@ import java.io.IOException;
 
 /*
  * Class that implements a real LCD 1602 (16 characters 2 lines)
- * display component.
+ * display component with the I2C Expander bus module.
  */
 public class TextDisplayConcreteLCD1602 extends TextDisplayModel implements ITextDisplay {
     @Override

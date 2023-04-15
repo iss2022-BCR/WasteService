@@ -14,7 +14,7 @@ public class TextDisplayMockCLI extends TextDisplayModel implements ITextDisplay
     protected void showText()
     {
         String className = "[" + this.getClass().getSimpleName() + "]";
-        ColorsOut.outappl(className + " Line1: " + getLine1(), ColorsOut.MAGENTA);
-        ColorsOut.outappl(className.replaceAll("(?s)(?<!\\\\S).(?!\\\\S)", " ") + " Line2: " + getLine2(), ColorsOut.MAGENTA);
+        ColorsOut.out(className + " Line1: " + getLine1());
+        ColorsOut.out(className.replaceAll("(?s)(?<!\\\\S).(?!\\\\S)", " ") + " Line2: " + getLine2());
     }
 }
