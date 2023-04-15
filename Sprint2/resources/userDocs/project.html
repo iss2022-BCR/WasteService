@@ -39,7 +39,13 @@
                     <a href="#TextDisplay-Component">TextDisplay Component</a>
                     <a href="#DomainSystemConfig-Changes">DomainSystemConfig Changes</a>
                 </div>
-                
+                <a href="#Raspberry-Pi">Raspberry Pi</a>
+                <div class="sidenavSubSection">
+                    <a href="#Raspberry-Pi-Updated-Logical-Architecture">RaspberryPi Updated<br/>Logical Architecture</a>
+                    <a href="#RaspberryPi-Device">RaspberryPi Device</a>
+                    <a href="#Sonar">Sonar</a>
+                    <a href="#Led">Led</a>
+                </div>
                 <a href="#Software-Name">&lt;Software Name&gt;</a>
                 <div class="sidenavSubSection">
                 </div>
@@ -400,19 +406,19 @@ protected void configure()
             Finally we implemented the concrete version which simply executes the
             <code>displayBCR.py</code> script passing the text as parameters:
 <pre style="white-space: pre;">
-    @Override
-    protected void textDisplayActivate(String text1, String text2)
-    {
-        String[] command = { "/usr/bin/python3", "-u", "./displayBCR.py", getLine1(), getLine2()};
-        ProcessBuilder builder = new ProcessBuilder(command);
+@Override
+protected void textDisplayActivate(String text1, String text2)
+{
+    String[] command = { "/usr/bin/python3", "-u", "./displayBCR.py", getLine1(), getLine2()};
+    ProcessBuilder builder = new ProcessBuilder(command);
 
-        String className = "[" + this.getClass().getSimpleName() + "]";
-        ColorsOut.out(className + " Line1: " + getLine1());
-        ColorsOut.out(className.replaceAll("(?s)(?&lt;!\\\\S).(?!\\\\S)", " ") + " Line2: " + getLine2());
+    String className = "[" + this.getClass().getSimpleName() + "]";
+    ColorsOut.out(className + " Line1: " + getLine1());
+    ColorsOut.out(className.replaceAll("(?s)(?&lt;!\\\\S).(?!\\\\S)", " ") + " Line2: " + getLine2());
 
-        try { builder.start(); }
-        catch(IOException e) { System.out.println("[" + this.getClass().getSimpleName() + "] ERROR: " +  e.getMessage()); }
-    }
+    try { builder.start(); }
+    catch(IOException e) { System.out.println("[" + this.getClass().getSimpleName() + "] ERROR: " +  e.getMessage()); }
+}
 </pre>
 
             <h3 id="DomainSystemConfig-Changes">DomainSystemConfig Changes</h3>
@@ -435,13 +441,41 @@ protected void configure()
                 </li>
             </ul>
 
+            <h4>Integration with Other Projects</h4>
+            In order to use the radarSystem22.domainBCR project in other projects (e.g. WasteService RaspberryPi),
+            we need to add the following line under the dependencies, in <code>build.gradle</code>:
+<pre style="white-space: pre;">
+dependencies {
+    [...]
+    implementation name: 'it.unibo.radarSystem22.domainBCR-1.0'
+}
+</pre>
+
             <h2 id="Raspberry-Pi">Sprint 2.3: Raspberry Pi</h2>
-            <h3 id="Device">Device</h3>
-            The device used is a <a href="https://www.raspberrypi.com/products/raspberry-pi-4-model-b/">Raspberry Pi 4 Model B</a>: <highlight1>Specifiche</highlight1>
-            <br/>
+            <ksi>RaspberryPi</ksi> (<a href="../../Sprint2_Project/sprint2_raspberry_pi/">sprint2_raspberry_pi</a>)
+            is the part of the Waste Service that involves the alarm/warning device.
+            
+            <h3 id="Raspberry-Pi-Updated-Logical-Architecture">RaspberryPi Updated Logical Architecture</h3>
+            <img width="100%" src="../../Sprint2_Project/sprint2_raspberry_pi/sprint2_raspberry_piarch_edited.png"/>
+            QAK model: <a href="../../Sprint2_Project/sprint2_raspberry_pi/src/wasteservice_rpi.qak">wasteservice_rpi.qak</a>
+
+            <h3 id="RaspberryPi-Device">RaspberryPi Device</h3>
+            The device used in our project is a <a href="https://www.raspberrypi.com/products/raspberry-pi-4-model-b/">Raspberry Pi 4 Model B</a>:
+            <ul>
+                <li>1.5 GHz 64-bit quad core ARM Cortex-A72</li>
+                <li>4GB RAM</li>
+                <li>standard 40 pin GPIO header</li>
+                <li>on-board 802.11ac Wi-Fi</li>
+                <li>Bluetooth 5.0</li>
+                <li>full gigabit Ethernet</li>
+                <li>[...]</li>
+            </ul>
 
             <h4>Pin scheme and components</h4>
-            
+            The Raspberry Pi <i>base</i> configuration we used for the project
+            is the following:
+            <img width="400px" src="../imgs/circuit_with_breadboard.png">
+
             <h4>Setup</h4>
             <ul>
                 <li>ssh/vnc</li>
@@ -449,34 +483,79 @@ protected void configure()
             </ul>
             <highlight1>Setup SSH without password</highlight1>
             
-            <h3>Sonar</h3>
-            Per implementare la feature del sonar, abbiamo preso un progetto fornito dalla nostra
-            software house (sonarqak) e ne abbiamo ricavato una versione specializzata:
-            abbiamo creato degli script python per diverse funzionalità
+            <h3 id="Sonar">Sonar</h3>
+            To implement the sonar part we based on the project 
+            <a href="https://github.com/anatali/issLab2022/tree/main/unibo.sonarqak22">unibo.sonarqak22</a>,
+            provided by the customer, and we integrated it with our <code>radarSystem22.domainBCR</code>.
+            
+            <h4>sonarSupportBCR Actor</h4>
+            <a href="../../Sprint2_Project/sprint2_raspberry_pi/resources/wasteservice/raspberry/sonar/sonarSupportBCR.kt"><ksi>sonarSupportBCR</ksi></a>
+            is a CodedQActor which represents the sonar data source (we called it "sonarinput"
+            inside the QAK). It creates an ISonar object (based on the configuration parameters it can be
+            a concrete Sonar component or a simulated one), and can be activated/deactivated through the
+            homonymous dispatches.
+<pre style="white-space: pre;">
+lateinit var sonar : ISonar
+init
+{
+    println("[$name] Started.")
+    DomainSystemConfig.setTheConfiguration("RaspberryDomainConfig.json")
+    sonar = DeviceFactory.createSonar()
+}
+</pre>
+            This actor iterates as long as the sonar is active, continuously getting
+            the detected distance and emitting a local stream event to the following
+            actor inside the pipeline.
 
+            <h4>sonarBuilder Object</h4>
+            <a href="../../Sprint2_Project/sprint2_raspberry_pi/resources/wasteservice/raspberry/sonar/sonarBuilder.kt"><ksi>sonarBuilder</ksi></a>
+            is a Kotlin object providing a function <code>createSonar()</code>
+            that builds the pipeline for the sonar, with the following actors:
             <ol>
-                <li>SonarAloneBCR.c</li>
-                <li>buzzerBCR.py</li>
-                <li>displayBCR.py</li>
-                <li>sonarBCR.py</li>
-                <li>ledBCR.py</li>
+                <li><code>sonarinput</code> (first) - the sonar data source;</li>
+                <li>
+                    <code>filter_distancebounds</code> - coded actor that acts as a filter and drops messages that
+                    contains a distance which goes outside the bounds defined in DomainSystemConfig;
+                </li>
+                <li>
+                    <code>filter_distancechanged</code> - coded actor that acts as a filter and drops messages that
+                    contains a distance equal to the previous detection;
+                </li>
+                <li>
+                    <code>filter_alarm</code> (last) - coded actor that emits a STOP event (not local anymore) if the distance
+                    became less than DLIMT, or else emits a RESUME event if the distance became greater or equal to DLIMT.
+                </li>
             </ol>
 
-            Inizialmente abbiamo creato un programma C chiamato SonarWrapperBCR.c che utilizzasse
-            gli script python. Tuttavia, la chiamata di programmi esterni generava overhead e ne rallentava
-            l'esecuzione. Quindi abbiamo deciso di creare un programma completamente in C che implementasse
-            tutte le funzioni, ed implementare la possibilità di abilitare le varie feature tramite opzioni passate
-            come argomenti del programma.
+            <h4>SonarBCR Actor</h4>
+            <ksi>SonarBCR</ksi> is a QAK actor that call the function which builds the sonar,
+            and activates it.
 
-            <h3>Led</h3>
+            <h3 id="Led">Led</h3>
+            As per the sonar, we implemented the led part by using our <code>radarSystem22.domainBCR</code>.
 
-            <h3>Integration with WasteService</h3>
-            + add entry to build.gradle
+            <h4>ledSupportBCR Object</h4>
+            <a href="../../Sprint2_Project/sprint2_raspberry_pi/resources/wasteservice/raspberry/led/ledSupportBCR.kt"><ksi>ledSupportBCR</ksi></a>
+            is Kotlin object that provides a function to create an ILed
+            object, according the DomainSystemConfig configuration, and a function to update the
+            led state according to the TransportTrolleyState.
+            <pre>
+                fun createLed()
+                fun doLed(state: TransportTrolleyState)
+            </pre>
 
-            <h2 id="Command-Runner">Sprint 2.4: Command Runner</h2>
+            <h4>ledBCR Actor</h4>
+            <ksi>ledBCR</ksi> is a QAK actor that uses the ledSupportBCR object and
+            listen to <code>trolley_state_changed</code> events, emitted by <code>TrolleyStateProvider</code>:
+            when this event is received, the led updates the component state by calling <code>doLed()</code>.
 
             <h2 id="Extensions">Sprint 2 Extensions</h2>
-            <h3>RadarSystem22: Radar GUI</h3>
+
+            <h3 id="Buzzer">Buzzer</h3>
+
+            <h3 id="TextDisplay">Text Display</h3>
+
+            <h3 id="RadarSystem22-RadarGUI">RadarSystem22: Radar GUI</h3>
             Since our software house already developed a project capable of showing sonar
             information in a fancy way, we considered its usage and analyzed if there was
             a way to adapt it and include it in our Waste Service project.
