@@ -296,8 +296,7 @@ onMsg(coapUpdate: coapUpdate(RESOURCE, VALUE)) {
                     running until the user interrupts it.
                 </li>
             </ul>
-            <a href="https://it.pinout.xyz/pinout/">Raspberry Pi Pinout reference</a>.
-
+            
             <h3 id="Led-and-Sonar-Changes">Led and Sonar Changes</h3>
             We updated the <code>ILed</code> interface to add the method <code>blink()</code>
             which should make the Led to blink the led flash at intervals of time:
@@ -402,7 +401,8 @@ dependencies {
             <h4>Pin scheme and components</h4>
             The Raspberry Pi <i>base</i> configuration we used for the project
             is the following:
-            <img width="400px" src="../imgs/circuit_with_breadboard.png">
+            <center><img width="400px" src="../imgs/circuit_with_breadboard.png"></center>
+            <a href="https://it.pinout.xyz/pinout/">Raspberry Pi Pinout reference</a>.
 
             <h4>Setup</h4>
             <ul>
@@ -491,8 +491,12 @@ init
                     device, such as the distance detected by the sonar and the Transport Trolley state
                     as text.
                 </li>
-            </ul> 
-            
+            </ul>
+
+            The Raspberry Pi <i>extended</i> configuration we used for the project is the following:
+            <center><img width="400px"  src="../../resources/imgs/project/circuit_with_breadboard_extension.png"></center>
+            <a href="https://it.pinout.xyz/pinout/">Raspberry Pi Pinout reference</a>.
+
             <h3 id="Buzzer">Buzzer</h3>
             The <b>buzzer</b> (TMB12A05) is a simple component, much similiar to the led, since it provides an output feedback, 
             has only 2 states (ON/OFF) and requires just 2 pins to work: power and ground.
@@ -546,7 +550,7 @@ catch (Exception e) {e.printStackTrace();}
             <h3 id="TextDisplay">Text Display</h3>
             The <b>LCD display 1602</b> is an output component capable of displaying 16 characters on
             2 different lines. Since its base interface is complex and requires many connections,
-            it's often used with an I2C expander module, which require instead only 4 pins, two of
+            it's often used with an <b>I2C bus expander module</b>, which require instead only 4 pins, two of
             which are the I2C RaspberryPi interface.
             <br/>
             <center><img width="300px" src="../../resources/imgs/project/displayLCD1602_I2c.jpg"></center>
@@ -656,7 +660,7 @@ protected void textDisplayActivate(String text1, String text2)
             networking interface.
 
             <consideration>
-                <b>Consideration</b>: our first idea was to enhance the Raspberry Pi node 
+                <b>Considerations</b>: our first idea was to enhance the Raspberry Pi node 
                 by attaching to the device an LCD touchscreen display with 3.5" size, so that
                 it <b>would show the obstacle/distances detected by the sonar already on the device</b>. 
                 <br/>
