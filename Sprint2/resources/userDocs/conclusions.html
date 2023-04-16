@@ -51,9 +51,44 @@
             <h1 align="center">Sprint Conclusions</h1>
 
             <h2 id="Summary">Summary</h2>
-            During <b>Sprint 2</b> our team analyzed and implemented the software
-            related to the Raspberry Pi part of the system, trying to meet in the best
-            way possible the customer requirements.
+            During <b>Sprint 2</b> our team analyzed and implemented the software needed to
+            meet the <b>4th requirement</b>.
+            The software was related to the Raspberry Pi part of the system, and in particular
+            we developed:
+            <ul>
+                <li>Possibility to use a real Raspberry Pi device with components, or to use a simulation</li>
+                <li>Extended features: display and buzzer</li>
+            </ul>
+
+            We tested the WasteService system with different architecture configurations:
+            <ul>
+                <li>
+                    <b>Simulated</b> environment in <b>LAN</b>:
+                    SmartDevice emulated on pc machine,
+                    WasteService Core on pc machine,
+                    WasteService Rpi on pc machine.
+                </li>
+                <li>
+                    <b>Real</b> environment in <b>LAN</b>:
+                    SmartDevice on smartphone, 
+                    WasteService Core on pc machine, 
+                    WasteService RPi on Raspberry Pi device.
+                </li>
+                <li>
+                    <b>Real</b> environment over the <b>Internet</b>:
+                    SmartDevice on smartphone (connected to a cellular connection),
+                    WasteService Core on pc machine (connected to router1),
+                    WasteService Rpi on Raspberry Pi device (connected to router2).
+                </li>
+            </ul>
+            <div class="remark">
+                The <b>output of the Sprint2</b> is the implementation of the following softwares:
+                <ol class="summary">
+                    <li><ksi>WasteService Core</ksi></li>
+                    <li>RadarSystem22.domainBCR</li>
+                    <li><ksi>WasteService RPi</ksi></li>
+                </ol>
+            </div>
             
 
             <h3 id="Task-Partitioning">Task Partitioning</h3>
@@ -220,7 +255,25 @@
             <h3 id="Demo-Example">Demo Example</h3>
             <h4>Setup</h4>
             <ol>
-                <li></li>
+                <li>Install Java (>8 or >11 if one wants to use the MapEditor);</li>
+                <li>Install docker.</li>
+                <li>Install gradle (>= 7.4).</li>
+                <li>
+                    (Optional, if one doesn't have an Android device)
+                    <ul>
+                        <li>Install an Android Emulator (<a href="https://developer.android.com/studio/run/emulator">guide</a>);</li>
+                        <li>Install Flutter (<a href="https://docs.flutter.dev/get-started/install">guide</a>) </li>
+                    </ul>
+                </li>
+                <li>
+                    From the latest release on our <a href="https://github.com/iss2022-BCR/WasteService/releases/latest">GitHub repository</a>, download:
+                    <ul>
+                        <li>VirtualRobot docker image (<code>virtualRobotOnly4.0.yaml</code>).</li>
+                        <li>WasteService ZIP archive (<code>waste_service.zip</code>).</li>
+                        <li>SmartDevice APK (<code>smart_device.apk</code>).</li>
+                    </ul>
+                    NB: file names can vary a bit (sprint number, version number). Use the <b>latest version available</b>.
+                </li>
             </ol>
             <h4>Execution</h4>
             <ol>

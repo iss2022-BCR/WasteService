@@ -55,7 +55,10 @@
                     <a href="#RadarSystem22-RadarGUI">RadarSystem22:<br/>Radar GUI</a>
                 </div>
                 <a href="#Deployment">Deployment</a>
-                <a href="#Raspberry-Demo">Raspberry Demo</a>
+                <div class="sidenavSubSection">
+                    <a href="#Build-System">Build System</a>
+                    <a href="#Deploy-System">Deploy System</a>
+                </div>
             </div>
             <a href="test_plans.html">Test Plans</a>
             <a href="conclusions.html">Conclusions</a>
@@ -692,25 +695,62 @@ protected void textDisplayActivate(String text1, String text2)
 
             which allows
 
-            <h3>Build System</h3>
-            <h4>Build WasteService Core</h4>
-
-            <h4>Build WasteService RPi</h4>
+            <h3 id="Build-System">Build System</h3>
+            To build the projects we used the <a href="https://docs.gradle.org/current/userguide/distribution_plugin.html">Gradle distribution plugin</a>,
+            which allowed us to generate ZIP archives containing everything needed to run the
+            system parts, by using the following command:
             <pre>
                 ./gradlew distZip
             </pre>
-            Will produce a ZIP archive in <a href="../../Sprint2_Project/sprint2_wasteservice_rpi/build/distributions/">sprint2_wasteservice_rpi/build/distributions</a>
-
-            <h3>Deploy System</h3>
-
-
-            <h2 id="Demo">Sprint2 Demo</h2>
-            In order to run demo components we need:
-            [...]
             
-            <h4>Setup Remote Communications</h4>
-            <highlight1>To setup remote communication refer to this: link.</highlight1>
-        
+            This command will produce a ZIP archive under <code>build/distributions/</code>
+
+            <h4>Build WasteService Core</h4>
+            To ease the building of the <ksi>WasteService Core</ksi>, since it contains 3 different
+            contexts and therefore <b>3 main classes</b>, we added the following entry to the
+            build.gradle:
+<pre style="white-space: pre;">
+distZip {
+    archiveName "unibo.sprint2_wasteservice_core_WS.zip"
+    if (project.hasProperty("build_TransportTrolley")) {
+        archiveName "unibo.sprint2_wasteservice_core_TT.zip"
+    } else if (project.hasProperty("build_Robot")) {
+        archiveName "unibo.sprint2_wasteservice_core_RT.zip"
+    }
+}
+</pre>
+            This way we are able to select the main of the distribution build, by
+            passing it as a parameter to the <code>gradlew</code> command. To make it
+            even easier to build the project, we created a script to automatize the build 
+            of the 3 context:
+            <pre>
+                <a href="../../Sprint2_Project/scripts/build_WasteService_Core.bat">build_WasteService_Core.bat</a>
+            </pre>
+
+            <h4>Build WasteService RPi</h4>
+            To build the <ksi>WasteService RPi</ksi> project simply run the following script:
+            <pre>
+                <a href="../../Sprint2_Project/scripts/build_WasteService_RPi.bat">build_WasteService_RPi.bat</a>
+            </pre>
+
+            <h3 id="Deploy-System">Deploy System</h3>
+            To deploy the WasteService RPi project on the Raspberry Pi device, we created a
+            batch script to automatize the task:
+            <pre>
+                <a href="../../Sprint2_Project/scripts/deploy_WasteService_RPi.bat">deploy_WasteService_RPi.bat</a>
+            </pre>
+
+            This script performs the following actions:
+            <ol>
+                <li>build the ZIP archive of the project for the distribution;</li>
+                <li>ask the user the IP address of the target RaspberryPi;</li>
+                <li>ask the password and copy the ZIP on the target RaspberryPi;</li>
+                <li>
+                    ask the password again and setup the environment (remove pre-existent folder, 
+                    unzip, give permissions to the runner script).
+                </li>
+            </ol>
+
         </div>
 
     </body>
