@@ -276,8 +276,7 @@ onMsg(coapUpdate: coapUpdate(RESOURCE, VALUE)) {
                 </li>
                 <li>
                     <b>Ease of use and deployment</b>, Python is easy to install and already shipped with
-                    Raspberry OS images. Python scripts also doesn't need to be compiled, which is one
-                    operation less to do during the deployment phase. 
+                    Raspberry OS images. Python scripts also don't need to be compiled: this results in one less task during deployment.
                 </li>
             </ul>
             For these reason we developed the following scripts:
@@ -390,7 +389,7 @@ dependencies {
             The device used in our project is a <a href="https://www.raspberrypi.com/products/raspberry-pi-4-model-b/">Raspberry Pi 4 Model B</a>:
             <ul>
                 <li>1.5 GHz 64-bit quad core ARM Cortex-A72</li>
-                <li>4GB RAM</li>
+                <li>4 GB RAM</li>
                 <li>standard 40 pin GPIO header</li>
                 <li>on-board 802.11ac Wi-Fi</li>
                 <li>Bluetooth 5.0</li>
@@ -644,7 +643,7 @@ protected void textDisplayActivate(String text1, String text2)
             center of the screen, <b><i>simulating a sonar</i></b>. Detected obstacles (with their
             distance and angle) are stored in a queue and, if the detected obstacle 
             distance is within the bounds of interest, as soon as the line encounters
-            the point, the application display
+            the point, he application shows the obstacle texture and gives an audio feedback.
             <br/><br/>
             <center>
                 <img width="50%" src="../imgs/project/radarGUI.gif"/>
@@ -673,18 +672,16 @@ protected void textDisplayActivate(String text1, String text2)
             </consideration>
             
             <problem>Raspberry Device PINs</problem>
-            <b>Problem</b>: what prevent us from pursuing this enhancement, was the fact that
-            that particular display needs to be attached to the first 26 pins of the Raspberry Pi,
-            including the 5V power supply one. That's an issue since the HC-SR04, which is a <i><b>requirement</b></i>
-            needs it too.
+            <b>Problem</b>: what prevent us from pursuing this enhancement are the 26 Raspberry Pi pins required by this particular display, 
+            including the 5V power supply one. This is an issue since the HC-SR04, provided by the <i><b>requirements</b></i>,
+            needs the 5V pin too.
             <br/><br/>
             <center>
                 <img width="50%" src="../imgs/project/RaspberryPi_displayLCD.jpg"/>
             </center>
 
             <solution>
-                <b>Decision</b>: we decided <ksi>not to implement that extension</ksi>, due to the time and
-                it would have required to search for and develop a workaround.
+                <b>Decision</b>: we decided <ksi>not to implement that extension</ksi>, since the time needed to find a workaround to fix it.
             </solution>
             
             <h2 id="Deployment">Deployment</h2>
