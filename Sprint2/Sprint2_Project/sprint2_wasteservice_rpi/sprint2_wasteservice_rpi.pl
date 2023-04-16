@@ -1,5 +1,5 @@
 %====================================================================================
-% sprint2_raspberry_pi description   
+% sprint2_wasteservice_rpi description   
 %====================================================================================
 context(ctx_wasteservice, "192.168.1.4",  "TCP", "11800").
 context(ctx_transporttrolley, "192.168.1.4",  "TCP", "11801").

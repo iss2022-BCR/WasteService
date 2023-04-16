@@ -114,8 +114,8 @@
                 </li>
                 <li>
                     <ksi>WasteService RPi</ksi>
-                    <img width="100%" src="../../Sprint2_Project/sprint2_raspberry_pi/sprint2_raspberry_pi_no_extensionarch_edited.png"/>
-                    QAK model: <a href="../../Sprint2_Project/sprint2_raspberry_pi/src/wasteservice_rpi_no_extension.noqak">wasteservice_rpi_no_extension.noqak</a>
+                    <img width="100%" src="../../Sprint2_Project/sprint2_wasteservice_rpi/sprint2_wasteservice_rpi_no_extensionarch_edited.png"/>
+                    QAK model: <a href="../../Sprint2_Project/sprint2_wasteservice_rpi/src/wasteservice_rpi_no_extension.noqak">wasteservice_rpi_no_extension.noqak</a>
                 </li>
             </ul>
             
@@ -378,12 +378,12 @@ dependencies {
 </pre>
 
             <h2 id="WasteService-RPi">Sprint 2.3: WasteService RPi</h2>
-            <ksi>WasteService RPi</ksi> (<a href="../../Sprint2_Project/sprint2_raspberry_pi/">sprint2_raspberry_pi</a>)
+            <ksi>WasteService RPi</ksi> (<a href="../../Sprint2_Project/sprint2_wasteservice_rpi/">sprint2_wasteservice_rpi</a>)
             is the part of the Waste Service that involves the alarm/warning device.
             
             <h3 id="WS-RPi-Updated-Logical-Architecture">WS RPi: Updated Logical Architecture</h3>
-            <img width="100%" src="../../Sprint2_Project/sprint2_raspberry_pi/sprint2_raspberry_piarch_edited.png"/>
-            QAK model: <a href="../../Sprint2_Project/sprint2_raspberry_pi/src/wasteservice_rpi.qak">wasteservice_rpi.qak</a>
+            <img width="100%" src="../../Sprint2_Project/sprint2_wasteservice_rpi/sprint2_wasteservice_rpiarch_edited.png"/>
+            QAK model: <a href="../../Sprint2_Project/sprint2_wasteservice_rpi/src/wasteservice_rpi.qak">wasteservice_rpi.qak</a>
 
             <h3 id="WS-RPi-RaspberryPi-Device">WS RPi: RaspberryPi Device</h3>
             The device used in our project is a <a href="https://www.raspberrypi.com/products/raspberry-pi-4-model-b/">Raspberry Pi 4 Model B</a>:
@@ -416,7 +416,7 @@ dependencies {
             provided by the customer, and we integrated it with our <code>radarSystem22.domainBCR</code>.
             
             <h4>sonarSupportBCR Actor</h4>
-            <a href="../../Sprint2_Project/sprint2_raspberry_pi/resources/wasteservice/raspberry/sonar/sonarSupportBCR.kt"><ksi>sonarSupportBCR</ksi></a>
+            <a href="../../Sprint2_Project/sprint2_wasteservice_rpi/resources/wasteservice/raspberry/sonar/sonarSupportBCR.kt"><ksi>sonarSupportBCR</ksi></a>
             is a CodedQActor which represents the sonar data source (we called it "sonarinput"
             inside the QAK). It creates an ISonar object (based on the configuration parameters it can be
             a concrete Sonar component or a simulated one), and can be activated/deactivated through the
@@ -435,7 +435,7 @@ init
             actor inside the pipeline.
 
             <h4>sonarBuilder Object</h4>
-            <a href="../../Sprint2_Project/sprint2_raspberry_pi/resources/wasteservice/raspberry/sonar/sonarBuilder.kt"><ksi>sonarBuilder</ksi></a>
+            <a href="../../Sprint2_Project/sprint2_wasteservice_rpi/resources/wasteservice/raspberry/sonar/sonarBuilder.kt"><ksi>sonarBuilder</ksi></a>
             is a Kotlin object providing a function <code>createSonar()</code>
             that builds the pipeline for the sonar, with the following actors:
             <ol>
@@ -462,7 +462,7 @@ init
             As per the sonar, we implemented the led part by using our <code>radarSystem22.domainBCR</code>.
 
             <h4>ledSupportBCR Object</h4>
-            <a href="../../Sprint2_Project/sprint2_raspberry_pi/resources/wasteservice/raspberry/led/ledSupportBCR.kt"><ksi>ledSupportBCR</ksi></a>
+            <a href="../../Sprint2_Project/sprint2_wasteservice_rpi/resources/wasteservice/raspberry/led/ledSupportBCR.kt"><ksi>ledSupportBCR</ksi></a>
             is Kotlin object that provides a function to create an ILed
             object, according to the DomainSystemConfig configuration, and a function to update the
             led state according to the TransportTrolleyState.
@@ -533,7 +533,7 @@ catch (Exception e) {e.printStackTrace();}
 </pre>
             <h4>WS Core: buzzerSupportBCR Object</h4>
             To integrate the buzzer component in the WasteService RPi project, we created a Kotlin object
-            <a href="../../Sprint2_Project/sprint2_raspberry_pi/resources/wasteservice/raspberry/buzzer/buzzerSupportBCR.kt"><ksi>buzzerSupportBCR</ksi></a>.
+            <a href="../../Sprint2_Project/sprint2_wasteservice_rpi/resources/wasteservice/raspberry/buzzer/buzzerSupportBCR.kt"><ksi>buzzerSupportBCR</ksi></a>.
             This object provides a function to create an IBuzzer object, according to the DomainSystemConfig configuration,
             and a function to update the buzzer state according to the TransportTrolleyState.
             <pre>
@@ -610,7 +610,7 @@ protected void textDisplayActivate(String text1, String text2)
             
             <h4>WS Core: displaySupportBCR Object</h4>
             To integrate the display component in the WasteService RPi project, we created a Kotlin object
-            <a href="../../Sprint2_Project/sprint2_raspberry_pi/resources/wasteservice/raspberry/display/displaySupportBCR.kt"><ksi>displaySupportBCR</ksi></a>.
+            <a href="../../Sprint2_Project/sprint2_wasteservice_rpi/resources/wasteservice/raspberry/display/displaySupportBCR.kt"><ksi>displaySupportBCR</ksi></a>.
             This object provides a function to create an ITextDisplay object, according to the DomainSystemConfig configuration,
             and a function to update the led state according to the TransportTrolleyState
             <pre>
@@ -691,6 +691,17 @@ protected void textDisplayActivate(String text1, String text2)
             https://docs.gradle.org/current/userguide/distribution_plugin.html
 
             which allows
+
+            <h3>Build System</h3>
+            <h4>Build WasteService Core</h4>
+
+            <h4>Build WasteService RPi</h4>
+            <pre>
+                ./gradlew distZip
+            </pre>
+            Will produce a ZIP archive in <a href="../../Sprint2_Project/sprint2_wasteservice_rpi/build/distributions/">sprint2_wasteservice_rpi/build/distributions</a>
+
+            <h3>Deploy System</h3>
 
 
             <h2 id="Demo">Sprint2 Demo</h2>

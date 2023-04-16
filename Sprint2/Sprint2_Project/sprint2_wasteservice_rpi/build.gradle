@@ -103,20 +103,6 @@ eclipse {
     }
 }
 
-
-/*application {
-    // Define the main class for the application.
-    mainClass = 'it.unibo.ctx_raspberrypi.MainCtx_raspberrypiKt'
-}
-
-jar {
-    println("building jar")
-    from sourceSets.main.allSource
-    manifest {
-        attributes 'Main-Class': "$mainClassName"
-    }
-}*/
-
 task(runCtx_RaspberryPi, dependsOn: 'classes', type: JavaExec) {
     mainClass = 'it.unibo.ctx_raspberrypi.MainCtx_raspberrypiKt'
     classpath = sourceSets.main.runtimeClasspath
@@ -164,6 +150,8 @@ distributions {
                 from "./resources/wasteservice/raspberry/buzzer/buzzerBCR.py"
                 from "./RaspberryDomainConfig.json"
             }
+
+            from "./run_WasteService_RPi.bat"
         }
     }
 }

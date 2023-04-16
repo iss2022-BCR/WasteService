@@ -16,7 +16,7 @@ eventedgeattr = {
     'color': 'red',
     'style': 'dotted'
 }
-with Diagram('sprint2_raspberry_piArch', show=False, outformat='png', graph_attr=graphattr) as diag:
+with Diagram('sprint2_wasteservice_rpiArch', show=False, outformat='png', graph_attr=graphattr) as diag:
   with Cluster('env'):
      sys = Custom('','./qakicons/system.png')
      with Cluster('ctx_wasteservice', graph_attr=nodeattr):
