@@ -25,6 +25,9 @@ public class TestTextDisplay {
     @Test
     public void testTextDisplayMock()
     {
+        DomainSystemConfig.textLine1Delay = 0;
+        DomainSystemConfig.textLine2Delay = 0;
+
         System.out.println("testTextDisplayMock");
 
         ITextDisplay textDisplay = DeviceFactory.createTextDisplay();
