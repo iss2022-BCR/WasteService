@@ -15,6 +15,6 @@ public class BuzzerMockCLI extends BuzzerModel implements IBuzzer {
 
     protected void showState()
     {
-        ColorsOut.outappl("[" + this.getClass().getSimpleName() + "] State: " + getState(), ColorsOut.MAGENTA);
+        ColorsOut.out("[" + this.getClass().getSimpleName() + "] State: " + getState());
     }
 }

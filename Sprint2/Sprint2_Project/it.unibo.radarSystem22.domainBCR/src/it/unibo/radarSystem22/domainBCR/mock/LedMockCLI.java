@@ -15,7 +15,7 @@ public class LedMockCLI extends LedModel implements ILed {
 
 	protected void showState()
 	{
-		ColorsOut.outappl("[" + this.getClass().getSimpleName() + "] State: " + getState(), ColorsOut.MAGENTA);
+		ColorsOut.out("[" + this.getClass().getSimpleName() + "] State: " + getState());
 	}
 
 	public static void main(String[] args)
