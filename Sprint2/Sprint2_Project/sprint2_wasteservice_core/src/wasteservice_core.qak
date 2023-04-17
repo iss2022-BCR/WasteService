@@ -424,7 +424,6 @@ QActor pathexecutorbcr context ctx_transporttrolley {
 		[# CurMoveTodo = pathut.nextMove() #]
 		[# MovesDone += CurMoveTodo #]
 		println("[PathExecutorBCR] Current move to do: $CurMoveTodo")
-		println("  TEST NEXT MOVE [PathExecutorBCR] MovesDone.length: ${MovesDone.length}, TotPathMoves: ${TotPathMoves}")
 		
 	}
 	Goto state_end_work_ok if [# CurMoveTodo.length == 0 #] else state_do_move
@@ -460,6 +459,7 @@ QActor pathexecutorbcr context ctx_transporttrolley {
 					whenEvent stop	-> state_stop
 	
 	State state_end_work_ok {
+		[# MovesDone = "" #]
 		println("[PathExecutorBCR] Path done.")
 		replyTo dopath with dopathdone: dopathdone( ok ) caller== transporttrolley
 	}
@@ -488,7 +488,6 @@ QActor pathexecutorbcr context ctx_transporttrolley {
 	Transition t3 whenEvent resume -> state_resume
 	
 	State state_resume {
-		println("  TEST RESUME [PathExecutorBCR] MovesDone.length: ${MovesDone.length}, TotPathMoves: ${TotPathMoves}")
 		if [# MovesDone.length != TotPathMoves #] {
 			//forward trolleystateprovider -m update_trolley_state: update_trolley_state(MOVING)
 			updateResource [# "transporttrolley(MOVING)" #]

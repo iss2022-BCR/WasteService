@@ -69,7 +69,6 @@ class Pathexecutorbcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 						 CurMoveTodo = pathut.nextMove()  
 						 MovesDone += CurMoveTodo  
 						println("[PathExecutorBCR] Current move to do: $CurMoveTodo")
-						println("  TEST NEXT MOVE [PathExecutorBCR] MovesDone.length: ${MovesDone.length}, TotPathMoves: ${TotPathMoves}")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -127,6 +126,7 @@ class Pathexecutorbcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 				}	 
 				state("state_end_work_ok") { //this:State
 					action { //it:State
+						 MovesDone = ""  
 						println("[PathExecutorBCR] Path done.")
 						answer("dopath", "dopathdone", "dopathdone(ok)","transporttrolley"   )  
 						//genTimer( actor, state )
@@ -164,7 +164,6 @@ class Pathexecutorbcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 				}	 
 				state("state_resume") { //this:State
 					action { //it:State
-						println("  TEST RESUME [PathExecutorBCR] MovesDone.length: ${MovesDone.length}, TotPathMoves: ${TotPathMoves}")
 						if(  MovesDone.length != TotPathMoves  
 						 ){updateResourceRep( "transporttrolley(MOVING)"  
 						)
