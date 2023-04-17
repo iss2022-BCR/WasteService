@@ -1,7 +1,6 @@
 package it.unibo.radarSystem22.domainBCR;
 import static org.junit.Assert.assertTrue;
 
-import it.unibo.radarSystem22.domainBCR.utils.ColorsOut;
 import org.junit.*;
 
 import it.unibo.radarSystem22.domainBCR.interfaces.ISonar;
@@ -9,7 +8,7 @@ import it.unibo.radarSystem22.domainBCR.utils.BasicUtils;
 import it.unibo.radarSystem22.domainBCR.utils.DomainSystemConfig;
  
 
-public class TestSonarMock {
+public class TestSonar {
 	@Before
 	public void up() {
 		System.out.println("up");
