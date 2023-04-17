@@ -279,24 +279,30 @@
                     From the latest release on our <a href="https://github.com/iss2022-BCR/WasteService/releases/latest">GitHub repository</a>, download:
                     <ul>
                         <li>VirtualRobot docker image (<code>virtualRobotOnly4.0.yaml</code>).</li>
-                        <li>WasteService Core & WasteService RPi ZIP archives (<code>waste_service.zip</code>).</li>
+                        <li>WasteService Core & WasteService RPi ZIP archives.</li>
                         <li>SmartDevice APK (<code>smart_device.apk</code>).</li>
                     </ul>
                     NB: file names can vary a bit (sprint number, version number). Use the <b>latest version available</b>.
                 </li>
             </ol>
+
+            <b>NB</b>: to download a ZIP containing the basics needed to run the system,
+            download <a href="https://github.com/iss2022-BCR/WasteService/releases/download/sprint2_v1/Sprint2_WasteServiceBCR.zip">Sprint2_WasteServiceBCR.zip</a>
+
             <h5>Raspberry Pi Node</h5>
             <ol>
                 <li>SSH must be installed and usable (see <a href="https://www.raspberrypi.com/documentation/computers/configuration.html">raspi-config</a>);</li>
                 <li>VNC could be another useful tool;</li>
                 <li>make sure Python is installed;</li>
                 <li>make sure Java (>8) is installed;</li>
-                <li></li>
             </ol>
-            <h4>Execution</h4>
 
+            <h4>Execution</h4>
             <ol>
-                <li></li>
+                <li>Run the virtual robot docker image;</li>
+                <li>Open a browser at http://localhost:8090/;</li>
+                <li>Run the WasteService Core contexts (WasteService, TransportTrolley and Robot);</li>
+                <li>Run the WasteService RPi context</li>
             </ol>
 
             <h2 id="Sprint-Review">Sprint Review</h2>
