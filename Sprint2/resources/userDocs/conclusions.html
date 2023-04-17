@@ -279,29 +279,56 @@
                     From the latest release on our <a href="https://github.com/iss2022-BCR/WasteService/releases/latest">GitHub repository</a>, download:
                     <ul>
                         <li>VirtualRobot docker image (<code>virtualRobotOnly4.0.yaml</code>).</li>
-                        <li>WasteService ZIP archive (<code>waste_service.zip</code>).</li>
+                        <li>WasteService Core & WasteService RPi ZIP archives (<code>waste_service.zip</code>).</li>
                         <li>SmartDevice APK (<code>smart_device.apk</code>).</li>
                     </ul>
                     NB: file names can vary a bit (sprint number, version number). Use the <b>latest version available</b>.
                 </li>
             </ol>
             <h5>Raspberry Pi Node</h5>
+            <ol>
+                <li>SSH must be installed and usable (see <a href="https://www.raspberrypi.com/documentation/computers/configuration.html">raspi-config</a>);</li>
+                <li>VNC could be another useful tool;</li>
+                <li>make sure Python is installed;</li>
+                <li>make sure Java (>8) is installed;</li>
+                <li></li>
+            </ol>
             <h4>Execution</h4>
+
             <ol>
                 <li></li>
             </ol>
 
             <h2 id="Sprint-Review">Sprint Review</h2>
-            TO-DO
+            <highlight1>TO-DO</highlight1>
+            <h3>Bugs</h3>
+            <ol>
+                <li>Sometimes the text on the LCD display gets blurred/buggy</li>
+                <li>
+                    The TransportTrolley state doesn't update correctly when resuming from STOP,
+                    after being STOPPED in HOME (the resumed state becomes MOVING instead of HOME).
+                </li>
+            </ol>
+            The full bugs list is available on the <a href="https://github.com/iss2022-BCR/WasteService/issues">GitHub repository</a>.
 
             <h2 id="Sprint-Retrospective">Sprint Retrospective</h2>
-            TO-DO
+            <highlight1>TO-DO</highlight1>
 
             <h2 id="Work-Plan">Work Plan</h2>
             The next sprint is <a href="../../../Sprint3/index.html">Sprint3</a>, which involves the requirement <b>3</b>.
 
             <h3 id="Sprint3"><b>Sprint3</b> - Monitoring</h3>
-
+            The Sprint3 will involve the creation of a Web application <i>WasteServiceStatusGUI</i>:
+            <ul>
+                <li>
+                    shows the state of the Service-Area:
+                    <ul>
+                        <li>transportTrolley current state;</li>
+                        <li>current weight stored in waste-containers;</li>
+                        <li>current Led state.</li>
+                    </ul>
+                </li>
+            </ul>
         </div>
 
         <!--<footer>

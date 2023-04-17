@@ -110,11 +110,6 @@ task(runCtx_SmartDevice, dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 }
 
-task(runCtx_RaspberryPi, dependsOn: 'classes', type: JavaExec) {
-    mainClass = 'it.unibo.ctx_raspberrypi.MainCtx_raspberrypiKt'
-    classpath = sourceSets.main.runtimeClasspath
-}
-
 task(runCtx_WasteService, dependsOn: 'classes', type: JavaExec) {
     mainClass = 'it.unibo.ctx_wasteservice.MainCtx_wasteserviceKt'
     classpath = sourceSets.main.runtimeClasspath
