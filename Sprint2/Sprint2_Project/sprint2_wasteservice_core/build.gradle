@@ -105,20 +105,6 @@ eclipse {
     }
 }
 
-
-/*application {
-    // Define the main class for the application.
-    mainClass = 'it.unibo.ctx_robot.MainCtx_robotKt'
-}
-
-jar {
-    println("building jar")
-    from sourceSets.main.allSource
-    manifest {
-        attributes 'Main-Class': "$mainClassName"
-    }
-}*/
-
 task(runCtx_SmartDevice, dependsOn: 'classes', type: JavaExec) {
     mainClass = 'it.unibo.ctx_smartdevice.MainCtx_smartdeviceKt'
     classpath = sourceSets.main.runtimeClasspath
@@ -156,9 +142,9 @@ application {
     // Define the main class for the application: -P<build_name> (default: WasteService build)
     mainClassName = 'it.unibo.ctx_wasteservice.MainCtx_wasteserviceKt'
     if (project.hasProperty("build_TransportTrolley")) {
-        mainClassName = 'it.unibo.ctx_wasteservice.MainCtx_transporttrolleyKt'
+        mainClassName = 'it.unibo.ctx_transporttrolley.MainCtx_transporttrolleyKt'
     } else if (project.hasProperty("build_Robot")) {
-        mainClassName = 'it.unibo.ctx_wasteservice.MainCtx_robotKt'
+        mainClassName = 'it.unibo.ctx_robot.MainCtx_robotKt'
     }
 }
 
@@ -175,5 +161,29 @@ jar {
         exclude 'META-INF/*.SF'
         exclude 'META-INF/*.DSA'
         exclude 'META-INF/*.RSA'
+    }
+}
+
+distZip {
+    archiveName "unibo.sprint2_wasteservice_core_WS.zip"
+    if (project.hasProperty("build_TransportTrolley")) {
+        archiveName "unibo.sprint2_wasteservice_core_TT.zip"
+    } else if (project.hasProperty("build_Robot")) {
+        archiveName "unibo.sprint2_wasteservice_core_RT.zip"
+    }
+}
+
+distributions {
+    main {
+        contents {
+            // Put the files into the following folder
+            into('bin/') {
+                from "./sprint2_wasteservice_core.pl"
+                from "./sysRules.pl"
+                from "./basicrobotConfig.json"
+                from "mapConfigWasteService.bin"
+                from "mapRoomEmpty.bin"
+            }
+        }
     }
 }

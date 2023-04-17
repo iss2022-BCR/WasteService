@@ -1,5 +1,5 @@
 %====================================================================================
-% sprint2_waste_service description   
+% sprint2_wasteservice_core description   
 %====================================================================================
 context(ctx_wasteservice, "localhost",  "TCP", "11800").
 context(ctx_transporttrolley, "localhost",  "TCP", "11801").
