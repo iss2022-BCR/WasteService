@@ -1,0 +1,154 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>SSH Notes</title>
+        <link rel="stylesheet" type="text/css" href="../resources/styles/templateISS.css">
+        <link rel="stylesheet" type="text/css" href="../resources/styles/main.css">
+        <link rel="stylesheet" type="text/css" href="../resources/styles/navbar.css">
+        <link rel="stylesheet" type="text/css" href="../resources/styles/table.css">
+        <link rel="stylesheet" type="text/css" href="../resources/styles/code.css">
+        <script type="text/javascript" src="../resources/scripts/myScripts.js"></script>
+    </head>
+    <style>
+        #main {
+            font-family: Georgia, serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: Georgia, serif;
+        }
+        pre {
+            white-space: pre-wrap;
+        }
+    </style>
+
+    <body onload="loadNav();">
+        <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
+        <div id="sidenav" class="sidenav">
+            <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
+            <a href="../../Sprint0/index.html">&#8617; &nbsp;&nbsp;&nbsp; Back to<br/>WasteService</a>
+            <p class="separator" style="color: #818181;">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
+            <a href="#SSH">SSH</a>
+            <p style="height: 100px; visibility: hidden"></p>
+        </div>
+
+        <div id="main">
+            <h1 align="center">SSH Notes</h1>
+            For this project, we want to connect to the raspberry in a simple way,
+            without a password required. A possible way to do this is using SSH public key authentication.
+            <br/><br/>
+            There are several reasons for using SSH password-less authentication, including:
+            <ol>
+                <li>
+                    Increased Security: Passwords can be guessed or intercepted by malicious actors,
+                    whereas password-less authentication using public and private keys offers a more
+                    secure method of authentication. With password-less authentication, there is no need
+                    to store sensitive login information on a remote server, reducing the risk of potential data breaches.
+                </li>
+                <li>
+                    Convenience: With password-less authentication, users can log in to remote servers without
+                    having to enter a password every time. This saves time and eliminates the need to remember
+                    complex passwords, making the authentication process more convenient and user-friendly.
+                </li>
+                <li>
+                    Automation: Password-less authentication can be used to automate tasks and scripts that
+                    require authentication, making it easier to manage and maintain large-scale infrastructure.
+                    This can save time and reduce the risk of human error when performing routine tasks.
+                </li>
+                <li>
+                    Centralized Management: Public and private keys can be easily managed from a central location,
+                    making it easier to control access to remote servers. This makes it easier to revoke access for
+                    users who no longer require it or to add new users as needed.
+                </li>
+            </ol>
+            
+            When it comes to cryptographic algorithms, RSA is a popular choice, but compared to newer algorithms,
+            it can be slow. In situations where time is a critical factor, such as with embedded systems, a faster
+            algorithm is essential. That's why we've chosen to use the Ed25519 algorithm, which offers superior
+            performance without compromising security.
+
+            <h3>Ed25519 public-key algorithm</h3>
+
+            Ed25519 is a relatively new public-key algorithm that is becoming increasingly popular for SSH key
+            generation due to its unique features and advantages over other algorithms such as RSA and DSA.
+            Its main advantages are: 
+            <ol>
+                <li>
+                    Strong Security: Ed25519 is designed to be very secure and resistant to various attacks,
+                    including side-channel attacks and collision attacks. It has been shown to be resistant
+                    to all known attacks, making it a very safe option for SSH key generation.
+                </li>
+                <li>
+                    Speed: generating and using Ed25519 SSH keys requires less computational resources and
+                    can perform faster than other algorithms like RSA or DSA.
+                </li>
+                <li>
+                    Short Key Length: Ed25519 keys are shorter than other public-key algorithms, which makes
+                    them easier to manage and store. For example, a 256-bit Ed25519 key is as secure as a
+                    3072-bit RSA key or a 3072-bit DSA key.
+                </li>
+                <li>
+                    Standardized and widely supported: Ed25519 is standardized and supported by most modern
+                    operating systems and SSH clients. It has become a popular choice for SSH key generation,
+                    and many organizations have started to adopt it as their default algorithm.
+                </li>
+                <li>
+                    Future-proof: Ed25519 has a long projected lifespan, and it is unlikely to be broken by
+                    future advances in cryptography. This means that Ed25519 keys are expected to remain secure
+                    and usable for many years to come.
+                </li>
+            </ol>
+
+            <h2>How to use the SSH public key authentication with ED25519 algorithm</h2>
+
+            <h3>Generate key on device</h3>
+
+            <ol>
+                <li>
+                    Open your terminal or command prompt and enter the following command:
+<pre>
+ssh-keygen -t ed25519
+</pre>
+                </li>
+                <li>
+                    The command will prompt you to enter a file name to save the key.
+                    You can either accept the default file name or enter a custom one.
+                </li>
+                <li>
+                    Next, the command will prompt you to enter a passphrase. This is
+                    optional but highly recommended, as it adds an extra layer of security to your key.
+                </li>
+                <li>
+                    Once you have entered the passphrase (if desired), the key will be generated
+                    and saved in the specified file location.
+                </li>
+            </ol>
+
+            <h3>Adding the Ed25519 Key to the Raspberry Pi</h3>
+            <ol>
+                <li>
+                    Navigate to your home directory and create a new file called authorized_keys
+                    if it doesn't already exist:
+<pre>
+mkdir ~/.ssh
+touch ~/.ssh/authorized_keys
+</pre>
+                </li>
+                <li>
+                    Open the `authorized_keys` file with a text editor and paste the contents
+                    of your Ed25519 public key (located in the `.pub` file that was generated
+                    when you created the key) into a new line in the file.
+                    <br/>
+                    Save and close the `authorized_keys` file.
+                </li>
+                <li>
+                    Finally, to confirm that the key has been added successfully, try logging
+                    in to the Raspberry Pi again using your new Ed25519 key:
+<pre>
+ssh pi@&lt;raspberry-ip&gt;
+</pre>
+                </li>
+            </ol>
+        </div>
+    </body>
+</html>

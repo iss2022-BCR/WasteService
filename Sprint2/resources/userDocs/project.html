@@ -24,12 +24,41 @@
             <a class="selected" href="project.html">Project</a>
             <div class="sidenavSection">
                 <a href="#Defects-Solution">Defects-Solution</a>
-                <a href="#Logical-Architecture">Logical Architecture</a>
-                <a href="#Software-Name">&lt;Software Name&gt;</a>
                 <div class="sidenavSubSection">
+                    <a href="#SmartDevice">SmartDevice</a>
+                    <a href="#MapEditor">MapEditor</a>
+                </div>
+                <a href="#Logical-Architecture">Logical Architecture</a>
+                <a href="#WasteService-Core">WasteService Core</a>
+                <div class="sidenavSubSection">
+                    <a href="#WS-Core-Updated-Logical-Architecture">WS Core: Updated<br/>Logical Architecture</a>
+                    <a href="#WS-Core-Upgrades">WS Core: Upgrades</a>
+                    <a href="#WS-Core-Bug-Fixes">WS Core: Bug Fixes</a>
+                </div>
+                <a href="#RadarSystem22-DomainBCR">RadarSystem22.<br/>DomainBCR</a>
+                <div class="sidenavSubSection">
+                    <a href="#Scripts-and-Programs">Scripts and Programs</a>
+                    <a href="#Led-and-Sonar-Changes">Led and Sonar Changes</a>
+                    <a href="#DomainSystemConfig-Changes">DomainSystemConfig<br/>Changes</a>
+                </div>
+                <a href="#WasteService-RPi">WasteService RPi</a>
+                <div class="sidenavSubSection">
+                    <a href="#WS-RPi-Updated-Logical-Architecture">WS RPi: Updated<br/>Logical Architecture</a>
+                    <a href="#WS-RPi-RaspberryPi-Device">WS RPi: RaspberryPi<br/>Device</a>
+                    <a href="#WS-RPi-Sonar">WS RPi: Sonar</a>
+                    <a href="#WS-RPi-Led">WS RPi: Led</a>
+                </div>
+                <a href="#Extensions">Extensions</a>
+                <div class="sidenavSubSection">
+                    <a href="#Buzzer">Buzzer</a>
+                    <a href="#TextDisplay">TextDisplay</a>
+                    <a href="#RadarSystem22-RadarGUI">RadarSystem22:<br/>Radar GUI</a>
                 </div>
                 <a href="#Deployment">Deployment</a>
-                <a href="#Raspberry-Demo">Raspberry Demo</a>
+                <div class="sidenavSubSection">
+                    <a href="#Build-System">Build System</a>
+                    <a href="#Deploy-System">Deploy System</a>
+                </div>
             </div>
             <a href="test_plans.html">Test Plans</a>
             <a href="conclusions.html">Conclusions</a>
@@ -42,9 +71,15 @@
         <div id="main">
             <h1 align="center">Project</h1>
             The project contains all the software our team developed to achieve the Sprint2 SCRUM goal.
+            We divided our work in <b>3 sub-sprint</b>
+            <ol>
+                <li><a href="#WasteService-Core">Sprint2.1</a> WasteService Core</li>
+                <li><a href="#RadarSystem22-DomainBCR">Sprint2.2</a> RadarSystem22.DomainBCR</li>
+                <li><a href="#WasteService-RPi">Sprint2.3</a> WasteService RPi</li>
+            </ol>
 
             <h2 id="Defects-Solution">Defects Solution</h2>
-            <h3>SmartDevice</h3>
+            <h3 id="SmartDevice">SmartDevice</h3>
             We upgraded the <ksi>SmartDevice</ksi> application to include a Menu and a <kc>Settings page</kc>.
             This page allows the user to change the <i>message parameter</i>:
             <ul>
@@ -59,7 +94,7 @@
             <img width="200px" src="../imgs/project/SmartDeviceSimulator_Settings.png">
             <img width="200px" src="../imgs/project/SmartDeviceSimulator_SendMessageInterface.png">
 
-            <h3>MapEditor</h3>
+            <h3 id="MapEditor">MapEditor</h3>
             We upgraded the <ksi>MapEditor</ksi> application to fix/implement the following <kc>features</kc>:
             <ul>
                 <li><code>roomMap</code> and <code>mapConfig</code> objects loading from file
@@ -70,20 +105,45 @@
             </ul>
 
             <h2 id="Logical-Architecture">Logical Architecture</h2>
-            The main change in the logical architecture from the Problem Analysis is [...].
-            <br/>
-            <img width="100%" src="../../Sprint1_Project/sprint1_waste_service/project_logical_architecture_core-business.png"/>
-            QAK model: <a href="../../Sprint1_Project/sprint1_waste_service/src/project_logical_architecture.qak">project_logical_architecture.qak</a>
+            As the project is starting to grow considerably in size, we decided to
+            split the system in 2 parts, one for each node:
 
-            <h2 id="WasteService">Sprint2.1: WasteService</h2>
-            <ksi>&lt;Raspberry-Pi-Software-Name&gt;</ksi> (<a href="../../Sprint2_Project/project_directory/">project_directory</a>) is a [...]
-            
-            <h4>Actor PathExecutorBCR</h4>
-            We modified the pathexecutor QAK actor to include the stop/resume functionality:
             <ul>
-                <li>Actor renamed to "pathexecutorbcr"</li>
-                <li>General refactor: renamed states, and added some middle ones (e.g. state_idle)</li>
-                <li>Added a guard checking for stop events (<code>Transition t1 whenEvent stop -> state_stop</code>) at the end of the following states:
+                <li>
+                    <ksi>WasteService Core</ksi>
+                    <img width="100%" src="../../Sprint2_Project/sprint2_wasteservice_core/sprint2_wasteservice_corearch_no_extension_edited.png"/>
+                    QAK model: <a href="../../Sprint2_Project/sprint2_wasteservice_core/src/wasteservice_core_no_extension.noqak">wasteservice_core_no_extension.noqak</a>
+                    <br/><br/>
+                </li>
+                <li>
+                    <ksi>WasteService RPi</ksi>
+                    <img width="100%" src="../../Sprint2_Project/sprint2_wasteservice_rpi/sprint2_wasteservice_rpi_no_extensionarch_edited.png"/>
+                    QAK model: <a href="../../Sprint2_Project/sprint2_wasteservice_rpi/src/wasteservice_rpi_no_extension.noqak">wasteservice_rpi_no_extension.noqak</a>
+                </li>
+            </ul>
+            
+            <h2 id="WasteService-Core">Sprint2.1: WasteService Core</h2>
+            We upgraded the <ksi>WasteService Core</ksi> (<a href="../../Sprint2_Project/sprint2_wasteservice_core/">sprint2_wasteservice</a>)
+            project to make it easier for us to integrate the Raspberry Pi functionalities.
+            
+            <h3 id="WS-Core-Updated-Logical-Architecture">WS Core: Updated Logical Architecture</h3>
+            <img width="100%" src="../../Sprint2_Project/sprint2_wasteservice_core/sprint2_wasteservice_corearch_edited.png"/>
+            QAK model: <a href="../../Sprint2_Project/sprint2_wasteservice_core/src/wasteservice_core.qak">wasteservice_core.qak</a>
+
+            <h3 id="WS-Core-Upgrades">WS Core: Upgrades</h3>
+            The remarkable changes are the following:
+
+            <h4>Stop/Resume feature</h4>
+            To support the stop/resume functionality, we modified the pathexecutor QAK
+            actor (renamed to PathExecutorBCR):
+            <div class="remark">
+                When PathExecutorBCR detects a stop event, if it's performing a task
+                it <b>finishes the current action</b>, then enters the STOP state, which will
+                cause it to ignore any other request, until a RESUME event is detected.
+            </div>
+            In particular:
+            <ul>
+                <li>We added a guard checking for stop events (<code>Transition t1 whenEvent stop -> state_stop</code>) at the end of the following states:
                     <ul>
                         <li>state_idle (the state where the actor waits for path requests);</li>
                         <li>state_do_move_forward;</li>
@@ -91,7 +151,7 @@
                     </ul>
                 </li>
                 <li>
-                    Added the state "state_stop"
+                    We added the state "<ks><code>state_stop</code></ks>"
 <pre style="white-space: pre;">
 State state_stop {
     [# var PathTodo = pathut.getPathTodo() #]
@@ -101,7 +161,7 @@ Transition t3 whenEvent resume -> state_resume
 </pre>
                 </li>
                 <li>
-                    Added the state "state_resume"
+                    We added the state "<ks><code>state_resume</code></ks>"
 <pre style="white-space: pre;">
 State state_resume {
     println("[PathExecutorBCR] Alarm retracted. Resuming...")
@@ -111,65 +171,495 @@ Goto state_next_move if [# MovesDone.length != TotPathMoves #] else state_idle
                 </li>
             </ul>
 
-            <br/>
+            <h4>TransportTrolley State</h4>
+            <div class="remark">
+                When the Transport Trolley performs an action, arrives at HOME or
+                becomes stopped/resumed, its state changes and is notified to the rest
+                of the system, so that the interested components (e.g the Led) can
+                get updated.
+            </div>
 
-            <h4>Class TransportTrolleyState</h4>
-            classe per rappresentare stato trolley
-            <h4>Class LedState</h4>
-            classe per rappresentare stato led
-            <h4>Utility Functions</h4>
+            To track the Transport Trolley state and make it COAP observable
+            since the QAK framework already supports COAP:
             
-            funzione isAlarm()
-            <br/>
-            funzione getLedStateFromTrolleyState()
+            <ul>
+                <li>
+                    We created a new enum class <code>TransportTrolleyState</code>
+<pre style="white-space: pre;">
+enum class TransportTrolleyState {
+    NONE, HOME, MOVING, PICKUP, DUMP, STOPPED;
 
+    companion object {
+        fun parseFromMessage(s: String): TransportTrolleyState
+    }
+}
+</pre>
+                    <b>NB</b>: The TransportTrolley state is different from the Led state.
+                </li>
+                <li>
+                    We added a call to <b>update the COAP resource</b> idicating the Transport Trolley
+                    state
+                    <pre>
+                        updateResource [# "transporttrolley(STATE)" #]
+                    </pre>
+                    inside the involved actors:
+                    <ul>
+                        <li>TransportTrolley</li>
+                        <li>PathExecutor</li>
+                    </ul>
+                </li>
+                <li>
+                    Created an actor that acts as an observer of the COAP
+                    resource: the actor <ks><code>TrolleyStateProvider</code></ks>
+                    registers itself to the COAP observable resource:
+                    <pre>
+                        observeResource transporttrolley
+		                observeResource pathexecutorbcr
+                    </pre>
+                    and generates an event (that other actors can detect) whenever the state changes:
+<pre style="white-space: pre;">
+onMsg(coapUpdate: coapUpdate(RESOURCE, VALUE)) {
+    // Check if the state changed
+    if [# wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) != TTState #] {
+        [# TTState = wasteservice.TransportTrolleyState.parseFromMessage(payloadArg(1)) #]
+        
+        // Emit event
+        emit trolley_state_changed: trolley_state_changed($TTState)
+    }
+}
+</pre>
+                </li>
+            </ul>
+
+            <h3 id="WS-Core-Bug-Fixes">WS Core: Bug Fixes</h3>
+            <problem>Bug: <a href="https://github.com/iss2022-BCR/WasteService/issues/24">Pickup/Dump Trolley State</a></problem>
+            <b>Problem</b>: the PICKUP and DUMP trolley states were arriving too late and that caused for
+            example the LED to never turn ON when the trolley was performing those actions.
+            <solution>
+                <b>Solution</b>: fix the implementation of <code>simulateAction()</code>,
+                by using <code>delay()</code> instead of <code>Thread.sleep()</code>.
+                <br/>
+                <b>Reason</b>: QAK actors of the same context run on the same thread,
+                therefore when calling <code>Thread.sleep()</code> they would get all blocked,
+                the TrolleyStateProvider too, preventing it from processing the <code>coapUpdate()</code>. 
+            </solution>
             
-            <h2>Sprint 2.2: Raspberry Pi Software</h2>
-            <h3 id="Device">Device</h3>
-            The device used is a <a href="https://www.raspberrypi.com/products/raspberry-pi-4-model-b/">Raspberry Pi 4 Model B</a>: <highlight1>Specifiche</highlight1>
-            <br/>
-            <highlight1>Schema pin</highlight1>
-            <br/>
-            <highlight1>Setup SSH without password</highlight1>
-            <h3>Sonar</h3>
-            Per implementare la feature del sonar, abbiamo preso un progetto fornito dalla nostra
-            software house (sonarqak) e ne abbiamo ricavato una versione specializzata:
-            abbiamo creato degli script python per diverse funzionalità
+            <problem>Bug: <a href="https://github.com/iss2022-BCR/WasteService/issues/25">Home/Moving Trolley State</a></problem>
+            <b>Problem</b>: after completing at least one deposit, when the Transport Trolley returns at home,
+            if a stop event is detected and the Transport Trolley enters the STOPPED state, when resuming the
+            PathExecutor mistakenly propagates the state MOVING, instead of HOME.
 
+            <h2 id="RadarSystem22-DomainBCR">Sprint 2.2: RadarSystem22.DomainBCR</h2>
+            Before implementing the Raspberry Pi QAK, we needed something to use the real/simulated
+            components.
+            <br/><br/>
+
+            To achieve this goal, we developed <ksi>RadarSystem22.DomainBCR</ksi>
+            (<a href="../../Sprint2_Project/it.unibo.radarSystem22.domainBCR/">it.unibo.radarSystem22.domainBCR</a>),
+            which we obtained by modifying the project provided by the customer:
+            <a href="https://github.com/anatali/issLab2022/tree/main/it.unibo.radarSystem22.domain">it.unibo.radarSystem22.domain</a>.
+            
+            <h3 id="Scripts-and-Programs">Scripts and Programs</h3>
+            The RadarSystem22.domain project used some scripts and programs which were
+            already provided by the customer: <a href="../../Sprint2_Project/misc/SonarAlone.c">SonarAlone.c</a>,
+            <a href="../../Sprint2_Project/misc/led25GpioTurnOn.sh">led25GpioTurnOn.sh</a>,
+            <a href="../../Sprint2_Project/misc/led25GpioTurnOff.sh">led25GpioTurnOff.sh</a>).
+            However, we decided to recreate them using Python scripts, for a number of reasons:
+            <ul>
+                <li>
+                    <b>portability</b>, since they wouldn't depend on libraries like WiringPi which is not supported
+                    anymore and generates problems with new Raspberry OS versions;
+                </li>
+                <li>
+                    <b>consistency</b> and <b>homogeneity</b>, since this way they all use the
+                    python interpreter and packages. That also makes it possible to avoid for example
+                    problems related to the End-Of-Line characters, which are different from
+                    Windows and Linux (a bash script written on a Windows OS won't work in Linux
+                    unless the EOF characters get replaced);
+                </li>
+                <li>
+                    <b>Ease of use and deployment</b>, Python is easy to install and already shipped with
+                    Raspberry OS images. Python scripts also don't need to be compiled: this results in one less task during deployment.
+                </li>
+            </ul>
+            For these reason we developed the following scripts:
+            <ul>
+                <li>
+                    <a href="../../Sprint2_Project/scripts/raspberry/sonarBCR.py"><ksi>sonarBCR.py</ksi></a> - is used to
+                    get the distance (in CM) from the SC-HR04 component. It uses the <b>GPIO 23</b> (Pin #16/40) as Trigger,
+                    and <b>GPIO 24</b> (Pin #18/40) as Echo.<br/>
+                    With the <code>loop</code> parameter (and optionally the delay) the script continuously
+                    prints the detected distance, until the user interrupts it.
+                </li>
+                <li>
+                    <a href="../../Sprint2_Project/scripts/raspberry/ledBCR.py"><ksi>ledBCR.py</ksi></a> - is used to
+                    turn ON/OFF a Led component or make it blink. It uses the <b>GPIO 25</b> (Pin #22/40).
+                    The state (on / off / blink) must be passed as a parameter. When blinking, the script keeps
+                    running until the user interrupts it.
+                </li>
+            </ul>
+            
+            <h3 id="Led-and-Sonar-Changes">Led and Sonar Changes</h3>
+            We updated the <code>ILed</code> interface to add the method <code>blink()</code>
+            which should make the Led to blink the led flash at intervals of time:
+<pre style="white-space: pre;">
+public interface ILed extends IDevice {
+    public void turnOn();
+    public void turnOff();
+    public void blink();
+    public LedState getState();
+}
+</pre>
+
+            We implemented the mock version of the <code>blink()</code> method by 
+            using a Thread which turns the Led ON and OFF at intervals of time delayed by
+            a number of milliseconds:
+<pre style="white-space: pre;">
+@Override // LedMock
+public void blink()
+{
+    if(getState().equals(LedState.BLINKING))
+        return;
+
+    super.blink();
+    blinker = new Thread(new Runnable() {
+        private boolean isOn = false;
+        @Override
+        public void run() {
+            while(getState().equals(LedState.BLINKING)) {
+                isOn = !isOn;
+
+                panel.setSize(isOn ? sizeOn : sizeOff);
+                panel.setBackground(isOn ? colorOn : colorOff);
+
+                panel.validate();
+                panel.repaint();
+
+                BasicUtils.delay(DomainSystemConfig.ledDelay);
+            }
+        }
+    });
+
+    blinker.start();
+}
+</pre>
+            We also changed the concrete implementation of both Led and Sonar
+            in order to make them use our new python scripts.
+<pre style="white-space: pre;">
+/usr/bin/python3 -u ./ledBCR.py &lt;on | off | blink [delay]&gt;
+/usr/bin/python3 -u ./sonarBCR.py &lt;loop [delay]&gt;
+</pre>
+
+            <h3 id="DomainSystemConfig-Changes">DomainSystemConfig Changes</h3>
+            To make the system more customizable at runtime, we extended the
+            <code>DomainSystemConfig</code> class too. In particular, we added:
+            <ul>
+                <li><code>sonarDelay</code> - used to delay the sonar detections.</li>
+                <li>
+                    <code>ledDelay</code> and <code>buzzerDelay</code> - used to choose how quickly
+                    the led and buzzer must blink/beep.
+                </li>
+                <li>
+                    <code>enableBuzzer</code> and <code>enableTextDisplay</code> - used to
+                    enable/disable the usage of the buzzer and display components (since they're not
+                    specifically required by the customer).
+                </li>
+                <li>
+                    <code>textLine1Delay</code> and <code>textLine2Delay</code> - used to
+                    limit the display refresh rate (may be different for each line).
+                </li>
+            </ul>
+
+            <h4>Integration with Other Projects</h4>
+            In order to use the radarSystem22.domainBCR project in other projects (e.g. <a href="#WasteService-RPi">WasteService RPi</a>),
+            we firstly have to build the library:
+            <pre>
+                ./gradlew jar
+            </pre>
+            Which generates a JAR under <a href="../../Sprint2_Project/it.unibo.radarSystem22.domainBCR/build/libs/">build/libs/</a>. We then move it to
+            <a href="../../unibolibs/">unibolibs/</a>.
+            <br/>
+            Finally we can add the following line under the dependencies, inside the <code>build.gradle</code> of the project:
+<pre style="white-space: pre;">
+dependencies {
+    [...]
+    implementation name: 'it.unibo.radarSystem22.domainBCR-1.0'
+}
+</pre>
+            And load the gradle changes.
+
+            <h2 id="WasteService-RPi">Sprint 2.3: WasteService RPi</h2>
+            <ksi>WasteService RPi</ksi> (<a href="../../Sprint2_Project/sprint2_wasteservice_rpi/">sprint2_wasteservice_rpi</a>)
+            is the part of the Waste Service that involves the alarm/warning device.
+            
+            <h3 id="WS-RPi-Updated-Logical-Architecture">WS RPi: Updated Logical Architecture</h3>
+            <img width="100%" src="../../Sprint2_Project/sprint2_wasteservice_rpi/sprint2_wasteservice_rpiarch_edited.png"/>
+            QAK model: <a href="../../Sprint2_Project/sprint2_wasteservice_rpi/src/wasteservice_rpi.qak">wasteservice_rpi.qak</a>
+
+            <h3 id="WS-RPi-RaspberryPi-Device">WS RPi: RaspberryPi Device</h3>
+            The device used in our project is a <a href="https://www.raspberrypi.com/products/raspberry-pi-4-model-b/">Raspberry Pi 4 Model B</a>:
+            <ul>
+                <li>1.5 GHz 64-bit quad core ARM Cortex-A72</li>
+                <li>4 GB RAM</li>
+                <li>standard 40 pin GPIO header</li>
+                <li>on-board 802.11ac Wi-Fi</li>
+                <li>Bluetooth 5.0</li>
+                <li>full gigabit Ethernet</li>
+                <li>[...]</li>
+            </ul>
+
+            <h4>Pin scheme and components</h4>
+            The Raspberry Pi <i>base</i> configuration we used for the project
+            is the following:
+            <center><img width="400px" src="../imgs/circuit_with_breadboard.png"></center>
+            <a href="https://it.pinout.xyz/pinout/">Raspberry Pi Pinout reference</a>.
+
+            <h4>Setup</h4>
+            <ul>
+                <li>ssh/vnc</li>
+                <li>Make sure python is installed</li>
+            </ul>
+            <highlight1><a href="../../../commons/ssh/ssh_notes.html">Setup SSH without password</a></highlight1>
+            
+            <h3 id="WS-RPi-Sonar">WS RPi: Sonar</h3>
+            To implement the sonar part we based on the project 
+            <a href="https://github.com/anatali/issLab2022/tree/main/unibo.sonarqak22">unibo.sonarqak22</a>,
+            provided by the customer, and we integrated it with our <code>radarSystem22.domainBCR</code>.
+            
+            <h4>sonarSupportBCR Actor</h4>
+            <a href="../../Sprint2_Project/sprint2_wasteservice_rpi/resources/wasteservice/raspberry/sonar/sonarSupportBCR.kt"><ksi>sonarSupportBCR</ksi></a>
+            is a CodedQActor which represents the sonar data source (we called it "sonarinput"
+            inside the QAK). It creates an ISonar object (based on the configuration parameters it can be
+            a concrete Sonar component or a simulated one), and can be activated/deactivated through the
+            homonymous dispatches.
+<pre style="white-space: pre;">
+lateinit var sonar : ISonar
+init
+{
+    println("[$name] Started.")
+    DomainSystemConfig.setTheConfiguration("RaspberryDomainConfig.json")
+    sonar = DeviceFactory.createSonar()
+}
+</pre>
+            This actor iterates as long as the sonar is active, continuously getting
+            the detected distance and emitting a local stream event to the following
+            actor inside the pipeline.
+
+            <h4>sonarBuilder Object</h4>
+            <a href="../../Sprint2_Project/sprint2_wasteservice_rpi/resources/wasteservice/raspberry/sonar/sonarBuilder.kt"><ksi>sonarBuilder</ksi></a>
+            is a Kotlin object providing a function <code>createSonar()</code>
+            that builds the pipeline for the sonar, with the following actors:
             <ol>
-                <li>SonarAloneBCR.c</li>
-                <li>buzzerBCR.py</li>
-                <li>displayBCR.py</li>
-                <li>sonarBCR.py</li>
-                <li>ledBCR.py</li>
+                <li><code>sonarinput</code> (first) - the sonar data source;</li>
+                <li>
+                    <code>filter_distancebounds</code> - coded actor that acts as a filter and drops messages that
+                    contains a distance which goes outside the bounds defined in DomainSystemConfig;
+                </li>
+                <li>
+                    <code>filter_distancechanged</code> - coded actor that acts as a filter and drops messages that
+                    contains a distance equal to the previous detection;
+                </li>
+                <li>
+                    <code>filter_alarm</code> (last) - coded actor that emits a STOP event (not local anymore) if the distance
+                    became less than DLIMT, or else emits a RESUME event if the distance became greater or equal to DLIMT.
+                </li>
             </ol>
 
-            Inizialmente abbiamo creato un programma C chiamato SonarWrapperBCR.c che utilizzasse
-            gli script python. Tuttavia, la chiamata di programmi esterni generava overhead e ne rallentava
-            l'esecuzione. Quindi abbiamo deciso di creare un programma completamente in C che implementasse
-            tutte le funzioni, ed implementare la possibilità di abilitare le varie feature tramite opzioni passate
-            come argomenti del programma.
+            <h4>SonarBCR Actor</h4>
+            <ksi>SonarBCR</ksi> is a QAK actor that call the function which builds the sonar,
+            and activates it.
 
-            <h3>Led</h3>
-            <h2 id="Extras">Sprint 2 Extras: Radar GUI</h2>
-            Since our software house already developed a project capable of showing sonar
-            information in a fancy way, we considered its usage and analyzed if there was
+            <h3 id="WS-RPi-Led">WS RPi: Led</h3>
+            As per the sonar, we implemented the led part by using our <code>radarSystem22.domainBCR</code>.
+
+            <h4>ledSupportBCR Object</h4>
+            <a href="../../Sprint2_Project/sprint2_wasteservice_rpi/resources/wasteservice/raspberry/led/ledSupportBCR.kt"><ksi>ledSupportBCR</ksi></a>
+            is Kotlin object that provides a function to create an ILed
+            object, according to the DomainSystemConfig configuration, and a function to update the
+            led state according to the TransportTrolleyState.
+            <pre>
+                fun createLed()
+                fun doLed(state: TransportTrolleyState)
+            </pre>
+
+            <h4>LedBCR Actor</h4>
+            <ksi>LedBCR</ksi> is a QAK actor that uses the ledSupportBCR object and
+            listen to <code>trolley_state_changed</code> events, emitted by <code>TrolleyStateProvider</code>:
+            when this event is received, this actor updates the component state by calling <code>doLed()</code>.
+
+            <h2 id="Extensions">Sprint 2 Extensions</h2>
+            To enhance our project and customize it a little, given the fact that we had some
+            spare components, we decided to extend the project with some extra features, in
+            particular, we included:
+            <ul>
+                <li>
+                    a <b>buzzer</b>, to provide an auditory (besides the visual one provided by the Led) 
+                    feedback for the Transport Trolley state;
+                </li>
+                <li>
+                    a <b>display LCD1602</b>, to display some extra information directly on the RaspberryPi
+                    device, such as the distance detected by the sonar and the Transport Trolley state
+                    as text.
+                </li>
+            </ul>
+
+            The Raspberry Pi <i>extended</i> configuration we used for the project is the following:
+            <center><img width="400px"  src="../../resources/imgs/project/circuit_with_breadboard_extension.png"></center>
+            <a href="https://it.pinout.xyz/pinout/">Raspberry Pi Pinout reference</a>.
+
+            <h3 id="Buzzer">Buzzer</h3>
+            The <b>buzzer</b> (TMB12A05) is a simple component, much similiar to the led, since it provides an output feedback, 
+            has only 2 states (ON/OFF) and requires just 2 pins to work: power and ground.
+            <br/>
+            <center><img width="150px" src="../../resources/imgs/project/buzzer.jpg"></center>
+
+            <h4>Script: buzzerBCR.py</h4>
+            The script <a href="../../Sprint2_Project/scripts/raspberry/buzzerBCR.py"><ksi>buzzerBCR.py</ksi></a> is used to
+            turn ON/OFF a buzzer component or make it intermittent. It uses the <b>GPIO 18</b> (Pin #12/40).
+            The state (on / off / intermittent) must be passed as a parameter. When intermittent, the script keeps
+            running until the user interrupts it.
+            
+            <h4>radarSystem22.domainBCR: Buzzer Component</h4>
+            The buzzer component is almost identical to the Led one. We declared
+            an <code>IBuzzer</code> interface and then implemented the mock/concrete classes:
+<pre style="white-space: pre;">
+public interface IBuzzer extends IDevice {
+    public void turnOn();
+    public void turnOff();
+    public void turnIntermittent();
+    public BuzzerState getState();
+}
+</pre>
+            To implement the mock we used the <code>javax.sound</code> library
+            to play a "beep" sound effect:
+<pre style="white-space: pre;">
+try {
+    URL url = new URL("https://www.soundjay.com/buttons/beep-09.wav");
+    clip = AudioSystem.getClip();
+
+    AudioInputStream ais = AudioSystem.getAudioInputStream(url);
+    clip.open(ais);
+}
+catch (Exception e) {e.printStackTrace();}
+</pre>
+            <h4>WS Core: buzzerSupportBCR Object</h4>
+            To integrate the buzzer component in the WasteService RPi project, we created a Kotlin object
+            <a href="../../Sprint2_Project/sprint2_wasteservice_rpi/resources/wasteservice/raspberry/buzzer/buzzerSupportBCR.kt"><ksi>buzzerSupportBCR</ksi></a>.
+            This object provides a function to create an IBuzzer object, according to the DomainSystemConfig configuration,
+            and a function to update the buzzer state according to the TransportTrolleyState.
+            <pre>
+                fun createBuzzer()
+                fun doBuzzer(state: TransportTrolleyState)
+            </pre>
+
+            <h4>WS Core: BuzzerBCR Actor</h4>
+            <ksi>BuzzerBCR</ksi> is a QAK actor that uses the buzzerSupportBCR object and listen to
+            <code>trolley_state_changed</code> events, emitted by <code>TrolleyStateProvider</code>
+            when this event is received, this actor updates the component state by calling <code>doBuzzer()</code>.
+
+            <h3 id="TextDisplay">Text Display</h3>
+            The <b>LCD display 1602</b> is an output component capable of displaying 16 characters on
+            2 different lines. Since its base interface is complex and requires many connections,
+            it's often used with an <b>I2C bus expander module</b>, which require instead only 4 pins, two of
+            which are the I2C RaspberryPi interface.
+            <br/>
+            <center><img width="300px" src="../../resources/imgs/project/displayLCD1602_I2c.jpg"></center>
+
+            <h4>Script: Text Display</h4>
+            The script <a href="../../Sprint2_Project/scripts/raspberry/displayBCR.py"><ksi>displayBCR.py</ksi></a>
+            is used to write on a text display LCD 1602. It uses the special GPIOs <b>GPIO 2</b> (Pin #3/40) and
+            <b>GPIO 3</b> (Pin #5/40) which are needed to use the I2C interface.
+            The script accepts 2 parameters which are the strings (characters sequence) to be passed to the component.
+            If no paramters are passed, the script clears the display.
+        
+            <h4>radarSystem22.domainBCR: Text Display</h4>
+            To implement the TextDisplay component we first declared an <code>ITextDisplay</code> interface:
+<pre style="white-space: pre;">
+public interface ITextDisplay extends IDevice {
+    public void setLines(String text1, String text2);
+    public String getLine1();
+    public String getLine2();
+    public void clear();
+}
+</pre>
+            Then we implemented a mock version of the device, which creates a GUI with
+            2 text boxes to simulate the output of the display:
+<pre style="white-space: pre;">
+protected void configure()
+{
+    textField1 = new TextField();
+    textField1.setEditable(false);
+    textField1.setColumns(16);
+    textField1.setFont(new Font(Font.MONOSPACED, Font.BOLD, 16));
+    textField2 = new TextField();
+    textField2.setEditable(false);
+    textField2.setColumns(16);
+    textField2.setFont(new Font(Font.MONOSPACED, Font.BOLD, 16));
+    frame.add(BorderLayout.PAGE_START, textField1);
+    frame.add(BorderLayout.PAGE_END, textField2);
+}
+</pre>
+            <img src="../../resources/imgs/project/TextDisplayMockGUI.png">
+            <br/><br/>
+            Finally we implemented the concrete version which simply executes the
+            <code>displayBCR.py</code> script passing the text as parameters:
+<pre style="white-space: pre;">
+@Override
+protected void textDisplayActivate(String text1, String text2)
+{
+    String[] command = { "/usr/bin/python3", "-u", "./displayBCR.py", getLine1(), getLine2()};
+    ProcessBuilder builder = new ProcessBuilder(command);
+
+    String className = "[" + this.getClass().getSimpleName() + "]";
+    ColorsOut.out(className + " Line1: " + getLine1());
+    ColorsOut.out(className.replaceAll("(?s)(?&lt;!\\\\S).(?!\\\\S)", " ") + " Line2: " + getLine2());
+
+    try { builder.start(); }
+    catch(IOException e) { System.out.println("[" + this.getClass().getSimpleName() + "] ERROR: " +  e.getMessage()); }
+}
+</pre>
+            
+            <h4>WS Core: displaySupportBCR Object</h4>
+            To integrate the display component in the WasteService RPi project, we created a Kotlin object
+            <a href="../../Sprint2_Project/sprint2_wasteservice_rpi/resources/wasteservice/raspberry/display/displaySupportBCR.kt"><ksi>displaySupportBCR</ksi></a>.
+            This object provides a function to create an ITextDisplay object, according to the DomainSystemConfig configuration,
+            and a function to update the led state according to the TransportTrolleyState
+            <pre>
+                fun createBuzzer()
+                fun doBuzzer(state: TransportTrolleyState)
+            </pre>
+
+            <h4>WS Core: DisplayBCR Actor</h4>
+            <ksi>DisplayBCR</ksi> is a QAK actor that uses the displaySupportBCR object and
+            listen to <code>trolley_state_changed</code> events, emitted by <code>TrolleyStateProvider</code>:
+            when this event is received, this actor updates the second line of the display by
+            calling <code>doDisplay()</code>.
+
+            <h4>WS Core: filter_textdisplay Actor</h4>
+            To write the detected distance on the first line of the display, we created a new coded actor <ksi>filter_textdisplay</ksi>
+            that acts like a filter for the sonar data. We inserted it in the sonar pipeline, right before the
+            <code>filter_alarm</code>.
+
+            <h3 id="RadarSystem22-RadarGUI">RadarSystem22: Radar GUI</h3>
+            Since our software house already had a project (developed by Michele Righi) capable of showing sonar
+            information "in a fancier way", we considered its usage and analyzed if there was
             a way to adapt it and include it in our Waste Service project.
             <br/><br/>
 
-            The <ksi>Radar GUI</ksi> project consists of an application able to display
-            elaborated information of detected obstacles, with a sonar-like graphical
-            interface:
+            The <a href="https://github.com/mikyll/righimichele/tree/master/iss2022/RadarSystem22/radarGUI"><ksi>Radar GUI</ksi></a>
+            project consists of an application able to display elaborated information of 
+            detected obstacles, with a sonar-like graphical interface:
+
             a line the length of the radius constantly rotates with its pivot in the
             center of the screen, <b><i>simulating a sonar</i></b>. Detected obstacles (with their
             distance and angle) are stored in a queue and, if the detected obstacle 
             distance is within the bounds of interest, as soon as the line encounters
-            the point, the application display
-
+            the point, he application shows the obstacle texture and gives an audio feedback.
+            <br/><br/>
             <center>
-                <img width="50%" src="../imgs/radarGUI.gif"/>
+                <img width="50%" src="../imgs/project/radarGUI.gif"/>
             </center>
-
+            <br/>
             The Radar GUI project is completely written in C with SDL2 and 
             includes an interface to ease the networking communication, using UDP and 
             TCP.
@@ -178,12 +668,32 @@ Goto state_next_move if [# MovesDone.length != TotPathMoves #] else state_idle
             Example usage: run the radarGUI on a computer, and a client on a Raspberry Pi,
             which detects obstacles with the sonar module, and sends the data by using the
             networking interface.
-            
-            <problem>Problemi: PIN del raspberry</problem>
-            <highlight1>Spiegare dettagliatamente perché abbiamo scartato l'idea di mettere
-                radarGUI sul raspberry
-            </highlight1>
 
+            <consideration>
+                <b>Considerations</b>: our first idea was to enhance the Raspberry Pi node 
+                by attaching to the device an LCD touchscreen display with 3.5" size, so that
+                it <b>would show the obstacle/distances detected by the sonar already on the device</b>. 
+                <br/>
+                We also already had the LCD display component.
+                <br/><br/>
+                <center>
+                    <img width="50%" src="../imgs/project/RaspberryPi_radarGUI.jpg"/>
+                </center>
+
+            </consideration>
+            
+            <problem>Raspberry Device PINs</problem>
+            <b>Problem</b>: what prevent us from pursuing this enhancement are the 26 Raspberry Pi pins required by this particular display, 
+            including the 5V power supply one. This is an issue since the HC-SR04, provided by the <i><b>requirements</b></i>,
+            needs the 5V pin too.
+            <br/><br/>
+            <center>
+                <img width="50%" src="../imgs/project/RaspberryPi_displayLCD.jpg"/>
+            </center>
+
+            <solution>
+                <b>Decision</b>: we decided <ksi>not to implement that extension</ksi>, since the time needed to find a workaround to fix it.
+            </solution>
             
             <h2 id="Deployment">Deployment</h2>
             Until now we deployed our sistem using the Gradle JAR plugin.
@@ -193,14 +703,66 @@ Goto state_next_move if [# MovesDone.length != TotPathMoves #] else state_idle
 
             which allows
 
-
-            <h2 id="Raspberry-Demo">Raspberry Demo</h2>
-            In order to run demo components we need:
-            [...]
+            <h3 id="Build-System">Build System</h3>
+            To build the projects we used the <a href="https://docs.gradle.org/current/userguide/distribution_plugin.html">Gradle distribution plugin</a>,
+            which allowed us to generate ZIP archives containing everything needed to run the
+            system parts, by using the following command:
+            <pre>
+                ./gradlew distZip
+            </pre>
             
-            <h4>Setup Remote Communications</h4>
-            <highlight1>To setup remote communication refer to this: link.</highlight1>
-        
+            This command will produce a ZIP archive under <code>build/distributions/</code>
+
+            <h4>Build WasteService Core</h4>
+            To ease the building of the <ksi>WasteService Core</ksi>, since it contains 3 different
+            contexts and therefore <b>3 main classes</b>, we added the following entry to the
+            build.gradle:
+<pre style="white-space: pre;">
+distZip {
+    archiveName "unibo.sprint2_wasteservice_core_WS.zip"
+    if (project.hasProperty("build_TransportTrolley")) {
+        archiveName "unibo.sprint2_wasteservice_core_TT.zip"
+    } else if (project.hasProperty("build_Robot")) {
+        archiveName "unibo.sprint2_wasteservice_core_RT.zip"
+    }
+}
+</pre>
+            This way we are able to select the main of the distribution build, by
+            passing it as a parameter to the <code>gradlew</code> command. To make it
+            even easier to build the project, we created a script to automatize the build 
+            of the 3 context:
+            <pre>
+                <a href="../../Sprint2_Project/scripts/build_WasteService_Core.bat">build_WasteService_Core.bat</a>
+            </pre>
+
+            <h4>Build WasteService RPi</h4>
+            To build the <ksi>WasteService RPi</ksi> project simply run the following script:
+            <pre>
+                <a href="../../Sprint2_Project/scripts/build_WasteService_RPi.bat">build_WasteService_RPi.bat</a>
+            </pre>
+
+            <h3 id="Deploy-System">Deploy System</h3>
+            To deploy the WasteService RPi project on the Raspberry Pi device, we created a
+            batch script to automatize the task:
+            <pre>
+                <a href="../../Sprint2_Project/scripts/deploy_WasteService_RPi.bat">deploy_WasteService_RPi.bat</a>
+            </pre>
+
+            This script performs the following actions:
+            <ol>
+                <li>build the ZIP archive of the project for the distribution;</li>
+                <li>ask the user the IP address of the target RaspberryPi;</li>
+                <li>ask the password and copy the ZIP on the target RaspberryPi;</li>
+                <li>
+                    ask the password again and setup the environment (remove pre-existent folder, 
+                    unzip, give permissions to the runner script).
+                </li>
+            </ol>
+
+            <div class="remark">
+                <b>NB:</b> more generally, the folder <a href="../../Sprint2_Project/scripts/">scripts/</a> contains executable batch scripts
+                for the most common and useful operations.
+            </div>
         </div>
 
     </body>
