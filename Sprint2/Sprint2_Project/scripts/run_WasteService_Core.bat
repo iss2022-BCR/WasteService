@@ -1,4 +1,4 @@
-cd ../sprint2_wasteservice/
+cd ../sprint2_wasteservice_core/
 
 :: Run Robot Context
 start .\gradlew runCtx_Robot
