@@ -1,3 +1,3 @@
-cd unibo.sprint2_wasteservice_rpi-1.0/bin/
+cd bin/
 
-start ./unibo.sprint2_wasteservice_rpi.bat
+start .\unibo.sprint2_wasteservice_rpi.bat

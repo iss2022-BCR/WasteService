@@ -142,7 +142,7 @@ distributions {
         contents {
             // Put the files into the following folder
             into('bin/') {
-                from "./sprint2_raspberry_pi.pl"
+                from "./sprint2_wasteservice_rpi.pl"
                 from "./sysRules.pl"
                 from "./resources/wasteservice/raspberry/sonar/sonarBCR.py"
                 from "./resources/wasteservice/raspberry/led/ledBCR.py"
@@ -152,6 +152,7 @@ distributions {
             }
 
             from "./run_WasteService_RPi.bat"
+            from "./run_WasteService_RPi.sh"
         }
     }
 }
