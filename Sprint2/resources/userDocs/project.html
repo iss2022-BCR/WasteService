@@ -372,13 +372,21 @@ public void blink()
 
             <h4>Integration with Other Projects</h4>
             In order to use the radarSystem22.domainBCR project in other projects (e.g. <a href="#WasteService-RPi">WasteService RPi</a>),
-            we need to add the following line under the dependencies, in <code>build.gradle</code>:
+            we firstly have to build the library:
+            <pre>
+                ./gradlew jar
+            </pre>
+            Which generates a JAR under <a href="../../Sprint2_Project/it.unibo.radarSystem22.domainBCR/build/libs/">build/libs/</a>. We then move it to
+            <a href="../../unibolibs/">unibolibs/</a>.
+            <br/>
+            Finally we can add the following line under the dependencies, inside the <code>build.gradle</code> of the project:
 <pre style="white-space: pre;">
 dependencies {
     [...]
     implementation name: 'it.unibo.radarSystem22.domainBCR-1.0'
 }
 </pre>
+            And load the gradle changes.
 
             <h2 id="WasteService-RPi">Sprint 2.3: WasteService RPi</h2>
             <ksi>WasteService RPi</ksi> (<a href="../../Sprint2_Project/sprint2_wasteservice_rpi/">sprint2_wasteservice_rpi</a>)
