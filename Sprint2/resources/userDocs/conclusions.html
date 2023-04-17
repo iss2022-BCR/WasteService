@@ -53,11 +53,16 @@
             <h2 id="Summary">Summary</h2>
             During <b>Sprint 2</b> our team analyzed and implemented the software needed to
             meet the <b>4th requirement</b>.
-            The software was related to the Raspberry Pi part of the system, and in particular
-            we developed:
+            The software was mostly related to the Raspberry Pi part of the system, and we believe
+            that our solution has many <b>points of strength</b>, in particular:
             <ul>
-                <li>Possibility to use a real Raspberry Pi device with components, or to use a simulation</li>
-                <li>Extended features: display and buzzer</li>
+                <li>the possibility to use a real Raspberry Pi device with components, or to use a simulation;</li>
+                <li>presents extended features: display and buzzer;</li>
+                <li>
+                    provides a wide choice of scripts to automatize the building and deployment processes, as well as
+                    the execution;
+                </li>
+                <li>is easily extendable.</li>
             </ul>
 
             We tested the WasteService system with different architecture configurations:
@@ -89,7 +94,6 @@
                     <li><ksi>WasteService RPi</ksi></li>
                 </ol>
             </div>
-            
 
             <h3 id="Task-Partitioning">Task Partitioning</h3>
             <table class="dictionary">
@@ -140,8 +144,8 @@
                 <tr>
                     <td>Problem Analysis:<br/>QAK model</td>
                     <td>
-                        Creation of a QAK model of the core-business, with just the
-                        main states and a draft of their behaviour and interactions.
+                        Upgrade of the QAK model of the core-business, to add the new
+                        actors needed to satisfy the new requirements.
                     </td>
                     <td>
                         <ul>
@@ -170,7 +174,8 @@
                     <td>Project:<br/>WasteService Core</td>
                     <td>
                         Upgrade of the WasteService to make it suitable for
-                        the integration with the Raspberry Pi functionalities. 
+                        the integration with the Raspberry Pi functionalities:
+                        
                     </td>
                     <td>
                         <ul>
@@ -184,7 +189,15 @@
                     <td>Project:<br/>RadarSystem22<br/>.domainBCR</td>
                     <td>
                         Refactor and extension of the project provided by the customer,
-                        with support for new components.  
+                        with support for new components:
+                        <ol>
+                            <li>python scripts;</li>
+                            <li>Led refactor/extension;</li>
+                            <li>Sonar refactor;</li>
+                            <li>new Buzzer component;</li>
+                            <li>new TextDisplay component;</li>
+                            <li>test plans.</li>
+                        </ol> 
                     </td>
                     <td>
                         <ul>
@@ -195,19 +208,13 @@
                 <tr>
                     <td>Project:<br/>WasteService RPi</td>
                     <td>
-                        WasteService part that runs on the Raspberry Pi, with alarm
-                        features and extensions. 
-                    </td>
-                    <td>
+                        WasteService part that runs on the Raspberry Pi (real device)
+                        or in a simulated environment, with alarm (stop/resume) features and extensions.
                         <ul>
-                            <li>Karina Chichifoi</li>
-                            <li>Michele Righi</li>
+                            <li>Components wrapper</li>
+                            <li>Filters for sonar data</li>
                         </ul>
                     </td>
-                </tr>
-                <tr>
-                    <td>Test Plans</td>
-                    <td>Test Plans related to projects.</td>
                     <td>
                         <ul>
                             <li>Karina Chichifoi</li>
@@ -219,12 +226,12 @@
                     <td>Automated Demo</td>
                     <td>
                         Test of single executable units and creation of a script program
-                        that automates the execution of the entire sprint2 demo.
+                        that automates the build, deployment and execution.
                     </td>
                     <td>
                         <ul>
-                            <li>Karina Chichifoi</li>
                             <li>Raffaele Battipaglia</li>
+                            <li>Karina Chichifoi</li>
                         </ul>
                     </td>
                 </tr>
@@ -239,11 +246,13 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><highlight1>TO-DO</highlight1></td>
-                    <td></td>
+                    <td>Remote Testing</td>
+                    <td>
+                        Testing of the system over the Internet, from Bologna to San Marino,
+                        and from San Marino to Molinella (BO).
+                    </td>
                     <td>
                         <ul>
-                            <li>Raffaele Battipaglia</li>
                             <li>Karina Chichifoi</li>
                             <li>Michele Righi</li>
                         </ul>
@@ -254,6 +263,7 @@
 
             <h3 id="Demo-Example">Demo Example</h3>
             <h4>Setup</h4>
+            <h5>PC Node</h5>
             <ol>
                 <li>Install Java (>8 or >11 if one wants to use the MapEditor);</li>
                 <li>Install docker.</li>
@@ -275,14 +285,17 @@
                     NB: file names can vary a bit (sprint number, version number). Use the <b>latest version available</b>.
                 </li>
             </ol>
+            <h5>Raspberry Pi Node</h5>
             <h4>Execution</h4>
             <ol>
                 <li></li>
             </ol>
 
             <h2 id="Sprint-Review">Sprint Review</h2>
+            TO-DO
 
             <h2 id="Sprint-Retrospective">Sprint Retrospective</h2>
+            TO-DO
 
             <h2 id="Work-Plan">Work Plan</h2>
             The next sprint is <a href="../../../Sprint3/index.html">Sprint3</a>, which involves the requirement <b>3</b>.
