@@ -14,7 +14,7 @@ public class SonarMockCLI extends SonarModel implements ISonar {
 	@Override
 	protected void sonarSetUp()
 	{
-		curVal = new Distance();
+		curVal = new Distance(DomainSystemConfig.sonarDistanceMax);
 		ColorsOut.out("[" + this.getClass().getSimpleName() + "] sonarSetUp curVal="+curVal);
 	}
 	
@@ -35,10 +35,19 @@ public class SonarMockCLI extends SonarModel implements ISonar {
 		}
 		else
 		{
-			int v = curVal.getVal() - delta;
-			updateDistance(v);
-			stopped = (v <= 0);
+			if(curVal.getVal() < 1)
+			{
+				updateDistance(DomainSystemConfig.sonarDistanceMax);
+				ColorsOut.out("[" + this.getClass().getSimpleName() + "] distance = " + curVal.getVal() + " cm");
+				return;
+			}
+			while(curVal.getVal() >= 1)
+			{
+				updateDistance(curVal.getVal() - delta);
+				ColorsOut.out("[" + this.getClass().getSimpleName() + "] distance = " + curVal.getVal() + " cm");
+
+				BasicUtils.delay(DomainSystemConfig.sonarDelay);
+			}
 		}
-		BasicUtils.delay(DomainSystemConfig.sonarDelay);  // avoid fast generation
  	}
 }

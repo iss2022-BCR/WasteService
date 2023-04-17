@@ -57,11 +57,7 @@ public class SonarConcreteHCSR04 extends SonarModel implements ISonar {
 
 			ColorsOut.out("[" + this.getClass().getSimpleName() + "] distance = " + v + " cm");
 
-			int lastSonarVal = curVal.getVal();
-			if(lastSonarVal != v)
-			{
-				updateDistance(v);
-			}
+			updateDistance(v);
        } catch(Exception e) {
        		ColorsOut.outerr("[" + this.getClass().getSimpleName() + "] " + e.getMessage() );
        }		

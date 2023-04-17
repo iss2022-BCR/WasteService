@@ -25,7 +25,7 @@ public class TestLed {
 	}	
 	
 	@Test
-	public void testLedMock()
+	public void testLedMockGUI()
 	{
 		System.out.println("testLedMock");
 		
