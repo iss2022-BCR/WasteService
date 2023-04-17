@@ -21,3 +21,5 @@ echo.
 echo.
 
 echo build complete.
+
+pause

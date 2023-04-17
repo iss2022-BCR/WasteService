@@ -5,3 +5,5 @@ cd ..\sprint2_wasteservice_rpi\
 
 echo Building WasteService_RPi ZIP ...
 .\gradlew distZip
+
+pause
