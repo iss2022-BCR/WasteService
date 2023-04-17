@@ -1,0 +1,5 @@
+item(proxyctx_robot,nostate,msg(trolley_state_changed,event,trolleystateprovider,none,trolley_state_changed(MOVING),26)).
+item(proxyctx_robot,nostate,msg(step,request,pathexecutorbcr,basicrobot,step(350),27)).
+item(proxyctx_robot,nostate,msg(step,request,pathexecutorbcr,basicrobot,step(350),28)).
+item(proxyctx_robot,nostate,msg(step,request,pathexecutorbcr,basicrobot,step(350),29)).
+item(proxyctx_robot,nostate,msg(step,request,pathexecutorbcr,basicrobot,step(350),30)).

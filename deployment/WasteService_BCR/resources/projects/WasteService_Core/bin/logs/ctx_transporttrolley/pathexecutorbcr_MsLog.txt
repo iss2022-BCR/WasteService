@@ -1,0 +1,6 @@
+item(pathexecutorbcr,state_idle,msg(dopath,request,transporttrolley,pathexecutorbcr,dopath(wwww,transporttrolley),25)).
+item(pathexecutorbcr,state_do_move_forward,msg(trolley_state_changed,event,trolleystateprovider,none,trolley_state_changed(MOVING),26)).
+discard(pathexecutorbcr,state_do_move_forward,msg(trolley_state_changed,event,trolleystateprovider,none,trolley_state_changed(MOVING),26)).
+item(pathexecutorbcr,state_do_move_forward,msg(stepdone,reply,basicrobot,pathexecutorbcr,stepdone(ok),22)).
+item(pathexecutorbcr,state_do_move_forward,msg(stepdone,reply,basicrobot,pathexecutorbcr,stepdone(ok),24)).
+item(pathexecutorbcr,state_do_move_forward,msg(stepdone,reply,basicrobot,pathexecutorbcr,stepdone(ok),26)).

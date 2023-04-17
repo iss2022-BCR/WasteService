@@ -1,0 +1,1 @@
+item(proxyctx_raspberrypi,nostate,msg(trolley_state_changed,event,trolleystateprovider,none,trolley_state_changed(MOVING),26)).

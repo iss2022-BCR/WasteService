@@ -1,0 +1,3 @@
+item(transporttrolley,state_idle,msg(deposit,request,wasteservice,transporttrolley,deposit(GLASS,50.0),21)).
+item(transporttrolley,state_move_to_indoor,msg(trolley_state_changed,event,trolleystateprovider,none,trolley_state_changed(MOVING),26)).
+discard(transporttrolley,state_move_to_indoor,msg(trolley_state_changed,event,trolleystateprovider,none,trolley_state_changed(MOVING),26)).

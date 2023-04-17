@@ -1,0 +1,3 @@
+item(trolleystateprovider,state_idle,msg(coapUpdate,dispatch,transporttrolley,trolleystateprovider,coapUpdate(transporttrolley,transporttrolley(HOME)),22)).
+item(trolleystateprovider,state_idle,msg(coapUpdate,dispatch,pathexecutorbcr,trolleystateprovider,'coapUpdate(pathexecutorbcr,        ActorBasic(Resource) pathexecutorbcr  | created  )',23)).
+item(trolleystateprovider,state_idle,msg(coapUpdate,dispatch,transporttrolley,trolleystateprovider,coapUpdate(transporttrolley,transporttrolley(MOVING)),24)).
