@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 
-# Usage: ./sonarBCR.py <loop> [delay]
-
 import sys
 import time
 
