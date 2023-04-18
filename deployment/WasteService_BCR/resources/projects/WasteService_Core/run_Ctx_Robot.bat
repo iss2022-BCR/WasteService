@@ -1,9 +1,13 @@
 cd bin\
 
+for /f "delims=" %%a in ('.\unibo.sprint2_wasteservice_core_RT.bat') do (echo %%a)
+
+exit
+
 setlocal
 call :setESC
 
-for /f "delims=" %%a in ('dir /b /a-d <PATH>') do (echo %ESC%%%a%ESC%[0m)
+
 .\unibo.sprint2_wasteservice_core_RT.bat
 
 :setESC
