@@ -672,7 +672,7 @@ QActor basicrobot context ctx_robot {
 }
 
 // Sprint2 Problem Analysis ===================================================
-/*QActor sonar_simulator context ctx_raspberrypi {
+QActor sonar_simulator context ctx_raspberrypi {
 	State state_init initial {
 		println("[SonarMockTest] Started.")
 		
@@ -690,7 +690,7 @@ QActor basicrobot context ctx_robot {
 		delay 7000
 	}
 	Goto state_detect
-}*/
+}
 
 QActor alarmcontroller context ctx_raspberrypi {
 	[#

@@ -27,6 +27,7 @@ with Diagram('sprint2_waste_service_analysisArch', show=False, outformat='png', 
           trolleystateprovider=Custom('trolleystateprovider','./qakicons/symActorSmall.png')
           pathexecutorbcr=Custom('pathexecutorbcr','./qakicons/symActorSmall.png')
      with Cluster('ctx_raspberrypi', graph_attr=nodeattr):
+          sonar_simulator=Custom('sonar_simulator','./qakicons/symActorSmall.png')
           alarmcontroller=Custom('alarmcontroller','./qakicons/symActorSmall.png')
           ledcontroller=Custom('ledcontroller','./qakicons/symActorSmall.png')
      with Cluster('ctx_robot', graph_attr=nodeattr):
@@ -46,6 +47,7 @@ with Diagram('sprint2_waste_service_analysisArch', show=False, outformat='png', 
      sys >> Edge(color='red', style='dashed', xlabel='resume', fontcolor='red') >> pathexecutorbcr
      basicrobot >> Edge(color='darkgreen', style='dashed', xlabel='stepdone', fontcolor='darkgreen') >> pathexecutorbcr
      basicrobot >> Edge(color='darkgreen', style='dashed', xlabel='stepfail', fontcolor='darkgreen') >> pathexecutorbcr
+     sonar_simulator >> Edge(color='blue', style='solid', xlabel='sonar_data', fontcolor='blue') >> alarmcontroller
      alarmcontroller >> Edge( xlabel='stop', **eventedgeattr, fontcolor='red') >> sys
      alarmcontroller >> Edge( xlabel='resume', **eventedgeattr, fontcolor='red') >> sys
      sys >> Edge(color='red', style='dashed', xlabel='trolley_state_changed', fontcolor='red') >> ledcontroller
