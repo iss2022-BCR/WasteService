@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>Sprint3</title>
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/templateISS.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/main.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/navbar.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/table.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/code.css">
+        <script type="text/javascript" src="../../../commons/resources/scripts/myScripts.js"></script>
+    </head>
+
+    <body onload="loadNav();">
+        <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
+        <div id="sidenav" class="sidenav">
+            <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
+            <a class="sprint" href="../../../Sprint0/index.html">Sprint0</a>
+            <a class="sprint" href="../../../Sprint1/index.html">Sprint1</a>
+            <a class="sprint" href="../../../Sprint2/index.html">Sprint2</a>
+            <a id="currentSprint" class="sprint" href="#">&#8211;&#8212; Sprint3 &#8212;&#8211;</a>
+            <a href="../../index.html">Index</a>
+            <a href="final_theme.html">Final Theme</a>
+            <a href="requirement_analysis.html">Requirement<br/>Analysis</a>
+            <a href="problem_analysis.html">Problem Analysis</a>
+            <a href="project.html">Project</a>
+            <a class="selected" href="test_plans.html">Test Plans</a>
+            <div class="sidenavSection">
+                <div class="sidenavSubSection">
+                </div>
+            </div>
+            <a href="conclusions.html">Conclusions</a>
+            <a href="team.html">Team</a>
+            <p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
+            <bottom-spacer/>
+        </div>
+
+        <div id="main">
+            <h1 align="center">Test Plans</h1>
+            
+            
+            
+            <h4>Execute Test</h4>
+            To run all the [...] tests:
+            <pre>
+                ./gradlew test
+            </pre>
+            Or, if the Gradle version is not supported (legacy project):
+            <ol>
+                <li>open the project in IntelliJ IDEA;</li>
+                <li>open the Gradle view: <code>View > Tool Windows > Gradle</code>;</li>
+                <li>
+                    run the test task:
+                    <img src="../../resources/imgs/test_plan/Gradle_Tool_Window.png">
+                </li>
+            </ol>
+
+            <h4>Test Report</h4>
+            The test report is generated automatically with the <a href="https://docs.gradle.org/current/userguide/jacoco_plugin.html">Jacoco plugin</a>,
+            and is available here:
+            <a href="../../Sprint2_Project/it.unibo.radarSystem22.domainBCR/build/reports/tests/test/index.html">index.html</a>
+        </div>
+
+    </body>
+
+</html>
