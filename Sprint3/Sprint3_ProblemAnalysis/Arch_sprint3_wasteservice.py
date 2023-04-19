@@ -16,7 +16,7 @@ eventedgeattr = {
     'color': 'red',
     'style': 'dotted'
 }
-with Diagram('sprint3_wasteservice_coreArch', show=False, outformat='png', graph_attr=graphattr) as diag:
+with Diagram('sprint3_wasteserviceArch', show=False, outformat='png', graph_attr=graphattr) as diag:
   with Cluster('env'):
      sys = Custom('','./qakicons/system.png')
      with Cluster('ctx_wasteservice', graph_attr=nodeattr):
@@ -29,10 +29,14 @@ with Diagram('sprint3_wasteservice_coreArch', show=False, outformat='png', graph
      with Cluster('ctx_robot', graph_attr=nodeattr):
           basicrobot=Custom('basicrobot','./qakicons/symActorSmall.png')
      with Cluster('ctx_raspberrypi', graph_attr=nodeattr):
+          sonar_bcr=Custom('sonar_bcr','./qakicons/symActorSmall.png')
+          led_bcr=Custom('led_bcr','./qakicons/symActorSmall.png')
           sonar_bcr=Custom('sonar_bcr(ext)','./qakicons/externalQActor.png')
           led_bcr=Custom('led_bcr(ext)','./qakicons/externalQActor.png')
           buzzer_bcr=Custom('buzzer_bcr(ext)','./qakicons/externalQActor.png')
           textdisplay_bcr=Custom('textdisplay_bcr(ext)','./qakicons/externalQActor.png')
+     with Cluster('ctx_status', graph_attr=nodeattr):
+          statusgui_controller=Custom('statusgui_controller','./qakicons/symActorSmall.png')
      wasteservice >> Edge(color='magenta', style='solid', xlabel='deposit', fontcolor='magenta') >> transporttrolley
      transporttrolley >> Edge(color='magenta', style='solid', xlabel='dopath', fontcolor='magenta') >> pathexecutorbcr
      transporttrolley >> Edge(color='darkgreen', style='dashed', xlabel='pickupcompleted', fontcolor='darkgreen') >> wasteservice

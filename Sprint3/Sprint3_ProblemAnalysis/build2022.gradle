@@ -105,7 +105,7 @@ eclipse {
 
 application {
     // Define the main class for the application.
-    mainClass = 'it.unibo.ctx_raspberrypi.MainCtx_raspberrypiKt'
+    mainClass = 'it.unibo.ctx_status.MainCtx_statusKt'
 }
 
  jar {
