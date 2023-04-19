@@ -18,6 +18,8 @@ class Sonar_bcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 		return { //this:ActionBasciFsm
 				state("state_init") { //this:State
 					action { //it:State
+						emit("stop", "stop" ) 
+						emit("resume", "resume" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

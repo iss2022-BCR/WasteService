@@ -31,12 +31,8 @@ with Diagram('sprint3_wasteserviceArch', show=False, outformat='png', graph_attr
      with Cluster('ctx_raspberrypi', graph_attr=nodeattr):
           sonar_bcr=Custom('sonar_bcr','./qakicons/symActorSmall.png')
           led_bcr=Custom('led_bcr','./qakicons/symActorSmall.png')
-          sonar_bcr=Custom('sonar_bcr(ext)','./qakicons/externalQActor.png')
-          led_bcr=Custom('led_bcr(ext)','./qakicons/externalQActor.png')
-          buzzer_bcr=Custom('buzzer_bcr(ext)','./qakicons/externalQActor.png')
-          textdisplay_bcr=Custom('textdisplay_bcr(ext)','./qakicons/externalQActor.png')
-     with Cluster('ctx_status', graph_attr=nodeattr):
-          statusgui_controller=Custom('statusgui_controller','./qakicons/symActorSmall.png')
+     with Cluster('ctx_statusgui', graph_attr=nodeattr):
+          gui_controller=Custom('gui_controller','./qakicons/symActorSmall.png')
      wasteservice >> Edge(color='magenta', style='solid', xlabel='deposit', fontcolor='magenta') >> transporttrolley
      transporttrolley >> Edge(color='magenta', style='solid', xlabel='dopath', fontcolor='magenta') >> pathexecutorbcr
      transporttrolley >> Edge(color='darkgreen', style='dashed', xlabel='pickupcompleted', fontcolor='darkgreen') >> wasteservice
@@ -52,4 +48,6 @@ with Diagram('sprint3_wasteserviceArch', show=False, outformat='png', graph_attr
      sys >> Edge(color='red', style='dashed', xlabel='resume', fontcolor='red') >> pathexecutorbcr
      basicrobot >> Edge(color='darkgreen', style='dashed', xlabel='stepdone', fontcolor='darkgreen') >> pathexecutorbcr
      basicrobot >> Edge(color='darkgreen', style='dashed', xlabel='stepfail', fontcolor='darkgreen') >> pathexecutorbcr
+     sonar_bcr >> Edge( xlabel='stop', **eventedgeattr, fontcolor='red') >> sys
+     sonar_bcr >> Edge( xlabel='resume', **eventedgeattr, fontcolor='red') >> sys
 diag

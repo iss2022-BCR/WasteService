@@ -60,7 +60,7 @@ Context ctx_transporttrolley	ip [host="localhost" port=11801]
 Context ctx_robot				ip [host="localhost" port=8020]
 
 Context ctx_raspberrypi			ip [host="localhost" port=11802]
-Context ctx_status				ip [host="localhost" port=11803]
+Context ctx_statusgui			ip [host="localhost" port=11803]
 
 // ACTORS =====================================================================
 // CTX WasteService -----------------------------------------------------------
@@ -622,15 +622,10 @@ QActor basicrobot context ctx_robot {
 }
 
 // CTX RaspberryPi ------------------------------------------------------------
-ExternalQActor sonar_bcr				context ctx_raspberrypi
-ExternalQActor led_bcr					context ctx_raspberrypi
-ExternalQActor buzzer_bcr				context ctx_raspberrypi
-ExternalQActor textdisplay_bcr			context ctx_raspberrypi
-
-// CTX RaspberryPi ------------------------------------------------------------
 QActor sonar_bcr context ctx_raspberrypi {
 	State state_init initial {
-		
+		emit stop: stop
+		emit resume: resume
 	}
 }
 
@@ -641,13 +636,8 @@ QActor led_bcr context ctx_raspberrypi {
 }
 
 // CTX ------------------------------------------------------------------------
-QActor statusgui_controller context ctx_status {
+QActor gui_controller context ctx_statusgui {
 	State state_init initial {
-		
-	}
-	Goto state_idle
-	
-	State state_idle {
 		
 	}
 	
