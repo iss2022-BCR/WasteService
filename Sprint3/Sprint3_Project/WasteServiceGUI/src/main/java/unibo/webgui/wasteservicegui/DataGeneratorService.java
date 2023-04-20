@@ -18,8 +18,34 @@ public class DataGeneratorService {
         this.messagingTemplate = messagingTemplate;
     }
 
+    // Plastic server Mock
     @Scheduled(fixedRate = 5000)
-    public void generateData() {
+    public void generatePlastic() {
+        String msg = "100.0";
+        messagingTemplate.convertAndSend("/topic/plastic", msg);
+    }
+
+    // Plastic server Mock
+    @Scheduled(fixedRate = 5000)
+    public void generateGlass() {
+        String msg = "100.0";
+        messagingTemplate.convertAndSend("/topic/glass", msg);
+    }
+
+
+    // Led server Mock
+    // Blink led: change status every 2 seconds from ON to OFF
+    @Scheduled(fixedRate = 10000)
+    public void changeLed() throws InterruptedException {
+        String msg = "ON";
+        messagingTemplate.convertAndSend("/topic/led", msg);
+        TimeUnit.SECONDS.sleep(5);
+        msg = "OFF";
+        messagingTemplate.convertAndSend("/topic/led", msg);
+    }
+}
+
+/*    public void generatePlastic() {
         ObjectMapper objectMapper = new ObjectMapper();
         Data data = new Data();
         data.setValue(100.0);
@@ -30,30 +56,11 @@ public class DataGeneratorService {
             e.printStackTrace();
         }
         messagingTemplate.convertAndSend("/topic/plastic", json);
-    }
-
-    @Scheduled(fixedRate = 2000)
-    public void changeLed() throws InterruptedException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = "";
-        try {
-            json = objectMapper.writeValueAsString("ON");
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        messagingTemplate.convertAndSend("/topic/led", json);
-        TimeUnit.SECONDS.sleep(1);
-        try {
-            json = objectMapper.writeValueAsString("OFF");
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
-    }
-}
+    }*/
 
 // Mock class for the data we want to represent
 // I know it's redundant, but it's just a mock
+/*
 class Data {
     private Double value;
 
@@ -65,3 +72,4 @@ class Data {
         this.value = value;
     }
 }
+*/

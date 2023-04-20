@@ -92,7 +92,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-7 col-xl-8 col-xxl-12" style="max-width: 50em">
+                    <div class="col-lg-7 col-xl-8 col-xxl-12" style="max-width: 40%">
                         <div class="card shadow mb-4">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <div class="row">
@@ -100,12 +100,41 @@
                                         <h6 class="text-primary fw-bold m-0">Transport Trolley</h6>
                                     </div>
                                     <div class="col-xxl-2">
-                                        <div></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
+                                    <div class="grid"
+                                         th:style="${'grid-template-columns: repeat(' + num_cols + ', 1fr)'}">
+                                        <!--retrieve each index of the cell and create and id for each one-->
+                                        <!--numbers.sequence produces an array with a sequence of integer numbers.-->
+                                        <div class="square empty-cell"
+                                             th:each="idx: ${#numbers.sequence(0, num_rows * num_cols - 1)}"
+                                             th:id="'cell_' + ${idx}">
+                                        </div>
+                                    </div>
+                                    <!--For each couple of coordinates of home_cells, we have idx representing the index of each home_cells-->
+                                    <!--The index is not global: it indicates which cell of room_home_cell we are considering-->
+                                    <!--With th:text... we obtain the general index of the cell; we cannot see the index, as the span is hidden-->
+                                    <div id="home_cells">
+                                        <span style="display: none"
+                                              th:each="idx: ${#numbers.sequence(0, room_home.length - 1, 2)}"
+                                              th:text="${room_home[idx] * num_cols + room_home[idx+1]}"></span>
+                                    </div>
+                                    <div id="indoor_cells">
+                                        <span style="display: none"
+                                              th:each="idx: ${#numbers.sequence(0, room_indoor.length - 1, 2)}"
+                                              th:text="${room_indoor[idx] * num_cols + room_indoor[idx+1]}"></span>
+                                    </div>
+                                    <div id="plastic_cells">
+                                        <label hidden th:each="idx: ${#numbers.sequence(0, room_plastic.length - 1, 2)}"
+                                               th:text="${room_plastic[idx] * num_cols + room_plastic[idx+1]}"></label>
+                                    </div>
+                                    <div id="glass_cells">
+                                        <label hidden th:each="idx: ${#numbers.sequence(0, room_glass.length - 1, 2)}"
+                                               th:text="${room_glass[idx] * num_cols + room_glass[idx+1]}"></label>
+                                    </div>
                                     <!--<div class="grid" th:each="i: ${IntStream.range(0, 80)}">
                                         <div class="square fullImg"><img src="https://farm9.staticflickr.com/8461/8048823381_0fbc2d8efb.jpg"/></div>
 
@@ -115,10 +144,11 @@
                         </div>
                     </div>
                     <div class="col">
-                        <div class="card" style="margin-bottom: 1em;">
+                        <div class="card" style="margin-bottom: 1em; max-width: 40%">
                             <div class="card-header d-flex justify-content-between">
                                 <div class="col-xxl-8" style="padding-top: 0px;">
-                                <h6 class="text-primary fw-bold m-0">Transport Trolley Info</h6></div></div>
+                                    <h6 class="text-primary fw-bold m-0">Transport Trolley Info</h6></div>
+                            </div>
                             <div class="card-body">
                                 <h6 class="text-muted card-subtitle mb-2">Status:&nbsp;</h6>
                                 <h6 class="text-muted card-subtitle mb-2">X:</h6>
@@ -126,13 +156,19 @@
                                 <p class="card-text"></p>
                             </div>
                         </div>
-                        <div class="card shadow border-start-info py-2">
+                        <div class="card shadow border-start-info py-2" style="max-width: 40%">
                             <div class="card-body">
                                 <div class="row align-items-center no-gutters">
                                     <div class="col me-2">
-                                        <div class="text-uppercase text-info fw-bold text-xs mb-1"><span style="font-size: 15px;color: rgb(78,115,223);">Led state</span></div>
+                                        <div class="text-uppercase text-info fw-bold text-xs mb-1"><span
+                                                style="font-size: 15px;color: rgb(78,115,223);">Led state</span></div>
                                     </div>
-                                    <div class="col-auto"><button class="btn btn-primary" type="button" style="height: 73px;width: 73px;border-radius: 65%;"></button></div>
+                                    <div class="col-auto">
+                                        <button class="btn btn-primary" id="led"
+                                                style="height: 73px;width: 73px;border-radius: 65%;"
+                                                type="button">OFF
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -145,8 +181,11 @@
                 <div class="text-center my-auto copyright"><span>Copyright © Team BCR 2023</span></div>
             </div>
         </footer>
-    </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+    </div>
+    <a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
 </div>
+<script>initialize_grid()</script>
+<script>connect()</script>
 </body>
 
 </html>
