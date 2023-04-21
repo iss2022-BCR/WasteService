@@ -45,6 +45,27 @@ function connect() {
                     "border-color": message.body.toString() === "ON" ? "#1cc88a" : "#858796"
                 });
         });
+        stompClient.subscribe('/topic/grid', (message) => {
+            console.log(`Robot in movimento, posizione: ${message.body}`);
+            console.log(message.body.split(","))
+            let num_cols = parseInt($("#num_cols").html(), 10)
+            console.log("aaaa"+ num_cols);
+            // Change background color of the cell
+            let coords = message.body
+                .split(",")
+                .map((s) => parseInt(s, 10));
+            console.log(coords);
+            let idx = coords[0] * num_cols + coords[1]
+            idx = parseInt(idx, 10)
+            console.log(idx);
+            $("#cell_" + idx).append("<div class='circle'></div>")
+            console.log(typeof coords[0])
+            console.log(typeof coords[1])
+            console.log(typeof num_cols)
+            console.log(typeof idx)
+
+
+        });
 
     });
 }

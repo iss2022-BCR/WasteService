@@ -6,10 +6,10 @@
 .square {
     aspect-ratio: 1/ 1;
     display: flex;
-    align-items: center;
     padding: 5%;
     color: #fff;
     border:1px solid #1c1c21;
+    /*width: 40%;*/
 }
 
 .btn-circle.btn-xl {
@@ -44,4 +44,17 @@
 .empty-cell {
     background-color: #858796;
     opacity: 0.3;
+}
+
+.circle {
+    /*
+    border-radius: 10px;
+    width: 10px;
+    height: 10px;
+    */
+    border-radius: 60%;
+    width: 60%;
+    height: 60%;
+    background-color: red;
+    /* width and height can be anything, as long as they're equal */
 }

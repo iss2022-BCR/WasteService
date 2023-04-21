@@ -43,6 +43,14 @@ public class DataGeneratorService {
         msg = "OFF";
         messagingTemplate.convertAndSend("/topic/led", msg);
     }
+    @Scheduled(fixedRate = 10000)
+    public void pathExecutor() throws InterruptedException {
+        for (int i = 0; i < 8; i++) {
+            String msg = "0,"+i;
+            messagingTemplate.convertAndSend("/topic/grid", msg);
+            TimeUnit.SECONDS.sleep(9);
+        }
+    }
 }
 
 /*    public void generatePlastic() {
