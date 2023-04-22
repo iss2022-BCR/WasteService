@@ -28,48 +28,58 @@
             <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
             <a href="../../Sprint0/index.html">&#8617; &nbsp;&nbsp;&nbsp; Back to<br/>WasteService</a>
             <p class="separator" style="color: #818181;">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
-            <a href="#SSH">SSH</a>
+            <a href="#SSH-Password-less">SSH<br/>Password-less</a>
+            <div class="sidenavSection">
+                <a href="#Advantages">Advantages</a>
+                <a href="#Ed25519-Public-key-Algorithm">Ed25519 Public-key<br/>Algorithm</a>
+            </div>
+            <a href="#SSH-Public-key-Authentication-Setup">SSH Public-key<br/>Auth Setup</a>
+            <div class="sidenavSection">
+                <a href="#ED25519">ED25519</a>
+                </div>
             <p style="height: 100px; visibility: hidden"></p>
         </div>
 
         <div id="main">
             <h1 align="center">SSH Notes</h1>
-            For this project, we want to connect to the raspberry in a simple way,
-            without a password required. A possible way to do this is using SSH public key authentication.
-            <br/><br/>
+            
+            <h2 id="SSH-Password-less">SSH Password-less</h2>
+            A possible way to setup ssh communication with a node,
+            is by using SSH public key authentication.
+            
+            <h3 id="Advantages">Advantages</h3>
             There are several reasons for using SSH password-less authentication, including:
             <ol>
                 <li>
-                    Increased Security: Passwords can be guessed or intercepted by malicious actors,
+                    <b>Increased Security</b>: passwords can be guessed or intercepted by malicious actors,
                     whereas password-less authentication using public and private keys offers a more
                     secure method of authentication. With password-less authentication, there is no need
                     to store sensitive login information on a remote server, reducing the risk of potential data breaches.
                 </li>
                 <li>
-                    Convenience: With password-less authentication, users can log in to remote servers without
+                    <b>Convenience</b>: with password-less authentication, users can log in to remote servers without
                     having to enter a password every time. This saves time and eliminates the need to remember
                     complex passwords, making the authentication process more convenient and user-friendly.
                 </li>
                 <li>
-                    Automation: Password-less authentication can be used to automate tasks and scripts that
+                    <b>Automation</b>: password-less authentication can be used to automate tasks and scripts that
                     require authentication, making it easier to manage and maintain large-scale infrastructure.
                     This can save time and reduce the risk of human error when performing routine tasks.
                 </li>
                 <li>
-                    Centralized Management: Public and private keys can be easily managed from a central location,
+                    <b>Centralized Management</b>: public and private keys can be easily managed from a central location,
                     making it easier to control access to remote servers. This makes it easier to revoke access for
                     users who no longer require it or to add new users as needed.
                 </li>
             </ol>
             
-            When it comes to cryptographic algorithms, RSA is a popular choice, but compared to newer algorithms,
-            it can be slow. In situations where time is a critical factor, such as with embedded systems, a faster
-            algorithm is essential. That's why we've chosen to use the Ed25519 algorithm, which offers superior
-            performance without compromising security.
+            <h3 id="Ed25519-Public-key-Algorithm">Ed25519 Public-key Algorithm</h3>
 
-            <h3>Ed25519 public-key algorithm</h3>
+            When it comes to cryptographic algorithms, <b>RSA</b> is a popular choice, but compared to newer algorithms,
+            it can be <i>slow</i>. In situations where time is a critical factor, such as with embedded systems, a faster
+            algorithm is essential.
 
-            Ed25519 is a relatively new public-key algorithm that is becoming increasingly popular for SSH key
+            <b>Ed25519</b> is a relatively new public-key algorithm that is becoming increasingly popular for SSH key
             generation due to its unique features and advantages over other algorithms such as RSA and DSA.
             Its main advantages are: 
             <ol>
@@ -99,9 +109,11 @@
                 </li>
             </ol>
 
-            <h2>How to use the SSH public key authentication with ED25519 algorithm</h2>
+            <h2 id="SSH-Public-key-Authentication-Setup">SSH Public-key Authentication Setup</h2>
+            
+            <h3 id="ED25519">ED25519</h3>
 
-            <h3>Generate key on device</h3>
+            <h4>Generate key on device</h4>
 
             <ol>
                 <li>
@@ -124,7 +136,7 @@ ssh-keygen -t ed25519
                 </li>
             </ol>
 
-            <h3>Adding the Ed25519 Key to the Raspberry Pi</h3>
+            <h4>Adding the Ed25519 Key to the Raspberry Pi</h4>
             <ol>
                 <li>
                     Navigate to your home directory and create a new file called authorized_keys
