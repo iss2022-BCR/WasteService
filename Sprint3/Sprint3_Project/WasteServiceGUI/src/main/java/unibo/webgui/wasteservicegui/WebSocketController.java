@@ -39,13 +39,18 @@ public class WebSocketController {
     @Value("${room.cols}")
     private int numCols;
 
+    @Value("${service.ip}")
+    private String ip;
+
+    @Value("${service.port}")
+    private String port;
 
     @GetMapping("/")
     public String getLogin() {
         return "login";
     }
 
-    public void initializeDashboard(Model viewmodel) {
+    public void initializeDashboard(Model viewmodel, String ip, String port) {
         viewmodel.addAttribute("led_state", ledState);
         viewmodel.addAttribute("plastic_current", plasticCurrent);
         viewmodel.addAttribute("plastic_max", plasticMax);
@@ -59,12 +64,16 @@ public class WebSocketController {
         viewmodel.addAttribute("room_glass", roomGlass);
         viewmodel.addAttribute("num_rows", numRows);
         viewmodel.addAttribute("num_cols", numCols);
+        viewmodel.addAttribute("ip", ip);
+        viewmodel.addAttribute("port", port);
     }
 
 
     @PostMapping("/dashboard")
     public String update(Model viewmodel, @RequestParam String ip, @RequestParam String port) {
-        initializeDashboard(viewmodel);
+        initializeDashboard(viewmodel, ip, port);
+        this.ip = ip;
+        this.port = port;
         // fai qualcosa con ip e porta
 
         // COAP, potrebbe servirci più tardi, solo ip
