@@ -50,15 +50,15 @@
 
         <div id="main">
             <h1 align="center">Problem Analysis</h1>
-            To focus the attention on the problem of the current sprint, we created a QAK
-            that includes only the core-business and the gui (without the Raspberry Pi part).
-
-            <h2 id="Logical-Architecture-from-Sprint1">Logical Architecture from Sprint2</h2>
-            <img width="100%" src="../../../Sprint2/Sprint2_Project/sprint2_waste_service/project_logical_architecture_core-business.png"/>
-            QAK model: <a href="../../../Sprint2/Sprint2_Project/sprint2_waste_service/src/waste_service.qak">waste_service.qak</a>
-
-            <img width="100%" src="../../../Sprint2/Sprint2_Project/sprint2_waste_service/project_logical_architecture_core-business.png"/>
-            QAK model: <a href="../../../Sprint2/Sprint2_Project/sprint2_waste_service/src/waste_service.qak">waste_service.qak</a>
+            Even though the GUI needs to receive information about the Led, it doesn't need to
+            interact directly with the Raspberry Pi, since the Led state is provided by
+            the WasteService Core.
+            For this reason, during this Sprint we're going to focus our attention on the
+            WasteService Core project.
+            
+            <h2 id="Logical-Architecture-from-Sprint2">Logical Architecture from Sprint2</h2>
+            <img width="100%" src="../../../Sprint2/Sprint2_Project/sprint2_wasteservice_core/sprint2_wasteservice_corearch_edited.png"/>
+            QAK model: <a href="../../../Sprint2/Sprint2_Project/sprint2_wasteservice_core/src/wasteservice_core.qak">wasteservice_core.qak</a>
 
             <h2 id="Defects-Analysis">Defects Analysis</h2> 
 

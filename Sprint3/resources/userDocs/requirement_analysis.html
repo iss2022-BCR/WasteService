@@ -56,16 +56,20 @@
             <h2 id="General-Overview">General Overview</h2>
 
             <h3 id="System-Abstract">System Abstract</h3>
-            The Sprint2 analyzes the components related directly or indirectly to 
-            the raspberry. Therefore we are interested in the following computational nodes:
+            The Sprint3 analyzes the components related to the managing and the displaying
+            of the Waste Service status GUI. Since the GUI is required to show information
+            about the transport trolley and its position, the current containers capacity
+            and the state of the led, we'll be interested in the following
+            computational nodes:
             <ul>
-                <li><b>Raspberry Pi</b></li>
                 <li><b>WasteService</b></li>
-                <li><b>DDR robot</b></li>
+                <li><b>Raspberry Pi</b></li>
+                <li><b>WasteService Status GUI</b></li>
             </ul>
+            
             <h4 id="Computational-Nodes">Related Computational Nodes</h4>
             <div class="image-container">
-                <img id="map" class="base-image" width="100%" src="../../resources/diagrams/sprint2_system_overview.png"/>
+                <img id="map" class="base-image" width="100%" src="../../resources/diagrams/sprint3_system_overview.png"/>
                 <img id="map-legend" class="overlay-image2" width="100%" src="../../resources/diagrams/legend.png"/>
             </div>
             <input type="checkbox" onclick="showOverlay(this, 'map-legend');" checked>Show the legend</input><br/>
@@ -81,24 +85,25 @@
                     <th>Description/Behaviour</th>
                 </tr>
                 <tr>
-                    <td>alarmDevice (sonar)</td>
-                    <td>Proactive</td>
-                    <td>-</td>
                     <td>
-                        Entity, which is part of a smart device, that sends a message to the
-                        wasteService when it detects the presence of an obstacle.
-                        We formalize the alarmDevice as an actor because it has its own autonomous
-                        flow of control, and sends messages to wasteService.
+                        WasteServiceStatusGUI
+                        (or StatusGUI)
                     </td>
-                </tr>
-                <tr>
-                    <td>warningDevice (led)</td>
                     <td>Reactive</td>
                     <td>-</td>
                     <td>
-                        Entity, which is part of a smart device, used to monitor the state of the trolley,
-                        We model it as an actor beacuse it processes messages one by one and
-                        updates the Led state accordingly.
+                        Entity, which task is to display a graphical interface to monitor
+                        the current state of the WasteService. It receives updates from the
+                        WasteService entities, and updates its GUI elements accordingly.
+                    </td>
+                </tr>
+                <tr>
+                    <td>led_bcr</td>
+                    <td>Reactive</td>
+                    <td>Actor</td>
+                    <td>
+                        Actor that handles the interaction with the Led component,
+                        updating its state according to the Transport Trolley state.
                     </td>
                 </tr>
                 <tr>
@@ -115,14 +120,9 @@
                     <td>Proactive&nbsp& Reactive</td>
                     <td>Actor</td>
                     <td>
-                        Handles the wasteService requests and sends lower-level commands to the basicRobot.
+                        Handles the wasteService requests and sends lower-level
+                        commands to the basicRobot.
                     </td>
-                </tr>
-                <tr>
-                    <td><emn>basicRobot</emn></td>
-                    <td>Reactive</td>
-                    <td>Actor</td>
-                    <td>Entity that receives commands from the transportTrolley and drives the DDR robot.</td>
                 </tr>
             </table>
 
@@ -132,6 +132,20 @@
                     <th>Data</th>
                     <th>Type</th>
                     <th>Description</th>
+                </tr>
+                <tr>
+                    <td>ContainerAmount</td>
+                    <td>Double (?)</td>
+                    <td>
+                        The current amount of KG present in a specific waste container.
+                    </td>
+                </tr>
+                <tr>
+                    <td>TrolleyPosition</td>
+                    <td>-</td>
+                    <td>
+                        The current position of the Transport Trolley inside the Waste Service Area.
+                    </td>
                 </tr>
                 <tr>
                     <td>LedState</td>
@@ -155,124 +169,60 @@
                     <th>Description</th>
                 </tr>
                 <tr>
-                    <td>distance</td>
+                    <td>updateContainer</td>
                     <td>Dispatch</td>
-                    <td>Alarm Device</td>
                     <td>WasteService</td>
                     <td>
-                        Tell the distance of eventually detected obstacles.
+                        StatusGUI
+                    </td>
+                    <td>
+                        Tells the StatusGUI to update the 
+                        current amount of stored waste of the GUI element
+                        corresponding to a specific container.
                     </td>
                 </tr>
                 <tr>
-                    <td>stop</td>
-                    <td>Dispatch</td>
-                    <td>WasteService</td>
-                    <td>Transport Trolley</td>
                     <td>
-                        Stop the robot and prevent it from doing any activity.
+                        update
+                        TrolleyPosition
                     </td>
-                </tr>
-                <tr>
-                    <td>resume</td>
                     <td>Dispatch</td>
-                    <td>WasteService</td>
-                    <td>Transport Trolley</td>
+                    <td>TransportTrolley</td>
                     <td>
-                        Resume the robot activity.
+                        StatusGUI
+                    <td>
+                        Tells the StatusGUI to update the current
+                        status of the GUI element referencing the
+                        Transport Trolley position.
                     </td>
                 </tr>
                 <tr>
                     <td>updateLed</td>
                     <td>Dispatch</td>
-                    <td>Transport Trolley</td>
-                    <td>Warning Device</td>
+                    <td>Raspberry Pi (?)</td>
                     <td>
-                        Update the Led state.
+                        StatusGUI
+                    </td>
+                    <td>
+                        Tells the StatusGUI to update the current
+                        status of the GUI element referencing the Led.
                     </td>
                 </tr>
             </table>
 
-            <h2 id="Raspberry-Pi">Raspberry Pi</h2>
-            <ksi>Raspberry Pi</ksi> is a single-board computer developed by the Raspberry Pi Foundation
-            in association with Broadcom. It has a CPU/GPU, a RAM, a series of pin for Input and Output, and
-            a USB hub.
-            <br/>
-            <br/>
-            <img width="240px" src="../imgs/raspberrypi4.png"/>
-            <img width="360px" src="../imgs/raspberrypi4_pins.png"/>
-            <br/>
-            <br/>
-            We're going to use a Raspberry Pi 4 Model B, since we already have one.
-            Moreover, it's going to constitute a <i>separate node</i> from the WasteService one,
-            and will have two main components attached: a Led and a Sonar.
-
-            <h4 id="Sonar">Sonar</h4>
-            The <ksi>Sonar</ksi> (<ksi>HC-SR04</ksi>) is an input component which measures the distance in a straight line,
-            from the surrounding environment, and sends those data.
-            <br/><br/>
-            <img width="340px" src="../imgs/HC-SR04.png"/>
-            <img width="260px" src="../imgs/Sonar-example.png"/>
-            <br/>
-            <br/>
-            
-            The sonar has 4 pins:
+            <h2 id="Status-GUI">Status GUI</h2>
+            The status GUI must be composed by different parts, showing at least the following
+            information:
             <ul>
-                <li><kc>Vcc</kc>, supplies power to the HC-SR04 ultrasonic sensor (it operates at 5V DC);</li>
-                <li><kc>Trig (Trigger)</kc>, used to trigger ultrasonic sound pulses. By setting this pin to HIGH for 10µs, the sensor initiates an ultrasonic burst;</li>
-                <li><kc>Echo</kc>, goes high when the ultrasonic burst is transmitted and remains high until the sensor receives an echo, after which it goes low.</li>
-                <li><kc>GND</kc>, the ground pin.</li>
-            </ul>
-            It's possible to calculate the distance from the detected object and the sonar, by measuring
-            the time the <kc>Echo</kc> pin stays high.
-            
-            <br/>
-            <br/>
-            <img width="400px" src="../imgs/HC-SR04_example.gif"/>
-            
-            <h4 id="Led">Led</h4>
-            The <ksi>Led</ksi> is an output component which has 2 pins: one for the power supply and
-            one for the ground. Its brightness can be adjusted according to the amount of voltage it's 
-            supplied with, but since the RaspberryPi doesn't have any analogic outputs, we must consider it having
-            two states: ON and OFF.
-            <br/>
-            <br/>
-            <img width="150px" src="../imgs/led_off.png"/>
-            <img width="150px" src="../imgs/led_on.png"/>
-            <br/>
-            <br/>
-
-            However, by turning it ON and OFF in a rapid sequence, we can make it BLINK,
-            and obtain a sort of "third state".
-            Therefore, for the purpose of the project, we will have to update its state
-            in real-time, according to the sonar data. Those data refers to the Transport
-            Trolley current state:
-            <ul>
-                <li>Transport Trolley is at HOME, then the Led must be off;</li>
-                <li>Transport Trolley is moving, then the Led must be blinking;</li>
-                <li>Transport Trolley is stopped, then the Led must be on.</li>
-            </ul>
-
-            <h4 id="Others">Others</h4>
-            The minimal configuration is the following:
-            <br/>
-            <br/>
-            <img width="400px" src="../imgs/circuit_with_breadboard.png"/>
-            <br/>
-            <br/>
-            Since we don't expect to solder components directly to the board,
-            we are going to need the following:
-            <ul>
+                <li>current state of the containers (amount in KG);</li>
                 <li>
-                    a <b>breadboard</b>, which will will ease the creation and testing of
-                    different circuits;
+                    current position of the Transport Trolley (it's not specified if
+                    it has to be the exact position, or a descriptive label, e.g "at home");
                 </li>
-                <li><b>wires</b>, needed to attach components to the Raspberry Pi.</li>
                 <li>
-                    <b>resistors</b> (not esplicitly needed for the Raspberry Pi, but may
-                    be safer) to limit the amount of current flowing through the circuit. 
+                    current state of the Led (On, Off, Blinking).
                 </li>
             </ul>
-            
         </div>
     </body>
 </html>
