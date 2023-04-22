@@ -1,5 +1,6 @@
 const stompClient = null;
 let plastic_counter = 0.0;
+let glass_counter = 0.0;
 
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
@@ -20,7 +21,7 @@ function connect() {
 
         // Subscribe to the /topic/plastic topic
         stompClient.subscribe('/topic/plastic', (message) => {
-            console.log(`Ricevuta plasticaccia: ${message.body}`);
+            console.log(`Ricevuta plastica: ${message.body}`);
             plastic_counter += parseFloat(message.body);
 
             // JQuery magic
@@ -28,10 +29,27 @@ function connect() {
 
             // The aria-valuenow attribute defines the current value of progress bar
             // In this way, we update the increment of the progress bar (depending on the quantity of plastic added)
-            $("#progress_bar")
+            $("#progress_bar_plastic")
                 .css({
                     "aria-valuenow": (plastic_counter / 10).toString(),
                     "width": (plastic_counter / 10).toString() + "%"
+                });
+        });
+
+        // Subscribe to the /topic/glass topic
+        stompClient.subscribe('/topic/glass', (message) => {
+            console.log(`Ricevuto vetro: ${message.body}`);
+            glass_counter += parseFloat(message.body);
+
+            // JQuery magic
+            $("#glass_current").html(glass_counter);
+
+            // The aria-valuenow attribute defines the current value of progress bar
+            // In this way, we update the increment of the progress bar (depending on the quantity of plastic added)
+            $("#progress_bar_glass")
+                .css({
+                    "aria-valuenow": (glass_counter / 10).toString(),
+                    "width": (glass_counter / 10).toString() + "%"
                 });
         });
         // Subscribe to the /topic/led topic
@@ -48,6 +66,9 @@ function connect() {
         stompClient.subscribe('/topic/grid', (message) => {
             console.log(`Robot in movimento, posizione: ${message.body}`);
             console.log(message.body.split(","))
+
+            $("#trolley_position").html(message.body.toString());
+            $("#trolley_status").html("MOVING");
             let num_cols = parseInt($("#num_cols").html(), 10)
             console.log("aaaa"+ num_cols);
             // Change background color of the cell
@@ -63,7 +84,6 @@ function connect() {
             console.log(typeof coords[1])
             console.log(typeof num_cols)
             console.log(typeof idx)
-
 
         });
 

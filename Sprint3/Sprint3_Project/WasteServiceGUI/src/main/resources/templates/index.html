@@ -24,7 +24,7 @@
     <div class="d-flex flex-column" id="content-wrapper">
         <div id="content">
             <nav class="navbar navbar-light navbar-expand bg-primary shadow mb-4 topbar static-top" style="background: #1cc88a;">
-                <div class="container-fluid"><button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button"><i class="fas fa-bars"></i></button><i class="fas fa-laugh-wink text-white" style="font-size: 30px;padding-right: 8px;"></i><span class="text-white" style="padding-right: 0px;font-size: 18px;">WasteService</span>
+                <div class="container-fluid"><i class="fas fa-laugh-wink text-white" style="font-size: 30px;padding-right: 8px;"></i><span class="text-white" style="padding-right: 0px;font-size: 18px;">WasteService</span>
                     <form class="d-none d-sm-inline-block me-auto ms-md-3 my-2 my-md-0 mw-100 navbar-search">
                         <div class="input-group"></div>
                     </form><a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#">
@@ -52,7 +52,7 @@
                                             </div>
                                             <div class="col">
                                                 <div class="progress progress-sm" style="--bs-warning: #edab03;--bs-warning-rgb: 237,171,3;">
-                                                    <div class="progress-bar bg-info bg-warning" id="progress_bar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"><span class="visually-hidden">50%</span></div>
+                                                    <div class="progress-bar bg-info bg-warning" id="progress_bar_plastic" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"><span class="visually-hidden">50%</span></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -73,11 +73,12 @@
                                         <div class="text-uppercase text-info fw-bold text-xs mb-1"><span style="font-size: 15px;">GLASS box weight (KG)</span></div>
                                         <div class="row g-0 align-items-center">
                                             <div class="col-auto">
-                                                <div class="text-dark fw-bold h5 mb-0 me-3"><span style="font-size: 15px;"></span></div>
+                                                <div class="text-dark fw-bold h5 mb-0 me-3"><span style="font-size: 15px;" id = "glass_current" th:text="${glass_current}"></span>
+                                                <span style="font-size: 15px;" id = "glass_max" th:text=" '/ ' + ${glass_max}"></span></div>
                                             </div>
                                             <div class="col">
                                                 <div class="progress progress-sm">
-                                                    <div class="progress-bar bg-info" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"><span class="visually-hidden">50%</span></div>
+                                                    <div class="progress-bar bg-info" id="progress_bar_glass" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"><span class="visually-hidden">50%</span></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -92,7 +93,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-7 col-xl-8 col-xxl-12" style="max-width: 40%">
+                    <div class="col-lg-5">
                         <div class="card shadow mb-4">
                             <div class="card-header d-flex justify-content-between">
                                 <div class="col-xxl-12" style="text-align: center;padding-top: 0px;">
@@ -149,9 +150,8 @@
                                     <h6 class="text-primary fw-bold m-0">Transport Trolley Info</h6></div>
                             </div>
                             <div class="card-body">
-                                <h6 class="text-muted card-subtitle mb-2">Status:&nbsp;</h6>
-                                <h6 class="text-muted card-subtitle mb-2">X:</h6>
-                                <h6 class="text-muted card-subtitle mb-2">Y:</h6>
+                                <p>Status: <span id = "trolley_status" th:text="${trolley_state}"></span></p>
+                                <p>Position: <span id = "trolley_position" th:text="${trolley_position}"></span></p>
                                 <p class="card-text"></p>
                             </div>
                         </div>
