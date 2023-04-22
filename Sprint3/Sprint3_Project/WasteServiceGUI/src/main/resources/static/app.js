@@ -94,7 +94,7 @@ function connect() {
 Initialize the grid of the Transport Trolley, depending on the type of cell.
 The cells are initialized as "empty cells". This function assigns the correct value of the cells, as specified
 in application.properties file.
-The cells are identified by their index (idx). The conversion from cartesian coordinates to index is done in index.html
+The cells are identified by their index (idx). The conversion from cartesian coordinates to index is done in dashboard.html
 with Thymeleaf.
 */
 function initialize_grid() {

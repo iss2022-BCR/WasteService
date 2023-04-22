@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class WebSocketController {
 
-    @Value("${webgui.addr}")
-    private String addr;
     @Value("${container.led_state}")
     private String ledState;
     @Value("${container.plastic_current}")
@@ -41,10 +39,13 @@ public class WebSocketController {
     @Value("${room.cols}")
     private int numCols;
 
+
     @GetMapping("/")
-    public String getDashboard(Model viewmodel) {
-        // Aggiungili al modello
-        viewmodel.addAttribute("addr", addr);
+    public String getLogin() {
+        return "login";
+    }
+
+    public void initializeDashboard(Model viewmodel) {
         viewmodel.addAttribute("led_state", ledState);
         viewmodel.addAttribute("plastic_current", plasticCurrent);
         viewmodel.addAttribute("plastic_max", plasticMax);
@@ -58,54 +59,22 @@ public class WebSocketController {
         viewmodel.addAttribute("room_glass", roomGlass);
         viewmodel.addAttribute("num_rows", numRows);
         viewmodel.addAttribute("num_cols", numCols);
-        // Restituisci la view (index.html)
-        return "index";
     }
 
 
-    @PostMapping("/update")
-    public String update(Model viewmodel, @RequestParam String ipaddr){
-        addr = ipaddr;
-        viewmodel.addAttribute("addr", addr);
-        //UtilsGUI.connectWithUtilsUsingCoap(ipaddr).observeResource(new UtilsCoapObserver());
-        //UtilsGUI.connectWithUtilsUsingTcp(ipaddr);
+    @PostMapping("/dashboard")
+    public String update(Model viewmodel, @RequestParam String ip, @RequestParam String port) {
+        initializeDashboard(viewmodel);
+        // fai qualcosa con ip e porta
+
+        // COAP, potrebbe servirci più tardi, solo ip
+        // UtilsGUI.connectWithUtilsUsingCoap(ipaddr).observeResource(new UtilsCoapObserver());
+        // Oppure con la porta
+        //UtilsGUI.connectWithUtilsUsingTcp(ipaddr, port).observeResource(new UtilsTcpObserver());
         //UtilsGUI.sendMsg();
         //return buildTheUpdatePage(viewmodel);
-        return "test";
-    }
 
-}
-
-class Greeting {
-
-    private String content;
-
-    public Greeting() {
-    }
-
-    public Greeting(String content) {
-        this.content = content;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-}
-class WordCount {
-    private String content;
-    public WordCount(String content) {
-        this.content = content;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
+        // Restituisci la view (dashboard.html)
+        return "dashboard";
     }
 }
