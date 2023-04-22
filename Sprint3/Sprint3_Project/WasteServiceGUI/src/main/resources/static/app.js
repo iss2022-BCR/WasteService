@@ -1,6 +1,7 @@
 const stompClient = null;
 let plastic_counter = 0.0;
 let glass_counter = 0.0;
+let idx_previous_cell = -1;
 
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
@@ -64,6 +65,8 @@ function connect() {
                 });
         });
         stompClient.subscribe('/topic/grid', (message) => {
+            if (idx_previous_cell !== -1)
+                $("#cell_"+ idx_previous_cell).empty();
             console.log(`Robot in movimento, posizione: ${message.body}`);
             console.log(message.body.split(","))
 
@@ -84,6 +87,7 @@ function connect() {
             console.log(typeof coords[1])
             console.log(typeof num_cols)
             console.log(typeof idx)
+            idx_previous_cell = idx;
 
         });
 

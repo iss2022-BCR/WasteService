@@ -48,7 +48,7 @@ public class DataGeneratorService {
         for (int i = 0; i < 8; i++) {
             String msg = "0,"+i;
             messagingTemplate.convertAndSend("/topic/grid", msg);
-            TimeUnit.SECONDS.sleep(9);
+            TimeUnit.SECONDS.sleep(1);
         }
     }
 }
