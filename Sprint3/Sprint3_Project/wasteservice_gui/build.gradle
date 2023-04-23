@@ -17,15 +17,26 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.webjars:jquery:3.6.4'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
-	implementation 'org.webjars:webjars-locator-core'
 	implementation 'org.springframework.session:spring-session-core'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
-
-
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	implementation 'org.webjars:jquery:3.6.4'
+	implementation 'org.webjars:webjars-locator-core'
+
+	/* COAP **************************************************************************************************************** */
+	// https://mvnrepository.com/artifact/org.eclipse.californium/californium-core
+	implementation group: 'org.eclipse.californium', name: 'californium-core', version: '3.5.0'
+	// https://mvnrepository.com/artifact/org.eclipse.californium/californium-proxy2
+	implementation group: 'org.eclipse.californium', name: 'californium-proxy2', version: '3.5.0'
+
+	/* UNIBO ********************************** */
+	implementation name: 'uniboInterfaces'
+	implementation name: '2p301'
+	implementation name: 'unibo.comm22-1.1'
+	implementation name: 'unibo.qakactor22-3.0'
 }
 
 tasks.named('test') {
