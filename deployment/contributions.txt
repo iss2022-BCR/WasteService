@@ -1,0 +1,10 @@
+- RadarSystem22 (radarGUI, radarClient, ...)
+- SmartDevice
+- Echo WasteServer
+- Map Editor
+- python Raspi scripts
+
+- WasteService Core
+- WasteService RPi
+- WasteService StatusGUI
+- batch scripts to automatize
