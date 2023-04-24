@@ -92,6 +92,7 @@ public class StatusController {
     @PostMapping("/dashboard")
     public String updateGUI(Model viewmodel, @RequestParam String ip, @RequestParam String port)
     {
+        System.out.println("test");
         this.ip = ip;
         this.port = port;
 

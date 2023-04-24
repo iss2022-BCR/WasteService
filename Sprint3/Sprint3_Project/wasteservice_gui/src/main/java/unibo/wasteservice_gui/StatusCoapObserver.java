@@ -8,12 +8,12 @@ import unibo.wasteservice_gui.websocket.WebSocketConfiguration;
 public class StatusCoapObserver implements CoapHandler {
     @Override
     public void onLoad(CoapResponse response) {
-        ColorsOut.outappl("StatusCoapObserver changed!" + response.getResponseText(), ColorsOut.GREEN);
+        ColorsOut.outappl("[StatusCoapObserver] Status changed! Value: " + response.getResponseText(), ColorsOut.GREEN);
         WebSocketConfiguration.webSocketHandler.sendToAll(response.getResponseText());
     }
 
     @Override
     public void onError() {
-        ColorsOut.outerr("StatusCoapObserver observe error!");
+        ColorsOut.outerr("[StatusCoapObserver] observe error!");
     }
 }

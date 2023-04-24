@@ -11,15 +11,11 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i&amp;display=swap">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <!--<script th:src="@{/webjars/jquery/jquery.min.js}"></script>-->
-    <script src="assets/js/theme.js"></script>
-    <!--<script src="app.js"></script>-->
-    <script src="ioutils.js"></script>
-    <script src="generate.js"></script>
-    <script src="dashboard_utils.js"></script>
-    <script src="wsminimal.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/wsminimal.js"></script>
+    <script src="js/dashboard_utils.js"></script>
 </head>
 
 <body id="page-top">
@@ -105,7 +101,7 @@
                     <div class="col-lg-5">
                         <div class="card shadow mb-4">
                             <div class="card-header d-flex justify-content-between">
-                                <div class="col-xxl-12" style="text-align: center;padding-top: 0px;">
+                                <div class="col-xxl-12" style="text-align: left;padding-top: 0px;">
                                     <h6 class="text-primary fw-bold m-0">Transport Trolley</h6>
                                     <div class="col-xxl-2">
                                     </div>
@@ -172,10 +168,9 @@
                                                 style="font-size: 15px;color: rgb(78,115,223);">Led state</span></div>
                                     </div>
                                     <div class="col-auto">
-                                        <button class="btn btn-primary" id="led"
-                                                style="height: 73px;width: 73px;border-radius: 65%;"
-                                                type="button">
-                                        </button>
+                                        <div class="led-off" id="led"
+                                                style="height: 73px;width: 73px;border-radius: 65%;">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -186,7 +181,7 @@
         </div>
         <footer class="bg-white sticky-footer">
             <div class="container my-auto">
-                <div class="text-center my-auto copyright"><span>Copyright © Team BCR 2023</span></div>
+                <div class="text-center my-auto copyright"><span>Copyright © <a href="https://github.com/iss2022-BCR/WasteService">Team BCR 2023</a></span></div>
             </div>
         </footer>
     </div>

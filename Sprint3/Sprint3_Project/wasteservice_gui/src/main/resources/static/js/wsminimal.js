@@ -35,24 +35,21 @@ function connect()
         if(firstMessage)
         {
             firstMessage = false
-            alert("Received first msg: " + msg)
+            //alert("Received first msg: " + msg) // test
 
             setPlasticMax(statusUpdate['maxPlastic'])
             setGlassMax(statusUpdate['maxGlass'])
+
+
             // build grid
-
         }
-        //alert("Received Msg: " + msg)
-
 
         updatePlasticCounter(statusUpdate['currentPlastic'])
         updateGlassCounter(statusUpdate['currentGlass'])
 
         updateLed(statusUpdate['ledState'])
 
-        updateTransportTrolleyPosition(statusUpdate['transportTrolleyPosition'])
-        updateTransportTrolleyState(statusUpdate['transportTrolleyState'])
-
+        updateTransportTrolley(statusUpdate['transportTrolleyPosition'], statusUpdate['transportTrolleyState'])
     };
 
 }//connect
