@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.TimeUnit;
 
 
-@Service
+//@Service
 public class DataGeneratorService {
 
-    private final SimpMessagingTemplate messagingTemplate;
+    /*private final SimpMessagingTemplate messagingTemplate;
 
     public DataGeneratorService(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
@@ -48,7 +48,7 @@ public class DataGeneratorService {
             messagingTemplate.convertAndSend("/topic/grid", msg);
             TimeUnit.SECONDS.sleep(1);
         }
-    }
+    }*/
 }
 
 /*    public void generatePlastic() {

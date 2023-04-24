@@ -90,6 +90,10 @@ dependencies {
     /* BCR ***************************************************************************************************************** */
     // Our JAR library to use the MapEditor classes
     implementation name: 'map_editor_bcr'
+
+    // https://mvnrepository.com/artifact/com.google.code.gson/gson
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
+
 }
 
 sourceSets {
@@ -134,13 +138,16 @@ tasks.withType(Test) {
 }
 
 application {
+    // Test
+    mainClassName = 'it.unibo.ctx_statusgui.MainCtx_statusguiKt'
+
     // Define the main class for the application: -P<build_name> (default: WasteService build)
-    mainClassName = 'it.unibo.ctx_wasteservice.MainCtx_wasteserviceKt'
+    /*mainClassName = 'it.unibo.ctx_wasteservice.MainCtx_wasteserviceKt'
     if (project.hasProperty("build_TransportTrolley")) {
         mainClassName = 'it.unibo.ctx_transporttrolley.MainCtx_transporttrolleyKt'
     } else if (project.hasProperty("build_Robot")) {
         mainClassName = 'it.unibo.ctx_robot.MainCtx_robotKt'
-    }
+    }*/
 }
 
 jar {

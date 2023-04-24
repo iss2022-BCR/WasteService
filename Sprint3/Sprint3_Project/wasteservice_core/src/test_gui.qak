@@ -1,0 +1,64 @@
+System wasteservice_core
+
+Dispatch update_trolleyposition: update_trolleyposition(X, Y)
+
+Dispatch get_data: get_data(_)
+Dispatch get_gui_config: get_gui_config(_)
+
+Context ctx_statusgui			ip [host="localhost" port=11803]
+
+QActor gui_updater context ctx_statusgui {
+	[#
+		var status: wasteservice.gui.StatusUpdate = wasteservice.gui.StatusUpdate()
+		
+		var rand = java.util.Random()
+	#]
+	State state_init initial {
+		println("[GUIupdater] Started.")
+	}
+	Goto state_idle
+	
+	State state_idle {
+		println("[GUIupdater] Idle")
+	}
+	Transition t0	whenMsg get_data -> state_send_update
+					whenMsg get_gui_config -> state_send_gui_config
+					
+	State state_send_gui_config {
+		println("[GUIupdater] Sending initial data...")
+		//updateResource [# wasteservice.gui.WasteServiceConfigurationParser.toJsonString(config) #]
+	}
+	Goto state_idle
+	
+	State state_send_update {
+		println("[GUIupdater] Sending StatusUpdate...")
+		[# var coords = status.getTransportTrolleyPosition() #]
+		if [# coords[0] == 4 #] {
+			[# 
+				coords[0] = 0
+				status.setTransportTrolleyPosition(coords) 
+			#]
+		}
+		else {
+			[# 
+				coords[0]++
+				status.setTransportTrolleyPosition(coords) 
+			#]
+		}
+		
+		if [# rand.nextBoolean() #] {
+			[# status.setLedState("BLINKING") #]
+		}
+		else {
+			[# status.setLedState("OFF") #]
+		}
+		
+		[# status.setCurrentPlastic(rand.nextDouble((100.0 + 1) - 0.0) + 0.0) #]
+		[# status.setCurrentGlass(rand.nextDouble((100.0 + 1) - 0.0) + 0.0) #]
+		
+		updateResource [# wasteservice.gui.StatusUpdateParser.toJsonString(status) #]
+		
+		delay 5000
+	}
+	Goto state_send_update
+}

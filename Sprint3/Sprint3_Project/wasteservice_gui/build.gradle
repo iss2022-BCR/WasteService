@@ -1,17 +1,21 @@
 plugins {
+	id 'org.springframework.boot' version '2.7.5'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 	id 'java'
-	id 'org.springframework.boot' version '3.0.6'
-	id 'io.spring.dependency-management' version '1.1.0'
+	id 'application'
+	id 'eclipse'
+
 }
 
 group = 'unibo'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+sourceCompatibility = '11'
 
 repositories {
 	mavenCentral()
 	flatDir {dirs{'../unibolibs'}}
 }
+
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
@@ -37,6 +41,12 @@ dependencies {
 	implementation name: '2p301'
 	implementation name: 'unibo.comm22-1.1'
 	implementation name: 'unibo.qakactor22-3.0'
+}
+
+sourceSets {
+	main.java.srcDirs += 'src'
+	main.java.srcDirs += 'resources'
+	test.java.srcDirs += 'test'		//test is specific
 }
 
 tasks.named('test') {

@@ -42,9 +42,36 @@
 }
 
 .empty-cell {
-    background-color: #858796;
-    opacity: 0.3;
+    background-color: rgba(133, 135, 150, 0.3);
+    border: 1px solid rgba(0, 0, 0, 0.3);
 }
+
+/*
+// TEST Miky (fix opacity)
+.home-cell {
+    background-color: rgba(231, 74, 59, 0.3);
+    border: 1px solid rgba(186, 186, 186, 1.0);
+}
+
+.indoor-cell {
+    background-color: rgba(78, 115, 223, 0.3);
+    border: 1px solid rgba(186, 186, 186, 1.0);
+}
+
+.plastic-cell {
+    background-color: rgba(246, 194, 62, 0.3);
+    border: 1px solid rgba(186, 186, 186, 1.0);
+
+.glass-cell {
+    background-color: rgba(28, 200, 138, 0.9);
+    border: 1px solid rgba(186, 186, 186, 1.0);
+}
+
+.empty-cell {
+    background-color: rgba(133, 135, 150, 0.3);
+    border: 1px solid rgba(152, 153, 156, 1.0);
+}
+*/
 
 .circle {
     /*
@@ -58,3 +85,11 @@
     background-color: red;
     /* width and height can be anything, as long as they're equal */
 }
+
+.blink-led {
+    animation:blink 250ms infinite alternate;
+}
+@keyframes blink {
+    from {background-color: #858796; border-color: #858796;}
+    to {background-color: #1cc88a; border-color: #1cc88a;}
+};
