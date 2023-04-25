@@ -35,10 +35,14 @@
   - Latest Release: [Sprint0 v2](https://github.com/iss2022-BCR/WasteService/releases/tag/sprint0_v2)
   - Sprint Review: 08/09/22 16:30
 - [x] **Sprint1** - WasteService Core-Business
-  - Latest Release: [Sprint1 v2](https://github.com/iss2022-BCR/WasteService/releases/tag/sprint1_v2)
+  - Latest Release: [Sprint1 v3](https://github.com/iss2022-BCR/WasteService/releases/tag/sprint1_v3)
   - Sprint Review: 25/11/22 10:30
-- [ ] **Sprint2** - Raspberry Pi
+- [x] **Sprint2** - Raspberry Pi
+  - Latest Release: [Sprint2 v1](https://github.com/iss2022-BCR/WasteService/releases/tag/sprint2_v1)
+  - Sprint Review: 14/04/22 16:30
 - [ ] **Sprint3** - Monitoring
+  - Latest Release: []()
+  - Final Exam: 
 
 ### Team Members
 <table>
