@@ -90,4 +90,10 @@ class WasteService {
             ColorsOut.outappl("${wt.name}: ${preStorage[wt]}/${storage[wt]}/${storageCapacity[wt]}", color)
         }
     }
+
+    fun getCurrentStorageForWasteType(wType: WasteType): Double {
+        if (!storage.contains(wType))
+            return -1.0
+        return storage[wType]!!
+    }
 }

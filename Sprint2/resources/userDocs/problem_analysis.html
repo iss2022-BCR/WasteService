@@ -242,7 +242,7 @@ public interface IDistance {
                 <b>Solution</b>: Exploit the project <ksi>it.unibo.radarSystem22.domain</ksi> and/or
                 make changes to it to obtain a more suitable piece of software to be integrated in the
                 system.
-                <br/>
+                <br/><br/>
                 <b>Reasons</b>: the possibility to have simulated devices makes it easier to
                 test the system without having to deploy on a real Raspberry Pi.
                 The project already implements the features we need to satisfy the requirements,
@@ -283,7 +283,7 @@ public interface IDistance {
             <solution>
                 <b>Solution</b>: Hybrid approach, using a <ksi>middle controller</ksi>, which sends 
                 <code>stop</code> and <code>resume</code> events to the system.
-                <br/>
+                <br/><br/>
                 <b>Reasons</b>: the core-business doesn't care about the distance at all.
                 In fact, from the Waste Service perspective,
                 the sonar acts as a simple switch ON/OFF, which indicates if the system
@@ -335,7 +335,7 @@ public interface IDistance {
             <solution>
                 <b>Solution</b>: for each step of the path, check if there is a stop/alarm event <ksi>only at the beginning or
                 at the end of the step</ksi>.
-                <br/>
+                <br/><br/>
                 <b>Reasons</b>: the robot position gets updated only when a step is completed,
                 so it might be easier to make the steps not interruptible; since our map
                 has specific positions, identified by discrete coordinates, that solution
@@ -358,7 +358,7 @@ public interface IDistance {
             <solution>
                 <b>Solution</b>: <ksi>handle the stop and resume from the pathexecutor</ksi> by adding a guard
                 (<code>Transition t# whenEvent stop -> state_stop</code>) in those states that can be interrupted.
-                <br/>
+                <br/><br/>
                 <b>Reasons</b>: ideally we want to act on the transport trolley, but it's busy waiting
                 for the pathexecutor reply, until the path is completed. Therefore, since the pathexecutor
                 is the one responsible for scheduling the steps, to interact with it is the best solution,

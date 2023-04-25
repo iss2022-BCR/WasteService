@@ -250,7 +250,12 @@ QActor wasteservice context ctx_wasteservice {
 			WasteService.addToStorage(RequestedWasteType, RequestedWasteWeight)
 			
 			WaitingDeposit = false
+			
+			val CurrAmount = WasteService.getCurrentStorageForWasteType(RequestedWasteType)
 		#]
+		
+		forward status_controller -m update_ws_storage: update_ws_storage(CurrAmount)
+		
 		println("[WasteService] Deposit completed. Current storage:")
 		[# WasteService.printFancyStatusString() #]
 	}
@@ -269,6 +274,78 @@ QActor wasteservice context ctx_wasteservice {
 		}
 		println("[WasteService] Current storage:")
 		[# WasteService.printFancyStatusString() #]
+	}
+	Goto state_idle
+}
+
+/*
+ * The GUIcontroller observes the components changes and updates the GUI accordingly
+ */
+QActor status_controller context ctx_wasteservice {
+	// Keeps the current status of the system in a variable
+	[#
+		var status: wasteservice.gui.StatusUpdate = wasteservice.gui.StatusUpdate()
+	#]
+	State state_init initial {
+		println("[GUIcontroller] Started.")
+	}
+	Goto state_idle
+	
+	State state_idle {
+		println("[GUIcontroller] Idle.")
+	}
+	Transition t0	whenMsg update_ws_storage		-> state_update_storage
+					whenEvent trolley_state_changed -> state_update_led
+					whenMsg update_trolley_position -> state_update_tt
+					
+	State state_update_storage {
+		onMsg(update_ws_storage : update_ws_storage(TYPE, AMOUNT)) {
+			[#
+				val WasteType = payloadArg(0)
+				val WasteAmount = payloadArg(1).toDouble()
+			#]
+			println("[GUIcontroller] Storage state changed: $WasteAmount KG of $WasteType")
+			
+			if [# WasteType == "PLASTIC" #] {
+				[# status.setCurrentPlastic(WasteAmount) #]
+			}
+			if [# WasteType == "GLASS" #] {
+				[# status.setCurrentGlass(WasteAmount) #]
+			}
+		}
+	}
+	Goto state_update_gui
+	
+	State state_update_led {
+		onMsg(trolley_state_changed : trolley_state_changed(STATE)) {
+			[#
+				val NewState = payloadArg(0)
+			#]
+			println("[GUIcontroller] Trolley state changed: $NewState")
+			
+			[# status.setLedState(wasteservice.Utils.getLedStateFromTrolleyState(NewState).toString()) #]
+			[# status.setTransportTrolleyState(NewState) #]
+		}
+	}
+	Goto state_update_gui
+	
+	State state_update_tt {
+		onMsg(update_trolley_position : update_trolley_position(X, Y)) {
+			[#
+				val X = payloadArg(0).toInt()
+				val Y = payloadArg(1).toInt()
+			#]
+			println("[WasteService] Trolley position changed: ($X, $Y)")
+			[# status.setTransportTrolleyPosition(X, Y) #]
+		}
+	}
+	Goto state_update_gui
+	
+	State state_update_gui {
+		println("[GUIcontroller] Sent a new update for the GUI.")
+		
+		// TO-DO: update GUI
+		forward gui_simulator -m update_statusgui: update_statusgui
 	}
 	Goto state_idle
 }
@@ -510,7 +587,7 @@ QActor pathexecutorbcr context ctx_transporttrolley {
 			val X = plannerBCR.get_curPos().first
 			val Y = plannerBCR.get_curPos().second
 		#]
-		forward gui_controller -m update_trolley_position: update_trolley_position($X, $Y)
+		forward status_controller -m update_trolley_position: update_trolley_position($X, $Y)
 	}
 	Goto state_do_move_forward if [# CurMoveTodo == "w" #] else state_do_move_turn
 	
@@ -697,78 +774,6 @@ ExternalQActor buzzer_bcr				context ctx_raspberrypi
 ExternalQActor textdisplay_bcr			context ctx_raspberrypi
 
 // CTX StatusGUI --------------------------------------------------------------
-/*
- * The GUIcontroller observes the components changes and updates the GUI accordingly
- */
-QActor gui_controller context ctx_statusgui {
-	// Keeps the current status of the system in a variable
-	[#
-		var status: wasteservice.gui.StatusUpdate = wasteservice.gui.StatusUpdate()
-	#]
-	State state_init initial {
-		println("[GUIcontroller] Started.")
-	}
-	Goto state_idle
-	
-	State state_idle {
-		println("[GUIcontroller] Idle.")
-	}
-	Transition t0	whenMsg update_ws_storage		-> state_update_storage
-					whenEvent trolley_state_changed -> state_update_led
-					whenMsg update_trolley_position -> state_update_tt
-					
-	State state_update_storage {
-		onMsg(update_ws_storage : update_ws_storage(TYPE, AMOUNT)) {
-			[#
-				val WasteType = payloadArg(0)
-				val WasteAmount = payloadArg(1).toDouble()
-			#]
-			println("[GUIcontroller] Storage state changed: $WasteAmount KG of $WasteType")
-			
-			if [# WasteType == "PLASTIC" #] {
-				[# status.setCurrentPlastic(WasteAmount) #]
-			}
-			if [# WasteType == "GLASS" #] {
-				[# status.setCurrentGlass(WasteAmount) #]
-			}
-		}
-	}
-	Goto state_update_gui
-	
-	State state_update_led {
-		onMsg(trolley_state_changed : trolley_state_changed(STATE)) {
-			[#
-				val NewState = payloadArg(0)
-			#]
-			println("[GUIcontroller] Trolley state changed: $NewState")
-			
-			[# status.setLedState(wasteservice.Utils.getLedStateFromTrolleyState(NewState).toString()) #]
-			[# status.setTransportTrolleyState(NewState) #]
-		}
-	}
-	Goto state_update_gui
-	
-	State state_update_tt {
-		onMsg(update_trolley_position : update_trolley_position(X, Y)) {
-			[#
-				val X = payloadArg(0).toInt()
-				val Y = payloadArg(1).toInt()
-			#]
-			println("[WasteService] Trolley position changed: ($X, $Y)")
-			[# status.setTransportTrolleyPosition(X, Y) #]
-		}
-	}
-	Goto state_update_gui
-	
-	State state_update_gui {
-		println("[GUIcontroller] Sent a new update for the GUI.")
-		
-		// TO-DO: update GUI
-		forward gui_simulator -m update_statusgui: update_statusgui
-	}
-	Goto state_idle
-}
-
 QActor gui_simulator context ctx_statusgui {
 	State state_init initial {
 		println("[GUIsimulator] Started.")

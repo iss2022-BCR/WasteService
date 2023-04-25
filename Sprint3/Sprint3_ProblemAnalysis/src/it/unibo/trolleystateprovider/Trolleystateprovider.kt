@@ -37,8 +37,8 @@ class Trolleystateprovider ( name: String, scope: CoroutineScope  ) : ActorBasic
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t012",targetState="state_update_trolley_state",cond=whenDispatch("coapUpdate"))
-					transition(edgeName="t013",targetState="state_update_trolley_state",cond=whenDispatch("update_trolley_state"))
+					 transition(edgeName="t015",targetState="state_update_trolley_state",cond=whenDispatch("coapUpdate"))
+					transition(edgeName="t016",targetState="state_update_trolley_state",cond=whenDispatch("update_trolley_state"))
 				}	 
 				state("state_update_trolley_state") { //this:State
 					action { //it:State
