@@ -248,13 +248,12 @@ QActor wasteservice context ctx_wasteservice {
 		// Update the actual storage counter
 		[#
 			WasteService.addToStorage(RequestedWasteType, RequestedWasteWeight)
-			
 			WaitingDeposit = false
-			
 			val CurrAmount = WasteService.getCurrentStorageForWasteType(RequestedWasteType)
 		#]
 		
-		forward status_controller -m update_ws_storage: update_ws_storage(CurrAmount)
+		// Update Storage
+		forward status_controller -m update_ws_storage: update_ws_storage(RequestedWasteType, CurrAmount)
 		
 		println("[WasteService] Deposit completed. Current storage:")
 		[# WasteService.printFancyStatusString() #]

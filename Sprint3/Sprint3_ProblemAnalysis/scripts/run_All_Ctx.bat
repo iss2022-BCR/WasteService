@@ -1,7 +1,7 @@
 cd ..
 
 :: Run SmartDevice Context
-start .\gradlew runCtx_SmartDevice
+:: start .\gradlew runCtx_SmartDevice
 
 :: Run Raspberry Context
 start .\gradlew runCtx_RaspberryPi

@@ -132,11 +132,9 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 					action { //it:State
 						
 									WasteService.addToStorage(RequestedWasteType, RequestedWasteWeight)
-									
 									WaitingDeposit = false
-									
 									val CurrAmount = WasteService.getCurrentStorageForWasteType(RequestedWasteType)
-						forward("update_ws_storage", "update_ws_storage(CurrAmount)" ,"status_controller" ) 
+						forward("update_ws_storage", "update_ws_storage(RequestedWasteType,CurrAmount)" ,"status_controller" ) 
 						println("[WasteService] Deposit completed. Current storage:")
 						 WasteService.printFancyStatusString()  
 						//genTimer( actor, state )
