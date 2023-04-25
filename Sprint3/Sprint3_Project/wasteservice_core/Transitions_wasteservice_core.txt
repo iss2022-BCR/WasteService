@@ -1,2 +1,1 @@
 {"actor":"gui_updater", "msgType":"dispatch", "curstate":"state_idle", "nextstate":"state_send_update", "msgId":"get_data"}
-{"actor":"gui_updater", "msgType":"dispatch", "curstate":"state_idle", "nextstate":"state_send_gui_config", "msgId":"get_gui_config"}

@@ -39,17 +39,6 @@ class Gui_updater ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name
 					sysaction { //it:State
 					}	 	 
 					 transition(edgeName="t00",targetState="state_send_update",cond=whenDispatch("get_data"))
-					transition(edgeName="t01",targetState="state_send_gui_config",cond=whenDispatch("get_gui_config"))
-				}	 
-				state("state_send_gui_config") { //this:State
-					action { //it:State
-						println("[GUIupdater] Sending initial data...")
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="state_idle", cond=doswitch() )
 				}	 
 				state("state_send_update") { //this:State
 					action { //it:State
@@ -65,14 +54,32 @@ class Gui_updater ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name
 						 				coords[0]++
 						 				status.setTransportTrolleyPosition(coords) 
 						 }
-						if(  rand.nextBoolean()  
-						 ){ status.setLedState("BLINKING")  
-						}
-						else
-						 { status.setLedState("OFF")  
-						 }
 						 status.setCurrentPlastic(rand.nextDouble((100.0 + 1) - 0.0) + 0.0)  
 						 status.setCurrentGlass(rand.nextDouble((100.0 + 1) - 0.0) + 0.0)  
+						 var ttstate = rand.nextInt((4 + 1) - 1) + 1  
+						if(  ttstate == 1  
+						 ){ status.setTransportTrolleyState("HOME")  
+						}
+						if(  ttstate == 2  
+						 ){ status.setTransportTrolleyState("MOVING")  
+						}
+						if(  ttstate == 3  
+						 ){ status.setTransportTrolleyState("PICKUP")  
+						}
+						if(  ttstate == 4  
+						 ){ status.setTransportTrolleyState("DUMP")  
+						}
+						 var ledstate = rand.nextInt((3 + 1) - 1) + 1  
+						if(  ledstate == 1  
+						 ){ status.setLedState("OFF")  
+						}
+						if(  ledstate == 2  
+						 ){ status.setLedState("ON")  
+						 status.setTransportTrolleyState("STOPPED")  
+						}
+						if(  ledstate == 3  
+						 ){ status.setLedState("BLINKING")  
+						}
 						updateResourceRep( wasteservice.gui.StatusUpdateParser.toJsonString(status)  
 						)
 						delay(5000) 

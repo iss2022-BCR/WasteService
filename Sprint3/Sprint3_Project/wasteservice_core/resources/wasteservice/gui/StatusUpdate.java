@@ -47,6 +47,7 @@ public class StatusUpdate {
     public void setLedState(String ledState) { this.ledState = ledState; }
     public int[] getTransportTrolleyPosition() { return transportTrolleyPosition; }
     public void setTransportTrolleyPosition(int[] transportTrolleyPosition) { this.transportTrolleyPosition = transportTrolleyPosition; }
+    public void setTransportTrolleyPosition(int x, int y) { this.transportTrolleyPosition = new int[]{ x, y }; }
     public String getTransportTrolleyState() { return transportTrolleyState; }
     public void setTransportTrolleyState(String transportTrolleyState) { this.transportTrolleyState = transportTrolleyState; }
 }
