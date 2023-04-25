@@ -60,10 +60,10 @@ dependencies {
     implementation group: 'org.eclipse.californium', name: 'californium-proxy2', version: '3.5.0'
 
 //OkHttp library for websockets with Kotlin
-	//implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.14.0'    
-	implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.9.3' 
-	// https://mvnrepository.com/artifact/com.squareup.okhttp3/mockwebserver
-	testImplementation group: 'com.squareup.okhttp3', name: 'mockwebserver', version: '4.9.3'
+    //implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.14.0'
+    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.9.3'
+    // https://mvnrepository.com/artifact/com.squareup.okhttp3/mockwebserver
+    testImplementation group: 'com.squareup.okhttp3', name: 'mockwebserver', version: '4.9.3'
 
     /* LOG4J *************************************************************************************************************** */
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-reload4j
@@ -78,15 +78,16 @@ dependencies {
     /* UNIBO *************************************************************************************************************** */
     implementation name: 'uniboInterfaces'
     implementation name: '2p301'
-	implementation name: 'unibo.qakactor22-3.2'
-	implementation name: 'unibo.comm22-1.1'
+    implementation name: 'unibo.qakactor22-3.2'
+    implementation name: 'unibo.comm22-1.1'
+    //implementation name: 'it.unibo.radarSystem22.domain-1.0'
+    implementation name: 'it.unibo.radarSystem22.domainBCR-1.0'
 
     /* AIMA **************************************************************************************************************** */
- 	//PLANNER  
+    //PLANNER
     implementation name: 'unibo.planner22-1.0'
     // https://mvnrepository.com/artifact/com.googlecode.aima-java/aima-core
     implementation group: 'com.googlecode.aima-java', name: 'aima-core', version: '3.0.0'
-
 }
 
 sourceSets {
@@ -94,24 +95,64 @@ sourceSets {
     main.java.srcDirs += 'resources'
     test.java.srcDirs += 'test'		//test is specific
 }
-  
+
 
 eclipse {
     classpath {
-        sourceSets -= [sourceSets.main, sourceSets.test]	
-    }	
- }
-
-
-application {
-    // Define the main class for the application.
-    mainClass = 'it.unibo.ctx_raspberrypi.MainCtx_raspberrypiKt'
+        sourceSets -= [sourceSets.main, sourceSets.test]
+    }
 }
 
- jar {
-    println("building jar")
+task(runCtx_RaspberryPi, dependsOn: 'classes', type: JavaExec) {
+    mainClass = 'it.unibo.ctx_raspberrypi.MainCtx_raspberrypiKt'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+tasks.withType(Test) {
+    testLogging {
+        exceptionFormat "full"
+        events "started", "skipped", "passed", "failed"
+        showStandardStreams true
+    }
+}
+
+application {
+    mainClassName = 'it.unibo.ctx_raspberrypi.MainCtx_raspberrypiKt'
+}
+
+jar {
     from sourceSets.main.allSource
+    println("building $mainClassName jar...")
     manifest {
         attributes 'Main-Class': "$mainClassName"
+    }
+    baseName = project.findProperty('mainClassName')
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from ((configurations.compileClasspath.findAll{ !it.path.endsWith(".pom") }).collect { it.isDirectory() ? it : zipTree(it) }) {
+        exclude 'META-INF/MANIFEST.MF'
+        exclude 'META-INF/*.SF'
+        exclude 'META-INF/*.DSA'
+        exclude 'META-INF/*.RSA'
+    }
+}
+
+// Deployment: ./gradlew distZip
+distributions {
+    main {
+        contents {
+            // Put the files into the following folder
+            into('bin/') {
+                from "./sprint2_wasteservice_rpi.pl"
+                from "./sysRules.pl"
+                from "./resources/wasteservice/raspberry/sonar/sonarBCR.py"
+                from "./resources/wasteservice/raspberry/led/ledBCR.py"
+                from "./resources/wasteservice/raspberry/display/displayBCR.py"
+                from "./resources/wasteservice/raspberry/buzzer/buzzerBCR.py"
+                from "./RaspberryDomainConfig.json"
+            }
+
+            from "./run_WasteService_RPi.bat"
+            from "./run_WasteService_RPi.sh"
+        }
     }
 }

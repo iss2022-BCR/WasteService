@@ -29,6 +29,11 @@ with Diagram('wasteservice_coreArch', show=False, outformat='png', graph_attr=gr
           pathexecutorbcr=Custom('pathexecutorbcr','./qakicons/symActorSmall.png')
      with Cluster('ctx_robot', graph_attr=nodeattr):
           basicrobot=Custom('basicrobot','./qakicons/symActorSmall.png')
+     with Cluster('ctx_raspberrypi', graph_attr=nodeattr):
+          sonar_bcr=Custom('sonar_bcr(ext)','./qakicons/externalQActor.png')
+          led_bcr=Custom('led_bcr(ext)','./qakicons/externalQActor.png')
+          buzzer_bcr=Custom('buzzer_bcr(ext)','./qakicons/externalQActor.png')
+          textdisplay_bcr=Custom('textdisplay_bcr(ext)','./qakicons/externalQActor.png')
      wasteservice >> Edge(color='magenta', style='solid', xlabel='deposit', fontcolor='magenta') >> transporttrolley
      wasteservice >> Edge(color='blue', style='solid', xlabel='update_ws_storage', fontcolor='blue') >> status_controller
      sys >> Edge(color='red', style='dashed', xlabel='trolley_state_changed', fontcolor='red') >> status_controller
