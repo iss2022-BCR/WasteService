@@ -118,7 +118,7 @@ function updateTransportTrolley(newTTposition, newTTstate)
     let num_cols = parseInt($("#num_cols").html(), 10)
     // Change background color of the cell
 
-    let idx = newTTposition[0] * num_cols + newTTposition[1]
+    let idx = newTTposition[1] * num_cols + newTTposition[0]
     idx = parseInt(idx, 10)
 
     let tt_img = "ddr_robot.png"

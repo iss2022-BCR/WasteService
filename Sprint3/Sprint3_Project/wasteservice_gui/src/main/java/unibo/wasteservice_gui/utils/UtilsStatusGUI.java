@@ -7,8 +7,8 @@ import unibo.comm22.utils.ColorsOut;
 import unibo.comm22.utils.CommSystemConfig;
 
 public class UtilsStatusGUI {
-    private static String ctxName = "ctx_statusgui";
-    private static String actorName = "gui_updater";
+    private static String ctxName = "ctx_wasteservice";
+    private static String actorName = "status_controller";
 
     private static Interaction2021 conn;
     private static Interaction2021 connTCP;
@@ -40,7 +40,7 @@ public class UtilsStatusGUI {
 
     public static void sendMsg() {
         try {
-            String msg = "msg(get_data, dispatch, ws_gui, gui_updater, get_data(_), 1)";
+            String msg = "msg(get_data, dispatch, ws_gui, " + actorName + ", get_data(_), 1)";
             ColorsOut.outappl("[UtilsStatusGUI] sendMsg msg:" + msg + " conn=" + conn, ColorsOut.BLUE);
             connTCP.forward(msg);
         } catch (Exception e) {

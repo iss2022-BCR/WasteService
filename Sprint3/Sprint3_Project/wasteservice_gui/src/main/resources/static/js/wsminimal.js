@@ -18,7 +18,11 @@ function connect()
 
     socket.onclose = function (event) {
         alert("Socket Closed")
-        // todo
+
+        updatePlasticCounter(0.0)
+        updateGlassCounter(0.0)
+        updateLed("OFF")
+        updateTransportTrolley([0,0], "HOME")
     };
 
     socket.onerror = function (event) {
