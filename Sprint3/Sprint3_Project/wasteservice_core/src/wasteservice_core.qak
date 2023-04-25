@@ -67,7 +67,7 @@ Context ctx_wasteservice		ip [host="localhost" port=11800]
 Context ctx_transporttrolley	ip [host="localhost" port=11801]
 Context ctx_robot				ip [host="localhost" port=8020]
 
-//Context ctx_raspberrypi			ip [host="192.168.1.5" port=11802]
+Context ctx_raspberrypi			ip [host="192.168.1.5" port=11802]
 
 // ACTORS =====================================================================
 // CTX WasteService -----------------------------------------------------------
@@ -713,7 +713,7 @@ QActor basicrobot context ctx_robot {
 }
 
 // CTX RaspberryPi ------------------------------------------------------------
-/*ExternalQActor sonar_bcr				context ctx_raspberrypi
+ExternalQActor sonar_bcr				context ctx_raspberrypi
 ExternalQActor led_bcr					context ctx_raspberrypi
 ExternalQActor buzzer_bcr				context ctx_raspberrypi
-ExternalQActor textdisplay_bcr			context ctx_raspberrypi*/
+ExternalQActor textdisplay_bcr			context ctx_raspberrypi
