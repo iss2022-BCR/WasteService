@@ -86,6 +86,10 @@ class Pathexecutorbcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 									// plannerBCR.showMap()
 									// plannerBCR.showCurrentRobotState()	
 						delay(350) 
+						
+									val X = plannerBCR.get_curPos().first
+									val Y = plannerBCR.get_curPos().second
+						forward("update_trolley_position", "update_trolley_position($X,$Y)" ,"gui_controller" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

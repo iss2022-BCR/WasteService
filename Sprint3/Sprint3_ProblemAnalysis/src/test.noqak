@@ -1,0 +1,43 @@
+// TEST
+System sprint3_wasteservice
+
+// COAP
+Dispatch coapUpdate : coapUpdate(RESOURCE, VALUE)
+
+Context ctx_test		ip [host="localhost" port=11800]
+
+QActor handler	context ctx_test {
+	State state_init initial {
+		println("[Handler] Started.")
+		observeResource sender
+	}
+	Goto state_idle
+	
+	State state_idle {
+		println("[Handler] Waiting update.")
+	}
+	Transition t0 whenMsg coapUpdate -> state_handle_res_update
+	
+	State state_handle_res_update {
+		println("[Handler] Received message:")
+		printCurrentMessage
+		
+	}
+	Goto state_idle
+}
+
+QActor sender	context ctx_test {
+	State state_init initial {
+		println("[Sender] Started.")
+		
+	}
+	Goto state_update_resource
+	
+	State state_update_resource {
+		updateResource [# "test(test)" #]
+		println("[Sender] Sent coap update.")
+		
+		delay 2000
+	}
+	Goto state_init
+}

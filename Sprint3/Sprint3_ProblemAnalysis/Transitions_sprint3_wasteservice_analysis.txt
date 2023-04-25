@@ -6,3 +6,6 @@
 {"actor":"basicrobot", "msgType":"dispatch", "curstate":"work", "nextstate":"handleObstacle", "msgId":"obstacle"}
 {"actor":"basicrobot", "msgType":"dispatch", "curstate":"work", "nextstate":"endwork", "msgId":"end"}
 {"actor":"basicrobot", "msgType":"dispatch", "curstate":"doStep", "nextstate":"stepFail", "msgId":"obstacle"}
+{"actor":"gui_controller", "msgType":"dispatch", "curstate":"state_idle", "nextstate":"state_update_storage", "msgId":"update_ws_storage"}
+{"actor":"gui_controller", "msgType":"dispatch", "curstate":"state_idle", "nextstate":"state_update_tt", "msgId":"update_trolley_position"}
+{"actor":"gui_simulator", "msgType":"dispatch", "curstate":"state_idle", "nextstate":"state_handle_update", "msgId":"update_statusgui"}
