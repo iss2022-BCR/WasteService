@@ -12,9 +12,9 @@ public class StatusUpdate {
     private int[][] locationPlastic = { { 2, 6 }, { 3, 6 }, { 4, 6 } };
     private int[][] locationGlass = { { 0, 4 }, { 0, 5 }, { 0, 6 } };
 
-    private double currentPlastic = 55.0;
-    private double currentGlass = 55.0;
-    private String ledState = "ON";
+    private double currentPlastic = 0.0;
+    private double currentGlass = 0.0;
+    private String ledState = "OFF";
 
     private int[] transportTrolleyPosition = { 0, 0 };
     private String transportTrolleyState = "HOME";
