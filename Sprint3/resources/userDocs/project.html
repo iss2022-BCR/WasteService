@@ -26,6 +26,11 @@
             <div class="sidenavSection">
                 <a href="#Logical-Architecture">Logical Architecture</a>
                 <a href="#WasteService-Core">WasteService Core</a>
+                <div class="sidenavSubSection">
+                    <a href="#Actors-Changed">Actors Changed</a>
+                    <a href="#New-Actor">New Actor</a>
+                    <a href="#System-Status">System Status</a>
+                </div>
                 <a href="#WasteService-GUI">WasteServic GUI</a>
                 <a href="#Extensions">Extensions</a>
                 <div class="sidenavSubSection">
@@ -52,11 +57,6 @@
                 <li>Sprint3.2 WasteService GUI;</li>
             </ol>
 
-
-            Validazione IP
-
-            Reset su disconnessione
-            
             <h2 id="Logical-Architecture">Logical Architecture</h2>
             <ul>
                 <li>
@@ -73,9 +73,116 @@
             </ul>
 
             <h2 id="WasteService-Core">Sprint3.1: WasteService Core</h2>
+            We upgraded the <ksi>WasteService Core</ksi> (<a href="../../Sprint3_Project/wasteservice_core/">wasteservice_core</a>) project to integrate
+            it with the new GUI functionalities.
+            In particular, we changed the actors from which we need to retrieve
+            information for the GUI status, and added a new one "StatusController",
+            that serves as a middle-man that propagates the updates to the GUI.
 
+            <h3 id="Actors-Changed">Actors Changed</h3>
+            <h4>WasteService</h4>
+            The WasteService actor already keeps track of the current state of the containers.
+            Therefore, we updated the state that occurs when a deposit action is completed (after the
+            TransportTrolley quits the DUMP state) by making it <b>forward to the StatusController</b>
+            the curret state of the container that has changed.
+
+<pre style="white-space: pre;">
+State state_deposit_completed {
+    // Update the actual storage counter
+    [#
+        WasteService.addToStorage(RequestedWasteType, RequestedWasteWeight)
+        WaitingDeposit = false
+        val CurrAmount = WasteService.getCurrentStorageForWasteType(RequestedWasteType)
+    #]
+    
+    // Update Storage
+    forward status_controller -m update_ws_storage: update_ws_storage($RequestedWasteType, $CurrAmount)
+}
+Goto state_idle
+</pre>
+            
+            <h4>PathExecutorBCR</h4>
+            As discussed during the Problem Analysis, the only actor that knows the actual
+            position of the robot in the room is the PathExecutorBCR. Therefore, we edited the
+            state that updates the map and from there we <b>forward the current new position
+            to the StatusController</b>.
+            
+<pre style="white-space: pre;">
+State state_do_move {
+    [#
+        plannerBCR.updateMap(CurMoveTodo, "")
+    #]
+    delay 350
+    
+    // Update Trolley Position
+    [#
+        val X = plannerBCR.get_curPos().first
+        val Y = plannerBCR.get_curPos().second
+    #]
+    forward status_controller -m update_trolley_position: update_trolley_position($X, $Y)
+}
+Goto state_do_move_forward if [# CurMoveTodo == "w" #] else state_do_move_turn
+</pre>
+
+            <h4>TrolleyStateProvider</h4>
+            Since we already modeled this actor so that it propagates the current
+            state of the TransportTrolley to the entire system by the use of an event,
+            we <i>didn't have to make any changes</i> to it: we just needed to add a new guard
+            to handle it, inside the StatusController. 
+
+
+            <h3 id="New-Actor">New Actor</h3>
+            <h4>StatusController</h4>
+            To update the GUI we introduced a new actor called "StatusController" in WasteService Context, whose purpose
+            is to receive updates about some components and propagate the new status of the system
+            to the GUI.
+            <br/>
+            In particular, it remains <i>idle</i> until it receives an update from any part of the
+            system. When the change is detected, it updates the current status and subsequently
+            sends it to the GUI. We also introduced a new message <code>get_data(_)</code>
+            that directly triggers a GUI update.
+<pre style="white-space: pre;">
+State state_idle {
+}
+Transition t0	whenMsg update_ws_storage		-> state_update_storage
+                whenEvent trolley_state_changed -> state_update_led
+                whenMsg update_trolley_position -> state_update_tt
+                whenMsg get_data 				-> state_update_gui
+</pre>
+
+            <h3 id="System-Status">System Status</h3>
+            <h4>StatusUpdate</h4>
+            To keep track of the information about the system, we created a new class <code>StatusUpdate</code>.
+            This class represents a <i>snapshot</i> of the system in a certain instant of time.
+            
+            <h4>Data Exchange</h4>
+            To send the StatusUpdate to the GUI, we decided to adopt JSON as a format.
+            As per the MapEditor we used Gson library to parse the class into a JSON string:
+            for this purpose we created a class StatusUpdateParser which exposes 2 static methods
+            to obtain the StatusUpdate object from a JSON string, and viceversa.
+            <br/>
+            To send the updated status to the GUI, we used a CoAP message:
+
+<pre style="white-space: pre;">
+State state_update_gui {
+    println("[StatusController] Sent a new update for the GUI.")
+    
+    updateResource [# wasteservice.gui.StatusUpdateParser.toJsonString(status) #]
+}
+Goto state_idle
+</pre>
+            
+            <br/>
+            
             <h2 id="WasteService-GUI">Sprint3.2: WasteService GUI</h2>
+            
+            <h3>Backend</h3>
 
+            <h3>Frontend</h3>
+            Validazione IP
+
+            Reset su disconnessione
+            
             <h2 id="Deployment">Deployment</h2>
 
             <h3 id="Build-System">Build System</h3>
