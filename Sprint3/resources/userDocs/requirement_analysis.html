@@ -1,0 +1,223 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>Sprint3</title>
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/templateISS.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/main.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/navbar.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/table.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/code.css">
+        <script type="text/javascript" src="../../../commons/resources/scripts/myScripts.js"></script>
+    </head>
+
+    <body onload="loadNav(); setupSort(); setupCode();">
+        <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
+        <div id="sidenav" class="sidenav">
+            <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
+            <a class="sprint" href="../../../Sprint0/index.html">Sprint0</a>
+            <a class="sprint" href="../../../Sprint1/index.html">Sprint1</a>
+            <a class="sprint" href="../../../Sprint2/index.html">Sprint2</a>
+            <a id="currentSprint" class="sprint" href="#">&#8211;&#8212; Sprint3 &#8212;&#8211;</a>
+            <a href="../../index.html">Index</a>
+            <a href="final_theme.html">Final Theme</a>
+            <a class="selected" href="requirement_analysis.html">Requirement<br/>Analysis</a>
+            <div class="sidenavSection">
+                <a href="#General-Overview">General Overview</a>
+                <div class="sidenavSubSection">
+                    <a href="#System-Abstract">System Abstract</a>
+                </div>
+                <a href="#Requirements-Formalization">Requirements<br/>Formalization</a>
+                <div class="sidenavSubSection">
+                    <a href="#Entities">Entities</a>
+                    <a href="#Data">Data</a>
+                    <a href="#Messages">Messages</a>
+                </div>
+                <a href="#Status-GUI">Status GUI</a>
+            </div>
+            <a href="problem_analysis.html">Problem Analysis</a>
+            <a href="project.html">Project</a>
+            <a href="test_plans.html">Test Plans</a>
+            <a href="conclusions.html">Conclusions</a>
+            <a href="team.html">Team</a>
+            <p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
+            <bottom-spacer/>
+        </div>
+
+        <div id="main">
+            <h1 align="center">Requirement Analysis</h1>
+            The purpose of the final product is to <b>manage a waste-disposal service</b>.
+
+            <h2 id="General-Overview">General Overview</h2>
+
+            <h3 id="System-Abstract">System Abstract</h3>
+            The Sprint3 analyzes the components related to the managing and the displaying
+            of the Waste Service status GUI. Since the GUI is required to show information
+            about the transport trolley and its position, the current containers capacity
+            and the state of the led, we'll be interested in the following
+            computational nodes:
+            <ul>
+                <li><b>WasteService</b></li>
+                <li><b>Raspberry Pi</b></li>
+                <li><b>WasteService Status GUI</b></li>
+            </ul>
+            
+            <h4 id="Computational-Nodes">Related Computational Nodes</h4>
+            <div class="image-container">
+                <img id="map" class="base-image" width="100%" src="../../resources/diagrams/sprint3_system_overview.png"/>
+                <img id="map-legend" class="overlay-image2" width="100%" src="../../resources/diagrams/legend.png"/>
+            </div>
+            <input type="checkbox" onclick="showOverlay(this, 'map-legend');" checked>Show the legend</input><br/>
+
+            
+            <h2 id="Requirements-Formalization">Requirements Formalization</h2>
+            <h3 id="Entities">Entities</h3>
+            <table class="dictionary">
+                <tr>
+                    <th>Entity</th>
+                    <th>Activity</th>
+                    <th>Type</th>
+                    <th>Description/Behaviour</th>
+                </tr>
+                <tr>
+                    <td>
+                        WasteServiceStatusGUI
+                        (or StatusGUI)
+                    </td>
+                    <td>Reactive</td>
+                    <td>-</td>
+                    <td>
+                        Entity, which task is to display a graphical interface to monitor
+                        the current state of the WasteService. It receives updates from the
+                        WasteService entities, and updates its GUI elements accordingly.
+                    </td>
+                </tr>
+                <tr>
+                    <td>led_bcr</td>
+                    <td>Reactive</td>
+                    <td>Actor</td>
+                    <td>
+                        Actor that handles the interaction with the Led component,
+                        updating its state according to the Transport Trolley state.
+                    </td>
+                </tr>
+                <tr>
+                    <td>wasteService</td>
+                    <td>Proactive&nbsp& Reactive</td>
+                    <td>Actor</td>
+                    <td>
+                        Handles the store requests and manages the transport trolley with high-level abstraction actions.
+                        It contains an internal representation of the waste service area.
+                    </td>
+                </tr>
+                <tr>
+                    <td>transportTrolley</td>
+                    <td>Proactive&nbsp& Reactive</td>
+                    <td>Actor</td>
+                    <td>
+                        Handles the wasteService requests and sends lower-level
+                        commands to the basicRobot.
+                    </td>
+                </tr>
+            </table>
+
+            <h3 id="Data">Data</h3>
+            <table class="dictionary">
+                <tr>
+                    <th>Data</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>ContainerAmount</td>
+                    <td>Double (?)</td>
+                    <td>
+                        The current amount of KG present in a specific waste container.
+                    </td>
+                </tr>
+                <tr>
+                    <td>TrolleyPosition</td>
+                    <td>-</td>
+                    <td>
+                        The current position of the Transport Trolley inside the Waste Service Area.
+                    </td>
+                </tr>
+                <tr>
+                    <td>LedState</td>
+                    <td>Enumerative</td>
+                    <td>
+                        All the <b>possible states</b> of the Led.
+                        <pre>
+                            enum class LedState { OFF, ON, BLINKING }
+                        </pre>
+                    </td>
+                </tr>
+            </table>
+
+            <h3 id="Messages">Messages</h3>
+            <table class="dictionary">
+                <tr>
+                    <th>Message</th>
+                    <th>Type</th>
+                    <th>Sender</th>
+                    <th>Receiver</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>updateContainer</td>
+                    <td>Dispatch</td>
+                    <td>WasteService</td>
+                    <td>
+                        StatusGUI
+                    </td>
+                    <td>
+                        Tells the StatusGUI to update the 
+                        current amount of stored waste of the GUI element
+                        corresponding to a specific container.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        update
+                        TrolleyPosition
+                    </td>
+                    <td>Dispatch</td>
+                    <td>TransportTrolley</td>
+                    <td>
+                        StatusGUI
+                    <td>
+                        Tells the StatusGUI to update the current
+                        status of the GUI element referencing the
+                        Transport Trolley position.
+                    </td>
+                </tr>
+                <tr>
+                    <td>updateLed</td>
+                    <td>Dispatch</td>
+                    <td>Raspberry Pi (?)</td>
+                    <td>
+                        StatusGUI
+                    </td>
+                    <td>
+                        Tells the StatusGUI to update the current
+                        status of the GUI element referencing the Led.
+                    </td>
+                </tr>
+            </table>
+
+            <h2 id="Status-GUI">Status GUI</h2>
+            The status GUI must be composed by different parts, showing at least the following
+            information:
+            <ul>
+                <li>current state of the containers (amount in KG);</li>
+                <li>
+                    current position of the Transport Trolley (it's not specified if
+                    it has to be the exact position, or a descriptive label, e.g "at home");
+                </li>
+                <li>
+                    current state of the Led (On, Off, Blinking).
+                </li>
+            </ul>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Sprint3</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="../commons/resources/styles/templateISS.css">
+        <link rel="stylesheet" type="text/css" href="../commons/resources/styles/main.css">
+        <link rel="stylesheet" type="text/css" href="../commons/resources/styles/navbar.css">
+        <link rel="stylesheet" type="text/css" href="../commons/resources/styles/table.css">
+        <link rel="stylesheet" type="text/css" href="../commons/resources/styles/code.css">
+        <script type="text/javascript" src="../commons/resources/scripts/myScripts.js"></script>
+    </head>
+    
+    <body onload="loadNav();">
+        <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
+        <div id="sidenav" class="sidenav">
+            <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
+            <a class="sprint" href="../Sprint0/index.html">Sprint0</a>
+            <a class="sprint" href="../Sprint1/index.html">Sprint1</a>
+            <a class="sprint" href="../Sprint2/index.html">Sprint2</a>
+            <a id="currentSprint" class="sprint" href="#">&#8211;&#8212; Sprint3 &#8212;&#8211;</a>
+            <a class="selected" href="#">Index</a>
+            <div class="sidenavSection">
+                <a href="#Introduction">Introduction</a>
+                <div class="sidenavSubSection">
+                    <a href="#Scrum-Goal">Scrum Goal</a>
+                    <a href="#Work-Plan">Work Plan</a>
+                </div>
+                <a href="#Motto">Motto</a>
+                <a href="#Resources">Resources</a>
+            </div>
+            <a href="resources/userDocs/final_theme.html">Final Theme</a>
+            <a href="resources/userDocs/requirement_analysis.html">Requirement<br/>Analysis</a>
+            <a href="resources/userDocs/problem_analysis.html">Problem Analysis</a>
+            <a href="resources/userDocs/project.html">Project</a>
+            <a href="resources/userDocs/test_plans.html">Test Plans</a>
+            <a href="resources/userDocs/conclusions.html">Conclusions</a>
+            <a href="resources/userDocs/team.html">Team</a>
+            <p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
+            <bottom-spacer/>
+        </div>
+        
+        <div id="main">
+            <h1 align="center">Sprint 3</h1>
+            <h2 id="Introduction">Introduction</h2>
+            Our <a href="resources/userDocs/team.html">team</a> must project and develop a software system
+            to manage a waste-disposal service, as described in <a href="resources/userDocs/final_theme.html">Final Theme 2022</a>.
+            <br/>
+            <br/>
+
+            <h3 id="Scrum-Goal">Scrum Goal</h3>
+            We must develop a graphic application <i>WasteServiceStatusGUI</i> capable of
+            displaying information about the WasteService
+            (requirement <a href="file:///D:/Michele%20Righi/Programmi/GitHub/WasteService/Sprint3/resources/userDocs/final_theme.html#requirement-3">3</a>).
+            In particular, the GUI must display:
+            <ul>
+                <li>the current state of the TransportTrolley and its position in the room;</li>
+                <li>the current weight of the material stored in the two waste-containers;</li>
+                <li>the current state of the Led;</li>
+            </ul>
+            
+            We also have to provide the customer an <ksi>executable demo</ksi> of the component being
+            integrated with the rest of the system.
+
+            <h3 id="Work-Plan">Work Plan</h3>
+            <ul>
+                <li>
+                    Analyze what's needed to implement the GUI in order to
+                    meet the customer requirements
+                </li>
+                <li>
+                    Find and address any problem related to the requirement
+                    (find difficulties, make considerations, suggest solution/s)
+                </li>
+                <li>Implement the GUI</li>
+                <li>
+                    Implement some API the GUI can use to retrieve the WasteService
+                    information, or some way to integrate the GUI with the rest of
+                    the system
+                </li>
+                <li>Package the project and create an easy way to deploy and launch it</li>
+                <li>Create a demo of the whole system</li>
+            </ul>
+            NB: eventually make use of the software provided by our software house.
+            
+            <h2 id="Motto">Motto</h2>
+            <div class="remark">
+                There is no code without a project, there is no project without problem analysis, there is no problem without requirements.
+            </div>
+
+            <h2 id="Resources">Resources</h2>
+            <ul>
+                <li>Course GitHub repository: <a href="https://github.com/anatali/issLab2022">anatali/issLab2022</a></li>
+                <li>Team GitHub repository: <a href="https://github.com/iss2022-BCR/WasteService">iss2022-BCR/WasteService</a></li>
+                <li>Scrum Guide: <a href="../commons/2020-Scrum-Guide-Italian.pdf">2020 Scrum Guide (IT)</a></li>
+            </ul>
+        </div>
+
+    </body>
+</html>

@@ -1,0 +1,501 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>Sprint3</title>
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/templateISS.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/main.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/navbar.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/table.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/code.css">
+        <script type="text/javascript" src="../../../commons/resources/scripts/myScripts.js"></script>
+    </head>
+
+    <body onload="loadNav();">
+        <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
+        <div id="sidenav" class="sidenav">
+            <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
+            <a class="sprint" href="../../../Sprint0/index.html">Sprint0</a>
+            <a class="sprint" href="../../../Sprint1/index.html">Sprint1</a>
+            <a class="sprint" href="../../../Sprint2/index.html">Sprint2</a>
+            <a id="currentSprint" class="sprint" href="#">&#8211;&#8212; Sprint3 &#8212;&#8211;</a>
+            <a href="../../index.html">Index</a>
+            <a href="final_theme.html">Final Theme</a>
+            <a href="requirement_analysis.html">Requirement<br/>Analysis</a>
+            <a class="selected" href="problem_analysis.html">Problem Analysis</a>
+            <div class="sidenavSection">
+                <a href="#Logical-Architecture-from-Sprint2">Logical Architecture<br/>from Sprint2</a>
+                <!--<a href="#Defects-Analysis">Defect Analysis</a>-->
+                <a href="#Sprint3-Software">Sprint3 Software</a>
+                <div class="sidenavSubSection">
+                    <a href="#GUI-Components">GUI Components</a>
+                    <a href="#Software-Provided-by-the-Customer">Software Provided<br/>by the Customer</a>
+                </div>
+                <a href="#Interactions">Interactions</a>
+                <div class="sidenavSubSection">
+                    <a href="#Messages">New Messages</a>
+                </div>
+                <a href="#Logical-Architecture">Logical Architecture</a>
+                <a href="#Test-Plans">Test Plans</a>
+                <div class="sidenavSubSection">
+                    <a href="#Execute-Test">Execute Test</a>
+                    <a href="#Test-Report">Test Report</a>
+                </div>
+            </div>
+            <a href="project.html">Project</a>
+            <a href="test_plans.html">Test Plans</a>
+            <a href="conclusions.html">Conclusions</a>
+            <a href="team.html">Team</a>
+            <p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
+            <bottom-spacer/>
+        </div>
+
+        <div id="main">
+            <h1 align="center">Problem Analysis</h1>
+            Even though the GUI needs to receive information about the Led, <b><i>it doesn't need to
+            interact directly with the Raspberry Pi</i></b>, since the Led state is provided by
+            the WasteService Core.
+            For this reason, during this Sprint we're going to focus our attention on the
+            WasteService Core project.
+            
+            <h2 id="Logical-Architecture-from-Sprint2">Logical Architecture from Sprint2</h2>
+            <img width="100%" src="../../../Sprint2/Sprint2_Project/sprint2_wasteservice_core/sprint2_wasteservice_corearch_edited.png"/>
+            QAK model: <a href="../../../Sprint2/Sprint2_Project/sprint2_wasteservice_core/src/wasteservice_core.qak">wasteservice_core.qak</a>
+
+            <!--<h2 id="Defects-Analysis">Defects Analysis</h2>--> 
+
+            <h2 id="Sprint3-Software">Sprint3 Software</h2>
+            The Sprint 3 software will be the product of the analysis of problems
+            related to the WasteServiceStatusGUI.
+
+            <problem>Where to place the WasteServiceStatusGUI node</problem>
+            
+            <consideration>
+                <b>Consideration</b>:
+                From the requirements it's clear that the WasteServiceStatusGUI will be
+                used by a human operator: the service manager.
+            </consideration>
+
+            <solution>
+                Since the main purpose of the GUI will be the monitoring of the
+                system, it makes sense to arrange that component to be <b><i>as independent as possible</i></b>.
+                <br/>
+                <br/>
+                <b>Solution</b>:
+                A possible solution could be to place the GUI software on a <ksi>separated
+                logical context</ksi>, and create a <ksi>controller</ksi> that acts as middleware between
+                the WasteService and the GUI (possibly to be implemented as a QAK actor).
+            </solution>
+
+            <h3 id="GUI-Components">GUI Components</h3>
+            We have to decide what exactly and how to display the information about the 
+            3 different components:
+            <ul>
+                <li>WasteService;</li>
+                <li>TransportTrolley;</li>
+                <li>Led.</li>
+            </ul> 
+
+            <problem>WasteService component</problem>
+            <b>Problem</b>: how do we represent the GUI component for the WasteService?
+            What information do we have to include? How do we represent them?
+
+            <consideration>
+                <b>Consideration</b>:
+                The requirement states that the customer is interested in the information
+                about the two container.
+            </consideration>
+
+            <solution>
+                <b>Solution</b>:
+                For simplicity we are going to consider <ksi>only the two containers</ksi>
+                plastic and glass, even though the MapEditor allows to define areas
+                for different types of waste.
+                <br/>
+                To represent those data, we'll be using <ksi>two <code>Double</code> variables</ksi> and
+                some GUI elements to make it nicer.
+            </solution>
+
+            <problem>TransportTrolley state representation</problem>
+            <b>Problem</b>: how do we represent the GUI component for the TransportTrolley?
+            What information do we have to include? How do we represent them?
+            <consideration>
+                <b>Considerations</b>:
+                The requirements include both the TransportTrolley state and Led state,
+                which means that they're probably made for (at least in part) different information.
+                From our point of view the TransportTrolley can be in many different states and
+                positions, while the Led just has to display a <i>subset</i> of its states.
+            </consideration>
+            
+            <solution>
+                <b>Solution</b>:
+                to represent the TransportTrolley state, we'll use <ksi>the state our system
+                already keeps about the trolley</ksi> (<code>HOME</code>, <code>MOVING</code>,
+                <code>PICKUP</code>, <code>DUMP</code>, <code>STOPPED</code>).
+                <br/>
+                <br/>
+                <b>Reasons</b>:
+                <ul>
+                    <li>it's a simple and effective representation;</li>
+                    <li>
+                        it doesn't requiree any "additional implementation"
+                        since our system already supports it.
+                    </li>
+                </ul> 
+            </solution>
+
+            <problem>TransportTrolley position representation</problem>
+            <consideration>
+                The requirements say that the GUI should display the TransportTrolley state,
+                <b><i>but also it's position in the room</i></b>. Therefore, it's state or what it's currently
+                doing probably is not enough and we have to provide further information.
+            </consideration>
+
+            <solution>
+                <b>Solution</b>:
+                to represent the TransportTrolley position, we'll keep track of its current
+                position inside the room (which is going to be a pair of integers, due to
+                the fact that the TransportTrolley moves by steps) by using a <ksi>cartesian coordinate system</ksi>, 
+                and update the GUI each time the trolley performs a step.
+                <br/><br/>
+                <b>Reasons</b>:
+                <ul>
+                    <li>
+                        the TransportTrolley (actually the PathExecutorBCR) already knows the robot
+                        precise location inside the room, since our planner uses its coordinates to
+                        calculate the best path. Therefore it doesn't require any "additional implementation";
+                    </li>
+                    <li>
+                        this allows to show an exact and reliable representation (both useful for the monitoring
+                        purpose and better from a "design point of view") of the actual position of the trolley;
+                    </li>
+                    <li>
+                        it also opens up to many possible extension (interactions, animations, etc. ).
+                    </li>
+                </ul>
+            </solution>
+
+            <alternative>
+                <b>Alternative</b>: to use a simple descriptive model
+                (e.g. "<code>TransportTrolley at Home</code>", "<code>TransportTrolley at Indoor</code>", "<code>TransportTrolley at GlassBox</code>", etc. ).
+            </alternative>
+
+            <problem>Led component</problem>
+            <b>Problem</b>: how do we represent the GUI component for the Led?
+            What information do we have to include? How do we represent them?
+            
+            <solution>
+                <b>Solution</b>:
+                as per the TransportTrolley state, we do the same for the Led.
+                We can adopt the same <ksi>descriptive model</ksi> (3 states: "<code>OFF</code>", "<code>ON</code>", "<code>BLINKING</code>").
+                <br/><br/>
+                <b>Reasons</b>:
+                <ul>
+                    <li>
+                        it doesn't require any "additional implementation", since we can use
+                        the function <code>getLedStateFromTrolleyState(state): LedState</code>
+                        (implemented during the Sprint2) to get obtain the <code>LedState</code>
+                        corresponding to a specific <code>TransportTrolleyState</code>;
+                    </li>
+                    <li>
+                        it's simple and effective;
+                    </li>
+                    <li>
+                        we could easily map those labels to a graphical component
+                        that simulates a Led.
+                    </li>
+                </ul>
+            </solution>
+
+            <problem>Data source</problem>
+            <b>Problem</b>: where do we retrieve the information for the GUI components?
+
+            <solution>
+                <b>Solution</b>:
+                <ul>
+                    <li>
+                        retrieve the WasteService containers information from the <ksi>WasteService 
+                        QAK actor</ksi>, since it keeps track of the deposit requests and updates
+                        the system storage.
+                    </li>
+                    <li>
+                        retrieve the TransportTrolley position information from the <ksi>PathExecutorBCR QAK actor</ksi>,
+                        since it keeps track of its location inside the room.
+                    </li>
+                    <li>
+                        retrieve the TransportTrolley state and the Led state information from the
+                        <ksi>TrolleyStateProvider QAK actor</ksi>, since it keeps track of the trolley current
+                        state (CoAP).
+                    </li>
+                </ul>
+            </solution>
+
+            <problem>When to exchange data</problem>
+            <b>Problem</b>: when does the controller have to send updates to the GUI?
+            How frequently?
+
+            <solution>
+                <b>Solution</b>:
+                we send the GUI updates <ksi>as soon as possible</ksi> (when the controller receives
+                any update from the WasteService components, it immediately sends an updated
+                version of the status information to the GUI).
+                <br/><br/>
+                <b>Reasons</b>:
+                <ul>
+                    <li>
+                        some information, such as the TransportTrolley position, or
+                        the Led state are extremely time-dependent, and the validity of the information
+                        they carry could be lost if we wait before sending them;
+                    </li>
+                    <li>
+                        since the Led
+                        state is used as an alarm indicator, it could be associated with an emergency
+                        situation, which obviously needs to be solved quickly otherwise could lead to
+                        unknown consequences.
+                    </li>
+                </ul>
+            </solution>
+            
+            <alternative>
+                <b>Alternative</b>: another possibility would be to buffer the status changes
+                and send them in batches.
+            </alternative>
+
+            <h3 id="Software-Provided-by-the-Customer">Software Provided by the Customer</h3>
+            <div class="remark">
+                The customer provides a well-detailed documentation related to Spring Boot and a complete
+                project with many examples: <a href="https://github.com/anatali/issLab2022/tree/main/webRobot22">webRobot22</a>
+            </div>
+
+            <problem>GUI type</problem>
+            How to implement the GUI? Are there more convenient solutions? Does the customer
+            provide something?
+
+            <solution>
+                <b>Solution</b>:
+                implement a <ksi>web application</ksi>.
+                <br/><br/>
+                <b>Reasons</b>:
+                <ul>
+                    <li>
+                        <b>Compatibility</b>: websites are more compatible with a wide range of devices
+                        and platforms than mobile apps. A website can be accessed from any device
+                        with a web browser, including desktops, laptops, tablets, and smartphones;
+                    </li>
+                    <li>
+                        <b>Accessibility</b>: users can easily access the dashboard from any device without
+                        having to download and install a separate app;
+                    </li>
+                    <li>
+                        <b>Maintenance</b>: websites require less maintenance than mobile apps. When updates
+                        or changes need to be made, they can be made to the website and will be immediately 
+                        accessible to all users. With mobile apps, updates must be made to the app and users 
+                        must download the updated version to see the changes;
+                    </li>
+                    <li>
+                        <b>User experience</b>: websites can provide a more consistent user experience across
+                        different devices and platforms than mobile apps.
+                    </li>
+                </ul>
+            </solution>
+            
+            <alternative>
+                <b>Alternatives</b>:
+                <ul>
+                    <li>Desktop graphical application;</li>
+                    <li>Mobile application;</li>
+                    <li>Specific technologies (Flutter, Angular.js, Node.js, Express, React.js, etc.)</li>
+                </ul>
+            </alternative>
+
+            <problem>How to exchange data</problem>
+            <b>Problem</b>: How do we exchange data between the controller and the GUI?
+            What format will be data transferred as? Is there any suitable protocol?
+            
+            <solution>
+                <b>Possible solution</b>:
+                we could use <ksi>CoAP</ksi>, and make the status controller CoAP observable
+                (or the single resources).
+                This way the GUI could observe it and get updated immediately each time
+                a change occurs.
+                <br/><br/>
+                <b>Reasons</b>:
+                <ul>
+                    <li>CoAP is already highly supported by QAK;</li>
+                    <li>
+                        no need of constant polling, allowing us to reduce the overhead and
+                        bandwidth consumption.
+                    </li>
+                </ul> 
+            </solution>
+
+            <alternative>
+                <b>Alternatives</b>:
+                MQTT could also be a valid protocol to exchange data, since it would be trivial to
+                provide a topic for each resource (containers, trolley, led) and make the GUI
+                subscribe to them.
+            </alternative>
+            
+            <h2 id="Interactions">Interactions</h2>
+
+            <h3 id="Messages">New Messages</h3>
+            <table class="dictionary">
+                <tr>
+                    <th>Message</th>
+                    <th>Type</th>
+                    <th>Sender</th>
+                    <th>Receiver</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>update_trolley_position</td>
+                    <td>dispatch</td>
+                    <td>PathExecutorBCR</td>
+                    <td>StatusController</td>
+                    <td>
+                        Tells the receiver that the TransportTrolley 
+                        position has changed. Contains the new position
+                        in the form of cartesian coordinates.
+                    </td>
+                </tr>
+                <tr>
+                    <td>update_ws_storage</td>
+                    <td>dispatch</td>
+                    <td>WasteService</td>
+                    <td>StatusController</td>
+                    <td>
+                        Tells the receiver that the storage content
+                        has been updated. Contains the type of the container
+                        and the (updated) current amount of waste it contains.
+                    </td>
+                </tr>
+                <tr>
+                    <td>update_statusgui</td>
+                    <td>dispatch</td>
+                    <td>StatusController</td>
+                    <td>GUI</td>
+                    <td>
+                        Tells the GUI to update the view with a new status of the WasteService.
+                        Contains the updated status.
+                    </td>
+                </tr>
+            </table>
+            
+            <h2 id="Logical-Architecture">Logical Architecture</h2>
+            The <a href="../../Sprint3_ProblemAnalysis/">Sprint3_ProblemAnalysis</a> project aims to address the main issues
+            of the GUI features and give a first solution and implementation,
+            using <ksi>simulated components and mocks</ksi>.
+            <img width="100%" src="../../Sprint3_ProblemAnalysis/sprint3_wasteservice_analysisarch_edited.png"/>
+            QAK model: <a href="../../Sprint3_ProblemAnalysis/src/wasteservice_problem_analysis.qak">waste_service.qak</a>
+            
+            <h2 id="Test-Plans">Test Plans</h2>
+            <table class="dictionary">
+                <tr>
+                    <th>Test</th>
+                    <th>Involved Actors</th>
+                    <th>Description</th>
+                    <th>Files</th>
+                </tr>
+                <tr> 
+                    <td>Container Update Test</td>
+                    <td>
+                        <ul>
+                            <li>WasteService</li>
+                            <li>StatusController</li>
+                        </ul>
+                    </td>
+                    <td>
+                        We check that:
+                        <ol>
+                            <li>
+                                the WasteService correctly sends the
+                                updated amount of waste for the specified container;
+                            </li>
+                            <li>the StatusController correctly receives it.</li>
+                        </ol>
+                    </td>
+                    <td>
+                        QAK: <a href="../../Sprint3_ProblemAnalysis/src/wasteservice_problem_analysis.qak">wasteservice_problem_analysis.qak</a>
+                        Test: <a href="../../Sprint3_ProblemAnalysis/test/it/unibo/wasteservice/TestStopResume.kt">TestContainerUpdate.kt</a>
+                    </td>
+                </tr>
+                <tr> 
+                    <td>TransportTrolley Update Test</td>
+                    <td>
+                        <ul>
+                            <li>PathExecutorBCR</li>
+                            <li>TrolleyStateProvider</li>
+                            <li>StatusController</li>
+                        </ul>
+                    </td>
+                    <td>
+                        We check that:
+                        <ol>
+                            <li>
+                                the PathExecutorBCR correctly sends the updated information
+                                about the trolley position;
+                            </li>
+                            <li>
+                                the TrolleyStateProvider correctly sends the updated information
+                                about the trolley state;
+                            </li>
+                            <li>the StatusController correctly receives it.</li>
+                        </ol>
+                    </td>
+                    <td>
+                        QAK: <a href="../../Sprint3_ProblemAnalysis/src/wasteservice_problem_analysis.qak">wasteservice_problem_analysis.qak</a>
+                        Test: <a href="../../Sprint3_ProblemAnalysis/test/it/unibo/wasteservice/TestTrolleyUpdate.kt">TestTrolleyUpdate.kt</a>
+                    </td>
+                </tr>
+                <tr> 
+                    <td>Led Update Test</td>
+                    <td>
+                        <ul>
+                            <li>TrolleyStateProvider</li>
+                            <li>StatusController</li>
+                        </ul>
+                    </td>
+                    <td>
+                        We check that:
+                        <ol>
+                            <li>
+                                the TrolleyStateProvider correctly sends the
+                                updated information about the trolley state;
+                            </li>
+                            <li>
+                                the StatusController receives it and parse it
+                                to obtain the correct Led state.
+                            </li>
+                        </ol>
+                    </td>
+                    <td>
+                        QAK: <a href="../../Sprint3_ProblemAnalysis/src/wasteservice_problem_analysis.qak">wasteservice_problem_analysis.qak</a>
+                        Test: <a href="../../Sprint3_ProblemAnalysis/test/it/unibo/wasteservice/TestLedUpdate.kt">TestLedUpdate.kt</a>
+                    </td>
+                </tr>
+            </table>
+            
+            <h3 id="Execute-Test">Execute Test</h3>
+            To execute all the tests, run the following command:
+            <pre>
+                ./gradlew test
+            </pre>
+            
+            <h3 id="Test-Report">Test Report</h3>
+            The test report is generated automatically and is available here: <a href="../../Sprint3_ProblemAnalysis/build/reports/tests/test/index.html">index.html</a>.
+
+        </div>
+
+    </body>
+
+</html>
+
+<!--
+<problem></problem>
+<b>Problem</b>: 
+<solution>
+    <b>Solution</b>:
+    <br/>
+    <b>Reasons</b>:
+</solution>
+<b>Alternatives</b>:
+-->

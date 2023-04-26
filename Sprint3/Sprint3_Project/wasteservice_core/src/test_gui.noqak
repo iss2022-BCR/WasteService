@@ -1,0 +1,75 @@
+System wasteservice_core
+
+Dispatch update_trolleyposition: update_trolleyposition(X, Y)
+
+Dispatch get_data: get_data(_)
+
+Context ctx_statusgui			ip [host="localhost" port=11803]
+
+QActor gui_updater context ctx_statusgui {
+	[#
+		var status: wasteservice.gui.StatusUpdate = wasteservice.gui.StatusUpdate()
+		
+		var rand = java.util.Random()
+	#]
+	State state_init initial {
+		println("[GUIupdater] Started.")
+	}
+	Goto state_idle
+	
+	State state_idle {
+		println("[GUIupdater] Idle")
+	}
+	Transition t0	whenMsg get_data -> state_send_update
+	
+	State state_send_update {
+		println("[GUIupdater] Sending StatusUpdate...")
+		[# var coords = status.getTransportTrolleyPosition() #]
+		if [# coords[0] == 4 #] {
+			[# 
+				coords[0] = 0
+				status.setTransportTrolleyPosition(coords) 
+			#]
+		}
+		else {
+			[# 
+				coords[0]++
+				status.setTransportTrolleyPosition(coords) 
+			#]
+		}
+		
+		[# status.setCurrentPlastic(rand.nextDouble((100.0 + 1) - 0.0) + 0.0) #]
+		[# status.setCurrentGlass(rand.nextDouble((100.0 + 1) - 0.0) + 0.0) #]
+		
+		[# var ttstate = rand.nextInt((4 + 1) - 1) + 1 #]
+		if [# ttstate == 1 #] {
+			[# status.setTransportTrolleyState("HOME") #]
+		}
+		if [# ttstate == 2 #] {
+			[# status.setTransportTrolleyState("MOVING") #]
+		}
+		if [# ttstate == 3 #] {
+			[# status.setTransportTrolleyState("PICKUP") #]
+		}
+		if [# ttstate == 4 #] {
+			[# status.setTransportTrolleyState("DUMP") #]
+		}
+		
+		[# var ledstate = rand.nextInt((3 + 1) - 1) + 1 #]
+		if [# ledstate == 1 #] {
+			[# status.setLedState("OFF") #]
+		}
+		if [# ledstate == 2 #] {
+			[# status.setLedState("ON") #]
+			[# status.setTransportTrolleyState("STOPPED") #]
+		}
+		if [# ledstate == 3 #] {
+			[# status.setLedState("BLINKING") #]
+		}
+		
+		updateResource [# wasteservice.gui.StatusUpdateParser.toJsonString(status) #]
+		
+		delay 5000
+	}
+	Goto state_send_update
+}

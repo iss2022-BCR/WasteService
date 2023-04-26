@@ -151,7 +151,9 @@ h4 {
 h5 {
     background-color: #d5ffb0;
     font-size: 100%;
-
+}
+h6 {
+    font-size: 80%;
 }
 div.req{
 	background-color: #d9ffb3;

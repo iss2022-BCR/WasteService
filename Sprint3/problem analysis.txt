@@ -1,0 +1,9 @@
+- data source e chi fornisce le informazioni
+
+- GUI type (standalone app, desktop, web, ...)
+
+- interaction WasteService <-> GUI (who acts like a client, who as a server)
+
+- protocollo di comunicazione: usando COAP o MQTT non è complicato introdurre un observer presso il WebServer Spring che riceve dati emessi dal Raspberry
+
+- customer software

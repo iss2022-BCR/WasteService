@@ -1,0 +1,88 @@
+.grid {
+    display: grid;
+    /*gap: 2%;*/
+    border: 1px solid #98999C;
+}
+
+.square {
+    aspect-ratio: 1/ 1;
+    display: flex;
+    padding: 5%;
+    color: #fff;
+    border:1px solid #1c1c21;
+    /*width: 40%;*/
+}
+
+.btn-circle.btn-xl {
+    width: 100px;
+    height: 100px;
+    padding: 13px 18px;
+    border-radius: 60px;
+    font-size: 15px;
+    text-align: center;
+}
+
+.home-cell {
+    background-color: #F8C8C4;
+    border: 1px solid #BABABC;
+}
+
+.indoor-cell {
+    background-color: #CAD5F5;
+    border: 1px solid #BABABC;
+}
+
+.plastic-cell {
+    background-color: #FCEDC5;
+    border: 1px solid #BABABC;
+}
+
+.glass-cell {
+    background-color: #BAEEDC;
+    border: 1px solid #BABABC;
+}
+
+.empty-cell {
+    background-color: #DADBDF;
+    border: 1px solid #98999C;
+}
+
+.circle {
+    /*
+    border-radius: 10px;
+    width: 10px;
+    height: 10px;
+    */
+    border-radius: 60%;
+    width: 60%;
+    height: 60%;
+    background-color: red;
+    /* width and height can be anything, as long as they're equal */
+}
+
+/* LED style */
+.led-off {
+    background-color: #858796;
+    border-color: #858796;
+    box-shadow: none;
+}
+.led-on {
+    background-color: #44ff00;
+    border-color: #44ff00;
+    box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #441313 0 -1px 9px, rgba(0, 255, 0, 0.5) 0 2px 12px;
+}
+.led-blink {
+    animation: blink 150ms infinite alternate;
+}
+@keyframes blink {
+    from {
+        background-color: #44ff00;
+        border-color: #44ff00;
+        box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #441313 0 -1px 9px, rgba(0, 255, 0, 0.5) 0 2px 12px;
+    }
+    to {
+        background-color: #858796;
+        border-color: #858796;
+        box-shadow: none;
+    }
+};

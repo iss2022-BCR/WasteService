@@ -1,0 +1,554 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>Sprint3</title>
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/templateISS.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/main.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/navbar.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/table.css">
+        <link rel="stylesheet" type="text/css" href="../../../commons/resources/styles/code.css">
+        <script type="text/javascript" src="../../../commons/resources/scripts/myScripts.js"></script>
+    </head>
+
+    <body onload="loadNav();">
+        <div id="openButton" class="openButton" onclick="openNav(true)">&#9776; Menu</div>
+        <div id="sidenav" class="sidenav">
+            <a class="closeButton" href="javascript:void(0)" onclick="closeNav(true)">&times;</a>
+            <a class="sprint" href="../../../Sprint0/index.html">Sprint0</a>
+            <a class="sprint" href="../../../Sprint1/index.html">Sprint1</a>
+            <a class="sprint" href="../../../Sprint2/index.html">Sprint2</a>
+            <a id="currentSprint" class="sprint" href="#">&#8211;&#8212; Sprint3 &#8212;&#8211;</a>
+            <a href="../../index.html">Index</a>
+            <a href="final_theme.html">Final Theme</a>
+            <a href="requirement_analysis.html">Requirement<br/>Analysis</a>
+            <a href="problem_analysis.html">Problem Analysis</a>
+            <a class="selected" href="project.html">Project</a>
+            <div class="sidenavSection">
+                <a href="#Logical-Architecture">Logical Architecture</a>
+                <a href="#WasteService-Core">WasteService Core</a>
+                <div class="sidenavSubSection">
+                    <a href="#Actors-Changed">Actors Changed</a>
+                    <a href="#New-Actor">New Actor</a>
+                    <a href="#System-Status">System Status</a>
+                </div>
+                <a href="#WasteService-GUI">WasteServic GUI</a>
+                <div class="sidenavSubSection">
+                    <a href="#Backend">Backend</a>
+                    <a href="#Frontend">Frontend</a>
+                </div>
+                <a href="#Deployment">Deployment</a>
+                <div class="sidenavSubSection">
+                    <a href="#Build-System">Build System</a>
+                    <a href="#Deploy-System">Deploy System</a>
+                </div>
+            </div>
+            <a href="test_plans.html">Test Plans</a>
+            <a href="conclusions.html">Conclusions</a>
+            <a href="team.html">Team</a>
+            <p class="separator">&mdash;&mdash;&mdash;&ndash;&ndash;&mdash;&mdash;&mdash;</p>
+            <bottom-spacer/>
+        </div>
+
+        <div id="main">
+            <h1 align="center">Project</h1>
+            The <a href="../../Sprint3_Project/">project</a> contains all the software out team developed to
+            achieve the Sprint3 SCRUM goal. We divided our work in <b>2 sub-sprints</b>:
+            <ol>
+                <li>Sprint3.1 WasteService Core;</li>
+                <li>Sprint3.2 WasteService GUI;</li>
+            </ol>
+
+            <h2 id="Logical-Architecture">Logical Architecture</h2>
+            <ul>
+                <li>
+                    <ksi>WasteService Core</ksi>
+                    <img width="100%" src="../../Sprint3_Project/wasteservice_core/wasteservice_corearch_edited.png"/>
+                    QAK model: <a href="../../Sprint3_Project/wasteservice_core/src/wasteservice_core.qak">wasteservice_core.qak</a>
+                    <br/><br/>
+                </li>
+                <li>
+                    <ksi>WasteService RPi</ksi>
+                    <img width="100%" src="../../Sprint3_Project/wasteservice_rpi/wasteservice_rpiarch_edited.png"/>
+                    QAK model: <a href="../../Sprint3_Project/wasteservice_rpi/src/wasteservice_rpi.qak">wasteservice_rpi.qak</a>
+                </li>
+            </ul>
+
+            <h2 id="WasteService-Core">Sprint3.1: WasteService Core</h2>
+            We upgraded the <ksi>WasteService Core</ksi> (<a href="../../Sprint3_Project/wasteservice_core/">wasteservice_core</a>) project to integrate
+            it with the new GUI functionalities.
+            In particular, we changed the actors from which we need to retrieve
+            information for the GUI status, and added a new one "StatusController",
+            that serves as a middle-man that propagates the updates to the GUI.
+
+            <h3 id="Actors-Changed">Actors Changed</h3>
+            <h4>WasteService</h4>
+            The WasteService actor already keeps track of the current state of the containers.
+            Therefore, we updated the state that occurs when a deposit action is completed (after the
+            TransportTrolley quits the DUMP state) by making it <b>forward to the StatusController</b>
+            the curret state of the container that has changed.
+
+<pre style="white-space: pre;">
+State state_deposit_completed {
+    // Update the actual storage counter
+    [#
+        WasteService.addToStorage(RequestedWasteType, RequestedWasteWeight)
+        WaitingDeposit = false
+        val CurrAmount = WasteService.getCurrentStorageForWasteType(RequestedWasteType)
+    #]
+    
+    // Update Storage
+    forward status_controller -m update_ws_storage: update_ws_storage($RequestedWasteType, $CurrAmount)
+}
+Goto state_idle
+</pre>
+            
+            <h4>PathExecutorBCR</h4>
+            As discussed during the Problem Analysis, the only actor that knows the actual
+            position of the robot in the room is the PathExecutorBCR. Therefore, we edited the
+            state that updates the map and from there we <b>forward the current new position
+            to the StatusController</b>.
+            
+<pre style="white-space: pre;">
+State state_do_move {
+    [#
+        plannerBCR.updateMap(CurMoveTodo, "")
+    #]
+    delay 350
+    
+    // Update Trolley Position
+    [#
+        val X = plannerBCR.get_curPos().first
+        val Y = plannerBCR.get_curPos().second
+    #]
+    forward status_controller -m update_trolley_position: update_trolley_position($X, $Y)
+}
+Goto state_do_move_forward if [# CurMoveTodo == "w" #] else state_do_move_turn
+</pre>
+
+            <h4>TrolleyStateProvider</h4>
+            Since we already modeled this actor so that it propagates the current
+            state of the TransportTrolley to the entire system by the use of an event,
+            we <i>didn't have to make any changes</i> to it: we just needed to add a new guard
+            to handle it, inside the StatusController. 
+
+
+            <h3 id="New-Actor">New Actor</h3>
+            <h4>StatusController</h4>
+            To update the GUI we introduced a new actor called "StatusController" in WasteService Context, whose purpose
+            is to receive updates about some components and propagate the new status of the system
+            to the GUI.
+            <br/>
+            In particular, it remains <i>idle</i> until it receives an update from any part of the
+            system. When the change is detected, it updates the current status and subsequently
+            sends it to the GUI. We also introduced a new message <code>get_data(_)</code>
+            that directly triggers a GUI update.
+<pre style="white-space: pre;">
+State state_idle {
+}
+Transition t0	whenMsg update_ws_storage		-> state_update_storage
+                whenEvent trolley_state_changed -> state_update_led
+                whenMsg update_trolley_position -> state_update_tt
+                whenMsg get_data 				-> state_update_gui
+</pre>
+
+            <h3 id="System-Status">System Status</h3>
+            <h4>StatusUpdate</h4>
+            To keep track of the information about the system, we created a new class <code>StatusUpdate</code>.
+            This class represents a <i>snapshot</i> of the system in a certain instant of time.
+            
+            <h4>Data Exchange</h4>
+            To send the StatusUpdate to the GUI, we decided to adopt JSON as a format.
+            As per the MapEditor we used Gson library to parse the class into a JSON string:
+            for this purpose we created a class StatusUpdateParser which exposes 2 static methods
+            to obtain the StatusUpdate object from a JSON string, and viceversa.
+            <br/>
+            To send the updated status to the GUI, we used a CoAP message:
+
+<pre style="white-space: pre;">
+State state_update_gui {
+    println("[StatusController] Sent a new update for the GUI.")
+    
+    updateResource [# wasteservice.gui.StatusUpdateParser.toJsonString(status) #]
+}
+Goto state_idle
+</pre>
+            
+            <br/>
+            
+            <h2 id="WasteService-GUI">Sprint3.2: WasteService GUI</h2>
+            <ksi>WasteService GUI</ksi> (<a href="../../Sprint3_Project/wasteservice_gui/">wasteservice_gui</a>)
+            is a web application that implements the Waste Service system monitoring
+            functionalities (GUI).
+            <br/><br/>
+            To develop this project we chose <a href="https://spring.io/">Spring Boot</a>,
+            an open-source Java-based framework built on top of the Spring framework,
+            that simplifies the process of building and deployment of <b>web applications</b>.
+            We chose Spring Boot principally for its core feature:
+            <ul>
+                <li>it provides <b>easy and fast configuration</b>, through a convention-over-configuration approach,
+                    which allowed us to focus on the application core features;</li>
+                <li>it comes with an HTTP <b>embedded web server</b> which simplifies the deployment process;</li>
+                <li>it provides a great collection of <b>plugins</b> to develop and test, using Gradle;</li>
+                <li>it allows to build a <b>microservices</b> architecture by breaking down
+                    the application into small, independent components that can be deployed and scaled separately;</li>
+            </ul>
+
+            <h4>Project Setup with Sprring Initializr (IntelliJ IDEA)</h4>
+            To setup the project we followed those steps:
+            <ol>
+                <li>Open IntelliJ IDEA and click on "Create New Project" on the welcome screen.</li>
+                <li>In the "New Project" dialog, select "Spring Initializr" as the project type.</li>
+                <li>Choose the project's name and location.</li>
+                <li>Select "Java" as the desired Spring Boot language (Java, Kotlin, Groovy).</li>
+                <li>Choose the project's packaging type (JAR) and Java version (17)</li>
+                <li>Configure additional project settings, such as project description and author, and click "Finish."</li>
+                <li>Configure the project's dependencies by selecting the necessary ones from the list (Spring Web,
+                    Thymeleaf).</li>
+            </ol>
+            <br/>
+            Once the project is generated, we started coding the Spring Boot app.
+            
+            <h3 id="Backend">Backend</h3>
+            Spring Boot is based on the <b>MVC (Model View Controller) pattern</b> which allows to separate
+            the business logic of the application from the view presentation. This approach promotes
+            reusability, scalability and flexibility, and even if it's not so recent, it's still more
+            relevant than ever in web application development.
+            <br/>
+            HTTPS requests are handled by a controller (identified by the <code>@Controller</code> annotation).
+            The controller maps the HTML page returned to the browser client through <code>@PostMapping</code>
+            and <code>@GetMapping</code> annotations. For example, the following code snippet in our
+            <a href="../../Sprint3_Project/wasteservice_gui/src/main/java/unibo/wasteservice_gui/StatusController.java">StatusController</a>
+            returns handles a GET request to URL "http://&lt;IPaddress&gt;:&lt;port&gt;" and returns the
+            <a href="../../Sprint3_Project/wasteservice_gui/src/main/resources/templates/home.html">home.html</a>
+            page.
+
+<pre style="white-space: pre;">
+@GetMapping("/")
+public String home(Model viewmodel)
+{
+    setConfigParams(viewmodel);
+    return "home";
+}
+</pre>
+
+            <h4>A first approach: STOMP</h4>
+            When developing our project we first <b>tried to use a STOMP client over websockets</b>.
+            STOMP clients work with WebSockets using the <b>publish/subscribe model</b> by establishing a
+            bidirectional connection to the data server and then sending and
+            receiving STOMP messages over that connection. The process involves:
+            <ul>
+                <li>sending a CONNECT frame to authenticate with the server;</li>
+                <li>subscribing to one or more destinations to receive messages;</li>
+                <li>sending STOMP messages to the server;</li>
+                <li>receiving messages sent by the server to the subscribed destination.</li>
+            </ul>
+            In the following code snipped we updated the plastic counter and progress bar of the
+            HTML page (using jQuery), when receiving the data from a STOMP topic (in this case /topic/plastic).
+            
+<pre style="white-space: pre;">
+const stompClient = Stomp.client('ws://localhost:8085/websocket');
+stompClient.connect({}, () => {
+
+// Subscribe to the /topic/plastic topic
+stompClient.subscribe('/topic/plastic', (message) => {
+    plastic_counter += parseFloat(message.body);
+    
+    $("#plastic_current").html(plastic_counter);
+    
+    // The aria-valuenow attribute defines the current value of progress bar
+    // This way we can update the increment of the progress bar (depending on the quantity of plastic added)
+    $("#progress_bar_plastic")
+        .css({
+            "aria-valuenow": (plastic_counter / 10).toString(),
+            "width": (plastic_counter / 10).toString() + "%"
+        });
+});
+// [...]
+</pre>
+            <problem>Problems with STOMP</problem>
+            During the implementation of the WasteService endpoint, we encountered problems
+            enstablishing the connection with the STOMP client. Therefore we decided to
+            abandon this approach and to try something else.
+
+            <h4>CoAP</h4>
+            We considered the usage of CoAP since it's highly supported by QAK, and also
+            because the customer provided some really useful examples.
+            <br/>
+            In fact, to develop the final version of the WasteService GUI project, we mostly got inspired by the
+            software provided by the customer
+            <a href="https://github.com/anatali/issLab2022/tree/main/webRobot22">webRobot22</a> from which
+            we have recycled some code:
+            
+            <h6><a href="../../Sprint3_Project/wasteservice_gui/src/main/java/unibo/wasteservice_gui/utils/IWShandler.java">IWsHandler</a> Interface</h6>
+<pre style="white-space: pre;">
+public interface IWsHandler {
+    void sendToAll (String message);
+}
+</pre>
+            <h6><a href="../../Sprint3_Project/wasteservice_gui/src/main/java/unibo/wasteservice_gui/utils/UtilsStatusGUI.java">UtilsStatusGUI</a> class</h6>
+            That class provides utility static methods to enstablish a CoAP connection and a TCP connection.
+            We edited it to make it suitable for our project (by changing context and actor names, and we also 
+            changed the methods parameters to be separated IP and port).
+<pre style="white-space: pre;">
+public class UtilsStatusGUI {
+    private static String ctxName = "ctx_wasteservice";
+    private static String actorName = "status_controller";
+
+    private static Interaction2021 conn;
+    private static Interaction2021 connTCP;
+
+    public static CoapConnection connectWithUtilsUsingCoap(String ip, int port) {
+        // [...]
+    }
+
+    public static void connectWithUtilsUsingTcp(String ip, int port){
+        // [...]
+    }
+
+    public static void sendMsg() {
+        // [...]
+    }
+}
+</pre>
+
+            <h6><a href="../../Sprint3_Project/wasteservice_gui/src/main/java/unibo/wasteservice_gui/websocket/WebSocketConfiguration.java">WebSocketConfiguration</a> class</h6>
+            In order to make the Spring application forward a client's requests to the server,
+            we need to register a handler using a class that implements <code>WebSocketConfigurer</code> interface.
+            (<code>@EnableWebSocket</code> annotation enables the application to the use of plain WebSockets).
+
+<pre style="white-space: pre;">
+@Configuration
+@EnableWebSocket
+public class WebSocketConfiguration implements WebSocketConfigurer {
+    public static final WebSocketHandler webSocketHandler = new WebSocketHandler();
+
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(webSocketHandler, "/socket").setAllowedOrigins("*");
+    }
+}
+</pre>
+
+            <h6><a href="../../Sprint3_Project/wasteservice_gui/src/main/java/unibo/wasteservice_gui/websocket/WebSocketHandler.java">WebSocketHandler</a> class</h6>
+            This class handles the received messages by propagating it one the WebSocket,
+            so that it reaches every client connected. To achieve that, we keep track of their
+            sessions:
+
+<pre style="white-space: pre;">
+public class WebSocketHandler extends AbstractWebSocketHandler implements IWShandler {
+    private final List&lt;WebSocketSession&gt; sessions = new CopyOnWriteArrayList&lt;&gt;();
+
+    @Override
+    protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws IOException {
+        Iterator&lt;WebSocketSession&gt; iter = sessions.iterator();
+        while( iter.hasNext() ){
+            iter.next().sendMessage(message);
+        }
+    }
+
+    @Override
+    public void sendToAll(String message)  {
+        try{
+            ColorsOut.outappl("[WebSocketHandler] sendToAll String: " + message, ColorsOut.CYAN);
+            sendToAll( new TextMessage(message)) ;
+        }catch( Exception e ){
+            ColorsOut.outerr("[WebSocketHandler] sendToAll String ERROR:"+e.getMessage());
+        }
+    }
+
+    public void sendToAll(TextMessage message) {
+        Iterator&lt;WebSocketSession&gt; iter = sessions.iterator();
+        while( iter.hasNext() ){
+            try{
+                WebSocketSession session = iter.next();
+                ColorsOut.outappl("[WebSocketHandler] sendToAll " +
+                        message.getPayload() + " for session " + session.getRemoteAddress() , ColorsOut.MAGENTA);
+                session.sendMessage(message);
+            }catch(Exception e){
+                ColorsOut.outerr("[WebSocketHandler] TextMessage ERROR:"+e.getMessage());
+            }
+        }
+    }
+}
+</pre>
+            <h6><a href="../../Sprint3_Project/wasteservice_gui/src/main/java/unibo/wasteservice_gui/StatusCoapObserver.java">StatusCoapObserver</a> class</h6>
+            This is a support class used to detect when the observed CoAP resource (the system StatusUpdate)
+            is updated from the StatusController QAK actor.
+
+<pre style="white-space: pre;">
+public class StatusCoapObserver implements CoapHandler {
+    @Override
+    public void onLoad(CoapResponse response) {
+        ColorsOut.outappl("[StatusCoapObserver] Status changed! Value: " + response.getResponseText(), ColorsOut.GREEN);
+        WebSocketConfiguration.webSocketHandler.sendToAll(response.getResponseText());
+    }
+
+    @Override
+    public void onError() {
+        ColorsOut.outerr("[StatusCoapObserver] observe error!");
+    }
+}
+</pre>
+
+            <h6><a href="../../Sprint3_Project/wasteservice_gui/src/main/resources/application.properties">application.properties</a> file</h6>
+            This file stores key-value properties for the Spring Boot application. Its purpose is to provide
+            a centralized location for configuring various aspects of a Spring Boot application.
+            It can be used to keep the configuration settings separated from the application code,
+            also making it simpler to change or replace without changing all the occurrencies in the application.
+            <br/>
+            We configured it as it follows:
+            <pre>
+                server.port=11804
+                spring.application.name=webGUI
+                spring.banner.location=classpath:banner.txt
+                service.ip=
+                service.port=
+                container.led_state=OFF
+                container.plastic_current=0
+                container.plastic_max=1000
+                container.glass_current=0
+                container.glass_max=1000
+                container.trolley_position=
+                container.trolley_state=
+                # Cell format: x,y for each cell
+                room.home=0,0
+                room.indoor=4,0,4,1,4,2
+                room.plastic=2,6,3,6,4,6
+                room.glass=0,4,0,5,0,6
+                room.rows=5
+                room.cols=7
+            </pre>
+
+            <h3 id="Frontend">Frontend</h3>
+
+            <h4>Thymeleaf</h4>
+            To render the initial HTML page we employed a <b>template engine</b>,
+            which allows for flexible configuration of parameters such as the grid
+            size or the maximum capacity of plastic and glass containers: namely, the
+            controller reads such parameters from the <code>application.properties</code>
+            configuration file and passes them to the template engine, which
+            injects them into an HTML template page and renders the final page.
+            <br/>
+            This approach allows us to <b>avoid hardcoding</b> the parameters into the HTML page itself.
+            In particular, we decided to use Thymeleaf as the template
+            engine, since it integrates very well with the Spring Boot framework.
+
+            <h4>Bootstrap</h4>
+            We strongly believe our WebApp has to offer the <b>best experience from any
+            device we use</b>. For this reason, we adopted the Bootstrap framework, which
+            is known for its <b>mobile-first approach</b> and <b>responsive design</b>.
+            Every design developed on Bootstrap work seamlessly across different devices
+            and screen size. Bootstrap provides a set of pre-built HTML, CSS, and JavaScript
+            components that can be easily integrated into web applications.
+            
+            <h4>Bootstrap Studio</h4>
+            We chose Bootstrap Studio (based on the Bootstrap framework) to <b>develop our UX design</b>,
+            as it offers an intuitive and user-friendly interface that allows us to create good-looking
+            web designs without having to write code manually. The drag and drop interface, pre-built
+            components, and CSS styling options make it easy to <b>create complex layouts quickly</b>.
+            It also provides pre-built components, templates, and snippets that can be easily customized
+            and reused across different projects. This can significantly reduce the time and
+            effort required to create complex designs.
+
+            <center><img width="100%" src="../../resources/imgs/project/WasteService_GUI/BootstrapStudio.png"/></center>
+
+            <h4>jQuery</h4>
+            We used jQuery, which simplifies web development by providing an easy-to-use API
+            for common tasks such as event handling, animation, and AJAX calls. It is widely
+            used to <b>improve the efficiency of client-side scripting</b> and HTML document traversal
+            and manipulation, reducing the amount of code required to perform common tasks.
+            Additionally, jQuery is flexible and can be used for a wide range of web development tasks,
+            from creating dynamic user interfaces to making server requests and handling responses.
+
+            <h4>Websockets</h4>
+            The most common use of Web Sockets is to facilitate communication between a server application
+            and a browser-based application. In fact, compared to RESTful HTTP, it has the advantage of
+            achieving two-way, real-time communication. This allows the <b>server to send information to
+            the client at any time</b>, rather than forcing the client to perform polling. WebSockets use 
+            Sockets in their implementation based on a standard protocol that defines a connection handshake
+            and a message frame.
+
+            <h4>GUI Pages</h4>
+
+            Since we wanted our web application to be independent from the WasteService Core,
+            we needed to implement a sort of lazy start.
+            
+            <h6>Home Page</h6>
+            <img width="100%" src="../../resources/imgs/project/WasteService_GUI/PageHome.png"/>
+            
+            <h6>Dashboard Page</h6>
+            <img width="100%" src="../../resources/imgs/project/WasteService_GUI/PageDashboard.png"/>
+
+            <h4>Animations</h4>
+            In order to make the GUI more interactive, we created some animations for
+            the TransportTrolley graphics:
+            <br/><br/>
+            <table width="100%">
+                <tr>
+                    <td width="19%"><img width="100%" src="../../resources/imgs/project/WasteService_GUI/TransportTrolley/ddr_robot.png"/></td>
+                    <td width="19%"><img width="100%" src="../../resources/imgs/project/WasteService_GUI/TransportTrolley/ddr_robot_moving.gif"/></td>
+                    <td width="19%"><img width="100%" src="../../resources/imgs/project/WasteService_GUI/TransportTrolley/ddr_robot_pickup.gif"/></td>
+                    <td width="19%"><img width="100%" src="../../resources/imgs/project/WasteService_GUI/TransportTrolley/ddr_robot_trash_moving.gif"/></td>
+                    <td width="19%"><img width="100%" src="../../resources/imgs/project/WasteService_GUI/TransportTrolley/ddr_robot_dump.gif"/></td>
+                </tr>
+                <tr>
+                    <td width="19%"><center>HOME /<br/>STOPPED</center></td>
+                    <td width="19%"><center>MOVING</center></td>
+                    <td width="19%"><center>PICKUP</center></td>
+                    <td width="19%"><center>MOVING (TRASH)</center></td>
+                    <td width="19%"><center>DUMP</center></td>
+                </tr>
+            </table>
+            <br/><br/>
+            <table width="100%">
+                <tr>
+                    <td width="33%"><img width="100%" src="../../resources/imgs/project/WasteService_GUI/LedOFF.png"/></td>
+                    <td width="33%"><img width="100%" src="../../resources/imgs/project/WasteService_GUI/LedON.png"/></td>
+                    <td width="33%"><img width="100%" src="../../resources/imgs/project/WasteService_GUI/LedBLINKING.gif"/></td>
+                    </tr>
+                <tr>
+                    <td width="33%"><center>OFF</center></td>
+                    <td width="33%"><center>ON</center></td>
+                    <td width="33%"><center>BLINKING</center></td>
+                </tr>
+            </table>
+
+            <h4>Address Validation</h4>
+            To prevent the user from submitting invalid IP addresses and ports,
+            we introduced a validation mechanism, with the following functions:
+<pre style="white-space: pre;">
+function validateConnect() {
+    let ipaddress = $("#ip").val()
+    let port = $("#port").val()
+
+    $("#connect").prop('disabled', !(validateIPaddress(ipaddress) && validatePort(port)));
+    return (validateIPaddress(ipaddress) && validatePort(port))
+}
+
+function validateIPaddress(ipaddress) {
+    if (ipaddress === "localhost")
+        return true
+    if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress))
+        return true
+
+    return false
+}
+function validatePort(port) {
+    return (port > 1023 && port &lt;= 65535)
+}
+</pre>
+
+            <!-- Reset su disconnessione -->
+            
+            <h2 id="Deployment">Deployment</h2>
+
+            <h3 id="Build-System">Build System</h3>
+            
+
+            <h3 id="Deploy-System">Deploy System</h3>
+           
+        </div>
+
+    </body>
+
+</html>

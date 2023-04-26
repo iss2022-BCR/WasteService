@@ -1,0 +1,27 @@
+{
+  "timestamp": 123123,
+  "wasteServiceArea": {
+    "size": {
+      "rows": 5,
+      "columns": 7
+    }
+  },
+  "maxWaste": {
+    "plastic": 100,
+    "glass": 100
+  },
+  "currWaste": {
+    "plastic": 100,
+    "glass": 100
+  },
+  "homePosition": [0, 0],
+  "indoorPositions": [[4, 0], [4, 1], [4, 2]],
+  "containerPositions": {
+    "plastic": [[2, 6], [3, 6], [4, 6]],
+    "glass": [[4, 0], [5, 0], [6, 0]]
+  },
+  "DLIMT": 15,
+  "transportTrolleyPosition": [ 0, 0],
+  "transportTrolleyState": "",
+  "ledState": "off"
+}

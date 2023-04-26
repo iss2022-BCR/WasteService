@@ -1,0 +1,70 @@
+plugins {
+	id 'org.springframework.boot' version '2.7.5'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id 'java'
+	id 'application'
+	id 'eclipse'
+
+}
+
+group = 'unibo'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+	flatDir {dirs{'../unibolibs'}}
+}
+
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.springframework.session:spring-session-core'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	implementation 'org.webjars:jquery:3.6.4'
+	implementation 'org.webjars:webjars-locator-core'
+
+	/* COAP **************************************************************************************************************** */
+	// https://mvnrepository.com/artifact/org.eclipse.californium/californium-core
+	implementation group: 'org.eclipse.californium', name: 'californium-core', version: '3.5.0'
+	// https://mvnrepository.com/artifact/org.eclipse.californium/californium-proxy2
+	implementation group: 'org.eclipse.californium', name: 'californium-proxy2', version: '3.5.0'
+
+	/* UNIBO ********************************** */
+	implementation name: 'uniboInterfaces'
+	implementation name: '2p301'
+	implementation name: 'unibo.comm22-1.1'
+	implementation name: 'unibo.qakactor22-3.0'
+
+	/* TEST */
+	//implementation('org.springframework.boot:spring-boot-starter-web')
+	//providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
+
+}
+
+sourceSets {
+	main.java.srcDirs += 'src'
+	main.java.srcDirs += 'resources'
+	test.java.srcDirs += 'test'		//test is specific
+}
+application {
+	mainClassName = 'unibo.wasteservice_gui.WasteServiceGuiApplication'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+tasks.named("bootJar") {
+	archiveClassifier = 'boot'
+}
+
+tasks.named("jar") {
+	archiveClassifier = ''
+}
