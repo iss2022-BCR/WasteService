@@ -27,13 +27,14 @@
                 <a href="#Logical-Architecture">Logical Architecture</a>
                 <a href="#WasteService-Core">WasteService Core</a>
                 <div class="sidenavSubSection">
-                    <a href="#Actors-Changed">Actors Changed</a>
+                    <a href="#Backend">Backend</a>
                     <a href="#New-Actor">New Actor</a>
                     <a href="#System-Status">System Status</a>
                 </div>
                 <a href="#WasteService-GUI">WasteServic GUI</a>
-                <a href="#Extensions">Extensions</a>
                 <div class="sidenavSubSection">
+                    <a href="#Backend">Backend</a>
+                    <a href="#Frontend">Frontend</a>
                 </div>
                 <a href="#Deployment">Deployment</a>
                 <div class="sidenavSubSection">
@@ -175,13 +176,224 @@ Goto state_idle
             <br/>
             
             <h2 id="WasteService-GUI">Sprint3.2: WasteService GUI</h2>
+            <ksi>WasteService GUI</ksi> (<a href="../../Sprint3_Project/wasteservice_gui/">wasteservice_gui</a>)
+            is a web application that implements the Waste Service system monitoring
+            functionalities (GUI).
+            <br/><br/>
+            To develop this project we chose <a href="https://spring.io/">Spring Boot</a>,
+            an open-source Java-based framework built on top of the Spring framework,
+            that simplifies the process of building and deployment of <b>web applications</b>.
+            We chose Spring Boot principally for its core feature:
+            <ul>
+                <li>it provides <b>easy and fast configuration</b>, through a convention-over-configuration approach,
+                    which allowed us to focus on the application core features;</li>
+                <li>it comes with an HTTP <b>embedded web server</b> which simplifies the deployment process;</li>
+                <li>it provides a great collection of <b>plugins</b> to develop and test, using Gradle;</li>
+                <li>it allows to build a <b>microservices</b> architecture by breaking down
+                    the application into small, independent components that can be deployed and scaled separately;</li>
+            </ul>
+
+            <h4>Project Setup with Sprring Initializr (IntelliJ IDEA)</h4>
+            To setup the project we followed those steps:
+            <ol>
+                <li>Open IntelliJ IDEA and click on "Create New Project" on the welcome screen.</li>
+                <li>In the "New Project" dialog, select "Spring Initializr" as the project type.</li>
+                <li>Choose the project's name and location.</li>
+                <li>Select "Java" as the desired Spring Boot language (Java, Kotlin, Groovy).</li>
+                <li>Choose the project's packaging type (JAR) and Java version (17)</li>
+                <li>Configure additional project settings, such as project description and author, and click "Finish."</li>
+                <li>Configure the project's dependencies by selecting the necessary ones from the list (Spring Web,
+                    Thymeleaf).</li>
+            </ol>
+            <br/>
+            Once the project is generated, we started coding the Spring Boot app.
             
-            <h3>Backend</h3>
+            <h3 id="Backend">Backend</h3>
+            To develop the project we got inspired by the software provided by the customer
+            <a href="https://github.com/anatali/issLab2022/tree/main/webRobot22">webRobot22</a> from which
+            we have recycled some code:
+            <h4>IWsHandler Interface</h4>
+<pre style="white-space: pre;">
+public interface IWsHandler {
+    void sendToAll (String message);
+}
+</pre>
+            <h4>UtilsStatusGUI</h4>
+            That class provides utility static methods to enstablish a CoAP connection and a TCP connection.
+            We edited it to make it suitable for our project (we changed context and actor name, and we changed
+            the methods parameters to be separated IP and port).
+<pre style="white-space: pre;">
+public class UtilsStatusGUI {
+    private static String ctxName = "ctx_wasteservice";
+    private static String actorName = "status_controller";
 
-            <h3>Frontend</h3>
-            Validazione IP
+    private static Interaction2021 conn;
+    private static Interaction2021 connTCP;
 
-            Reset su disconnessione
+    public static CoapConnection connectWithUtilsUsingCoap(String ip, int port) {
+        // [...]
+    }
+
+    public static void connectWithUtilsUsingTcp(String ip, int port){
+        // [...]
+    }
+
+    public static void sendMsg() {
+        // [...]
+    }
+}
+</pre>
+
+            The file 
+            <a href="../../Sprint3_Project/wasteservice_gui/src/main/resources/application.properties">application.properties</a>
+            stores key-value properties for the Spring Boot application. Its purpose is to provide
+            a centralized location for configuring various aspects of a Spring Boot application.
+            It can be used to keep the configuration settings separated from the application code,
+            also making it simpler to change or replace without changing all the occurrencies in the application.
+            <br/>
+            We configured it as it follows:
+            <pre>
+                server.port=11804
+                spring.application.name=webGUI
+                spring.banner.location=classpath:banner.txt
+                service.ip=
+                service.port=
+                container.led_state=OFF
+                container.plastic_current=0
+                container.plastic_max=1000
+                container.glass_current=0
+                container.glass_max=1000
+                container.trolley_position=
+                container.trolley_state=
+                # Cell format: x,y for each cell
+                room.home=0,0
+                room.indoor=4,0,4,1,4,2
+                room.plastic=2,6,3,6,4,6
+                room.glass=0,4,0,5,0,6
+                room.rows=5
+                room.cols=7
+            </pre>
+
+            <h3 id="Frontend">Frontend</h3>
+
+            <h4>Thymeleaf</h4>
+            To render the initial HTML page we employed a <b>template engine</b>,
+            which allows for flexible configuration of parameters such as the grid
+            size or the maximum capacity of plastic and glass containers: namely, the
+            controller reads such parameters from the <code>application.properties</code>
+            configuration file and passes them to the template engine, which
+            injects them into an HTML template page and renders the final page.
+            <br/>
+            This approach allows us to <b>avoid hardcoding</b> the parameters into the HTML page itself.
+            In particular, we decided to use Thymeleaf as the template
+            engine, since it integrates very well with the Spring Boot framework.
+
+            <h4>Bootstrap</h4>
+            We strongly believe our WebApp has to offer the <b>best experience from any
+            device we use</b>. For this reason, we adopted the Bootstrap framework, which
+            is known for its <b>mobile-first approach</b> and <b>responsive design</b>.
+            Every design developed on Bootstrap work seamlessly across different devices
+            and screen size. Bootstrap provides a set of pre-built HTML, CSS, and JavaScript
+            components that can be easily integrated into web applications.
+            
+            <h4>Bootstrap Studio</h4>
+            We chose Bootstrap Studio (based on the Bootstrap framework) to <b>develop our UX design</b>,
+            as it offers an intuitive and user-friendly interface that allows us to create good-looking
+            web designs without having to write code manually. The drag and drop interface, pre-built
+            components, and CSS styling options make it easy to <b>create complex layouts quickly</b>.
+            It also provides pre-built components, templates, and snippets that can be easily customized
+            and reused across different projects. This can significantly reduce the time and
+            effort required to create complex designs.
+
+            <center><img width="100%" src="../../resources/imgs/project/WasteService_GUI/BootstrapStudio.png"/></center>
+
+            <h4>jQuery</h4>
+            We used jQuery, which simplifies web development by providing an easy-to-use API
+            for common tasks such as event handling, animation, and AJAX calls. It is widely
+            used to <b>improve the efficiency of client-side scripting</b> and HTML document traversal
+            and manipulation, reducing the amount of code required to perform common tasks.
+            Additionally, jQuery is flexible and can be used for a wide range of web development tasks,
+            from creating dynamic user interfaces to making server requests and handling responses.
+
+            <h4>Websockets</h4>
+            The most common use of Web Sockets is to facilitate communication between a server application
+            and a browser-based application. In fact, compared to RESTful HTTP, it has the advantage of
+            achieving two-way, real-time communication. This allows the <b>server to send information to
+            the client at any time</b>, rather than forcing the client to perform polling. WebSockets use 
+            Sockets in their implementation based on a standard protocol that defines a connection handshake
+            and a message frame.
+
+            <h4>GUI Pages</h4>
+
+            Since we wanted our web application to be independent from the WasteService Core,
+            we needed to implement a sort of lazy start.
+            
+            <h6>Home Page</h6>
+            <img width="100%" src="../../resources/imgs/project/WasteService_GUI/PageHome.png"/>
+            
+            <h6>Dashboard Page</h6>
+            <img width="100%" src="../../resources/imgs/project/WasteService_GUI/PageDashboard.png"/>
+
+            <h4>Animations</h4>
+            In order to make the GUI more interactive, we created some animations for
+            the TransportTrolley graphics:
+            <br/><br/>
+            <table width="100%">
+                <tr>
+                    <td width="19%"><img width="100%" src="../../resources/imgs/project/WasteService_GUI/TransportTrolley/ddr_robot.png"/></td>
+                    <td width="19%"><img width="100%" src="../../resources/imgs/project/WasteService_GUI/TransportTrolley/ddr_robot_moving.gif"/></td>
+                    <td width="19%"><img width="100%" src="../../resources/imgs/project/WasteService_GUI/TransportTrolley/ddr_robot_pickup.gif"/></td>
+                    <td width="19%"><img width="100%" src="../../resources/imgs/project/WasteService_GUI/TransportTrolley/ddr_robot_trash_moving.gif"/></td>
+                    <td width="19%"><img width="100%" src="../../resources/imgs/project/WasteService_GUI/TransportTrolley/ddr_robot_dump.gif"/></td>
+                </tr>
+                <tr>
+                    <td width="19%"><center>HOME /<br/>STOPPED</center></td>
+                    <td width="19%"><center>MOVING</center></td>
+                    <td width="19%"><center>PICKUP</center></td>
+                    <td width="19%"><center>MOVING (TRASH)</center></td>
+                    <td width="19%"><center>DUMP</center></td>
+                </tr>
+            </table>
+            <br/><br/>
+            <table width="100%">
+                <tr>
+                    <td width="33%"><img width="100%" src="../../resources/imgs/project/WasteService_GUI/LedOFF.png"/></td>
+                    <td width="33%"><img width="100%" src="../../resources/imgs/project/WasteService_GUI/LedON.png"/></td>
+                    <td width="33%"><img width="100%" src="../../resources/imgs/project/WasteService_GUI/LedBLINKING.gif"/></td>
+                    </tr>
+                <tr>
+                    <td width="33%"><center>OFF</center></td>
+                    <td width="33%"><center>ON</center></td>
+                    <td width="33%"><center>BLINKING</center></td>
+                </tr>
+            </table>
+
+            <h4>Address Validation</h4>
+            To prevent the user from submitting invalid IP addresses and ports,
+            we introduced a validation mechanism, with the following functions:
+<pre style="white-space: pre;">
+function validateConnect() {
+    let ipaddress = $("#ip").val()
+    let port = $("#port").val()
+
+    $("#connect").prop('disabled', !(validateIPaddress(ipaddress) && validatePort(port)));
+    return (validateIPaddress(ipaddress) && validatePort(port))
+}
+
+function validateIPaddress(ipaddress) {
+    if (ipaddress === "localhost")
+        return true
+    if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress))
+        return true
+
+    return false
+}
+function validatePort(port) {
+    return (port > 1023 && port &lt;= 65535)
+}
+</pre>
+
+            <!-- Reset su disconnessione -->
             
             <h2 id="Deployment">Deployment</h2>
 
