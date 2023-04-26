@@ -71,28 +71,17 @@ public class StatusController {
         viewmodel.addAttribute("num_cols", numCols);
     }
 
-    public String buildHomePage(Model viewmodel)
+    @GetMapping("/")
+    public String home(Model viewmodel)
     {
         setConfigParams(viewmodel);
         return "home";
     }
 
-    public String buildDashboardPage(Model viewmodel)
-    {
-        setConfigParams(viewmodel);
-        return "dashboard";
-    }
-
-    @GetMapping("/")
-    public String home(Model viewmodel)
-    {
-        return buildHomePage(viewmodel);
-    }
-
     @PostMapping("/dashboard")
     public String updateGUI(Model viewmodel, @RequestParam String ip, @RequestParam String port)
     {
-        System.out.println("test");
+
         this.ip = ip;
         this.port = port;
 
@@ -103,6 +92,7 @@ public class StatusController {
         UtilsStatusGUI.connectWithUtilsUsingTcp(this.ip, Integer.parseInt(port));
         UtilsStatusGUI.sendMsg();
 
-        return buildDashboardPage(viewmodel);
+        setConfigParams(viewmodel);
+        return "dashboard";
     }
 }

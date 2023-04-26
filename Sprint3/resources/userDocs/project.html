@@ -27,7 +27,7 @@
                 <a href="#Logical-Architecture">Logical Architecture</a>
                 <a href="#WasteService-Core">WasteService Core</a>
                 <div class="sidenavSubSection">
-                    <a href="#Backend">Backend</a>
+                    <a href="#Actors-Changed">Actors Changed</a>
                     <a href="#New-Actor">New Actor</a>
                     <a href="#System-Status">System Status</a>
                 </div>
@@ -209,19 +209,86 @@ Goto state_idle
             Once the project is generated, we started coding the Spring Boot app.
             
             <h3 id="Backend">Backend</h3>
-            To develop the project we got inspired by the software provided by the customer
+            Spring Boot is based on the <b>MVC (Model View Controller) pattern</b> which allows to separate
+            the business logic of the application from the view presentation. This approach promotes
+            reusability, scalability and flexibility, and even if it's not so recent, it's still more
+            relevant than ever in web application development.
+            <br/>
+            HTTPS requests are handled by a controller (identified by the <code>@Controller</code> annotation).
+            The controller maps the HTML page returned to the browser client through <code>@PostMapping</code>
+            and <code>@GetMapping</code> annotations. For example, the following code snippet in our
+            <a href="../../Sprint3_Project/wasteservice_gui/src/main/java/unibo/wasteservice_gui/StatusController.java">StatusController</a>
+            returns handles a GET request to URL "http://&lt;IPaddress&gt;:&lt;port&gt;" and returns the
+            <a href="../../Sprint3_Project/wasteservice_gui/src/main/resources/templates/home.html">home.html</a>
+            page.
+
+<pre style="white-space: pre;">
+@GetMapping("/")
+public String home(Model viewmodel)
+{
+    setConfigParams(viewmodel);
+    return "home";
+}
+</pre>
+
+            <h4>A first approach: STOMP</h4>
+            When developing our project we first <b>tried to use a STOMP client over websockets</b>.
+            STOMP clients work with WebSockets using the <b>publish/subscribe model</b> by establishing a
+            bidirectional connection to the data server and then sending and
+            receiving STOMP messages over that connection. The process involves:
+            <ul>
+                <li>sending a CONNECT frame to authenticate with the server;</li>
+                <li>subscribing to one or more destinations to receive messages;</li>
+                <li>sending STOMP messages to the server;</li>
+                <li>receiving messages sent by the server to the subscribed destination.</li>
+            </ul>
+            In the following code snipped we updated the plastic counter and progress bar of the
+            HTML page (using jQuery), when receiving the data from a STOMP topic (in this case /topic/plastic).
+            
+<pre style="white-space: pre;">
+const stompClient = Stomp.client('ws://localhost:8085/websocket');
+stompClient.connect({}, () => {
+
+// Subscribe to the /topic/plastic topic
+stompClient.subscribe('/topic/plastic', (message) => {
+    plastic_counter += parseFloat(message.body);
+    
+    $("#plastic_current").html(plastic_counter);
+    
+    // The aria-valuenow attribute defines the current value of progress bar
+    // This way we can update the increment of the progress bar (depending on the quantity of plastic added)
+    $("#progress_bar_plastic")
+        .css({
+            "aria-valuenow": (plastic_counter / 10).toString(),
+            "width": (plastic_counter / 10).toString() + "%"
+        });
+});
+// [...]
+</pre>
+            <problem>Problems with STOMP</problem>
+            During the implementation of the WasteService endpoint, we encountered problems
+            enstablishing the connection with the STOMP client. Therefore we decided to
+            abandon this approach and to try something else.
+
+            <h4>CoAP</h4>
+            We considered the usage of CoAP since it's highly supported by QAK, and also
+            because the customer provided some really useful examples.
+            <br/>
+            In fact, to develop the final version of the WasteService GUI project, we mostly got inspired by the
+            software provided by the customer
             <a href="https://github.com/anatali/issLab2022/tree/main/webRobot22">webRobot22</a> from which
             we have recycled some code:
-            <h4>IWsHandler Interface</h4>
+            
+            <h6><a href="../../Sprint3_Project/wasteservice_gui/src/main/java/unibo/wasteservice_gui/utils/IWShandler.java">IWsHandler</a> Interface</h6>
 <pre style="white-space: pre;">
 public interface IWsHandler {
     void sendToAll (String message);
 }
 </pre>
-            <h4>UtilsStatusGUI</h4>
+            <h6><a href="../../Sprint3_Project/wasteservice_gui/src/main/java/unibo/wasteservice_gui/utils/UtilsStatusGUI.java">UtilsStatusGUI</a> class</h6>
             That class provides utility static methods to enstablish a CoAP connection and a TCP connection.
-            We edited it to make it suitable for our project (we changed context and actor name, and we changed
-            the methods parameters to be separated IP and port).
+            We edited it to make it suitable for our project (by changing context and actor names, and we also 
+            changed the methods parameters to be separated IP and port).
 <pre style="white-space: pre;">
 public class UtilsStatusGUI {
     private static String ctxName = "ctx_wasteservice";
@@ -244,9 +311,87 @@ public class UtilsStatusGUI {
 }
 </pre>
 
-            The file 
-            <a href="../../Sprint3_Project/wasteservice_gui/src/main/resources/application.properties">application.properties</a>
-            stores key-value properties for the Spring Boot application. Its purpose is to provide
+            <h6><a href="../../Sprint3_Project/wasteservice_gui/src/main/java/unibo/wasteservice_gui/websocket/WebSocketConfiguration.java">WebSocketConfiguration</a> class</h6>
+            In order to make the Spring application forward a client's requests to the server,
+            we need to register a handler using a class that implements <code>WebSocketConfigurer</code> interface.
+            (<code>@EnableWebSocket</code> annotation enables the application to the use of plain WebSockets).
+
+<pre style="white-space: pre;">
+@Configuration
+@EnableWebSocket
+public class WebSocketConfiguration implements WebSocketConfigurer {
+    public static final WebSocketHandler webSocketHandler = new WebSocketHandler();
+
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(webSocketHandler, "/socket").setAllowedOrigins("*");
+    }
+}
+</pre>
+
+            <h6><a href="../../Sprint3_Project/wasteservice_gui/src/main/java/unibo/wasteservice_gui/websocket/WebSocketHandler.java">WebSocketHandler</a> class</h6>
+            This class handles the received messages by propagating it one the WebSocket,
+            so that it reaches every client connected. To achieve that, we keep track of their
+            sessions:
+
+<pre style="white-space: pre;">
+public class WebSocketHandler extends AbstractWebSocketHandler implements IWShandler {
+    private final List&lt;WebSocketSession&gt; sessions = new CopyOnWriteArrayList&lt;&gt;();
+
+    @Override
+    protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws IOException {
+        Iterator&lt;WebSocketSession&gt; iter = sessions.iterator();
+        while( iter.hasNext() ){
+            iter.next().sendMessage(message);
+        }
+    }
+
+    @Override
+    public void sendToAll(String message)  {
+        try{
+            ColorsOut.outappl("[WebSocketHandler] sendToAll String: " + message, ColorsOut.CYAN);
+            sendToAll( new TextMessage(message)) ;
+        }catch( Exception e ){
+            ColorsOut.outerr("[WebSocketHandler] sendToAll String ERROR:"+e.getMessage());
+        }
+    }
+
+    public void sendToAll(TextMessage message) {
+        Iterator&lt;WebSocketSession&gt; iter = sessions.iterator();
+        while( iter.hasNext() ){
+            try{
+                WebSocketSession session = iter.next();
+                ColorsOut.outappl("[WebSocketHandler] sendToAll " +
+                        message.getPayload() + " for session " + session.getRemoteAddress() , ColorsOut.MAGENTA);
+                session.sendMessage(message);
+            }catch(Exception e){
+                ColorsOut.outerr("[WebSocketHandler] TextMessage ERROR:"+e.getMessage());
+            }
+        }
+    }
+}
+</pre>
+            <h6><a href="../../Sprint3_Project/wasteservice_gui/src/main/java/unibo/wasteservice_gui/StatusCoapObserver.java">StatusCoapObserver</a> class</h6>
+            This is a support class used to detect when the observed CoAP resource (the system StatusUpdate)
+            is updated from the StatusController QAK actor.
+
+<pre style="white-space: pre;">
+public class StatusCoapObserver implements CoapHandler {
+    @Override
+    public void onLoad(CoapResponse response) {
+        ColorsOut.outappl("[StatusCoapObserver] Status changed! Value: " + response.getResponseText(), ColorsOut.GREEN);
+        WebSocketConfiguration.webSocketHandler.sendToAll(response.getResponseText());
+    }
+
+    @Override
+    public void onError() {
+        ColorsOut.outerr("[StatusCoapObserver] observe error!");
+    }
+}
+</pre>
+
+            <h6><a href="../../Sprint3_Project/wasteservice_gui/src/main/resources/application.properties">application.properties</a> file</h6>
+            This file stores key-value properties for the Spring Boot application. Its purpose is to provide
             a centralized location for configuring various aspects of a Spring Boot application.
             It can be used to keep the configuration settings separated from the application code,
             also making it simpler to change or replace without changing all the occurrencies in the application.
