@@ -16,7 +16,7 @@ clearDevices
 
 # Start
 echo "Starting WasteService RPi..."
-./unibo.sprint2_wasteservice_rpi
+./unibo.wasteservice_rpi
 
 clearDevices
 
