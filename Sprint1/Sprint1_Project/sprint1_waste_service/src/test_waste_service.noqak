@@ -114,8 +114,8 @@ QActor transporttrolley context ctx_wasteservice_test {
 	[# 
 		var Actions: String = "" 
 		var Progress = ""
-		planner.initAI()
-		planner.loadRoomMap("mapRoomEmpty")
+		plannerBCR.initAI()
+		plannerBCR.loadRoomMap("mapRoomEmpty")
 	#]
 	State state_init initial {
 		println("[TransportTrolley] Started")
@@ -135,9 +135,9 @@ QActor transporttrolley context ctx_wasteservice_test {
 			println("[TransportTrolley] Received deposit request...")
 			
 			[#
-				planner.setGoal(4, 3)
-				planner.doPlan()
-				Actions = planner.getActionsString()
+				plannerBCR.setGoal(4, 3)
+				plannerBCR.doPlan()
+				Actions = plannerBCR.getActionsString()
 			#]
 			request pathexecutor -m dopath : dopath($Actions, transporttrolley)
 			
@@ -193,9 +193,9 @@ QActor pathexecutor context ctx_wasteservice_test {
 	
 	State doMove {
 		[#
-			planner.updateMap(CurMoveTodo, "")
-			// planner.showMap()
-			// planner.showCurrentRobotState()	
+			plannerBCR.updateMap(CurMoveTodo, "")
+			// plannerBCR.showMap()
+			// plannerBCR.showCurrentRobotState()	
 		#]
 		delay 350
 	}
@@ -209,15 +209,9 @@ QActor pathexecutor context ctx_wasteservice_test {
 	State doMoveW {
 		request basicrobot -m step : step(350)
 	}
-	Transition t2 whenEvent alarm -> handleAlarm
-				  whenReply stepdone -> nextMove
+	Transition t2 whenReply stepdone -> nextMove
 				  whenReply stepfail -> endWorkKo
 				  
-	State handleAlarm {
-		[# var PathTodo = pathut.getPathTodo() #]
-		println("[PathExecutor] handleAlarm ... pathTodo: $PathTodo")
-	}
-	
 	State endWorkOk {
 		println("[PathExecutor] Path done - bye")
 		replyTo dopath with dopathdone : dopathdone( ok )
@@ -229,7 +223,6 @@ QActor pathexecutor context ctx_wasteservice_test {
 		println("[PathExecutor] path failure - sorry. PathStillTodo: $PathStillTodo")
 		replyTo dopath with dopathfail : dopathfail( $PathStillTodo )
 	}
-	Transition t0 whenEvent alarm -> handleAlarm
 }
 
 QActor basicrobot context ctx_wasteservice_test {

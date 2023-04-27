@@ -1,0 +1,4 @@
+{"actor":"basicrobot", "msgType":"dispatch", "curstate":"work", "nextstate":"execcmd", "msgId":"cmd"}
+{"actor":"basicrobot", "msgType":"dispatch", "curstate":"work", "nextstate":"handleObstacle", "msgId":"obstacle"}
+{"actor":"basicrobot", "msgType":"dispatch", "curstate":"work", "nextstate":"endwork", "msgId":"end"}
+{"actor":"basicrobot", "msgType":"dispatch", "curstate":"doStep", "nextstate":"stepFail", "msgId":"obstacle"}

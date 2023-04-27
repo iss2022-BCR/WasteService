@@ -101,19 +101,8 @@ class Pathexecutor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t214",targetState="handleAlarm",cond=whenEvent("alarm"))
-					transition(edgeName="t215",targetState="nextMove",cond=whenReply("stepdone"))
-					transition(edgeName="t216",targetState="endWorkKo",cond=whenReply("stepfail"))
-				}	 
-				state("handleAlarm") { //this:State
-					action { //it:State
-						 var PathTodo = pathut.getPathTodo()  
-						println("[PathExecutor] handleAlarm ... pathTodo: $PathTodo")
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
+					 transition(edgeName="t214",targetState="nextMove",cond=whenReply("stepdone"))
+					transition(edgeName="t215",targetState="endWorkKo",cond=whenReply("stepfail"))
 				}	 
 				state("endWorkOk") { //this:State
 					action { //it:State
@@ -136,7 +125,6 @@ class Pathexecutor ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t017",targetState="handleAlarm",cond=whenEvent("alarm"))
 				}	 
 			}
 		}

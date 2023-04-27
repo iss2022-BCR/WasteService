@@ -417,14 +417,8 @@ QActor pathexecutor context ctx_transporttrolley {
 	State doMoveW {
 		request basicrobot -m step : step(350)
 	}
-	Transition t2 whenEvent alarm -> handleAlarm
-				  whenReply stepdone -> nextMove
+	Transition t2 whenReply stepdone -> nextMove
 				  whenReply stepfail -> endWorkKo
-				  
-	State handleAlarm {
-		[# var PathTodo = pathut.getPathTodo() #]
-		println("[PathExecutor] handleAlarm ... pathTodo: $PathTodo")
-	}
 	
 	State endWorkOk {
 		println("[PathExecutor] Path done - bye")
@@ -437,7 +431,6 @@ QActor pathexecutor context ctx_transporttrolley {
 		println("[PathExecutor] path failure - sorry. PathStillTodo: $PathStillTodo")
 		replyTo dopath with dopathfail : dopathfail( $PathStillTodo )
 	}
-	Transition t0 whenEvent alarm -> handleAlarm
 }
 
 /*QActor basicrobot context ctx_robot {
