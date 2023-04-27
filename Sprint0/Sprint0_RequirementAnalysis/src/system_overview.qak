@@ -1,4 +1,4 @@
-System demo_system_overview_v0
+System sprint0_system_overview
 
 // MESSAGES AND EVENTS ========================================================
 // SmartDevice (truck) -> WasteService
@@ -33,7 +33,7 @@ Dispatch updategui: 	updategui(
 Dispatch updateled: 	updateled(LedStatus)
 
 // AlarmDevice -> WasteService
-Dispatch distance:		distance(_)
+Dispatch distance:		distance(V)
 
 
 // CONTEXTS ===================================================================
@@ -125,12 +125,14 @@ QActor wasteservice context ctx_wasteservice {
 	Goto state_idle
 	
 	State state_handle_distance {
-		if [# payloadArg(0).toFloat() >= wasteservice.Constants.DLIMT #] {
-			// state_handle_stop
-			forward transporttrolley -m stop: stop(_)
-		} else {
-			// state_handle_resume
-			forward transporttrolley -m resume: resume(_)
+		onMsg(distance: distance(V)) {
+			if [# payloadArg(0).toFloat() >= wasteservice.Constants.DLIMT #] {
+				// state_handle_stop
+				forward transporttrolley -m stop: stop(_)
+			} else {
+				// state_handle_resume
+				forward transporttrolley -m resume: resume(_)
+			}
 		}
 	}
 	Goto state_idle

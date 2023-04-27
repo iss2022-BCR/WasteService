@@ -16,7 +16,7 @@ eventedgeattr = {
     'color': 'red',
     'style': 'dotted'
 }
-with Diagram('demo_system_overview_v0Arch', show=False, outformat='png', graph_attr=graphattr) as diag:
+with Diagram('sprint0_system_overviewArch', show=False, outformat='png', graph_attr=graphattr) as diag:
   with Cluster('env'):
      sys = Custom('','./qakicons/system.png')
      with Cluster('ctx_wasteservice', graph_attr=nodeattr):
@@ -31,16 +31,14 @@ with Diagram('demo_system_overview_v0Arch', show=False, outformat='png', graph_a
           smartdevice_test=Custom('smartdevice_test','./qakicons/symActorSmall.png')
      with Cluster('ctx_basicrobot', graph_attr=nodeattr):
           basicrobot=Custom('basicrobot(ext)','./qakicons/externalQActor.png')
-     smartdevice_test >> Edge(color='magenta', style='solid', xlabel='storerequest') >> wasteservice
-     wasteservice >> Edge(color='green', style='dashed', xlabel='loadaccepted') >> sys 
-     wasteservice >> Edge(color='blue', style='solid', xlabel='doDeposit') >> transporttrolley
-     wasteservice >> Edge(color='green', style='dashed', xlabel='loadrejected') >> sys 
-     wasteservice >> Edge(color='blue', style='solid', xlabel='updategui') >> wasteservicestatusgui
-     wasteservice >> Edge(color='blue', style='solid', xlabel='stop') >> transporttrolley
-     wasteservice >> Edge(color='blue', style='solid', xlabel='resume') >> transporttrolley
-     transporttrolley >> Edge(color='blue', style='solid', xlabel='updateled') >> warningdevice
-     transporttrolley >> Edge(color='blue', style='solid', xlabel='updategui') >> wasteservicestatusgui
-     transporttrolley >> Edge(color='magenta', style='solid', xlabel='step') >> basicrobot
-     transporttrolley >> Edge(color='blue', style='solid', xlabel='cmd') >> basicrobot
-     alarmdevice >> Edge(color='blue', style='solid', xlabel='distance') >> wasteservice
+     smartdevice_test >> Edge(color='magenta', style='solid', xlabel='storerequest', fontcolor='magenta') >> wasteservice
+     wasteservice >> Edge(color='blue', style='solid', xlabel='doDeposit', fontcolor='blue') >> transporttrolley
+     wasteservice >> Edge(color='blue', style='solid', xlabel='updategui', fontcolor='blue') >> wasteservicestatusgui
+     wasteservice >> Edge(color='blue', style='solid', xlabel='stop', fontcolor='blue') >> transporttrolley
+     wasteservice >> Edge(color='blue', style='solid', xlabel='resume', fontcolor='blue') >> transporttrolley
+     transporttrolley >> Edge(color='blue', style='solid', xlabel='updateled', fontcolor='blue') >> warningdevice
+     transporttrolley >> Edge(color='blue', style='solid', xlabel='updategui', fontcolor='blue') >> wasteservicestatusgui
+     transporttrolley >> Edge(color='magenta', style='solid', xlabel='step', fontcolor='magenta') >> basicrobot
+     transporttrolley >> Edge(color='blue', style='solid', xlabel='cmd', fontcolor='blue') >> basicrobot
+     alarmdevice >> Edge(color='blue', style='solid', xlabel='distance', fontcolor='blue') >> wasteservice
 diag

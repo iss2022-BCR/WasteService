@@ -16,7 +16,7 @@ eventedgeattr = {
     'color': 'red',
     'style': 'dotted'
 }
-with Diagram('test_storerequestArch', show=False, outformat='png', graph_attr=graphattr) as diag:
+with Diagram('sprint0_test_storerequestArch', show=False, outformat='png', graph_attr=graphattr) as diag:
   with Cluster('env'):
      sys = Custom('','./qakicons/system.png')
      with Cluster('ctx_test_storerequest', graph_attr=nodeattr):

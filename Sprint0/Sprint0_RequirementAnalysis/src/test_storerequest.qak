@@ -1,5 +1,5 @@
-System test_storerequest
-
+System sprint0_test_storerequest
+ 
 // MESSAGES AND EVENTS ========================================================
 // SmartDevice (truck) -> WasteService
 Request storerequest:	storerequest(

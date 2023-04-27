@@ -1,0 +1,8 @@
+{"actor":"wasteservice", "msgType":"dispatch", "curstate":"state_idle", "nextstate":"state_handle_distance", "msgId":"distance"}
+{"actor":"transporttrolley", "msgType":"dispatch", "curstate":"state_idle", "nextstate":"state_deposit", "msgId":"doDeposit"}
+{"actor":"transporttrolley", "msgType":"dispatch", "curstate":"state_idle", "nextstate":"state_handle_stop", "msgId":"stop"}
+{"actor":"transporttrolley", "msgType":"dispatch", "curstate":"state_handle_stop", "nextstate":"state_handle_resume", "msgId":"resume"}
+{"actor":"warningdevice", "msgType":"dispatch", "curstate":"state_off", "nextstate":"state_update", "msgId":"updateled"}
+{"actor":"warningdevice", "msgType":"dispatch", "curstate":"state_on", "nextstate":"state_update", "msgId":"updateled"}
+{"actor":"warningdevice", "msgType":"dispatch", "curstate":"state_blinking", "nextstate":"state_update", "msgId":"updateled"}
+{"actor":"wasteservicestatusgui", "msgType":"dispatch", "curstate":"state_idle", "nextstate":"state_handle_update", "msgId":"updategui"}
