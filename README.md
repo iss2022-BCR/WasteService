@@ -42,7 +42,7 @@
   - Sprint Review: 14/04/22 16:30
 - [ ] **Sprint3** - Monitoring
   - Latest Release: []()
-  - Final Exam: 
+  - Final Exam: 27/04/22 11:00
 
 ### Team Members
 <table>
