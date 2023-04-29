@@ -21,7 +21,7 @@ sourceCompatibility = 11
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
-    flatDir {   dirs '../unibolibs'	 }
+    flatDir {   dirs '../../../unibolibs'	 }
 }
 
 dependencies {
@@ -88,10 +88,8 @@ dependencies {
     // https://mvnrepository.com/artifact/com.googlecode.aima-java/aima-core
     implementation group: 'com.googlecode.aima-java', name: 'aima-core', version: '3.0.0'
 
-    // test
-    implementation name: 'lib'
-
-    implementation files('../unibolibs/map_editor_bcr.jar')
+    // MapEditor
+    implementation name: 'map_editor_bcr'
 }
 
 sourceSets {

@@ -100,3 +100,5 @@ outTmp/
 /kotlin-native/dist
 kotlin-ide/
 
+# unibolibs
+!/unibolibs/*
