@@ -25,7 +25,7 @@
   ·
   [SCRUM Guide (EN)](./commons/2020-Scrum-Guide-US.pdf)
   ·
-  [Italiano](./README.it.md)
+  [Italiano <kbd><img width="20px" src="https://flagicons.lipis.dev/flags/4x3/it.svg"></kbd> ](./README.it.md)
   
 </div>
 
