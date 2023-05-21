@@ -25,7 +25,7 @@
   ·
   [SCRUM Guide (EN)](./commons/2020-Scrum-Guide-US.pdf)
   ·
-  [Italiano <kbd><img width="20px" src="https://flagicons.lipis.dev/flags/4x3/it.svg"></kbd> ](./README.it.md)
+  [Italiano <kbd><img width="20px" src="https://flagicons.lipis.dev/flags/4x3/it.svg"></kbd>](./README.it.md)
   
 </div>
 
@@ -40,8 +40,8 @@
 - [x] **Sprint2** - Raspberry Pi
   - Latest Release: [Sprint2 v1](https://github.com/iss2022-BCR/WasteService/releases/tag/sprint2_v1)
   - Sprint Review: 14/04/22 16:30
-- [ ] **Sprint3** - Monitoring
-  - Latest Release: []()
+- [x] **Sprint3** - Monitoring
+  - Latest Release: [to-do]()
   - Final Exam: 27/04/22 11:00
 
 ### Team Members
