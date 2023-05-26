@@ -1,6 +1,0 @@
-Nuovo attore che come il types provider fornisce un'informazione sul waste service, ad esempio la quantità massima che il wasteservice può contenere
-
-NB: loadrejected è comunque bloccata finché la deposit non finisce, se ce n'è una in corso.
-
-un attore QAK che agisce da controller/manager:
-gli si inviano certe richieste (magari tramite una gui o qualcosa del genere) e lui esegue e risponde. Es: reset WasteService storage, ecc.
