@@ -1,0 +1,26 @@
+- RadarSystem22 (radarGUI, radarClient, ...)
+- SmartDevice
+- Echo WasteServer
+- Map Editor
+- python Raspi scripts
+
+- WasteService Core
+- WasteService RPi
+- WasteService StatusGUI
+- batch scripts to automatize
+
+
+
+CONSIDERAZIONI:
+- Perché Flutter? Solitamente quando si realizza un'applicazione mobile, è necessario fare alcune considerazioni preliminari.
+Una di queste potrebbe riguardare il sistema operativo. Infatti i due principali sistemi operativi per mobile sono iOS e Android.
+Non per forza è necessario scegliere: esistono framework o librerie, che permettono di rendere l'applicazione indipendente dall'architettura sottostante. Fra queste, emergono tra le più popolari, due tecnologie molto utilizzate:
+- ReactJS, è una libreria JavaScript realizzato da Facebook che permette di creare applicazioni indipendenti dalla piattaforma sottostante, in quanto queste funzionano "scaricando" l'interfaccia e gli aggiornamenti, a tempo di esecuzione, come se fosse un'applicazione Web.
+- Flutter, è un framework realizzato da Google che permette di sviluppare applicazioni cross-platform, grazie alla cross-compilazione. In questo modo si scrive il codice una volta, ed è possibile fare build e successivamente deployment per diverse architetture (Android, iOS, ma anche Web e Desktop (Windows, Linux, MacOS).
+
+Le principali differenze sono che:
+- ReactJS necessita di una connessione ad Internet, mentre Flutter (a meno che l'utente non debba visualizzare contenuto online, non ne ha bisogno).
+- principale differenza fra ReactJS e Flutter, si nota al tempo di avvio: Flutter è molto più rapido rispetto a ReactJS.
+
+Abbiamo scelto Flutter in quanto la nostra applicazione SmartDevice non deve necessariamente essere connessa ad Internet: se la rete è LAN, o comunque è necessario connettersi ad un IP privato, non è necessario passare da Internet. Inoltre, le informazioni visualizzate dall'app, e che compongono l'interfaccia, sono già note o intuibili. L'unica cosa che cambia a runtime, sono i parametri di una richiesta, ed i valori della risposta.
+
