@@ -1,6 +1,0 @@
-mandare via il truck appena possibile;
-i contenitori vengono svuotati solo riavviando l'app;
-tempo di raccolta del materiale dal truck è sempre limitato e prevedibile;
-tempo di deposito imprevedibile ed eventualmente anche alquanto lungo;
-sonar (alarm) e led (warning) sono su un raspberry a parte, non sul robot;
-il blocco in seguito ad un allarme deve avvenire IL PRIMA POSSIBILE.
