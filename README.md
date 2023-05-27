@@ -75,17 +75,23 @@ The project consists of different elements:
   </tr>
   <tr align="center">
     <td><b>Waste&nbsp;Service&nbsp;Core</b></td>
-    <td></td>
+    <td>
+			Main component of the system. It loads a map configuration and <b>manages the Waste Service</b>. It receives Store Requests from the Smart Devices, process them and delegates a <i>Transport Trolley</i> for the waste pick up and dump, in case there is enough space in the requested container.
+		</td>
     <td><img src="./commons/resources/imgs/gifs/Demo_WasteServiceCore.gif"/></td>
   </tr>
   <tr align="center">
     <td><b>Waste&nbsp;Service&nbsp;RPi</b></td>
-    <td></td>
+    <td>
+			Component that can run on a Raspberry Pi or on a desktop node (simulated). It implements an <b>alarm/warning device</b>: when a ultrasonic sonar (or some distance provider, e.g. the simulator) detects a distance that is lower/greater than a threshold, it sends an event to the system, that will stop/resume the Transport Trolley activity; Waste Service RPi also shows information about the system current state through other components (led, buzzer, LCD display).
+		</td>
     <td><img width="50%" src="./commons/resources/imgs/gifs/Demo_WasteServiceRPi_Simulated.gif"/></td>
   </tr>
   <tr align="center">
     <td><b>Waste&nbsp;Service&nbsp;GUI</b></td>
-    <td></td>
+    <td>
+			Web application to <b>monitor the Waste Service status</b>. It displays any useful information about the current state of the system, including a representation of the Waste Area and the robot position inside of it.
+		</td>
     <td><img src="./commons/resources/imgs/gifs/Demo_WasteServiceGUI.gif"/></td>
   </tr>
 </table>
