@@ -103,7 +103,7 @@ Il progetto consiste nei seguenti elementi:
   - Ultima Release: [Sprint0 v2](https://github.com/iss2022-BCR/WasteService/releases/tag/sprint0_v2)
   - Sprint Review: 08/09/22 16:30
 - [x] **Sprint1** - WasteService Core-Business
-  - Ultima Release: [Sprint1 v1](https://github.com/iss2022-BCR/WasteService/releases/tag/sprint1_v1)
+  - Ultima Release: [Sprint1 v3](https://github.com/iss2022-BCR/WasteService/releases/tag/sprint1_v3)
   - Sprint Review: 25/11/22 10:30
 - [X] **Sprint2** - Raspberry Pi
   - Ultima Release: [Sprint2 v1](https://github.com/iss2022-BCR/WasteService/releases/tag/sprint2_v1)
