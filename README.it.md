@@ -23,12 +23,80 @@
   
   [Documenti di Progetto](https://htmlpreview.github.io/?https://raw.githubusercontent.com/iss2022-BCR/WasteService/main/Sprint0/index.html)
   ·
-  [Guida SCRUM (IT)](./commons/2020-Scrum-Guide-Italian.pdf)
+  [Presentazione](./commons/presentation/WasteServiceBCR_IT.pdf)
+  ·
+  [Guida SCRUM](./commons/2020-Scrum-Guide-Italian.pdf)
   ·
   [English <kbd><img width="20px" src="https://flagicons.lipis.dev/flags/4x3/gb.svg"></kbd>](./README.md)
   
 </div>
 
+## Il Progetto
+
+<div align="center">
+  <a href="https://youtu.be/WAImSQSib1A" target="_blank"><img width="70%" src="./commons/resources/imgs/Thumbnail_YouTube.png" alt="Demo Video" /></a>
+	<br/>
+	Video dimostrativo completo
+</div>
+
+### Componenti
+Il progetto consiste nei seguenti elementi:
+<table>
+  <tr align="center">
+    <th width="15%">Nome</th>
+    <th width="35%">Descrizione</th>
+    <th width="50%">Demo</th>
+  </tr>
+  <tr align="center">
+    <td><b>Smart&nbsp;Device</b></td>
+    <td>
+      Mobile application that allows a <i>Waste Truck driver</i> to <b>send a <i>StoreRequest</i></b> to the Waste Service, specifying the X amount (kg) of Y type (glass or plastic) of waste they want to deposit.
+    </td>
+    <td><img width="30%" src="./commons/resources/imgs/gifs/Demo_SmartDevice.gif"/></td>
+  </tr>
+  <tr align="center">
+    <td><b>Virtual&nbsp;Robot</b></td>
+    <td>
+      Web application provided by the customer that simulates a Robot. The robot is confined in a <b>virtual environment</b> (a rectangular room) and can <b>receive commands to perform some actions</b>, such as moving forward/backwards both for a certain amount of time or by steps equal to its length, and to rotate.
+    </td>
+    <td><img src="./commons/resources/imgs/gifs/Demo_VirtualRobot.gif"/></td>
+  </tr>
+  <tr align="center">
+    <td><b>Mapper&nbsp;QAK22</b></td>
+    <td>
+      Software provided by the customer that exploits Planner functions to map the room in which the robot is located (moving it by steps), and outputs a <b>grid representation file</b>;
+    </td>
+    <td><img src="./commons/resources/imgs/gifs/Demo_Mapper.gif"/></td>
+  </tr>
+  <tr align="center">
+    <td><b>Map&nbsp;Editor</b></td>
+    <td>
+      Desktop graphical application that allows the user to load a map representation and to create a <b>map configuration file</b> by dragging and dropping the room tiles (<i>Home</i>, <i>Indoor</i>, <i>PlasticBox</i>, etc.)
+    </td>
+    <td><img src="./commons/resources/imgs/gifs/Demo_MapEditor.gif"/></td>
+  </tr>
+  <tr align="center">
+    <td><b>Waste&nbsp;Service&nbsp;Core</b></td>
+    <td>
+			Main component of the system. It loads a map configuration and <b>manages the Waste Service</b>. It receives Store Requests from the Smart Devices, process them and delegates a <i>Transport Trolley</i> for the waste pick up and dump, in case there is enough space in the requested container.
+		</td>
+    <td><img src="./commons/resources/imgs/gifs/Demo_WasteServiceCore.gif"/></td>
+  </tr>
+  <tr align="center">
+    <td><b>Waste&nbsp;Service&nbsp;RPi</b></td>
+    <td>
+			Component that can run on a Raspberry Pi or on a desktop node (simulated). It implements an <b>alarm/warning device</b>: when a ultrasonic sonar (or some distance provider, e.g. the simulator) detects a distance that is lower/greater than a threshold, it sends an event to the system, that will stop/resume the Transport Trolley activity; Waste Service RPi also shows information about the system current state through other components (led, buzzer, LCD display).
+		</td>
+    <td><img width="80%" src="./commons/resources/imgs/gifs/Demo_WasteServiceRPi_Simulated.gif"/></td>
+  </tr>
+  <tr align="center">
+    <td><b>Waste&nbsp;Service&nbsp;GUI</b></td>
+    <td>
+			Web application to <b>monitor the Waste Service status</b>. It displays any useful information about the current state of the system, including a representation of the Waste Area and the robot position inside of it.
+		</td>
+    <td><img src="./commons/resources/imgs/gifs/Demo_WasteServiceGUI.gif"/></td>
+  </tr>
+</table>
 
 ### Roadmap
 - [x] **Sprint0** - System Base Requirement Analysis
@@ -44,11 +112,13 @@
   - Ultima Release: [to-do]()
   - Esame Finale: 27/04/22 11:00 
 
+<!--
 ### Competenze Acquisite
 - SCRUM/Agile
 [...]
+-->
 
-### Membri del Team
+## Team
 <table>
   <!--<tr align="center"><td colspan="3"><b>Team BCR</b></td></tr>-->
   <tr align="center">
