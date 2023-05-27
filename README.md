@@ -23,9 +23,9 @@
   
   [Project documents](https://htmlpreview.github.io/?https://raw.githubusercontent.com/iss2022-BCR/WasteService/main/Sprint0/index.html)
   ·
-  [Presentation (EN)](./commons/Presentation/WasteServiceBCR.pdf)
+  [Presentation](./commons/presentation/WasteServiceBCR.pdf)
   ·
-  [SCRUM Guide (EN)](./commons/2020-Scrum-Guide-US.pdf)
+  [SCRUM Guide](./commons/2020-Scrum-Guide-US.pdf)
   ·
   [Italiano <kbd><img width="20px" src="https://flagicons.lipis.dev/flags/4x3/it.svg"></kbd>](./README.it.md)
   
