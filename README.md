@@ -23,6 +23,8 @@
   
   [Project documents](https://htmlpreview.github.io/?https://raw.githubusercontent.com/iss2022-BCR/WasteService/main/Sprint0/index.html)
   ·
+  [Presentation](./commons/Presentation/WasteServiceBCR.pdf)
+  ·
   [SCRUM Guide (EN)](./commons/2020-Scrum-Guide-US.pdf)
   ·
   [Italiano <kbd><img width="20px" src="https://flagicons.lipis.dev/flags/4x3/it.svg"></kbd>](./README.it.md)
@@ -85,7 +87,7 @@ The project consists of different elements:
     <td>
 			Component that can run on a Raspberry Pi or on a desktop node (simulated). It implements an <b>alarm/warning device</b>: when a ultrasonic sonar (or some distance provider, e.g. the simulator) detects a distance that is lower/greater than a threshold, it sends an event to the system, that will stop/resume the Transport Trolley activity; Waste Service RPi also shows information about the system current state through other components (led, buzzer, LCD display).
 		</td>
-    <td><img width="50%" src="./commons/resources/imgs/gifs/Demo_WasteServiceRPi_Simulated.gif"/></td>
+    <td><img width="80%" src="./commons/resources/imgs/gifs/Demo_WasteServiceRPi_Simulated.gif"/></td>
   </tr>
   <tr align="center">
     <td><b>Waste&nbsp;Service&nbsp;GUI</b></td>
