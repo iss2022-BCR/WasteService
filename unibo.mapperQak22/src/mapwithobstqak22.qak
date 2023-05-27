@@ -82,7 +82,7 @@ val MapName     = "mapWithObst2019"
  	               whenReply stepfail -> fatal
 
 /*
- * Il ritorno a home può provocare un hit su wallup
+ * Il ritorno a home puo' provocare un hit su wallup
  */ 
  	State gotoHome{
  		[# unibo.kotlin.planner22Util.updateMap(  "w", "" ) 
