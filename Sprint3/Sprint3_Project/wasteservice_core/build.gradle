@@ -20,7 +20,7 @@ sourceCompatibility = 11
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
-    flatDir {   dirs '../unibolibs'	 }
+    flatDir {   dirs '../../../unibolibs'	 }
 }
 
 dependencies {
@@ -139,15 +139,15 @@ tasks.withType(Test) {
 
 application {
     // Test
-    mainClassName = 'it.unibo.ctx_statusgui.MainCtx_statusguiKt'
+    //mainClassName = 'it.unibo.ctx_statusgui.MainCtx_statusguiKt'
 
     // Define the main class for the application: -P<build_name> (default: WasteService build)
-    /*mainClassName = 'it.unibo.ctx_wasteservice.MainCtx_wasteserviceKt'
+    mainClassName = 'it.unibo.ctx_wasteservice.MainCtx_wasteserviceKt'
     if (project.hasProperty("build_TransportTrolley")) {
         mainClassName = 'it.unibo.ctx_transporttrolley.MainCtx_transporttrolleyKt'
     } else if (project.hasProperty("build_Robot")) {
         mainClassName = 'it.unibo.ctx_robot.MainCtx_robotKt'
-    }*/
+    }
 }
 
 jar {
@@ -167,11 +167,11 @@ jar {
 }
 
 distZip {
-    archiveName "unibo.sprint2_wasteservice_core_WS.zip"
+    archiveName "unibo.wasteservice_core_WS.zip"
     if (project.hasProperty("build_TransportTrolley")) {
-        archiveName "unibo.sprint2_wasteservice_core_TT.zip"
+        archiveName "unibo.wasteservice_core_TT.zip"
     } else if (project.hasProperty("build_Robot")) {
-        archiveName "unibo.sprint2_wasteservice_core_RT.zip"
+        archiveName "unibo.wasteservice_core_RT.zip"
     }
 }
 
@@ -180,7 +180,7 @@ distributions {
         contents {
             // Put the files into the following folder
             into('bin/') {
-                from "./sprint2_wasteservice_core.pl"
+                from "./wasteservice_core.pl"
                 from "./sysRules.pl"
                 from "./basicrobotConfig.json"
                 from "mapConfigWasteService.bin"

@@ -1,0 +1,14 @@
+item(trolleystateprovider,state_idle,msg(coapUpdate,dispatch,pathexecutorbcr,trolleystateprovider,'coapUpdate(pathexecutorbcr,        ActorBasic(Resource) pathexecutorbcr  | created  )',23)).
+item(trolleystateprovider,state_idle,msg(coapUpdate,dispatch,transporttrolley,trolleystateprovider,coapUpdate(transporttrolley,transporttrolley(HOME)),24)).
+item(trolleystateprovider,state_idle,msg(stop,event,filter_alarm,none,stop,83)).
+discard(trolleystateprovider,state_idle,msg(stop,event,filter_alarm,none,stop,83)).
+item(trolleystateprovider,state_idle,msg(coapUpdate,dispatch,pathexecutorbcr,trolleystateprovider,coapUpdate(pathexecutorbcr,transporttrolley(STOPPED)),25)).
+item(trolleystateprovider,state_idle,msg(resume,event,filter_alarm,none,resume,93)).
+discard(trolleystateprovider,state_idle,msg(resume,event,filter_alarm,none,resume,93)).
+item(trolleystateprovider,state_idle,msg(coapUpdate,dispatch,pathexecutorbcr,trolleystateprovider,coapUpdate(pathexecutorbcr,transporttrolley(HOME)),27)).
+item(trolleystateprovider,state_idle,msg(coapUpdate,dispatch,transporttrolley,trolleystateprovider,coapUpdate(transporttrolley,transporttrolley(MOVING)),29)).
+item(trolleystateprovider,state_idle,msg(coapUpdate,dispatch,transporttrolley,trolleystateprovider,coapUpdate(transporttrolley,transporttrolley(PICKUP)),41)).
+item(trolleystateprovider,state_idle,msg(coapUpdate,dispatch,transporttrolley,trolleystateprovider,coapUpdate(transporttrolley,transporttrolley(MOVING)),44)).
+item(trolleystateprovider,state_idle,msg(coapUpdate,dispatch,transporttrolley,trolleystateprovider,coapUpdate(transporttrolley,transporttrolley(DUMP)),70)).
+item(trolleystateprovider,state_idle,msg(coapUpdate,dispatch,transporttrolley,trolleystateprovider,coapUpdate(transporttrolley,transporttrolley(MOVING)),73)).
+item(trolleystateprovider,state_idle,msg(coapUpdate,dispatch,transporttrolley,trolleystateprovider,coapUpdate(transporttrolley,transporttrolley(HOME)),88)).

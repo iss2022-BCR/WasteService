@@ -20,7 +20,7 @@ class Status_controller ( name: String, scope: CoroutineScope  ) : ActorBasicFsm
 		return { //this:ActionBasciFsm
 				state("state_init") { //this:State
 					action { //it:State
-						println("[GUIcontroller] Started.")
+						println("[StatusController] Started.")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -48,7 +48,7 @@ class Status_controller ( name: String, scope: CoroutineScope  ) : ActorBasicFsm
 								
 												val WasteType = payloadArg(0)
 												val WasteAmount = payloadArg(1).toDouble()
-								println("[GUIcontroller] Storage state changed: $WasteAmount KG of $WasteType")
+								println("[StatusController] Storage state changed: $WasteAmount KG of $WasteType")
 								if(  WasteType == "PLASTIC"  
 								 ){ status.setCurrentPlastic(WasteAmount)  
 								}
@@ -69,7 +69,7 @@ class Status_controller ( name: String, scope: CoroutineScope  ) : ActorBasicFsm
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								
 												val NewState = payloadArg(0)
-								println("[GUIcontroller] Trolley state changed: $NewState")
+								println("[StatusController] Trolley state changed: $NewState")
 								 status.setLedState(wasteservice.Utils.getLedStateFromTrolleyState(NewState).toString())  
 								 status.setTransportTrolleyState(NewState)  
 						}
@@ -87,7 +87,7 @@ class Status_controller ( name: String, scope: CoroutineScope  ) : ActorBasicFsm
 								
 												val X = payloadArg(0).toInt()
 												val Y = payloadArg(1).toInt()
-								println("[WasteService] Trolley position changed: ($X, $Y)")
+								println("[StatusController] Trolley position changed: ($X, $Y)")
 								 status.setTransportTrolleyPosition(X, Y)  
 						}
 						//genTimer( actor, state )
@@ -99,7 +99,7 @@ class Status_controller ( name: String, scope: CoroutineScope  ) : ActorBasicFsm
 				}	 
 				state("state_update_gui") { //this:State
 					action { //it:State
-						println("[GUIcontroller] Sent a new update for the GUI.")
+						println("[StatusController] Sent a new update for the GUI.")
 						updateResourceRep( wasteservice.gui.StatusUpdateParser.toJsonString(status)  
 						)
 						//genTimer( actor, state )

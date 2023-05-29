@@ -1,0 +1,3 @@
+{"actor":"wasteservice", "msgType":"dispatch", "curstate":"state_waiting_deposit", "nextstate":"state_deposit_completed", "msgId":"depositcompleted"}
+{"actor":"wasteservice", "msgType":"dispatch", "curstate":"state_waiting_deposit", "nextstate":"state_deposit_failed", "msgId":"depositfailed"}
+{"actor":"transporttrolley", "msgType":"dispatch", "curstate":"state_move_to_indoor", "nextstate":"state_pickup", "msgId":"depositcompleted"}

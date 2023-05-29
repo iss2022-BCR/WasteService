@@ -23,5 +23,4 @@ with Diagram('test_echo_waste_serverArch', show=False, outformat='png', graph_at
           echo_wasteservice=Custom('echo_wasteservice','./qakicons/symActorSmall.png')
      with Cluster('ctxbasicrobot', graph_attr=nodeattr):
           basicrobot=Custom('basicrobot(ext)','./qakicons/externalQActor.png')
-     echo_wasteservice >> Edge(color='green', style='dashed', xlabel='loadaccepted') >> sys 
 diag

@@ -13,7 +13,7 @@ sourceCompatibility = '11'
 
 repositories {
 	mavenCentral()
-	flatDir {dirs{'../unibolibs'}}
+	flatDir {dirs{'../../../unibolibs'}}
 }
 
 

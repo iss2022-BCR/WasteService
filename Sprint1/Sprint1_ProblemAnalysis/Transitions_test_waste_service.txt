@@ -1,0 +1,2 @@
+{"actor":"wasteservice_ws_test", "msgType":"dispatch", "curstate":"state_waiting_deposit", "nextstate":"state_deposit_completed", "msgId":"depositcompleted"}
+{"actor":"wasteservice_ws_test", "msgType":"dispatch", "curstate":"state_waiting_deposit", "nextstate":"state_deposit_failed", "msgId":"depositfailed"}

@@ -1,0 +1,15 @@
+PROJECT WasteServiceGUI
+Seguendo la documentazione fornita dal committente (link a SpringBoot)
+
+abbiamo creato un nuovo progetto SpringBoot, utilizzando la pagina ufficiale https://spring.io/
+
+Abbiamo riempito i campi e aggiunto le dipendenze necessarie:
+- lista dipendenze;
+
+poi abbiamo generato il progetto, scaricato lo zip, ed estratto il contenuto.
+
+Abbiamo ultimato le modifiche aggiungendo le nostre librerie
+
+
+#### realizzazione AppGUI
+

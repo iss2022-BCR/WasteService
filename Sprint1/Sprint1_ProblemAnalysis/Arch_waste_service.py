@@ -28,12 +28,8 @@ with Diagram('waste_serviceArch', show=False, outformat='png', graph_attr=grapha
      with Cluster('ctx_robot', graph_attr=nodeattr):
           basicrobot=Custom('basicrobot(ext)','./qakicons/externalQActor.png')
           pathexecutor=Custom('pathexecutor(ext)','./qakicons/externalQActor.png')
-     smartdevice_simulator >> Edge(color='magenta', style='solid', xlabel='typesrequest') >> typesprovider
-     smartdevice_simulator >> Edge(color='magenta', style='solid', xlabel='storerequest') >> wasteservice
-     typesprovider >> Edge(color='green', style='dashed', xlabel='typesreply') >> sys 
-     wasteservice >> Edge(color='magenta', style='solid', xlabel='deposit') >> transporttrolley
-     wasteservice >> Edge(color='green', style='dashed', xlabel='loadrejected') >> sys 
-     wasteservice >> Edge(color='green', style='dashed', xlabel='loadaccepted') >> sys 
-     transporttrolley >> Edge(color='green', style='dashed', xlabel='pickupcompleted') >> sys 
-     transporttrolley >> Edge(color='blue', style='solid', xlabel='depositcompleted') >> wasteservice
+     smartdevice_simulator >> Edge(color='magenta', style='solid', xlabel='typesrequest', fontcolor='magenta') >> typesprovider
+     smartdevice_simulator >> Edge(color='magenta', style='solid', xlabel='storerequest', fontcolor='magenta') >> wasteservice
+     wasteservice >> Edge(color='magenta', style='solid', xlabel='deposit', fontcolor='magenta') >> transporttrolley
+     transporttrolley >> Edge(color='blue', style='solid', xlabel='depositcompleted', fontcolor='blue') >> wasteservice
 diag

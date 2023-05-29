@@ -1,7 +1,7 @@
-:: Script to build the WasteService_Core project
+:: Script to build the WasteService_RPi project
 @echo off
 
-cd ..\wasteservice_core\
+cd ..\sprint2_wasteservice_core\
 
 echo Building WasteService_Core ZIPs ...
 

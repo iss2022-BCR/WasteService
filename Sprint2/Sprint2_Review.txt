@@ -1,0 +1,30 @@
+Nello sprint2 abbiamo analizzato il requisito 4, relativo al Raspberry Pi.
+
+Dall'analisi dei requisiti è emerso che i due principali obiettivi dello sprint2 erano l'implementazione di 2 feature: una meccanica di allarme con stop/resume del TransportTrolley, utilizzando un sonar (entità proattiva); una meccanica per il tracciamento dello stato del TransportTrolley, utilizzando un Led (entità reattiva).
+
+Proseguendo con l'analisi, abbiamo individuato diverse potenziali problematiche relative ai requisiti dello sprint, in particolare:
+- come ottenere l'input dal sonar;
+- quali dati inviare e quando inviarli (opzioni: inviare tutte le rilevazioni, inviare solo l'allarme, introdurre un componente intermedio che riceve tutte le rilevazioni e le filtra);
+- stop/resume: quando stoppare il trolley? non appena ricevuto o alla fine dello step? La prima opzione avrebbe presentato diverse difficoltà, tra cui il fatto che la stanza è rappresentata a celle, ed il robot si muove già a step. Di conseguenza, se avessimo reso uno step interrompibile, avremmo dovuto calcolare il tempo rimanente per terminare lo step, sottraendo quello già percorso da quello totale dello step. Ma questo introduce complessità e possibilità di errore, in quanto i calcoli basati sul tempo non sono mai al 100% accurati per diversi fattori => stop solo al termine dello step.
+- come stoppare? Modificando il PathExecutor abbiamo introdotto degli stati per stop e resume, e delle guardie per controllare il verificarsi di un evento stop;
+- led: è necessario tracciare lo stato del trolley. Per farlo la soluzione proposta è di rendere lo stato del trolley coap osservabile, ed introdurre un observer TrolleyStateProvider che notifica gli attori interessati (quello che si occupa di aggiornare lo stato del led).
+
+Conclusa l'analisi abbiamo aggiornato il QAK del sistema introducendo questi nuovi aspetti, e creato 2 test plan: TestStopResume e TestLed
+
+
+
+
+---------------
+note del prof
+
+
+3/4 slide con:
+il nostro progetto ha queste caratteristiche [...]
+
+
+slide con anche essenza dell'organizzazione ad esempio, basata su SCRUM agile (Sprint)
+
+lui è interessato a capire come mai e quando abbiamo iniziato a sentire il bisogno di astrarre da Java o usare altre tecnologie
+
+poniamo attenzione sui vari punti salienti 
+come si presenta il sistema, senza parte implementativa (o comunque che parli dei punti salienti)

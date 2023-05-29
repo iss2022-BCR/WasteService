@@ -1,0 +1,9 @@
+item(proxyctx_wasteservice,nostate,msg(trolley_state_changed,event,trolleystateprovider,none,trolley_state_changed(STOPPED),26)).
+item(proxyctx_wasteservice,nostate,msg(trolley_state_changed,event,trolleystateprovider,none,trolley_state_changed(HOME),28)).
+item(proxyctx_wasteservice,nostate,msg(trolley_state_changed,event,trolleystateprovider,none,trolley_state_changed(MOVING),31)).
+item(proxyctx_wasteservice,nostate,msg(trolley_state_changed,event,trolleystateprovider,none,trolley_state_changed(PICKUP),42)).
+item(proxyctx_wasteservice,nostate,msg(pickupcompleted,reply,transporttrolley,wasteservice,pickupcompleted(_1767230265),43)).
+item(proxyctx_wasteservice,nostate,msg(trolley_state_changed,event,trolleystateprovider,none,trolley_state_changed(MOVING),46)).
+item(proxyctx_wasteservice,nostate,msg(trolley_state_changed,event,trolleystateprovider,none,trolley_state_changed(DUMP),71)).
+item(proxyctx_wasteservice,nostate,msg(trolley_state_changed,event,trolleystateprovider,none,trolley_state_changed(MOVING),75)).
+item(proxyctx_wasteservice,nostate,msg(trolley_state_changed,event,trolleystateprovider,none,trolley_state_changed(HOME),89)).

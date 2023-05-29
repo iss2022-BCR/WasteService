@@ -21,9 +21,9 @@ Event trolley_state_changed:	trolley_state_changed(STATE)
 Dispatch coapUpdate: coapUpdate(RESOURCE, VALUE)
 
 // CONTEXES ===================================================================
-Context ctx_wasteservice		ip [host="192.168.137.1" port=11800]
-Context ctx_transporttrolley	ip [host="192.168.137.1" port=11801]
-Context ctx_robot				ip [host="192.168.137.1" port=8020]
+Context ctx_wasteservice		ip [host="192.168.1.4" port=11800]
+Context ctx_transporttrolley	ip [host="192.168.1.4" port=11801]
+Context ctx_robot				ip [host="192.168.1.4" port=8020]
 
 Context ctx_raspberrypi			ip [host="localhost" port=11802]
 

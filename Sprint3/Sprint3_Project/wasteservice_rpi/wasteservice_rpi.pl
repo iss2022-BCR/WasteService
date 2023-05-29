@@ -1,9 +1,9 @@
 %====================================================================================
 % wasteservice_rpi description   
 %====================================================================================
-context(ctx_wasteservice, "192.168.137.1",  "TCP", "11800").
-context(ctx_transporttrolley, "192.168.137.1",  "TCP", "11801").
-context(ctx_robot, "192.168.137.1",  "TCP", "8020").
+context(ctx_wasteservice, "localhost",  "TCP", "11800").
+context(ctx_transporttrolley, "localhost",  "TCP", "11801").
+context(ctx_robot, "localhost",  "TCP", "8020").
 context(ctx_raspberrypi, "localhost",  "TCP", "11802").
  qactor( typesprovider, ctx_wasteservice, "external").
   qactor( wasteservice, ctx_wasteservice, "external").

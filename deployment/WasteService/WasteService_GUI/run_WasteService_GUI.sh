@@ -1,0 +1,1 @@
+java -jar unibo.wasteservice_gui.jar

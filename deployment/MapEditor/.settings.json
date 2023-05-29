@@ -1,0 +1,12 @@
+{
+  "roomMapFile": "D:\\Michele Righi\\Programmi\\GitHub\\WasteService\\deployment\\WasteService_BCR\\resources\\projects\\MapEditor\\mapRoomEmpty.bin",
+  "mapConfigFile": "",
+  "logLevel": {
+    "toStandardOutput": true,
+    "toFile": false,
+    "directory": ""
+  },
+  "confirmations": true,
+  "darkTheme": false,
+  "coordinateColor": "0x000000ff"
+}

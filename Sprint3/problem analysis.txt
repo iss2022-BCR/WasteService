@@ -6,4 +6,11 @@
 
 - protocollo di comunicazione: usando COAP o MQTT non è complicato introdurre un observer presso il WebServer Spring che riceve dati emessi dal Raspberry
 
-- customer software
+- customer software:
+	- webRobot22
+
+
+- how to send the updated state to the GUI?
+
+
+- perché JSON come formato messaggi?

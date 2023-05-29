@@ -22,10 +22,6 @@ with Diagram('test_transport_trolleyArch', show=False, outformat='png', graph_at
      with Cluster('ctx_transporttrolley_test', graph_attr=nodeattr):
           wasteservice_tt_test=Custom('wasteservice_tt_test','./qakicons/symActorSmall.png')
           transporttrolley_tt_test=Custom('transporttrolley_tt_test','./qakicons/symActorSmall.png')
-     wasteservice_tt_test >> Edge(color='magenta', style='solid', xlabel='deposit') >> transporttrolley_tt_test
-     wasteservice_tt_test >> Edge(color='green', style='dashed', xlabel='loadrejected') >> sys 
-     wasteservice_tt_test >> Edge(color='green', style='dashed', xlabel='loadrejected') >> sys 
-     wasteservice_tt_test >> Edge(color='green', style='dashed', xlabel='loadaccepted') >> sys 
-     transporttrolley_tt_test >> Edge(color='green', style='dashed', xlabel='pickupcompleted') >> sys 
-     transporttrolley_tt_test >> Edge(color='blue', style='solid', xlabel='depositcompleted') >> wasteservice_tt_test
+     wasteservice_tt_test >> Edge(color='magenta', style='solid', xlabel='deposit', fontcolor='magenta') >> transporttrolley_tt_test
+     transporttrolley_tt_test >> Edge(color='blue', style='solid', xlabel='depositcompleted', fontcolor='blue') >> wasteservice_tt_test
 diag

@@ -231,7 +231,7 @@ QActor status_controller context ctx_wasteservice {
 		var status: wasteservice.gui.StatusUpdate = wasteservice.gui.StatusUpdate()
 	#]
 	State state_init initial {
-		println("[GUIcontroller] Started.")
+		println("[StatusController] Started.")
 	}
 	Goto state_idle
 	
@@ -250,7 +250,7 @@ QActor status_controller context ctx_wasteservice {
 				val WasteType = payloadArg(0)
 				val WasteAmount = payloadArg(1).toDouble()
 			#]
-			println("[GUIcontroller] Storage state changed: $WasteAmount KG of $WasteType")
+			println("[StatusController] Storage state changed: $WasteAmount KG of $WasteType")
 			
 			if [# WasteType == "PLASTIC" #] {
 				[# status.setCurrentPlastic(WasteAmount) #]
@@ -267,7 +267,7 @@ QActor status_controller context ctx_wasteservice {
 			[#
 				val NewState = payloadArg(0)
 			#]
-			println("[GUIcontroller] Trolley state changed: $NewState")
+			println("[StatusController] Trolley state changed: $NewState")
 			
 			[# status.setLedState(wasteservice.Utils.getLedStateFromTrolleyState(NewState).toString()) #]
 			[# status.setTransportTrolleyState(NewState) #]
@@ -281,14 +281,14 @@ QActor status_controller context ctx_wasteservice {
 				val X = payloadArg(0).toInt()
 				val Y = payloadArg(1).toInt()
 			#]
-			println("[WasteService] Trolley position changed: ($X, $Y)")
+			println("[StatusController] Trolley position changed: ($X, $Y)")
 			[# status.setTransportTrolleyPosition(X, Y) #]
 		}
 	}
 	Goto state_update_gui
 	
 	State state_update_gui {
-		println("[GUIcontroller] Sent a new update for the GUI.")
+		println("[StatusController] Sent a new update for the GUI.")
 		
 		updateResource [# wasteservice.gui.StatusUpdateParser.toJsonString(status) #]
 	}

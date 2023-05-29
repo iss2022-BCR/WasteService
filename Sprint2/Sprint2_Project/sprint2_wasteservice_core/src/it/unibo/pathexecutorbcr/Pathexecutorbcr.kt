@@ -47,12 +47,12 @@ class Pathexecutorbcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 				}	 
 				state("state_do_path") { //this:State
 					action { //it:State
+						println("$name in ${currentState.stateName} | $currentMsg")
 						if( checkMsgContent( Term.createTerm("dopath(PATH,OWNER)"), Term.createTerm("dopath(P,C)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 
 												val path = payloadArg(0)
 												pathut.setPath(path)
-												MovesDone = ""
 												TotPathMoves = pathut.getPathTodo().length
 								println("$path")
 						}
@@ -126,7 +126,6 @@ class Pathexecutorbcr ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 				}	 
 				state("state_end_work_ok") { //this:State
 					action { //it:State
-						 MovesDone = ""  
 						println("[PathExecutorBCR] Path done.")
 						answer("dopath", "dopathdone", "dopathdone(ok)","transporttrolley"   )  
 						//genTimer( actor, state )
