@@ -109,7 +109,7 @@ Il progetto consiste nei seguenti elementi:
   - Ultima Release: [Sprint2 v1](https://github.com/iss2022-BCR/WasteService/releases/tag/sprint2_v1)
   - Sprint Review: 14/04/22 16:30
 - [x] **Sprint3** - Monitoring
-  - Ultima Release: [to-do]()
+  - Ultima Release: [WasteService](https://github.com/iss2022-BCR/WasteService/releases/latest)
   - Esame Finale: 27/04/22 11:00 
 
 <!--
