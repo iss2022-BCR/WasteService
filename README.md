@@ -146,5 +146,5 @@ The project consists of different elements:
 [size-url]: https://github.com/iss2022-BCR/WasteService
 [issues-shield]: https://img.shields.io/github/issues/iss2022-BCR/WasteService
 [issues-url]: https://github.com/iss2022-BCR/WasteService/issues
-[stars-shield]: https://custom-icon-badges.herokuapp.com/github/stars/iss2022-BCR/WasteService?logo=star&logoColor=yellow
+[stars-shield]: https://custom-icon-badges.herokuapp.com/github/stars/iss2022-BCR/WasteService?logo=star&logoColor=yellow&style=flat
 [stars-url]: https://github.com/iss2022-BCR/WasteService/stargazers
