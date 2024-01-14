@@ -134,9 +134,9 @@ Il progetto consiste nei seguenti elementi:
 </table>
 
 
-[java-shield]: https://img.shields.io/badge/Java-ED8B00?logo=java&logoColor=white
+[java-shield]: https://custom-icon-badges.herokuapp.com/badge/Java-ED8B00?logo=java&logoColor=white
 [java-url]: https://www.java.com
-[kotlin-shield]: https://img.shields.io/badge/kotlin-%237F52FF.svg?logo=kotlin&logoColor=white
+[kotlin-shield]: https://img.shields.io/badge/Kotlin-%237F52FF.svg?logo=kotlin&logoColor=white
 [kotlin-url]: https://kotlinlang.org/
 [flutter-shield]: https://img.shields.io/badge/Flutter-%2302569B.svg?logo=Flutter&logoColor=white
 [flutter-url]: https://flutter.dev/
