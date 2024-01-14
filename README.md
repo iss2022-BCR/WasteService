@@ -128,7 +128,7 @@ The project consists of different elements:
 </table>
 
 
-[java-shield]: https://img.shields.io/badge/Java-ED8B00?logo=java&logoColor=white
+[java-shield]: https://custom-icon-badges.herokuapp.com/badge/Java-ED8B00?logo=java&logoColor=white
 [java-url]: https://www.java.com
 [kotlin-shield]: https://img.shields.io/badge/kotlin-%237F52FF.svg?logo=kotlin&logoColor=white
 [kotlin-url]: https://kotlinlang.org/
